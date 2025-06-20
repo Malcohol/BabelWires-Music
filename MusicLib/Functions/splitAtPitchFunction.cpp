@@ -2,7 +2,7 @@
 
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/Utilities/filteredTrackIterator.hpp>
-#include <MusicLib/Utilities/simpleTrackBuilder.hpp>
+#include <MusicLib/Utilities/validTrackBuilder.hpp>
 
 namespace {
     struct NotesAbove : bw_music::FilteredTrackIterator<> {
@@ -43,9 +43,9 @@ namespace {
 }
 
 bw_music::SplitAtPitchResult bw_music::splitAtPitch(Pitch pitch, const Track& sourceTrack) {
-    SimpleTrackBuilder equalOrAbove;
-    SimpleTrackBuilder below;
-    SimpleTrackBuilder other;
+    ValidTrackBuilder equalOrAbove;
+    ValidTrackBuilder below;
+    ValidTrackBuilder other;
     
     SplitAtPitchResult result;
     // TODO Do this in one traversal.

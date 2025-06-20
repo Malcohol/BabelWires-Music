@@ -9,7 +9,7 @@
 
 #include <MusicLib/Types/Track/TrackEvents/chordEvents.hpp>
 #include <MusicLib/Utilities/filteredTrackIterator.hpp>
-#include <MusicLib/Utilities/simpleTrackBuilder.hpp>
+#include <MusicLib/Utilities/validTrackBuilder.hpp>
 
 #include <algorithm>
 #include <array>
@@ -199,7 +199,7 @@ bw_music::Track bw_music::fingeredChordsFunction(const Track& sourceTrack, Finge
     // Required for getMatchingChordType::ValueFromIntervals
     assert(std::is_sorted(recognizedIntervals.begin(), recognizedIntervals.end()));
 
-    SimpleTrackBuilder trackOut;
+    ValidTrackBuilder trackOut;
 
     ActivePitches activePitches;
     ModelDuration timeSinceLastChordEvent = 0;

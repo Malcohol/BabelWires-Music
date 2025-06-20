@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
-#include <MusicLib/Utilities/simpleTrackBuilder.hpp>
+#include <MusicLib/Utilities/validTrackBuilder.hpp>
 #include <MusicLib/Utilities/trackValidator.hpp>
 #include <MusicLib/Utilities/validTrackBuilder.hpp>
 
@@ -108,7 +108,7 @@ TEST(TrackBuilderTest, validator_invalidUnterminatedGroup) {
 
 TEST(TrackBuilderTest, simpleBuilder_validSimple) {
     bw_music::Track track;
-    bw_music::SimpleTrackBuilder validTrackBuilder;
+    bw_music::ValidTrackBuilder validTrackBuilder;
 
     auto addEvent = [&track, &validTrackBuilder](auto&& event) {
         track.addEvent(event);

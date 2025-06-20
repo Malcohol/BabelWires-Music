@@ -8,7 +8,7 @@
 #include <MusicLib/Functions/monophonicSubtracksFunction.hpp>
 
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
-#include <MusicLib/Utilities/simpleTrackBuilder.hpp>
+#include <MusicLib/Utilities/validTrackBuilder.hpp>
 
 #include <Common/Identifiers/registeredIdentifier.hpp>
 
@@ -22,8 +22,8 @@ bw_music::MonophonicSubtracksPolicyEnum::MonophonicSubtracksPolicyEnum()
 
 namespace {
     struct TrackBuilders {
-        std::vector<bw_music::SimpleTrackBuilder> m_noteTracks;
-        bw_music::SimpleTrackBuilder m_other;
+        std::vector<bw_music::ValidTrackBuilder> m_noteTracks;
+        bw_music::ValidTrackBuilder m_other;
     };
 
     struct TrackInfo {

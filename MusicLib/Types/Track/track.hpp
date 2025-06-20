@@ -24,7 +24,7 @@ namespace bw_music {
     /// using SourceFileFormats and TargetFileFormats formats.
     /// The events in a track are intended to be subject to a set of rules, see the TrackValidator.
     /// The Track class itself does not enforce these rules. It's simply a container.
-    /// See the SimpleTrackBuilder or the ValidTrackBuilder to ensure a Track is valid.
+    /// See the ValidTrackBuilder or the ValidTrackBuilder to ensure a Track is valid.
     class Track : public babelwires::Value {
       public:
         CLONEABLE(Track);
