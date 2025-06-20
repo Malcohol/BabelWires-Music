@@ -56,5 +56,5 @@ std::size_t bw_music::ChordOffEvent::getHash() const {
 }
 
 bw_music::TrackEvent::GroupingInfo bw_music::ChordOffEvent::getGroupingInfo() const {
-    return {s_chordEventCategory, 0, GroupingInfo::Grouping::StartOfGroup};
+    return {s_chordEventCategory, 0, GroupingInfo::Grouping::EndOfGroup};
 }

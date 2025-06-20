@@ -7,6 +7,7 @@
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/Types/Track/trackInstance.hpp>
 #include <MusicLib/libRegistration.hpp>
+#include <MusicLib/Utilities/trackValidator.hpp>
 
 #include <Tests/BabelWiresLib/TestUtils/testEnvironment.hpp>
 #include <Tests/TestUtils/seqTestUtils.hpp>
@@ -74,6 +75,7 @@ TEST(TransposeProcessorTest, funcSimpleChordsZero) {
         },
         trackIn);
 
+    bw_music::assertTrackIsValid(trackIn);
     auto trackOut = bw_music::transposeTrack(trackIn, 0);
 
     testUtils::testChords(

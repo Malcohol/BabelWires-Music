@@ -2,6 +2,7 @@
 
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/Utilities/filteredTrackIterator.hpp>
+#include <MusicLib/Utilities/simpleTrackBuilder.hpp>
 
 namespace {
     struct NotesAbove : bw_music::FilteredTrackIterator<> {
@@ -42,6 +43,10 @@ namespace {
 }
 
 bw_music::SplitAtPitchResult bw_music::splitAtPitch(Pitch pitch, const Track& sourceTrack) {
+    SimpleTrackBuilder equalOrAbove;
+    SimpleTrackBuilder below;
+    SimpleTrackBuilder other;
+    
     SplitAtPitchResult result;
     // TODO Do this in one traversal.
     {
@@ -50,7 +55,7 @@ bw_music::SplitAtPitchResult bw_music::splitAtPitch(Pitch pitch, const Track& so
         aboveIt.initBegin();
         aboveItEnd.initEnd();
         for (; aboveIt != aboveItEnd; ++aboveIt) {
-            result.m_equalOrAbove.addEvent(*aboveIt);
+            equalOrAbove.addEvent(*aboveIt);
         }
     }
     {
@@ -59,7 +64,7 @@ bw_music::SplitAtPitchResult bw_music::splitAtPitch(Pitch pitch, const Track& so
         belowIt.initBegin();
         belowItEnd.initEnd();
         for (; belowIt != belowItEnd; ++belowIt) {
-            result.m_below.addEvent(*belowIt);
+            below.addEvent(*belowIt);
         }
     }
     {
@@ -68,13 +73,13 @@ bw_music::SplitAtPitchResult bw_music::splitAtPitch(Pitch pitch, const Track& so
         otherIt.initBegin();
         otherItEnd.initEnd();
         for (; otherIt != otherItEnd; ++otherIt) {
-            result.m_other.addEvent(*otherIt);
+            other.addEvent(*otherIt);
         }
     }
 
-    result.m_equalOrAbove.setDuration(sourceTrack.getDuration());
-    result.m_below.setDuration(sourceTrack.getDuration());
-    result.m_other.setDuration(sourceTrack.getDuration());
+    equalOrAbove.setDuration(sourceTrack.getDuration());
+    below.setDuration(sourceTrack.getDuration());
+    other.setDuration(sourceTrack.getDuration());
 
-    return result;
+    return {equalOrAbove.finishAndGetTrack(), below.finishAndGetTrack(), other.finishAndGetTrack()};
 }

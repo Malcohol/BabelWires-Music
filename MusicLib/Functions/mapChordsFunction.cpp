@@ -10,6 +10,7 @@
 #include <MusicLib/Types/Track/TrackEvents/chordEvents.hpp>
 #include <MusicLib/chord.hpp>
 #include <MusicLib/pitch.hpp>
+#include <MusicLib/Utilities/simpleTrackBuilder.hpp>
 
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/Enum/enumAtomTypeConstructor.hpp>
@@ -228,7 +229,7 @@ bw_music::Track bw_music::mapChordsFunction(const babelwires::TypeSystem& typeSy
 
     ChordMapApplicator mapApplicator(typeSystem, chordMapValue);
 
-    Track trackOut;
+    SimpleTrackBuilder trackOut;
     ModelDuration totalEventDuration;
 
     std::optional<bw_music::Chord> silenceToChordChord = mapApplicator.getNoChordTarget();
@@ -296,5 +297,5 @@ bw_music::Track bw_music::mapChordsFunction(const babelwires::TypeSystem& typeSy
     }
 
     trackOut.setDuration(sourceTrack.getDuration());
-    return trackOut;
+    return trackOut.finishAndGetTrack();
 }

@@ -9,6 +9,7 @@
 
 #include <MusicLib/Types/Track/TrackEvents/chordEvents.hpp>
 #include <MusicLib/Utilities/filteredTrackIterator.hpp>
+#include <MusicLib/Utilities/simpleTrackBuilder.hpp>
 
 #include <algorithm>
 #include <array>
@@ -198,10 +199,10 @@ bw_music::Track bw_music::fingeredChordsFunction(const Track& sourceTrack, Finge
     // Required for getMatchingChordType::ValueFromIntervals
     assert(std::is_sorted(recognizedIntervals.begin(), recognizedIntervals.end()));
 
-    bw_music::Track trackOut;
+    SimpleTrackBuilder trackOut;
 
     ActivePitches activePitches;
-    bw_music::ModelDuration timeSinceLastChordEvent = 0;
+    ModelDuration timeSinceLastChordEvent = 0;
     Chord currentChord;
 
     for (const auto& event : iterateOver<NoteEvent>(sourceTrack)) {
@@ -237,5 +238,5 @@ bw_music::Track bw_music::fingeredChordsFunction(const Track& sourceTrack, Finge
         trackOut.addEvent(ChordOffEvent(timeSinceLastChordEvent));
     }
     trackOut.setDuration(sourceTrack.getDuration());
-    return trackOut;
+    return trackOut.finishAndGetTrack();
 }
