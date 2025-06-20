@@ -8,7 +8,7 @@
 #include <MusicLib/Functions/monophonicSubtracksFunction.hpp>
 
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
-#include <MusicLib/Utilities/trackBuilder.hpp>
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 
 #include <Common/Identifiers/registeredIdentifier.hpp>
 

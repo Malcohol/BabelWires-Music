@@ -8,7 +8,7 @@
 #include <MusicLib/Types/Track/trackInstance.hpp>
 #include <MusicLib/libRegistration.hpp>
 #include <MusicLib/Utilities/trackValidator.hpp>
-#include <MusicLib/Utilities/trackBuilder.hpp>
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 
 #include <Tests/BabelWiresLib/TestUtils/testEnvironment.hpp>
 #include <Tests/TestUtils/seqTestUtils.hpp>

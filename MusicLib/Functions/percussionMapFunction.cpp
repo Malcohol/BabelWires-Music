@@ -10,7 +10,7 @@
 #include <MusicLib/Percussion/percussionTypeTag.hpp>
 #include <MusicLib/Percussion/builtInPercussionInstruments.hpp>
 #include <MusicLib/Types/Track/TrackEvents/percussionEvents.hpp>
-#include <MusicLib/Utilities/trackBuilder.hpp>
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 
 #include <BabelWiresLib/ValueTree/modelExceptions.hpp>
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>

@@ -3,7 +3,7 @@
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/chordEvents.hpp>
 #include <MusicLib/Types/Track/track.hpp>
-#include <MusicLib/Utilities/trackBuilder.hpp>
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 
 #include <gtest/gtest.h>
 

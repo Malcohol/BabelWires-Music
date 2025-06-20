@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
 
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
-#include <MusicLib/Utilities/trackBuilder.hpp>
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 #include <MusicLib/Utilities/trackValidator.hpp>
-#include <MusicLib/Utilities/trackBuilder.hpp>
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 
 #include <Tests/BabelWiresLib/TestUtils/testEnvironment.hpp>
 #include <Tests/TestUtils/seqTestUtils.hpp>

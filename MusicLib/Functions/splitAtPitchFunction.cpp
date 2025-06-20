@@ -2,7 +2,7 @@
 
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/Utilities/filteredTrackIterator.hpp>
-#include <MusicLib/Utilities/trackBuilder.hpp>
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 
 namespace {
     struct NotesAbove : bw_music::FilteredTrackIterator<> {

@@ -8,7 +8,7 @@
 #include <MusicLib/Functions/mergeFunction.hpp>
 
 #include <MusicLib/Utilities/trackTraverser.hpp>
-#include <MusicLib/Utilities/trackBuilder.hpp>
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 
 #include <BabelWiresLib/ValueTree/modelExceptions.hpp>
 

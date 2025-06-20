@@ -6,7 +6,7 @@
  * Licensed under the GPLv3.0. See LICENSE file.
  **/
 #include <MusicLib/Functions/appendTrackFunction.hpp>
-#include <MusicLib/Utilities/trackBuilder.hpp>
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 
 #include <BabelWiresLib/ValueTree/modelExceptions.hpp>
 

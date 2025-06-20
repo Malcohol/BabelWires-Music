@@ -9,7 +9,7 @@
 
 #include <MusicLib/Types/Track/TrackEvents/chordEvents.hpp>
 #include <MusicLib/Utilities/filteredTrackIterator.hpp>
-#include <MusicLib/Utilities/trackBuilder.hpp>
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 
 #include <algorithm>
 #include <array>

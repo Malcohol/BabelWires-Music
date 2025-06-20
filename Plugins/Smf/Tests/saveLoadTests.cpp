@@ -8,7 +8,7 @@
 
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/libRegistration.hpp>
-#include <MusicLib/Utilities/trackBuilder.hpp>
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 
 #include <BabelWiresLib/Instance/arrayTypeInstance.hpp>
 #include <BabelWiresLib/libRegistration.hpp>

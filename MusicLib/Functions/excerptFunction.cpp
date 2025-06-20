@@ -7,7 +7,7 @@
  **/
 #include <MusicLib/Functions/excerptFunction.hpp>
 
-#include <MusicLib/Utilities/trackBuilder.hpp>
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 
 #include <set>
 

@@ -5,7 +5,7 @@
  *
  * Licensed under the GPLv3.0. See LICENSE file.
  **/
-#include <MusicLib/Utilities/trackBuilder.hpp>
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 
 bw_music::TrackBuilder::TrackBuilder() {}
 

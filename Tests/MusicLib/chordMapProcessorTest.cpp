@@ -8,7 +8,7 @@
 #include <MusicLib/chord.hpp>
 #include <MusicLib/libRegistration.hpp>
 #include <MusicLib/Functions/mergeFunction.hpp>
-#include <MusicLib/Utilities/trackBuilder.hpp>
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/Enum/enumValue.hpp>

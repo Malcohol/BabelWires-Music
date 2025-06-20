@@ -10,7 +10,7 @@
 #include <MusicLib/Types/Track/TrackEvents/chordEvents.hpp>
 #include <MusicLib/chord.hpp>
 #include <MusicLib/pitch.hpp>
-#include <MusicLib/Utilities/trackBuilder.hpp>
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/Enum/enumAtomTypeConstructor.hpp>

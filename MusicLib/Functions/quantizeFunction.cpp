@@ -7,7 +7,7 @@
  **/
 #include <MusicLib/Functions/quantizeFunction.hpp>
 
-#include <MusicLib/Utilities/trackBuilder.hpp>
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 
 namespace {
     bw_music::ModelDuration getIdealTime(bw_music::ModelDuration time, bw_music::ModelDuration beat) {
