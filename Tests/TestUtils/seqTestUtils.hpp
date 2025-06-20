@@ -7,12 +7,12 @@
 #include <vector>
 
 namespace bw_music {
-    class Track;
+    class TrackBuilder;
 }
 
 namespace testUtils {
     /// Add notes of the given pitches to the track. Each has quaternote duration.
-    void addSimpleNotes(const std::vector<bw_music::Pitch>& expectedPitches, bw_music::Track& track);
+    void addSimpleNotes(const std::vector<bw_music::Pitch>& expectedPitches, bw_music::TrackBuilder& track);
 
     /// Check that there is a sequence of the given pitches in the track, each with quaternote duration.
     void testSimpleNotes(const std::vector<bw_music::Pitch>& expectedPitches, const bw_music::Track& track);
@@ -24,7 +24,7 @@ namespace testUtils {
     };
 
     /// Add notes as described to the track. Each has quaternote duration.
-    void addNotes(const std::vector<NoteInfo>& notes, bw_music::Track& track);
+    void addNotes(const std::vector<NoteInfo>& notes, bw_music::TrackBuilder& track);
 
     /// Check that there is a sequence of the given notes in the track.
     void testNotes(const std::vector<NoteInfo>& expectedNotes, const bw_music::Track& track);
@@ -37,7 +37,7 @@ namespace testUtils {
     };
 
     /// Add the given chords. Each has halfnote duration.
-    void addChords(const std::vector<ChordInfo>& chords, bw_music::Track& track);
+    void addChords(const std::vector<ChordInfo>& chords, bw_music::TrackBuilder& track);
 
     void testChords(const std::vector<ChordInfo>& expectedChords, const bw_music::Track& track);
 

@@ -20,11 +20,10 @@
 
 namespace bw_music {
     /// A track carries a stream of TrackEvents.
-    /// Tracks are not editable: they can be manipulated only using Processors and can be serialized/deserialized only
-    /// using SourceFileFormats and TargetFileFormats formats.
-    /// The events in a track are intended to be subject to a set of rules, see the TrackValidator.
-    /// The Track class itself does not enforce these rules. It's simply a container.
-    /// See the TrackBuilder or the TrackBuilder to ensure a Track is valid.
+    /// Construct a track using a TrackBuilder.
+    /// From the point of view of the project, Tracks are not editable: they can be manipulated only using Processors
+    /// and can be serialized/deserialized only using SourceFileFormats and TargetFileFormats formats. The events in a
+    /// track are intended to be subject to a set of rules, see the TrackValidator.
     class Track : public babelwires::Value {
       public:
         CLONEABLE(Track);

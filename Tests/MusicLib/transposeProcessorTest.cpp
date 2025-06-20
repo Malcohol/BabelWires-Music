@@ -8,62 +8,63 @@
 #include <MusicLib/Types/Track/trackInstance.hpp>
 #include <MusicLib/libRegistration.hpp>
 #include <MusicLib/Utilities/trackValidator.hpp>
+#include <MusicLib/Utilities/trackBuilder.hpp>
 
 #include <Tests/BabelWiresLib/TestUtils/testEnvironment.hpp>
 #include <Tests/TestUtils/seqTestUtils.hpp>
 
 TEST(TransposeProcessorTest, funcSimpleZero) {
-    bw_music::Track trackIn;
+    bw_music::TrackBuilder trackIn;
 
     testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65}, trackIn);
 
-    auto trackOut = bw_music::transposeTrack(trackIn, 0);
+    auto trackOut = bw_music::transposeTrack(trackIn.finishAndGetTrack(), 0);
 
     testUtils::testSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65}, trackOut);
 }
 
 TEST(TransposeProcessorTest, funcSimplePositive) {
-    bw_music::Track trackIn;
+    bw_music::TrackBuilder trackIn;
 
     testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65}, trackIn);
 
-    auto trackOut = bw_music::transposeTrack(trackIn, 1);
+    auto trackOut = bw_music::transposeTrack(trackIn.finishAndGetTrack(), 1);
 
     testUtils::testSimpleNotes(std::vector<bw_music::Pitch>{61, 63, 65, 66}, trackOut);
 }
 
 TEST(TransposeProcessorTest, funcSimpleNegative) {
-    bw_music::Track trackIn;
+    bw_music::TrackBuilder trackIn;
 
     testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65}, trackIn);
 
-    auto trackOut = bw_music::transposeTrack(trackIn, -1);
+    auto trackOut = bw_music::transposeTrack(trackIn.finishAndGetTrack(), -1);
 
     testUtils::testSimpleNotes(std::vector<bw_music::Pitch>{59, 61, 63, 64}, trackOut);
 }
 
 TEST(TransposeProcessorTest, funcSimplePositiveLimit) {
-    bw_music::Track trackIn;
+    bw_music::TrackBuilder trackIn;
 
     testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65}, trackIn);
 
-    auto trackOut = bw_music::transposeTrack(trackIn, 127);
+    auto trackOut = bw_music::transposeTrack(trackIn.finishAndGetTrack(), 127);
 
     testUtils::testSimpleNotes(std::vector<bw_music::Pitch>{127, 127, 127, 127}, trackOut);
 }
 
 TEST(TransposeProcessorTest, funcSimpleNegativeLimit) {
-    bw_music::Track trackIn;
+    bw_music::TrackBuilder trackIn;
 
     testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65}, trackIn);
 
-    auto trackOut = bw_music::transposeTrack(trackIn, -127);
+    auto trackOut = bw_music::transposeTrack(trackIn.finishAndGetTrack(), -127);
 
     testUtils::testSimpleNotes(std::vector<bw_music::Pitch>{0, 0, 0, 0}, trackOut);
 }
 
 TEST(TransposeProcessorTest, funcSimpleChordsZero) {
-    bw_music::Track trackIn;
+    bw_music::TrackBuilder trackIn;
 
     // Some random chords.
     testUtils::addChords(
@@ -75,8 +76,7 @@ TEST(TransposeProcessorTest, funcSimpleChordsZero) {
         },
         trackIn);
 
-    bw_music::assertTrackIsValid(trackIn);
-    auto trackOut = bw_music::transposeTrack(trackIn, 0);
+    auto trackOut = bw_music::transposeTrack(trackIn.finishAndGetTrack(), 0);
 
     testUtils::testChords(
         {
@@ -85,11 +85,11 @@ TEST(TransposeProcessorTest, funcSimpleChordsZero) {
             {bw_music::PitchClass::PitchClass::Value::Gsh, bw_music::ChordType::ChordType::Value::dim},
             {bw_music::PitchClass::PitchClass::Value::A, bw_music::ChordType::ChordType::Value::aug},
         },
-        trackIn);
+        trackOut);
 }
 
 TEST(TransposeProcessorTest, funcSimpleChordsPositive) {
-    bw_music::Track trackIn;
+    bw_music::TrackBuilder trackIn;
 
     // Some random chords.
     testUtils::addChords(
@@ -101,7 +101,7 @@ TEST(TransposeProcessorTest, funcSimpleChordsPositive) {
         },
         trackIn);
 
-    auto trackOut = bw_music::transposeTrack(trackIn, 1);
+    auto trackOut = bw_music::transposeTrack(trackIn.finishAndGetTrack(), 1);
 
     testUtils::testChords(
         {
@@ -114,7 +114,7 @@ TEST(TransposeProcessorTest, funcSimpleChordsPositive) {
 }
 
 TEST(TransposeProcessorTest, funcSimpleChordsNegative) {
-    bw_music::Track trackIn;
+    bw_music::TrackBuilder trackIn;
 
     // Some random chords.
     testUtils::addChords(
@@ -126,7 +126,7 @@ TEST(TransposeProcessorTest, funcSimpleChordsNegative) {
         },
         trackIn);
 
-    auto trackOut = bw_music::transposeTrack(trackIn, -1);
+    auto trackOut = bw_music::transposeTrack(trackIn.finishAndGetTrack(), -1);
 
     testUtils::testChords(
         {
@@ -172,9 +172,9 @@ TEST(TransposeProcessorTest, processor) {
     EXPECT_EQ(outArray.getEntry(0).get().getDuration(), 0);
 
     {
-        bw_music::Track track;
+        bw_music::TrackBuilder track;
         testUtils::addSimpleNotes({60, 62, 64, 65}, track);
-        inArray.getEntry(0).set(std::move(track));
+        inArray.getEntry(0).set(track.finishAndGetTrack());
     }
     processor.process(testEnvironment.m_log);
     testUtils::testSimpleNotes({60, 62, 64, 65}, outArray.getEntry(0).get());
@@ -188,9 +188,9 @@ TEST(TransposeProcessorTest, processor) {
     {
         inArray.setSize(2);
         {
-            bw_music::Track track;
+            bw_music::TrackBuilder track;
             testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{48, 50, 52, 53}, track);
-            inArray.getEntry(1).set(std::move(track));
+            inArray.getEntry(1).set(track.finishAndGetTrack());
         }
     }
     processor.process(testEnvironment.m_log);

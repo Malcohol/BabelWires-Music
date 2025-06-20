@@ -2,6 +2,7 @@
 
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/Types/Track/track.hpp>
+#include <MusicLib/Utilities/trackBuilder.hpp>
 
 #include <Tests/TestUtils/seqTestUtils.hpp>
 #include <Tests/TestUtils/testTrackEvents.hpp>
@@ -88,19 +89,26 @@ TEST(Track, equality) {
     bw_music::Track emptyTrack0;
     bw_music::Track emptyTrack1;
     bw_music::Track emptyTrackWithPositiveDuration;
-    bw_music::Track trackWithNotes;
-    bw_music::Track trackWithSameNotes;
-    bw_music::Track trackWithMoreNotes;
-    bw_music::Track trackWithDifferentNotes;
-    bw_music::Track trackWithSameNotesLongerDuration;
-
     emptyTrackWithPositiveDuration.setDuration(1);
-    testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65}, trackWithNotes);
-    testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65}, trackWithSameNotes);
-    testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65, 67}, trackWithMoreNotes);
-    testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 63, 65}, trackWithDifferentNotes);
-    testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65}, trackWithSameNotesLongerDuration);
-    trackWithSameNotesLongerDuration.setDuration(16);
+    
+    bw_music::TrackBuilder trackWithNotesBuilder;
+    bw_music::TrackBuilder trackWithSameNotesBuilder;
+    bw_music::TrackBuilder trackWithMoreNotesBuilder;
+    bw_music::TrackBuilder trackWithDifferentNotesBuilder;
+    bw_music::TrackBuilder trackWithSameNotesLongerDurationBuilder;
+
+    testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65}, trackWithNotesBuilder);
+    testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65}, trackWithSameNotesBuilder);
+    testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65, 67}, trackWithMoreNotesBuilder);
+    testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 63, 65}, trackWithDifferentNotesBuilder);
+    testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65}, trackWithSameNotesLongerDurationBuilder);
+    trackWithSameNotesLongerDurationBuilder.setDuration(16);
+
+    bw_music::Track trackWithNotes = trackWithNotesBuilder.finishAndGetTrack();
+    bw_music::Track trackWithSameNotes = trackWithSameNotesBuilder.finishAndGetTrack();
+    bw_music::Track trackWithMoreNotes = trackWithMoreNotesBuilder.finishAndGetTrack();
+    bw_music::Track trackWithDifferentNotes = trackWithDifferentNotesBuilder.finishAndGetTrack();
+    bw_music::Track trackWithSameNotesLongerDuration = trackWithSameNotesLongerDurationBuilder.finishAndGetTrack();
 
     EXPECT_EQ(emptyTrack0, emptyTrack0);
     EXPECT_EQ(emptyTrack0, emptyTrack1);

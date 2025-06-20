@@ -8,15 +8,16 @@
 #include <MusicLib/Types/Track/TrackEvents/chordEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/libRegistration.hpp>
+#include <MusicLib/Utilities/trackBuilder.hpp>
 
 #include <Tests/BabelWiresLib/TestUtils/testEnvironment.hpp>
 #include <Tests/TestUtils/seqTestUtils.hpp>
 
 TEST(SplitAtPitchProcessorTest, monophonicSplit) {
-    bw_music::Track track;
+    bw_music::TrackBuilder track;
     testUtils::addSimpleNotes({60, 62, 64, 65, 67, 69, 71, 72}, track);
 
-    bw_music::SplitAtPitchResult result = bw_music::splitAtPitch(67, track);
+    bw_music::SplitAtPitchResult result = bw_music::splitAtPitch(67, track.finishAndGetTrack());
 
     const std::vector<testUtils::NoteInfo> expectedNotesAbove{
         {67, 1, babelwires::Rational(1, 4)},
@@ -91,9 +92,9 @@ TEST(SplitAtPitchProcessorTest, processor) {
 
     input.getPitch().set(babelwires::EnumValue(input.getPitch().getInstanceType().getIdentifierFromIndex(67)));
     {
-        bw_music::Track track;
+        bw_music::TrackBuilder track;
         testUtils::addSimpleNotes({60, 62, 64, 65, 67, 69, 71, 72}, track);
-        input.getInput().set(std::move(track));
+        input.getInput().set(track.finishAndGetTrack());
     }
     processor.process(testEnvironment.m_log);
 

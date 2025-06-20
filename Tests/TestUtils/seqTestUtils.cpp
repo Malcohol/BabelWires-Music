@@ -3,10 +3,11 @@
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/chordEvents.hpp>
 #include <MusicLib/Types/Track/track.hpp>
+#include <MusicLib/Utilities/trackBuilder.hpp>
 
 #include <gtest/gtest.h>
 
-void testUtils::addSimpleNotes(const std::vector<bw_music::Pitch>& expectedPitches, bw_music::Track& track) {
+void testUtils::addSimpleNotes(const std::vector<bw_music::Pitch>& expectedPitches, bw_music::TrackBuilder& track) {
     for (auto pitch : expectedPitches) {
         track.addEvent(bw_music::NoteOnEvent{ 0, pitch });
         track.addEvent(bw_music::NoteOffEvent{ babelwires::Rational(1, 4), pitch });
@@ -43,7 +44,7 @@ void testUtils::testSimpleNotes(const std::vector<bw_music::Pitch>& expectedPitc
     EXPECT_EQ(track.getDuration(), expectedNoteDuration * expectedPitches.size());
 }
 
-void testUtils::addNotes(const std::vector<NoteInfo>& notes, bw_music::Track& track) {
+void testUtils::addNotes(const std::vector<NoteInfo>& notes, bw_music::TrackBuilder& track) {
     for (auto note : notes) {
         track.addEvent(bw_music::NoteOnEvent{ note.m_noteOnTime, note.m_pitch });
         track.addEvent(bw_music::NoteOffEvent{ note.m_noteOffTime, note.m_pitch });
@@ -82,7 +83,7 @@ void testUtils::testNotes(const std::vector<NoteInfo>& expectedNotes, const bw_m
     EXPECT_EQ(noteIterator, endIterator);
 }
 
-void testUtils::addChords(const std::vector<ChordInfo>& chords, bw_music::Track& track) {
+void testUtils::addChords(const std::vector<ChordInfo>& chords, bw_music::TrackBuilder& track) {
     for (auto expectedChord : chords) {
         track.addEvent(bw_music::ChordOnEvent(expectedChord.m_chordOnTime, expectedChord.m_chord));
         track.addEvent(bw_music::ChordOffEvent(expectedChord.m_chordOffTime));
