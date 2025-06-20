@@ -9,6 +9,9 @@
 
 bw_music::ValidTrackBuilder::ValidTrackBuilder() {}
 
+bw_music::ValidTrackBuilder::ValidTrackBuilder(Track startState)
+    : m_track(std::move(startState)) {}
+
 bool bw_music::ValidTrackBuilder::onNewEvent(const TrackEvent& event) {
     const TrackEvent::GroupingInfo groupInfo = event.getGroupingInfo();
     if (groupInfo.m_grouping == TrackEvent::GroupingInfo::Grouping::NotInGroup) {

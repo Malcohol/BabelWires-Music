@@ -12,12 +12,16 @@
 #include <set>
 
 /// Ensures the following:
+/// * All group events are enclosed between start and end events.
 /// * All groups must have strictly positive duration
 /// * No overlapping groups of the same category and value.
 namespace bw_music {
     class ValidTrackBuilder {
       public:
         ValidTrackBuilder();
+
+        /// Add more events to the startTrack.
+        ValidTrackBuilder(Track startState);
 
         /// Add a TrackEvent by moving or copying it into the track.
         void addEvent(const TrackEvent& event);
