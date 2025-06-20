@@ -8,6 +8,7 @@
 #include <MusicLib/Functions/monophonicSubtracksFunction.hpp>
 
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
+#include <MusicLib/Utilities/simpleTrackBuilder.hpp>
 
 #include <Common/Identifiers/registeredIdentifier.hpp>
 
@@ -20,6 +21,11 @@ bw_music::MonophonicSubtracksPolicyEnum::MonophonicSubtracksPolicyEnum()
     : babelwires::EnumType(getStaticValueSet(), 0) {}
 
 namespace {
+    struct TrackBuilders {
+        std::vector<bw_music::SimpleTrackBuilder> m_noteTracks;
+        bw_music::SimpleTrackBuilder m_other;
+    };
+
     struct TrackInfo {
         bw_music::ModelDuration m_timeSinceLastEvent;
         bw_music::TrackEvent::GroupingInfo::GroupValue m_activeValue = bw_music::TrackEvent::GroupingInfo::c_notAValue;
@@ -37,14 +43,14 @@ namespace {
     const bw_music::TrackEvent::GroupingInfo::Category c_noteCategory = bw_music::NoteEvent::s_noteEventCategory;
 
     void moveEventToOtherTrack(bw_music::ModelDuration& timeSinceLastEventOther, bw_music::TrackEventHolder& event,
-                               bw_music::MonophonicSubtracksResult& result) {
+                               TrackBuilders& result) {
         event->setTimeSinceLastEvent(timeSinceLastEventOther);
         result.m_other.addEvent(event.release());
         timeSinceLastEventOther = 0;
     }
 
     void moveNoteEventToTrack(std::vector<TrackInfo>& trackInfos, NoteEventInfo& noteEvent, int trackToUse,
-                              bw_music::MonophonicSubtracksResult& result) {
+                              TrackBuilders& result) {
         const bw_music::TrackEvent::GroupingInfo groupInfo = noteEvent.m_event->getGroupingInfo();
         auto& t = trackInfos[trackToUse];
         noteEvent.m_event->setTimeSinceLastEvent(t.m_timeSinceLastEvent);
@@ -60,7 +66,7 @@ namespace {
     }
 
     void evictEvent(std::vector<TrackInfo>& trackInfos, int trackToUse, PitchSet& evictedPitches,
-                    bw_music::MonophonicSubtracksResult& result) {
+                    TrackBuilders& result) {
         auto& t = trackInfos[trackToUse];
         const bw_music::Pitch pitchToEvict = trackInfos[trackToUse].m_activeValue;
         assert((evictedPitches.find(pitchToEvict) == evictedPitches.end()) && "Evicting an already evicted pitch");
@@ -111,7 +117,7 @@ namespace {
     void assignNoteEventsToTracks(std::vector<TrackInfo>& trackInfos, bw_music::ModelDuration& timeSinceLastEventOther,
                                   std::vector<NoteEventInfo>& noteEvents, PitchSet& evictedPitches,
                                   bw_music::MonophonicSubtracksPolicyEnum::Value policy,
-                                  bw_music::MonophonicSubtracksResult& result) {
+                                  TrackBuilders& result) {
         const bool preferHigherPitches = (policy == bw_music::MonophonicSubtracksPolicyEnum::Value::High) ||
                                          (policy == bw_music::MonophonicSubtracksPolicyEnum::Value::HighEv);
         const auto lessThan = [preferHigherPitches](NoteEventInfo& a, NoteEventInfo& b) {
@@ -162,11 +168,11 @@ namespace {
 bw_music::MonophonicSubtracksResult bw_music::getMonophonicSubtracks(const Track& trackIn, int numTracks,
                                                                      MonophonicSubtracksPolicyEnum::Value policy) {
     assert(numTracks > 0);
-    bw_music::MonophonicSubtracksResult result;
+    TrackBuilders builders;
 
     std::vector<TrackInfo> trackInfos;
     trackInfos.resize(numTracks);
-    result.m_noteTracks.resize(numTracks);
+    builders.m_noteTracks.resize(numTracks);
     ModelDuration timeSinceLastEventOther;
 
     using Group = std::tuple<TrackEvent::GroupingInfo::Category, TrackEvent::GroupingInfo::GroupValue>;
@@ -177,7 +183,7 @@ bw_music::MonophonicSubtracksResult bw_music::getMonophonicSubtracks(const Track
     for (auto& event : trackIn) {
         if (event.getTimeSinceLastEvent() != 0) {
             assignNoteEventsToTracks(trackInfos, timeSinceLastEventOther, noteEventsNow, evictedPitches, policy,
-                                     result);
+                                     builders);
             noteEventsNow.clear();
 
             for (auto& t : trackInfos) {
@@ -193,15 +199,18 @@ bw_music::MonophonicSubtracksResult bw_music::getMonophonicSubtracks(const Track
             noteInfo.m_originalIndex = noteEventsNow.size() - 1;
         } else {
             TrackEventHolder otherEvent = event;
-            moveEventToOtherTrack(timeSinceLastEventOther, otherEvent, result);
+            moveEventToOtherTrack(timeSinceLastEventOther, otherEvent, builders);
         }
     }
-    assignNoteEventsToTracks(trackInfos, timeSinceLastEventOther, noteEventsNow, evictedPitches, policy, result);
+    assignNoteEventsToTracks(trackInfos, timeSinceLastEventOther, noteEventsNow, evictedPitches, policy, builders);
 
-    for (int i = 0; i < numTracks; ++i) {
-        result.m_noteTracks[i].setDuration(trackIn.getDuration());
+    bw_music::MonophonicSubtracksResult result;
+    result.m_noteTracks.reserve(builders.m_noteTracks.size());
+    for (auto& trackBuilder : builders.m_noteTracks) {
+        trackBuilder.setDuration(trackIn.getDuration());
+        result.m_noteTracks.emplace_back(trackBuilder.finishAndGetTrack());
     }
-    result.m_other.setDuration(trackIn.getDuration());
-
+    builders.m_other.setDuration(trackIn.getDuration());
+    result.m_other = builders.m_other.finishAndGetTrack();
     return result;
 }
