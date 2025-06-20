@@ -13,6 +13,7 @@
 #include <MusicLib/Percussion/builtInPercussionInstruments.hpp>
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/percussionEvents.hpp>
+#include <MusicLib/Utilities/validTrackBuilder.hpp>
 
 #include <BabelWiresLib/Project/projectContext.hpp>
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
@@ -249,7 +250,7 @@ class smf::SmfParser::TrackSplitter {
   private:
     struct PerChannelInfo {
         bw_music::ModelDuration m_timeOfLastEvent;
-        bw_music::Track m_track;
+        bw_music::ValidTrackBuilder m_track;
     };
 
     PerChannelInfo* getChannel(unsigned int channelNumber) {
@@ -799,7 +800,7 @@ void smf::SmfParser::readFormat0Sequence() {
     auto tracks = getSmfSequence().getTrcks0();
     for (int channelNumber = 0; channelNumber < MAX_CHANNELS; ++channelNumber) {
         if (splitTracks.m_channels[channelNumber] != nullptr) {
-            tracks.activateAndGetTrack(channelNumber).set(std::move(splitTracks.m_channels[channelNumber]->m_track));
+            tracks.activateAndGetTrack(channelNumber).set(splitTracks.m_channels[channelNumber]->m_track.finishAndGetTrack());
         }
     }
 }
@@ -808,24 +809,30 @@ void smf::SmfParser::readFormat1SequenceTrack(MidiTrackAndChannel::Instance& tra
                                               bool hasMainMetadata) {
     TrackSplitter splitTrack(m_channelSetup);
     readTrack(0, splitTrack, hasMainMetadata);
+
+    // Convert the builders to actual tracks.
+    std::array<bw_music::Track, 16> tracks;
+
     // If this is a format 1 track with multiple channels (rare but possible), privilege the
     // channel with the most events.
     int privilegedTrack = -1;
     int maxNumEvents = 0;
     for (int channelNumber = 0; channelNumber < MAX_CHANNELS; ++channelNumber) {
-        if ((splitTrack.m_channels[channelNumber] != nullptr) &&
-            (splitTrack.m_channels[channelNumber]->m_track.getNumEvents() > maxNumEvents)) {
-            privilegedTrack = channelNumber;
-            maxNumEvents = splitTrack.m_channels[channelNumber]->m_track.getNumEvents();
+        if (splitTrack.m_channels[channelNumber] != nullptr) {
+            tracks[channelNumber] = splitTrack.m_channels[channelNumber]->m_track.finishAndGetTrack();
+            if (tracks[channelNumber].getNumEvents() > maxNumEvents) {
+                privilegedTrack = channelNumber;
+                maxNumEvents = tracks[channelNumber].getNumEvents();
+            }
         }
     }
     for (int channelNumber = 0; channelNumber < MAX_CHANNELS; ++channelNumber) {
         if (channelNumber == privilegedTrack) {
             track.getChan().set(channelNumber);
-            track.getTrack().set(std::move(splitTrack.m_channels[channelNumber]->m_track));
+            track.getTrack().set(std::move(tracks[channelNumber]));
         } else if (splitTrack.m_channels[channelNumber] != nullptr) {
             // All other tracks are added as extra.
-            track.activateAndGetTrack(channelNumber).set(std::move(splitTrack.m_channels[channelNumber]->m_track));
+            track.activateAndGetTrack(channelNumber).set(std::move(tracks[channelNumber]));
         }
     }
 }
