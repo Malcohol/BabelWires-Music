@@ -19,6 +19,9 @@
 #include <vector>
 
 namespace bw_music {
+    class TrackBuilder;
+    class UnsafeTrack;
+
     /// A track carries a stream of TrackEvents.
     /// Construct a track using a TrackBuilder.
     /// From the point of view of the project, Tracks are not editable: they can be manipulated only using Processors
@@ -29,15 +32,11 @@ namespace bw_music {
         CLONEABLE(Track);
 
         Track();
+
         /// Create an empty track with a given duration.
         Track(ModelDuration duration);
 
-        /// Add a TrackEvent by copying it into the track.
-        void addEvent(const TrackEvent& event);
-
-        /// Add a TrackEvent by moving it into the track.
-        void addEvent(TrackEvent&& event);
-
+      public:
         /// Get the total number of events in the track.
         int getNumEvents() const;
 
@@ -60,6 +59,16 @@ namespace bw_music {
 
         /// Get a summary of the track contents, by category.
         const std::unordered_map<const char*, int>& getNumEventGroupsByCategory() const;
+
+      private:
+        friend TrackBuilder;
+        friend UnsafeTrack;
+
+        /// Add a TrackEvent by copying it into the track.
+        void addEvent(const TrackEvent& event);
+
+        /// Add a TrackEvent by moving it into the track.
+        void addEvent(TrackEvent&& event);
 
       public:
         using const_iterator = babelwires::BlockStream::Iterator<const babelwires::BlockStream, const TrackEvent>;
@@ -89,5 +98,11 @@ namespace bw_music {
 
         /// A summary of information about the track.
         std::unordered_map<const char*, int> m_numEventGroupsByCategory;
+    };
+
+    /// This is only intended for testing tracks.
+    class UnsafeTrack : public Track {
+      public:
+        using Track::addEvent;
     };
 } // namespace bw_music

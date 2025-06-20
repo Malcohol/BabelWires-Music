@@ -8,6 +8,7 @@
 
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/percussionEvents.hpp>
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 #include <MusicLib/Utilities/filteredTrackIterator.hpp>
 #include <MusicLib/libRegistration.hpp>
 
@@ -52,7 +53,7 @@ TEST_P(SmfStandardPercussionTest, saveLoad) {
 
         auto track9 = smfType.getTrcks0().activateAndGetTrack(9);
 
-        bw_music::Track track;
+        bw_music::TrackBuilder track;
 
         track.addEvent(bw_music::PercussionOnEvent{0, testData.m_instrumentId0});
         track.addEvent(bw_music::PercussionOffEvent{babelwires::Rational(1, 4), testData.m_instrumentId0});
@@ -61,7 +62,7 @@ TEST_P(SmfStandardPercussionTest, saveLoad) {
         track.addEvent(bw_music::PercussionOnEvent{0, testData.m_instrumentId2});
         track.addEvent(bw_music::PercussionOffEvent{babelwires::Rational(1, 4), testData.m_instrumentId2});
 
-        track9.set(std::move(track));
+        track9.set(track.finishAndGetTrack());
 
         std::ofstream os = tempFile.openForWriting(std::ios_base::binary);
         smf::writeToSmf(testEnvironment.m_projectContext, testEnvironment.m_log, smfFeature, os);
@@ -180,7 +181,7 @@ TEST_P(SmfTrackAllocationPercussionTest, trackAllocation) {
         for (int i = 0; i < 3; ++i) {
             auto trackI = tracks.activateAndGetTrack(8 + i);
 
-            bw_music::Track track;
+            bw_music::TrackBuilder track;
 
             track.addEvent(bw_music::NoteOnEvent{0, 65});
             track.addEvent(bw_music::NoteOffEvent{babelwires::Rational(1, 4), 65});
@@ -190,7 +191,7 @@ TEST_P(SmfTrackAllocationPercussionTest, trackAllocation) {
                 track.addEvent(bw_music::PercussionOffEvent{babelwires::Rational(1, 4), instrument});
             }
 
-            trackI.set(std::move(track));
+            trackI.set(track.finishAndGetTrack());
         }
 
         std::ofstream os = tempFile.openForWriting(std::ios_base::binary);

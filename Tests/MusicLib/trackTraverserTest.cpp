@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 #include <MusicLib/Utilities/filteredTrackIterator.hpp>
 #include <MusicLib/Utilities/trackTraverser.hpp>
 
@@ -26,13 +27,15 @@ TEST(TrackTraverser, leastUpperBoundDuration) {
 }
 
 TEST(TrackTraverser, greatestLowerBoundNextEvent) {
-    bw_music::Track track1;
-    bw_music::Track track2;
-    bw_music::Track track3;
-
-    track1.addEvent(testUtils::TestTrackEvent(10, 0));
-    track2.addEvent(testUtils::TestTrackEvent(5, 0));
-    track3.addEvent(testUtils::TestTrackEvent2(20, 0));
+    bw_music::TrackBuilder track1Builder;
+    bw_music::TrackBuilder track2Builder;
+    bw_music::TrackBuilder track3Builder;
+    track1Builder.addEvent(testUtils::TestTrackEvent(10, 0));
+    track2Builder.addEvent(testUtils::TestTrackEvent(5, 0));
+    track3Builder.addEvent(testUtils::TestTrackEvent2(20, 0));
+    bw_music::Track track1 = track1Builder.finishAndGetTrack();
+    bw_music::Track track2 = track2Builder.finishAndGetTrack();
+    bw_music::Track track3 = track3Builder.finishAndGetTrack();
 
     bw_music::TrackTraverser traverser1(track1, track1);
     bw_music::TrackTraverser traverser2(track2, track2);
@@ -50,14 +53,15 @@ TEST(TrackTraverser, greatestLowerBoundNextEvent) {
 }
 
 TEST(TrackTraverser, filteredIteration) {
-    bw_music::Track track;
+    bw_music::TrackBuilder trackBuilder;
 
     for (int i = 0; i < 10; ++i) {
-        track.addEvent(testUtils::TestTrackEvent(1, 2 * i));
-        track.addEvent(testUtils::TestTrackEvent(0, (2 * i) + 1));
-        track.addEvent(testUtils::TestTrackEvent2(0, 2 * i));
-        track.addEvent(testUtils::TestTrackEvent2(1, (2 * i) + 1));
+        trackBuilder.addEvent(testUtils::TestTrackEvent(1, 2 * i));
+        trackBuilder.addEvent(testUtils::TestTrackEvent(0, (2 * i) + 1));
+        trackBuilder.addEvent(testUtils::TestTrackEvent2(0, 2 * i));
+        trackBuilder.addEvent(testUtils::TestTrackEvent2(1, (2 * i) + 1));
     }
+    bw_music::Track track = trackBuilder.finishAndGetTrack();
 
     bw_music::TrackTraverser<bw_music::FilteredTrackIterator<testUtils::TestTrackEvent>> traverser1(
         track, bw_music::iterateOver<testUtils::TestTrackEvent>(track));

@@ -5,6 +5,7 @@
 #include <MusicLib/Processors/percussionMapProcessor.hpp>
 #include <MusicLib/Types/Track/TrackEvents/percussionEvents.hpp>
 #include <MusicLib/Types/Track/track.hpp>
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 #include <MusicLib/libRegistration.hpp>
 
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
@@ -67,7 +68,7 @@ namespace {
     }
 
     bw_music::Track getTestInputTrack() {
-        bw_music::Track track;
+        bw_music::TrackBuilder track;
         track.addEvent(bw_music::PercussionOnEvent{0, "AcBass", 64});
         track.addEvent(bw_music::PercussionOffEvent{babelwires::Rational(1, 2), "AcBass", 64});
         track.addEvent(bw_music::PercussionOnEvent{0, "Clap", 64});
@@ -79,11 +80,11 @@ namespace {
         track.addEvent(bw_music::PercussionOffEvent{babelwires::Rational(1, 2), "Dummy", 64});
         track.addEvent(bw_music::PercussionOnEvent{0, "Crash1", 64});
         track.addEvent(bw_music::PercussionOffEvent{babelwires::Rational(1, 2), "Crash1", 64});
-        return track;
+        return track.finishAndGetTrack();
     }
 
     bw_music::Track getTestOutputTrack() {
-        bw_music::Track track;
+        bw_music::TrackBuilder track;
         track.addEvent(bw_music::PercussionOnEvent{0, "AcBass", 64});
         track.addEvent(bw_music::PercussionOffEvent{babelwires::Rational(1, 2), "AcBass", 64});
         track.addEvent(bw_music::PercussionOnEvent{0, "Cowbll", 64});
@@ -94,7 +95,7 @@ namespace {
         track.addEvent(bw_music::PercussionOffEvent{babelwires::Rational(1, 2), "Dummy", 64});
         track.addEvent(bw_music::PercussionOnEvent{0, "Crash2", 64});
         track.addEvent(bw_music::PercussionOffEvent{babelwires::Rational(1, 2), "Crash2", 64});
-        return track;
+        return track.finishAndGetTrack();
     }
 } // namespace
 

@@ -29,7 +29,7 @@ namespace {
 } // namespace
 
 TEST(TrackBuilderTest, validator_validSimple) {
-    bw_music::Track track;
+    bw_music::UnsafeTrack track;
 
     track.addEvent(bw_music::NoteOnEvent(0, 60));
     track.addEvent(bw_music::NoteOffEvent(babelwires::Rational(1, 4), 60));
@@ -44,7 +44,7 @@ TEST(TrackBuilderTest, validator_validSimple) {
 }
 
 TEST(TrackBuilderTest, validator_invalidSimpleZeroLengthNote) {
-    bw_music::Track track;
+    bw_music::UnsafeTrack track;
 
     track.addEvent(bw_music::NoteOnEvent(0, 60));
     track.addEvent(bw_music::NoteOffEvent(babelwires::Rational(1, 4), 60));
@@ -59,7 +59,7 @@ TEST(TrackBuilderTest, validator_invalidSimpleZeroLengthNote) {
 }
 
 TEST(TrackBuilderTest, validator_invalidSimpleEndEventOutsideGroup) {
-    bw_music::Track track;
+    bw_music::UnsafeTrack track;
 
     track.addEvent(bw_music::NoteOnEvent(0, 60));
     track.addEvent(bw_music::NoteOffEvent(babelwires::Rational(1, 4), 60));
@@ -75,7 +75,7 @@ TEST(TrackBuilderTest, validator_invalidSimpleEndEventOutsideGroup) {
 }
 
 TEST(TrackBuilderTest, validator_invalidStartEventInsideGroup) {
-    bw_music::Track track;
+    bw_music::UnsafeTrack track;
 
     track.addEvent(bw_music::NoteOnEvent(0, 60));
     track.addEvent(bw_music::NoteOffEvent(babelwires::Rational(1, 4), 60));
@@ -91,7 +91,7 @@ TEST(TrackBuilderTest, validator_invalidStartEventInsideGroup) {
 }
 
 TEST(TrackBuilderTest, validator_invalidUnterminatedGroup) {
-    bw_music::Track track;
+    bw_music::UnsafeTrack track;
 
     track.addEvent(bw_music::NoteOnEvent(0, 60));
     track.addEvent(bw_music::NoteOffEvent(babelwires::Rational(1, 4), 60));
@@ -107,7 +107,7 @@ TEST(TrackBuilderTest, validator_invalidUnterminatedGroup) {
 }
 
 TEST(TrackBuilderTest, simpleBuilder_validSimple) {
-    bw_music::Track track;
+    bw_music::UnsafeTrack track;
     bw_music::TrackBuilder trackBuilder;
 
     auto addEvent = [&track, &trackBuilder](auto&& event) {
@@ -133,7 +133,7 @@ TEST(TrackBuilderTest, simpleBuilder_validSimple) {
 }
 
 TEST(TrackBuilderTest, validBuilder_validSimple) {
-    bw_music::Track track;
+    bw_music::UnsafeTrack track;
     bw_music::TrackBuilder trackBuilder;
 
     auto addEvent = [&track, &trackBuilder](auto&& event) {
@@ -159,7 +159,7 @@ TEST(TrackBuilderTest, validBuilder_validSimple) {
 }
 
 TEST(TrackBuilderTest, validBuilder_InvalidSimpleZeroLengthNote) {
-    bw_music::Track track;
+    bw_music::UnsafeTrack track;
     bw_music::TrackBuilder trackBuilder;
 
     auto addEvent = [&track, &trackBuilder](auto&& event) {
@@ -185,7 +185,7 @@ TEST(TrackBuilderTest, validBuilder_InvalidSimpleZeroLengthNote) {
 }
 
 TEST(TrackBuilderTest, validBuilder_InvalidSimpleEndEventOutsideGroup) {
-    bw_music::Track track;
+    bw_music::UnsafeTrack track;
     bw_music::TrackBuilder trackBuilder;
 
     auto addEvent = [&track, &trackBuilder](auto&& event) {
@@ -212,7 +212,7 @@ TEST(TrackBuilderTest, validBuilder_InvalidSimpleEndEventOutsideGroup) {
 }
 
 TEST(TrackBuilderTest, validBuilder_InvalidStartEventInsideGroup) {
-    bw_music::Track track;
+    bw_music::UnsafeTrack track;
     bw_music::TrackBuilder trackBuilder;
 
     auto addEvent = [&track, &trackBuilder](auto&& event) {
@@ -239,7 +239,7 @@ TEST(TrackBuilderTest, validBuilder_InvalidStartEventInsideGroup) {
 }
 
 TEST(TrackBuilderTest, validBuilder_InvalidReordered) {
-    bw_music::Track track;
+    bw_music::UnsafeTrack track;
     bw_music::TrackBuilder trackBuilder;
 
     auto addEvent = [&track, &trackBuilder](auto&& event) {
@@ -265,7 +265,7 @@ TEST(TrackBuilderTest, validBuilder_InvalidReordered) {
 }
 
 TEST(TrackBuilderTest, validBuilder_invalidUnterminatedGroup) {
-    bw_music::Track track;
+    bw_music::UnsafeTrack track;
     bw_music::TrackBuilder trackBuilder;
 
     auto addEvent = [&track, &trackBuilder](auto&& event) {
@@ -297,7 +297,7 @@ TEST(TrackBuilderTest, validBuilder_invalidUnterminatedGroup) {
 }
 
 TEST(TrackBuilderTest, validBuilder_invalidUnterminatedGroupWithDuration) {
-    bw_music::Track track;
+    bw_music::UnsafeTrack track;
     bw_music::TrackBuilder trackBuilder;
 
     auto addEvent = [&track, &trackBuilder](auto&& event) {
@@ -330,7 +330,7 @@ TEST(TrackBuilderTest, validBuilder_invalidUnterminatedGroupWithDuration) {
 }
 
 TEST(TrackBuilderTest, validBuilder_invalidUnterminatedGroupWithDuration2) {
-    bw_music::Track track;
+    bw_music::UnsafeTrack track;
     bw_music::TrackBuilder trackBuilder;
 
     auto addEvent = [&track, &trackBuilder](auto&& event) {
@@ -364,7 +364,7 @@ TEST(TrackBuilderTest, validBuilder_invalidUnterminatedGroupWithDuration2) {
 }
 
 TEST(TrackBuilderTest, validBuilder_InvalidReorderedAndZeroLength) {
-    bw_music::Track track;
+    bw_music::UnsafeTrack track;
     bw_music::TrackBuilder trackBuilder;
 
     auto addEvent = [&track, &trackBuilder](auto&& event) {
@@ -394,7 +394,7 @@ TEST(TrackBuilderTest, validBuilder_InvalidReorderedAndZeroLength) {
 }
 
 TEST(TrackBuilderTest, validBuilder_InvalidMixture) {
-    bw_music::Track goodEvents;
+    bw_music::UnsafeTrack goodEvents;
     goodEvents.addEvent(bw_music::NoteOnEvent(0, 60));
     goodEvents.addEvent(TestEnclosedEvent(bw_music::ModelDuration(1, 8), 60));
     goodEvents.addEvent(bw_music::NoteOffEvent(babelwires::Rational(1, 8), 60));
@@ -408,7 +408,7 @@ TEST(TrackBuilderTest, validBuilder_InvalidMixture) {
     goodEvents.addEvent(TestEnclosedEvent(bw_music::ModelDuration(1, 8), 67));
     goodEvents.addEvent(bw_music::NoteOffEvent(babelwires::Rational(1, 8), 67));
 
-    bw_music::Track badEvents;
+    bw_music::UnsafeTrack badEvents;
     badEvents.addEvent(TestEnclosedEvent(0, 72));
     badEvents.addEvent(bw_music::NoteOffEvent(0, 72));
     badEvents.addEvent(bw_music::NoteOffEvent(0, 72));
@@ -417,7 +417,7 @@ TEST(TrackBuilderTest, validBuilder_InvalidMixture) {
     badEvents.addEvent(bw_music::NoteOffEvent(0, 72));
     badEvents.addEvent(bw_music::NoteOnEvent(0, 72));
 
-    bw_music::Track track;
+    bw_music::UnsafeTrack track;
     bw_music::TrackBuilder trackBuilder;
 
     auto addEvent = [&track, &trackBuilder](auto&& event) {

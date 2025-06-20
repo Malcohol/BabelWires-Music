@@ -9,7 +9,7 @@
 
 
 TEST(Track, Simple) {
-    bw_music::Track track;
+    bw_music::UnsafeTrack track;
     const size_t hashWhenEmpty = track.getHash();
 
     EXPECT_EQ(track.getNumEvents(), 0);
@@ -44,7 +44,7 @@ TEST(Track, BlocksAndAlignment) {
     EXPECT_NE(testUtils::TestTrackEvent(1).getSize(), testUtils::BigTestTrackEvent(1).getSize());
     EXPECT_NE(testUtils::TestTrackEvent(1).getAlignment(), testUtils::BigTestTrackEvent(1).getAlignment());
 
-    bw_music::Track track;
+    bw_music::UnsafeTrack track;
 
     for (int i = 0; i < 100; ++i) {
         testUtils::TestTrackEvent newEvent(1);
@@ -73,7 +73,7 @@ TEST(Track, PayloadTest) {
     int counter = 0;
 
     {
-        bw_music::Track track;
+        bw_music::UnsafeTrack track;
 
         for (int i = 0; i < 100; ++i) {
             track.addEvent(testUtils::TestTrackEventWithPayload(1, counter));
@@ -86,9 +86,9 @@ TEST(Track, PayloadTest) {
 }
 
 TEST(Track, equality) {
-    bw_music::Track emptyTrack0;
-    bw_music::Track emptyTrack1;
-    bw_music::Track emptyTrackWithPositiveDuration;
+    bw_music::UnsafeTrack emptyTrack0;
+    bw_music::UnsafeTrack emptyTrack1;
+    bw_music::UnsafeTrack emptyTrackWithPositiveDuration;
     emptyTrackWithPositiveDuration.setDuration(1);
     
     bw_music::TrackBuilder trackWithNotesBuilder;

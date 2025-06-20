@@ -23,14 +23,14 @@ TEST(ExcerptProcessorTest, funcSimple) {
 }
 
 TEST(ExcerptProcessorTest, funcEmptyBefore) {
-    bw_music::Track trackIn;
+    bw_music::TrackBuilder trackIn;
     bw_music::NoteOnEvent note;
     note.m_pitch = 64;
     note.m_velocity = 100;
     note.setTimeSinceLastEvent(10);
     trackIn.addEvent(note);
 
-    auto trackOut = bw_music::getTrackExcerpt(trackIn, 3, 4);
+    auto trackOut = bw_music::getTrackExcerpt(trackIn.finishAndGetTrack(), 3, 4);
 
     EXPECT_EQ(trackOut.getDuration(), 4);
     EXPECT_EQ(trackOut.getNumEvents(), 0);
@@ -46,7 +46,7 @@ TEST(ExcerptProcessorTest, funcEmptyAfter) {
 }
 
 TEST(ExcerptProcessorTest, funcEmptyBetween) {
-    bw_music::Track trackIn;
+    bw_music::TrackBuilder trackIn;
     bw_music::NoteOnEvent noteOn;
     noteOn.m_pitch = 64;
     noteOn.m_velocity = 100;
@@ -58,7 +58,7 @@ TEST(ExcerptProcessorTest, funcEmptyBetween) {
     noteOff.setTimeSinceLastEvent(10);
     trackIn.addEvent(noteOff);
 
-    auto trackOut = bw_music::getTrackExcerpt(trackIn, 2, 2);
+    auto trackOut = bw_music::getTrackExcerpt(trackIn.finishAndGetTrack(), 2, 2);
 
     EXPECT_EQ(trackOut.getDuration(), 2);
     EXPECT_EQ(trackOut.getNumEvents(), 0);

@@ -1,12 +1,13 @@
 #include <gtest/gtest.h>
 
 #include <MusicLib/Utilities/monophonicNoteIterator.hpp>
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 
 #include <Tests/TestUtils/testTrackEvents.hpp>
 
 namespace {
     bw_music::Track createTestTrack() {
-        bw_music::Track track;
+        bw_music::TrackBuilder track;
 
         bw_music::NoteOnEvent noteOn;
         bw_music::NoteOffEvent noteOff;
@@ -72,7 +73,7 @@ namespace {
 
         track.addEvent(testUtils::TestTrackEvent(1));
 
-        return track;
+        return track.finishAndGetTrack();
     }
 } // namespace
 
