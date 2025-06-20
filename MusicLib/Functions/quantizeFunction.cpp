@@ -7,7 +7,7 @@
  **/
 #include <MusicLib/Functions/quantizeFunction.hpp>
 
-#include <MusicLib/Utilities/validTrackBuilder.hpp>
+#include <MusicLib/Utilities/trackBuilder.hpp>
 
 namespace {
     bw_music::ModelDuration getIdealTime(bw_music::ModelDuration time, bw_music::ModelDuration beat) {
@@ -23,7 +23,7 @@ bw_music::Track bw_music::quantize(const Track& trackIn, ModelDuration beat) {
 
     using Group = std::tuple<TrackEvent::GroupingInfo::Category, TrackEvent::GroupingInfo::GroupValue>;
 
-    ValidTrackBuilder track;
+    TrackBuilder track;
 
     ModelDuration currentTimeSinceLastEvent;
 

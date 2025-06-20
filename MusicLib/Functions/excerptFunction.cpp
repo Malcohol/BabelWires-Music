@@ -7,13 +7,13 @@
  **/
 #include <MusicLib/Functions/excerptFunction.hpp>
 
-#include <MusicLib/Utilities/validTrackBuilder.hpp>
+#include <MusicLib/Utilities/trackBuilder.hpp>
 
 #include <set>
 
 bw_music::Track bw_music::getTrackExcerpt(const Track& trackIn, ModelDuration start,
                                                            ModelDuration duration) {
-    ValidTrackBuilder trackOut;
+    TrackBuilder trackOut;
 
     ModelDuration end = start + duration;
     ModelDuration timeProcessed;

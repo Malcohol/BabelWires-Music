@@ -37,7 +37,7 @@ SET( MUSICLIB_SRCS
 	Percussion/percussionSetWithPitchMap.cpp
 	pitch.cpp
 	Utilities/monophonicNoteIterator.cpp
-	Utilities/validTrackBuilder.cpp
+	Utilities/trackBuilder.cpp
 	Utilities/trackValidator.cpp
 	libRegistration.cpp
    )

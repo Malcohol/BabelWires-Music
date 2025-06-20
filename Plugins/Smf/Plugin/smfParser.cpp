@@ -13,7 +13,7 @@
 #include <MusicLib/Percussion/builtInPercussionInstruments.hpp>
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/percussionEvents.hpp>
-#include <MusicLib/Utilities/validTrackBuilder.hpp>
+#include <MusicLib/Utilities/trackBuilder.hpp>
 
 #include <BabelWiresLib/Project/projectContext.hpp>
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
@@ -250,7 +250,7 @@ class smf::SmfParser::TrackSplitter {
   private:
     struct PerChannelInfo {
         bw_music::ModelDuration m_timeOfLastEvent;
-        bw_music::ValidTrackBuilder m_track;
+        bw_music::TrackBuilder m_track;
     };
 
     PerChannelInfo* getChannel(unsigned int channelNumber) {

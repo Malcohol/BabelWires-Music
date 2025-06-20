@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
 
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
-#include <MusicLib/Utilities/validTrackBuilder.hpp>
+#include <MusicLib/Utilities/trackBuilder.hpp>
 #include <MusicLib/Utilities/trackValidator.hpp>
-#include <MusicLib/Utilities/validTrackBuilder.hpp>
+#include <MusicLib/Utilities/trackBuilder.hpp>
 
 #include <Tests/BabelWiresLib/TestUtils/testEnvironment.hpp>
 #include <Tests/TestUtils/seqTestUtils.hpp>
@@ -108,11 +108,11 @@ TEST(TrackBuilderTest, validator_invalidUnterminatedGroup) {
 
 TEST(TrackBuilderTest, simpleBuilder_validSimple) {
     bw_music::Track track;
-    bw_music::ValidTrackBuilder validTrackBuilder;
+    bw_music::TrackBuilder trackBuilder;
 
-    auto addEvent = [&track, &validTrackBuilder](auto&& event) {
+    auto addEvent = [&track, &trackBuilder](auto&& event) {
         track.addEvent(event);
-        validTrackBuilder.addEvent(std::forward<decltype(event)>(event));
+        trackBuilder.addEvent(std::forward<decltype(event)>(event));
     };
 
     addEvent(bw_music::NoteOnEvent(0, 60));
@@ -124,7 +124,7 @@ TEST(TrackBuilderTest, simpleBuilder_validSimple) {
     addEvent(bw_music::NoteOnEvent(0, 67));
     addEvent(bw_music::NoteOffEvent(babelwires::Rational(1, 4), 67));
 
-    auto builtTrack = validTrackBuilder.finishAndGetTrack();
+    auto builtTrack = trackBuilder.finishAndGetTrack();
     EXPECT_TRUE(bw_music::isTrackValid(track));
     EXPECT_TRUE(bw_music::isTrackValid(builtTrack));
     EXPECT_EQ(track.getDuration(), builtTrack.getDuration());
@@ -134,11 +134,11 @@ TEST(TrackBuilderTest, simpleBuilder_validSimple) {
 
 TEST(TrackBuilderTest, validBuilder_validSimple) {
     bw_music::Track track;
-    bw_music::ValidTrackBuilder validTrackBuilder;
+    bw_music::TrackBuilder trackBuilder;
 
-    auto addEvent = [&track, &validTrackBuilder](auto&& event) {
+    auto addEvent = [&track, &trackBuilder](auto&& event) {
         track.addEvent(event);
-        validTrackBuilder.addEvent(std::forward<decltype(event)>(event));
+        trackBuilder.addEvent(std::forward<decltype(event)>(event));
     };
 
     addEvent(bw_music::NoteOnEvent(0, 60));
@@ -150,7 +150,7 @@ TEST(TrackBuilderTest, validBuilder_validSimple) {
     addEvent(bw_music::NoteOnEvent(0, 67));
     addEvent(bw_music::NoteOffEvent(babelwires::Rational(1, 4), 67));
 
-    auto builtTrack = validTrackBuilder.finishAndGetTrack();
+    auto builtTrack = trackBuilder.finishAndGetTrack();
     EXPECT_TRUE(bw_music::isTrackValid(track));
     EXPECT_TRUE(bw_music::isTrackValid(builtTrack));
     EXPECT_EQ(track.getDuration(), builtTrack.getDuration());
@@ -160,11 +160,11 @@ TEST(TrackBuilderTest, validBuilder_validSimple) {
 
 TEST(TrackBuilderTest, validBuilder_InvalidSimpleZeroLengthNote) {
     bw_music::Track track;
-    bw_music::ValidTrackBuilder validTrackBuilder;
+    bw_music::TrackBuilder trackBuilder;
 
-    auto addEvent = [&track, &validTrackBuilder](auto&& event) {
+    auto addEvent = [&track, &trackBuilder](auto&& event) {
         track.addEvent(event);
-        validTrackBuilder.addEvent(std::forward<decltype(event)>(event));
+        trackBuilder.addEvent(std::forward<decltype(event)>(event));
     };
 
     addEvent(bw_music::NoteOnEvent(0, 60));
@@ -176,7 +176,7 @@ TEST(TrackBuilderTest, validBuilder_InvalidSimpleZeroLengthNote) {
     addEvent(bw_music::NoteOnEvent(0, 67));
     addEvent(bw_music::NoteOffEvent(babelwires::Rational(1, 4), 67));
 
-    auto builtTrack = validTrackBuilder.finishAndGetTrack();
+    auto builtTrack = trackBuilder.finishAndGetTrack();
     EXPECT_FALSE(bw_music::isTrackValid(track));
     EXPECT_TRUE(bw_music::isTrackValid(builtTrack));
     EXPECT_EQ(track.getDuration(), builtTrack.getDuration());
@@ -186,11 +186,11 @@ TEST(TrackBuilderTest, validBuilder_InvalidSimpleZeroLengthNote) {
 
 TEST(TrackBuilderTest, validBuilder_InvalidSimpleEndEventOutsideGroup) {
     bw_music::Track track;
-    bw_music::ValidTrackBuilder validTrackBuilder;
+    bw_music::TrackBuilder trackBuilder;
 
-    auto addEvent = [&track, &validTrackBuilder](auto&& event) {
+    auto addEvent = [&track, &trackBuilder](auto&& event) {
         track.addEvent(event);
-        validTrackBuilder.addEvent(std::forward<decltype(event)>(event));
+        trackBuilder.addEvent(std::forward<decltype(event)>(event));
     };
 
     addEvent(bw_music::NoteOnEvent(0, 60));
@@ -203,7 +203,7 @@ TEST(TrackBuilderTest, validBuilder_InvalidSimpleEndEventOutsideGroup) {
     addEvent(bw_music::NoteOnEvent(0, 67));
     addEvent(bw_music::NoteOffEvent(babelwires::Rational(1, 4), 67));
 
-    auto builtTrack = validTrackBuilder.finishAndGetTrack();
+    auto builtTrack = trackBuilder.finishAndGetTrack();
     EXPECT_FALSE(bw_music::isTrackValid(track));
     EXPECT_TRUE(bw_music::isTrackValid(builtTrack));
     EXPECT_EQ(track.getDuration(), builtTrack.getDuration());
@@ -213,11 +213,11 @@ TEST(TrackBuilderTest, validBuilder_InvalidSimpleEndEventOutsideGroup) {
 
 TEST(TrackBuilderTest, validBuilder_InvalidStartEventInsideGroup) {
     bw_music::Track track;
-    bw_music::ValidTrackBuilder validTrackBuilder;
+    bw_music::TrackBuilder trackBuilder;
 
-    auto addEvent = [&track, &validTrackBuilder](auto&& event) {
+    auto addEvent = [&track, &trackBuilder](auto&& event) {
         track.addEvent(event);
-        validTrackBuilder.addEvent(std::forward<decltype(event)>(event));
+        trackBuilder.addEvent(std::forward<decltype(event)>(event));
     };
 
     addEvent(bw_music::NoteOnEvent(0, 60));
@@ -230,7 +230,7 @@ TEST(TrackBuilderTest, validBuilder_InvalidStartEventInsideGroup) {
     addEvent(bw_music::NoteOnEvent(0, 67));
     addEvent(bw_music::NoteOffEvent(babelwires::Rational(1, 4), 67));
 
-    auto builtTrack = validTrackBuilder.finishAndGetTrack();
+    auto builtTrack = trackBuilder.finishAndGetTrack();
     EXPECT_FALSE(bw_music::isTrackValid(track));
     EXPECT_TRUE(bw_music::isTrackValid(builtTrack));
     EXPECT_EQ(track.getDuration(), builtTrack.getDuration());
@@ -240,11 +240,11 @@ TEST(TrackBuilderTest, validBuilder_InvalidStartEventInsideGroup) {
 
 TEST(TrackBuilderTest, validBuilder_InvalidReordered) {
     bw_music::Track track;
-    bw_music::ValidTrackBuilder validTrackBuilder;
+    bw_music::TrackBuilder trackBuilder;
 
-    auto addEvent = [&track, &validTrackBuilder](auto&& event) {
+    auto addEvent = [&track, &trackBuilder](auto&& event) {
         track.addEvent(event);
-        validTrackBuilder.addEvent(std::forward<decltype(event)>(event));
+        trackBuilder.addEvent(std::forward<decltype(event)>(event));
     };
 
     addEvent(bw_music::NoteOnEvent(0, 60));
@@ -256,7 +256,7 @@ TEST(TrackBuilderTest, validBuilder_InvalidReordered) {
     addEvent(bw_music::NoteOffEvent(0, 60));
     addEvent(bw_music::NoteOffEvent(babelwires::Rational(1, 4), 60));
 
-    auto builtTrack = validTrackBuilder.finishAndGetTrack();
+    auto builtTrack = trackBuilder.finishAndGetTrack();
     EXPECT_FALSE(bw_music::isTrackValid(track));
     EXPECT_TRUE(bw_music::isTrackValid(builtTrack));
     EXPECT_EQ(track.getDuration(), builtTrack.getDuration());
@@ -266,11 +266,11 @@ TEST(TrackBuilderTest, validBuilder_InvalidReordered) {
 
 TEST(TrackBuilderTest, validBuilder_invalidUnterminatedGroup) {
     bw_music::Track track;
-    bw_music::ValidTrackBuilder validTrackBuilder;
+    bw_music::TrackBuilder trackBuilder;
 
-    auto addEvent = [&track, &validTrackBuilder](auto&& event) {
+    auto addEvent = [&track, &trackBuilder](auto&& event) {
         track.addEvent(event);
-        validTrackBuilder.addEvent(std::forward<decltype(event)>(event));
+        trackBuilder.addEvent(std::forward<decltype(event)>(event));
     };
 
     addEvent(bw_music::NoteOnEvent(0, 72)); // unterminated
@@ -287,7 +287,7 @@ TEST(TrackBuilderTest, validBuilder_invalidUnterminatedGroup) {
 
     EXPECT_FALSE(bw_music::isTrackValid(track));
 
-    auto builtTrack = validTrackBuilder.finishAndGetTrack();
+    auto builtTrack = trackBuilder.finishAndGetTrack();
     EXPECT_FALSE(bw_music::isTrackValid(track));
     EXPECT_TRUE(bw_music::isTrackValid(builtTrack));
     EXPECT_EQ(track.getDuration(), builtTrack.getDuration());
@@ -298,11 +298,11 @@ TEST(TrackBuilderTest, validBuilder_invalidUnterminatedGroup) {
 
 TEST(TrackBuilderTest, validBuilder_invalidUnterminatedGroupWithDuration) {
     bw_music::Track track;
-    bw_music::ValidTrackBuilder validTrackBuilder;
+    bw_music::TrackBuilder trackBuilder;
 
-    auto addEvent = [&track, &validTrackBuilder](auto&& event) {
+    auto addEvent = [&track, &trackBuilder](auto&& event) {
         track.addEvent(event);
-        validTrackBuilder.addEvent(std::forward<decltype(event)>(event));
+        trackBuilder.addEvent(std::forward<decltype(event)>(event));
     };
 
     addEvent(bw_music::NoteOnEvent(0, 72)); // unterminated
@@ -319,8 +319,8 @@ TEST(TrackBuilderTest, validBuilder_invalidUnterminatedGroupWithDuration) {
 
     EXPECT_FALSE(bw_music::isTrackValid(track));
 
-    validTrackBuilder.setDuration(4);
-    auto builtTrack = validTrackBuilder.finishAndGetTrack();
+    trackBuilder.setDuration(4);
+    auto builtTrack = trackBuilder.finishAndGetTrack();
     EXPECT_FALSE(bw_music::isTrackValid(track));
     EXPECT_TRUE(bw_music::isTrackValid(builtTrack));
     EXPECT_EQ(builtTrack.getDuration(), 4);
@@ -331,11 +331,11 @@ TEST(TrackBuilderTest, validBuilder_invalidUnterminatedGroupWithDuration) {
 
 TEST(TrackBuilderTest, validBuilder_invalidUnterminatedGroupWithDuration2) {
     bw_music::Track track;
-    bw_music::ValidTrackBuilder validTrackBuilder;
+    bw_music::TrackBuilder trackBuilder;
 
-    auto addEvent = [&track, &validTrackBuilder](auto&& event) {
+    auto addEvent = [&track, &trackBuilder](auto&& event) {
         track.addEvent(event);
-        validTrackBuilder.addEvent(std::forward<decltype(event)>(event));
+        trackBuilder.addEvent(std::forward<decltype(event)>(event));
     };
 
     addEvent(bw_music::NoteOnEvent(0, 72)); // unterminated
@@ -353,8 +353,8 @@ TEST(TrackBuilderTest, validBuilder_invalidUnterminatedGroupWithDuration2) {
 
     EXPECT_FALSE(bw_music::isTrackValid(track));
 
-    validTrackBuilder.setDuration(4);
-    auto builtTrack = validTrackBuilder.finishAndGetTrack();
+    trackBuilder.setDuration(4);
+    auto builtTrack = trackBuilder.finishAndGetTrack();
     EXPECT_FALSE(bw_music::isTrackValid(track));
     EXPECT_TRUE(bw_music::isTrackValid(builtTrack));
     EXPECT_EQ(builtTrack.getDuration(), 4);
@@ -365,11 +365,11 @@ TEST(TrackBuilderTest, validBuilder_invalidUnterminatedGroupWithDuration2) {
 
 TEST(TrackBuilderTest, validBuilder_InvalidReorderedAndZeroLength) {
     bw_music::Track track;
-    bw_music::ValidTrackBuilder validTrackBuilder;
+    bw_music::TrackBuilder trackBuilder;
 
-    auto addEvent = [&track, &validTrackBuilder](auto&& event) {
+    auto addEvent = [&track, &trackBuilder](auto&& event) {
         track.addEvent(event);
-        validTrackBuilder.addEvent(std::forward<decltype(event)>(event));
+        trackBuilder.addEvent(std::forward<decltype(event)>(event));
     };
 
     addEvent(bw_music::NoteOnEvent(0, 60));
@@ -385,7 +385,7 @@ TEST(TrackBuilderTest, validBuilder_InvalidReorderedAndZeroLength) {
     addEvent(bw_music::NoteOnEvent(0, 67));
     addEvent(bw_music::NoteOffEvent(babelwires::Rational(1, 4), 67));
 
-    auto builtTrack = validTrackBuilder.finishAndGetTrack();
+    auto builtTrack = trackBuilder.finishAndGetTrack();
     EXPECT_FALSE(bw_music::isTrackValid(track));
     EXPECT_TRUE(bw_music::isTrackValid(builtTrack));
     EXPECT_EQ(track.getDuration(), builtTrack.getDuration());
@@ -418,11 +418,11 @@ TEST(TrackBuilderTest, validBuilder_InvalidMixture) {
     badEvents.addEvent(bw_music::NoteOnEvent(0, 72));
 
     bw_music::Track track;
-    bw_music::ValidTrackBuilder validTrackBuilder;
+    bw_music::TrackBuilder trackBuilder;
 
-    auto addEvent = [&track, &validTrackBuilder](auto&& event) {
+    auto addEvent = [&track, &trackBuilder](auto&& event) {
         track.addEvent(event);
-        validTrackBuilder.addEvent(std::forward<decltype(event)>(event));
+        trackBuilder.addEvent(std::forward<decltype(event)>(event));
     };
 
     // getBadEvent() repeatedly produces badEvents
@@ -445,7 +445,7 @@ TEST(TrackBuilderTest, validBuilder_InvalidMixture) {
         addEvent(getBadEvent());
     }
 
-    auto builtTrack = validTrackBuilder.finishAndGetTrack();
+    auto builtTrack = trackBuilder.finishAndGetTrack();
     EXPECT_FALSE(bw_music::isTrackValid(track));
     EXPECT_TRUE(bw_music::isTrackValid(builtTrack));
     EXPECT_EQ(track.getDuration(), builtTrack.getDuration());

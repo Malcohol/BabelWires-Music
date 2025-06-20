@@ -10,7 +10,7 @@
 #include <MusicLib/Percussion/percussionTypeTag.hpp>
 #include <MusicLib/Percussion/builtInPercussionInstruments.hpp>
 #include <MusicLib/Types/Track/TrackEvents/percussionEvents.hpp>
-#include <MusicLib/Utilities/validTrackBuilder.hpp>
+#include <MusicLib/Utilities/trackBuilder.hpp>
 
 #include <BabelWiresLib/ValueTree/modelExceptions.hpp>
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
@@ -64,8 +64,8 @@ bw_music::Track bw_music::mapPercussionFunction(const babelwires::TypeSystem& ty
         percussionMapValue, enumToIdentifierAdapter, enumToIdentifierAdapter};
 
     // The map could make two overlapping notes use the same instrument, which violates the track invariants.
-    // Using the ValidTrackBuilder ensures this is fixed.
-    ValidTrackBuilder trackOut;
+    // Using the TrackBuilder ensures this is fixed.
+    TrackBuilder trackOut;
     // If an event is dropped, then we need to carry its time forward for the next event.
     ModelDuration timeFromDroppedEvent;
 
