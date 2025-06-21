@@ -41,12 +41,16 @@ bool bw_music::Detail::isTrackValidInternal(const bw_music::Track& track, bool a
             }
             case bw_music::TrackEvent::GroupingInfo::Grouping::EndOfGroup: {
                 const bool alreadyAGroup = (activeGroupIt != activeGroups.end());
-                const bool positiveDurationGroup = (activeGroupIt->second > 0);
                 assert((!assertIfInvalid || alreadyAGroup) &&
                        "Encountered an end event when there was no matching group.");
-                assert((!assertIfInvalid || positiveDurationGroup) && "Encountered a zero-duration group");
-                if (!alreadyAGroup || !positiveDurationGroup) {
+                if (!alreadyAGroup) {
                     return false;
+                } else {
+                    const bool positiveDurationGroup = (activeGroupIt->second > 0);
+                    assert((!assertIfInvalid || positiveDurationGroup) && "Encountered a zero-duration group");
+                    if (!positiveDurationGroup) {
+                        return false;
+                    }
                 }
                 activeGroups.erase(activeGroupIt);
                 break;
