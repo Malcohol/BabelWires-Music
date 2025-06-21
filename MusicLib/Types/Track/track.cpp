@@ -28,9 +28,8 @@ bw_music::ModelDuration bw_music::Track::getTotalEventDuration() const {
 }
 
 void bw_music::Track::setDuration(ModelDuration d) {
-    if (d > getTotalEventDuration()) {
-        m_duration = d;
-    }
+    assert((d >= getTotalEventDuration()) && "Attempt to set a duration shorter than the event duration");
+    m_duration = d;
 }
 
 std::size_t bw_music::Track::getHash() const {
@@ -83,9 +82,6 @@ void bw_music::Track::onNewEvent(const TrackEvent& event) {
     if ((groupingInfo.m_grouping == TrackEvent::GroupingInfo::Grouping::NotInGroup) ||
         (groupingInfo.m_grouping == TrackEvent::GroupingInfo::Grouping::StartOfGroup)) {
         ++m_numEventGroupsByCategory[groupingInfo.m_category];
-    }
-    if (getTotalEventDuration() > m_duration) {
-        m_duration = getTotalEventDuration();
     }
 }
 

@@ -127,7 +127,7 @@ TEST(TrackBuilderTest, simpleBuilder_validSimple) {
     auto builtTrack = trackBuilder.finishAndGetTrack();
     EXPECT_TRUE(bw_music::isTrackValid(track));
     EXPECT_TRUE(bw_music::isTrackValid(builtTrack));
-    EXPECT_EQ(track.getDuration(), builtTrack.getDuration());
+    EXPECT_EQ(track.getTotalEventDuration(), builtTrack.getDuration());
     EXPECT_EQ(track.getTotalEventDuration(), builtTrack.getTotalEventDuration());
     EXPECT_EQ(track.getNumEvents(), builtTrack.getNumEvents());
 }
@@ -153,7 +153,7 @@ TEST(TrackBuilderTest, validBuilder_validSimple) {
     auto builtTrack = trackBuilder.finishAndGetTrack();
     EXPECT_TRUE(bw_music::isTrackValid(track));
     EXPECT_TRUE(bw_music::isTrackValid(builtTrack));
-    EXPECT_EQ(track.getDuration(), builtTrack.getDuration());
+    EXPECT_EQ(track.getTotalEventDuration(), builtTrack.getDuration());
     EXPECT_EQ(track.getTotalEventDuration(), builtTrack.getTotalEventDuration());
     EXPECT_EQ(track.getNumEvents(), builtTrack.getNumEvents());
 }
@@ -179,7 +179,7 @@ TEST(TrackBuilderTest, validBuilder_InvalidSimpleZeroLengthNote) {
     auto builtTrack = trackBuilder.finishAndGetTrack();
     EXPECT_FALSE(bw_music::isTrackValid(track));
     EXPECT_TRUE(bw_music::isTrackValid(builtTrack));
-    EXPECT_EQ(track.getDuration(), builtTrack.getDuration());
+    EXPECT_EQ(track.getTotalEventDuration(), builtTrack.getDuration());
     EXPECT_EQ(track.getTotalEventDuration(), builtTrack.getTotalEventDuration());
     EXPECT_GT(track.getNumEvents(), builtTrack.getNumEvents());
 }
@@ -206,7 +206,7 @@ TEST(TrackBuilderTest, validBuilder_InvalidSimpleEndEventOutsideGroup) {
     auto builtTrack = trackBuilder.finishAndGetTrack();
     EXPECT_FALSE(bw_music::isTrackValid(track));
     EXPECT_TRUE(bw_music::isTrackValid(builtTrack));
-    EXPECT_EQ(track.getDuration(), builtTrack.getDuration());
+    EXPECT_EQ(track.getTotalEventDuration(), builtTrack.getDuration());
     EXPECT_EQ(track.getTotalEventDuration(), builtTrack.getTotalEventDuration());
     EXPECT_GT(track.getNumEvents(), builtTrack.getNumEvents());
 }
@@ -233,7 +233,7 @@ TEST(TrackBuilderTest, validBuilder_InvalidStartEventInsideGroup) {
     auto builtTrack = trackBuilder.finishAndGetTrack();
     EXPECT_FALSE(bw_music::isTrackValid(track));
     EXPECT_TRUE(bw_music::isTrackValid(builtTrack));
-    EXPECT_EQ(track.getDuration(), builtTrack.getDuration());
+    EXPECT_EQ(track.getTotalEventDuration(), builtTrack.getDuration());
     EXPECT_EQ(track.getTotalEventDuration(), builtTrack.getTotalEventDuration());
     EXPECT_GT(track.getNumEvents(), builtTrack.getNumEvents());
 }
@@ -259,7 +259,7 @@ TEST(TrackBuilderTest, validBuilder_InvalidReordered) {
     auto builtTrack = trackBuilder.finishAndGetTrack();
     EXPECT_FALSE(bw_music::isTrackValid(track));
     EXPECT_TRUE(bw_music::isTrackValid(builtTrack));
-    EXPECT_EQ(track.getDuration(), builtTrack.getDuration());
+    EXPECT_EQ(track.getTotalEventDuration(), builtTrack.getDuration());
     EXPECT_EQ(track.getTotalEventDuration(), builtTrack.getTotalEventDuration());
     EXPECT_EQ(builtTrack.getNumEvents(), track.getNumEvents());
 }
@@ -290,7 +290,7 @@ TEST(TrackBuilderTest, validBuilder_invalidUnterminatedGroup) {
     auto builtTrack = trackBuilder.finishAndGetTrack();
     EXPECT_FALSE(bw_music::isTrackValid(track));
     EXPECT_TRUE(bw_music::isTrackValid(builtTrack));
-    EXPECT_EQ(track.getDuration(), builtTrack.getDuration());
+    EXPECT_EQ(track.getTotalEventDuration(), builtTrack.getDuration());
     EXPECT_EQ(track.getTotalEventDuration(), builtTrack.getTotalEventDuration());
     // Two events added and one event removed
     EXPECT_EQ(builtTrack.getNumEvents(), track.getNumEvents() + 1);
@@ -386,7 +386,7 @@ TEST(TrackBuilderTest, validBuilder_InvalidReorderedAndZeroLength) {
     auto builtTrack = trackBuilder.finishAndGetTrack();
     EXPECT_FALSE(bw_music::isTrackValid(track));
     EXPECT_TRUE(bw_music::isTrackValid(builtTrack));
-    EXPECT_EQ(track.getDuration(), builtTrack.getDuration());
+    EXPECT_EQ(track.getTotalEventDuration(), builtTrack.getDuration());
     EXPECT_EQ(track.getTotalEventDuration(), builtTrack.getTotalEventDuration());
     EXPECT_EQ(builtTrack.getNumEvents(), track.getNumEvents() - 2);
 }
@@ -446,7 +446,7 @@ TEST(TrackBuilderTest, validBuilder_InvalidMixture) {
     auto builtTrack = trackBuilder.finishAndGetTrack();
     EXPECT_FALSE(bw_music::isTrackValid(track));
     EXPECT_TRUE(bw_music::isTrackValid(builtTrack));
-    EXPECT_EQ(track.getDuration(), builtTrack.getDuration());
+    EXPECT_EQ(track.getTotalEventDuration(), builtTrack.getDuration());
     EXPECT_EQ(track.getTotalEventDuration(), builtTrack.getTotalEventDuration());
     EXPECT_EQ(builtTrack.getTotalEventDuration(), goodEvents.getTotalEventDuration());
 

@@ -28,7 +28,7 @@ TEST(Track, Simple) {
     track.addEvent(event1);
 
     EXPECT_EQ(track.getNumEvents(), 2);
-    EXPECT_EQ(track.getDuration(), 1);
+    EXPECT_EQ(track.getTotalEventDuration(), 1);
     const size_t hashWithTwoEvents = track.getHash();
     EXPECT_NE(hashWhenEmpty, hashWithTwoEvents);
     EXPECT_NE(hashWithOneEvent, hashWithTwoEvents);
@@ -54,7 +54,7 @@ TEST(Track, BlocksAndAlignment) {
         track.addEvent(std::move(newEvent2));
     }
     EXPECT_EQ(track.getNumEvents(), 200);
-    EXPECT_EQ(track.getDuration(), 200);
+    EXPECT_EQ(track.getTotalEventDuration(), 200);
 
     int count = 0;
     for (const auto& event : track) {
