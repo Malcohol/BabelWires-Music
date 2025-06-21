@@ -48,6 +48,5 @@ bw_music::Track bw_music::quantize(const Track& trackIn, ModelDuration beat) {
         }
     }
     const ModelDuration idealDuration = getIdealTime(trackIn.getDuration(), beat);
-    track.setDuration(idealDuration);
-    return track.finishAndGetTrack();
+    return track.finishAndGetTrack(idealDuration);
 }

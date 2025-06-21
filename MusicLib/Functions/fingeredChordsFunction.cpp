@@ -237,6 +237,5 @@ bw_music::Track bw_music::fingeredChordsFunction(const Track& sourceTrack, Finge
     if (currentChord.m_chordType != ChordType::Value::NotAValue) {
         trackOut.addEvent(ChordOffEvent(timeSinceLastChordEvent));
     }
-    trackOut.setDuration(sourceTrack.getDuration());
-    return trackOut.finishAndGetTrack();
+    return trackOut.finishAndGetTrack(sourceTrack.getDuration());
 }

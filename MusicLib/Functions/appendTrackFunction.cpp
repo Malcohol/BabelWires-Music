@@ -27,6 +27,5 @@ void bw_music::appendTrack(Track& targetTrack, const Track& sourceTrack) {
         }
     }
     
-    resultTrack.setDuration(initialDuration + sourceTrack.getDuration());
-    targetTrack = resultTrack.finishAndGetTrack();
+    targetTrack = resultTrack.finishAndGetTrack(initialDuration + sourceTrack.getDuration());
 }

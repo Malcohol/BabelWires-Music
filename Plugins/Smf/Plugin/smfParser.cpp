@@ -239,18 +239,19 @@ class smf::SmfParser::TrackSplitter {
 
     /// All channels share the duration of the MIDI track.
     void setDurationsForAllChannels(bw_music::ModelDuration timeToEndOfTrackEvent) {
-        bw_music::ModelDuration duration = m_timeSinceStart + timeToEndOfTrackEvent;
+        const bw_music::ModelDuration duration = m_timeSinceStart + timeToEndOfTrackEvent;
         for (int channelNumber = 0; channelNumber < MAX_CHANNELS; ++channelNumber) {
             if (m_channels[channelNumber] != nullptr) {
-                m_channels[channelNumber]->m_track.setDuration(duration);
+                m_channels[channelNumber]->m_trackDuration = duration;
             }
         }
     }
 
   private:
     struct PerChannelInfo {
-        bw_music::ModelDuration m_timeOfLastEvent;
         bw_music::TrackBuilder m_track;
+        bw_music::ModelDuration m_timeOfLastEvent;
+        bw_music::ModelDuration m_trackDuration = 0;
     };
 
     PerChannelInfo* getChannel(unsigned int channelNumber) {
@@ -799,8 +800,9 @@ void smf::SmfParser::readFormat0Sequence() {
     readTrack(0, splitTracks, true);
     auto tracks = getSmfSequence().getTrcks0();
     for (int channelNumber = 0; channelNumber < MAX_CHANNELS; ++channelNumber) {
-        if (splitTracks.m_channels[channelNumber] != nullptr) {
-            tracks.activateAndGetTrack(channelNumber).set(splitTracks.m_channels[channelNumber]->m_track.finishAndGetTrack());
+        const auto& perChannelInfoPtr = splitTracks.m_channels[channelNumber];
+        if (perChannelInfoPtr != nullptr) {
+            tracks.activateAndGetTrack(channelNumber).set(perChannelInfoPtr->m_track.finishAndGetTrack(perChannelInfoPtr->m_trackDuration));
         }
     }
 }

@@ -102,13 +102,12 @@ TEST(Track, equality) {
     testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65, 67}, trackWithMoreNotesBuilder);
     testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 63, 65}, trackWithDifferentNotesBuilder);
     testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65}, trackWithSameNotesLongerDurationBuilder);
-    trackWithSameNotesLongerDurationBuilder.setDuration(16);
 
     bw_music::Track trackWithNotes = trackWithNotesBuilder.finishAndGetTrack();
     bw_music::Track trackWithSameNotes = trackWithSameNotesBuilder.finishAndGetTrack();
     bw_music::Track trackWithMoreNotes = trackWithMoreNotesBuilder.finishAndGetTrack();
     bw_music::Track trackWithDifferentNotes = trackWithDifferentNotesBuilder.finishAndGetTrack();
-    bw_music::Track trackWithSameNotesLongerDuration = trackWithSameNotesLongerDurationBuilder.finishAndGetTrack();
+    bw_music::Track trackWithSameNotesLongerDuration = trackWithSameNotesLongerDurationBuilder.finishAndGetTrack(16);
 
     EXPECT_EQ(emptyTrack0, emptyTrack0);
     EXPECT_EQ(emptyTrack0, emptyTrack1);

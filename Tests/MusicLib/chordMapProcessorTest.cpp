@@ -146,9 +146,7 @@ namespace {
                               {bw_music::PitchClass::Value::Csh, bw_music::ChordType::ChordType::Value::M7s11}},
                              track);
 
-        track.setDuration(babelwires::Rational(11, 2));
-
-        return track.finishAndGetTrack();
+        return track.finishAndGetTrack(bw_music::ModelDuration(11, 2));
     }
 
     void testOutputTrack(const bw_music::Track& outputTrack, SourceMode sourceMode, TargetMode targetMode,

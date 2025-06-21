@@ -1,12 +1,14 @@
 #include <MusicLib/Functions/splitAtPitchFunction.hpp>
 
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
-#include <MusicLib/Utilities/filteredTrackIterator.hpp>
 #include <MusicLib/Types/Track/trackBuilder.hpp>
+#include <MusicLib/Utilities/filteredTrackIterator.hpp>
 
 namespace {
     struct NotesAbove : bw_music::FilteredTrackIterator<> {
-        NotesAbove(const bw_music::Track& track, bw_music::Pitch pitch) : bw_music::FilteredTrackIterator<>(track), m_pitch(pitch) {}
+        NotesAbove(const bw_music::Track& track, bw_music::Pitch pitch)
+            : bw_music::FilteredTrackIterator<>(track)
+            , m_pitch(pitch) {}
 
         virtual bool isEventOfInterest(const bw_music::TrackEvent& event) override {
             if (const bw_music::NoteEvent* noteEvent = event.as<bw_music::NoteEvent>()) {
@@ -19,7 +21,9 @@ namespace {
     };
 
     struct NotesBelow : bw_music::FilteredTrackIterator<> {
-        NotesBelow(const bw_music::Track& track, bw_music::Pitch pitch) : bw_music::FilteredTrackIterator<>(track), m_pitch(pitch) {}
+        NotesBelow(const bw_music::Track& track, bw_music::Pitch pitch)
+            : bw_music::FilteredTrackIterator<>(track)
+            , m_pitch(pitch) {}
 
         virtual bool isEventOfInterest(const bw_music::TrackEvent& event) override {
             if (const bw_music::NoteEvent* noteEvent = event.as<bw_music::NoteEvent>()) {
@@ -32,7 +36,8 @@ namespace {
     };
 
     struct NotNotes : bw_music::FilteredTrackIterator<> {
-        NotNotes(const bw_music::Track& track) : bw_music::FilteredTrackIterator<>(track) {}
+        NotNotes(const bw_music::Track& track)
+            : bw_music::FilteredTrackIterator<>(track) {}
 
         virtual bool isEventOfInterest(const bw_music::TrackEvent& event) override {
             return event.as<bw_music::NoteEvent>() == nullptr;
@@ -40,13 +45,13 @@ namespace {
 
         bw_music::Pitch m_pitch;
     };
-}
+} // namespace
 
 bw_music::SplitAtPitchResult bw_music::splitAtPitch(Pitch pitch, const Track& sourceTrack) {
     TrackBuilder equalOrAbove;
     TrackBuilder below;
     TrackBuilder other;
-    
+
     SplitAtPitchResult result;
     // TODO Do this in one traversal.
     {
@@ -77,9 +82,6 @@ bw_music::SplitAtPitchResult bw_music::splitAtPitch(Pitch pitch, const Track& so
         }
     }
 
-    equalOrAbove.setDuration(sourceTrack.getDuration());
-    below.setDuration(sourceTrack.getDuration());
-    other.setDuration(sourceTrack.getDuration());
-
-    return {equalOrAbove.finishAndGetTrack(), below.finishAndGetTrack(), other.finishAndGetTrack()};
+    return {equalOrAbove.finishAndGetTrack(sourceTrack.getDuration()),
+            below.finishAndGetTrack(sourceTrack.getDuration()), other.finishAndGetTrack(sourceTrack.getDuration())};
 }

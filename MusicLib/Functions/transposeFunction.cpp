@@ -24,7 +24,6 @@ bw_music::Track bw_music::transposeTrack(const Track& trackIn, int pitchOffset) 
         trackOut.addEvent(holder.release());
     }
 
-    trackOut.setDuration(trackIn.getDuration());
-    return trackOut.finishAndGetTrack();
+    return trackOut.finishAndGetTrack(trackIn.getDuration());
 }
 

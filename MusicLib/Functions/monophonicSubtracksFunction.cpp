@@ -207,10 +207,8 @@ bw_music::MonophonicSubtracksResult bw_music::getMonophonicSubtracks(const Track
     bw_music::MonophonicSubtracksResult result;
     result.m_noteTracks.reserve(builders.m_noteTracks.size());
     for (auto& trackBuilder : builders.m_noteTracks) {
-        trackBuilder.setDuration(trackIn.getDuration());
-        result.m_noteTracks.emplace_back(trackBuilder.finishAndGetTrack());
+        result.m_noteTracks.emplace_back(trackBuilder.finishAndGetTrack(trackIn.getDuration()));
     }
-    builders.m_other.setDuration(trackIn.getDuration());
-    result.m_other = builders.m_other.finishAndGetTrack();
+    result.m_other = builders.m_other.finishAndGetTrack(trackIn.getDuration());
     return result;
 }

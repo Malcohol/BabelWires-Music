@@ -296,6 +296,5 @@ bw_music::Track bw_music::mapChordsFunction(const babelwires::TypeSystem& typeSy
         trackOut.addEvent(ChordOffEvent(timeSinceLastEvent));
     }
 
-    trackOut.setDuration(sourceTrack.getDuration());
-    return trackOut.finishAndGetTrack();
+    return trackOut.finishAndGetTrack(sourceTrack.getDuration());
 }

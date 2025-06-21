@@ -27,8 +27,10 @@ namespace bw_music {
         void addEvent(const TrackEvent& event);
         void addEvent(TrackEvent&& event);
 
-        void setDuration(ModelDuration d);
+        /// Set the full duration of the track to d and obtain the track built by this builder.
+        Track finishAndGetTrack(ModelDuration d);
 
+        /// Set the duration of the track to be the duration of its events and obtain the track built by this builder.
         Track finishAndGetTrack();
 
       private:

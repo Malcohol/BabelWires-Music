@@ -40,6 +40,5 @@ bw_music::Track bw_music::getTrackExcerpt(const Track& trackIn, ModelDuration st
         ++it;
     }
 
-    trackOut.setDuration(duration);
-    return trackOut.finishAndGetTrack();
+    return trackOut.finishAndGetTrack(duration);
 }

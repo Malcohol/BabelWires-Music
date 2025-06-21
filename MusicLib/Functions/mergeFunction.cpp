@@ -49,7 +49,5 @@ bw_music::Track bw_music::mergeTracks(const std::vector<const Track*>& sourceTra
         timeSinceStart += timeToNextEvent;
     }
 
-    trackOut.setDuration(trackDuration);
-
-    return trackOut.finishAndGetTrack();
+    return trackOut.finishAndGetTrack(trackDuration);
 }

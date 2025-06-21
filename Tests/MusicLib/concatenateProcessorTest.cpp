@@ -32,8 +32,7 @@ TEST(ConcatenateProcessorTest, appendFuncGaps) {
                                                       {64, 0, babelwires::Rational(1, 4)},
                                                       {65, 0, babelwires::Rational(1, 4)}};
     testUtils::addNotes(noteInfosA, trackBuilderA);
-    trackBuilderA.setDuration(3);
-    bw_music::Track trackA = trackBuilderA.finishAndGetTrack();
+    bw_music::Track trackA = trackBuilderA.finishAndGetTrack(3);
 
     bw_music::TrackBuilder trackBuilderB;
     const std::vector<testUtils::NoteInfo> noteInfosB{
@@ -43,8 +42,7 @@ TEST(ConcatenateProcessorTest, appendFuncGaps) {
         {72, 0, babelwires::Rational(1, 4)},
     };
     testUtils::addNotes(noteInfosB, trackBuilderB);
-    trackBuilderB.setDuration(3);
-    bw_music::Track trackB = trackBuilderB.finishAndGetTrack();
+    bw_music::Track trackB = trackBuilderB.finishAndGetTrack(3);
 
     appendTrack(trackA, trackB);
 

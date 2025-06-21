@@ -319,8 +319,7 @@ TEST(TrackBuilderTest, validBuilder_invalidUnterminatedGroupWithDuration) {
 
     EXPECT_FALSE(bw_music::isTrackValid(track));
 
-    trackBuilder.setDuration(4);
-    auto builtTrack = trackBuilder.finishAndGetTrack();
+    auto builtTrack = trackBuilder.finishAndGetTrack(4);
     EXPECT_FALSE(bw_music::isTrackValid(track));
     EXPECT_TRUE(bw_music::isTrackValid(builtTrack));
     EXPECT_EQ(builtTrack.getDuration(), 4);
@@ -353,8 +352,7 @@ TEST(TrackBuilderTest, validBuilder_invalidUnterminatedGroupWithDuration2) {
 
     EXPECT_FALSE(bw_music::isTrackValid(track));
 
-    trackBuilder.setDuration(4);
-    auto builtTrack = trackBuilder.finishAndGetTrack();
+    auto builtTrack = trackBuilder.finishAndGetTrack(4);
     EXPECT_FALSE(bw_music::isTrackValid(track));
     EXPECT_TRUE(bw_music::isTrackValid(builtTrack));
     EXPECT_EQ(builtTrack.getDuration(), 4);

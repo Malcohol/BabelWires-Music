@@ -92,7 +92,5 @@ bw_music::Track bw_music::mapPercussionFunction(const babelwires::TypeSystem& ty
             trackOut.addEvent(*it);
         }
     }
-    trackOut.setDuration(trackIn.getDuration());
-
-    return trackOut.finishAndGetTrack();
+    return trackOut.finishAndGetTrack(trackIn.getDuration());
 }

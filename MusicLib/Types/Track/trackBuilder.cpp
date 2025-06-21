@@ -155,11 +155,6 @@ void bw_music::TrackBuilder::processEventsAtCurrentTime(bool atEndOfTrack) {
     m_eventsAtCurrentTime.clear();
 }
 
-void bw_music::TrackBuilder::setDuration(ModelDuration d) {
-    assert(!m_isFinished && "You cannot call this after the builder is finished.");
-    m_track.setDuration(d);
-}
-
 void bw_music::TrackBuilder::endActiveGroups() {
     if (!m_activeGroups.empty()) {
         ModelDuration initialTime = getTimeToEndOfTrack();
@@ -194,9 +189,14 @@ bw_music::ModelDuration bw_music::TrackBuilder::getTimeToEndOfTrack() const {
     return m_track.getDuration() - m_track.getTotalEventDuration();
 }
 
-bw_music::Track bw_music::TrackBuilder::finishAndGetTrack() {
+bw_music::Track bw_music::TrackBuilder::finishAndGetTrack(ModelDuration d) {
+    m_track.setDuration(d);
     processEventsAtCurrentTime(getTimeToEndOfTrack() == m_timeSinceLastEvent);
     endActiveGroups();
     m_isFinished = true;
     return std::move(m_track);
+}
+
+bw_music::Track bw_music::TrackBuilder::finishAndGetTrack() {
+    return finishAndGetTrack(m_track.getTotalEventDuration());    
 }
