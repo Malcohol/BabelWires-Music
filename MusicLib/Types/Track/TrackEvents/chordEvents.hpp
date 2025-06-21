@@ -20,6 +20,8 @@ namespace bw_music {
             : TrackEvent(timeSinceLastEvent) {}
 
         static GroupingInfo::Category s_chordEventCategory;
+
+        void createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const override;
     };
 
     /// Describes the start of a chord.

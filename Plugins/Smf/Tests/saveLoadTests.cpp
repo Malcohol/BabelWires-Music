@@ -8,6 +8,7 @@
 
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/libRegistration.hpp>
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 
 #include <BabelWiresLib/Instance/arrayTypeInstance.hpp>
 #include <BabelWiresLib/libRegistration.hpp>
@@ -38,9 +39,9 @@ TEST(SmfSaveLoadTest, cMajorScale) {
         auto tracks = smfType.getTrcks0();
         auto track2 = tracks.activateAndGetTrack(2);
 
-        bw_music::Track track;
+        bw_music::TrackBuilder track;
         testUtils::addSimpleNotes(pitches, track);
-        track2.set(std::move(track));
+        track2.set(track.finishAndGetTrack());
 
         std::ofstream os = tempFile.openForWriting(std::ios_base::binary);
         smf::writeToSmf(testEnvironment.m_projectContext, testEnvironment.m_log, smfFeature, os);
@@ -121,9 +122,9 @@ TEST(SmfSaveLoadTest, cMajorScaleWithMetadata) {
             auto tracks = smfType.getTrcks0();
             auto track2 = tracks.activateAndGetTrack(2);
 
-            bw_music::Track track;
+            bw_music::TrackBuilder track;
             testUtils::addSimpleNotes(pitches, track);
-            track2.set(std::move(track));
+            track2.set(track.finishAndGetTrack());
 
             std::ofstream os = tempFile.openForWriting(std::ios_base::binary);
             smf::writeToSmf(testEnvironment.m_projectContext, testEnvironment.m_log, smfFeature, os);
@@ -171,9 +172,9 @@ TEST(SmfSaveLoadTest, format0Chords) {
 
         for (int i = 0; i < 3; ++i) {
             auto trackI = tracks.activateAndGetTrack(i);
-            bw_music::Track track;
+            bw_music::TrackBuilder track;
             testUtils::addSimpleNotes(chordPitches[i], track);
-            trackI.set(std::move(track));
+            trackI.set(track.finishAndGetTrack());
         }
 
         std::ofstream os = tempFile.openForWriting(std::ios_base::binary);
@@ -221,9 +222,9 @@ TEST(SmfSaveLoadTest, format1Chords) {
         for (int i = 0; i < 3; ++i) {
             auto trackAndChan = tracks.getEntry(i);
             trackAndChan.getChan().set(i);
-            bw_music::Track track;
+            bw_music::TrackBuilder track;
             testUtils::addSimpleNotes(chordPitches[i], track);
-            trackAndChan.getTrack().set(std::move(track));
+            trackAndChan.getTrack().set(track.finishAndGetTrack());
         }
 
         std::ofstream os = tempFile.openForWriting(std::ios_base::binary);

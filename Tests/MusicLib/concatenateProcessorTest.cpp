@@ -6,16 +6,19 @@
 #include <MusicLib/Processors/concatenateProcessor.hpp>
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/libRegistration.hpp>
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 
 #include <Tests/BabelWiresLib/TestUtils/testEnvironment.hpp>
 #include <Tests/TestUtils/seqTestUtils.hpp>
 
 TEST(ConcatenateProcessorTest, appendFuncSimple) {
-    bw_music::Track trackA;
-    testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65}, trackA);
+    bw_music::TrackBuilder trackBuilderA;
+    testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65}, trackBuilderA);
+    bw_music::Track trackA = trackBuilderA.finishAndGetTrack();
 
-    bw_music::Track trackB;
-    testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{67, 69, 71, 72}, trackB);
+    bw_music::TrackBuilder trackBuilderB;
+    testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{67, 69, 71, 72}, trackBuilderB);
+    bw_music::Track trackB = trackBuilderB.finishAndGetTrack();
 
     appendTrack(trackA, trackB);
 
@@ -23,23 +26,23 @@ TEST(ConcatenateProcessorTest, appendFuncSimple) {
 }
 
 TEST(ConcatenateProcessorTest, appendFuncGaps) {
-    bw_music::Track trackA;
+    bw_music::TrackBuilder trackBuilderA;
     const std::vector<testUtils::NoteInfo> noteInfosA{{60, 1, babelwires::Rational(1, 4)},
                                                       {62, 0, babelwires::Rational(1, 4)},
                                                       {64, 0, babelwires::Rational(1, 4)},
                                                       {65, 0, babelwires::Rational(1, 4)}};
-    testUtils::addNotes(noteInfosA, trackA);
-    trackA.setDuration(3);
+    testUtils::addNotes(noteInfosA, trackBuilderA);
+    bw_music::Track trackA = trackBuilderA.finishAndGetTrack(3);
 
-    bw_music::Track trackB;
+    bw_music::TrackBuilder trackBuilderB;
     const std::vector<testUtils::NoteInfo> noteInfosB{
         {67, 1, babelwires::Rational(1, 4)},
         {69, 0, babelwires::Rational(1, 4)},
         {71, 0, babelwires::Rational(1, 4)},
         {72, 0, babelwires::Rational(1, 4)},
     };
-    testUtils::addNotes(noteInfosB, trackB);
-    trackB.setDuration(3);
+    testUtils::addNotes(noteInfosB, trackBuilderB);
+    bw_music::Track trackB = trackBuilderB.finishAndGetTrack(3);
 
     appendTrack(trackA, trackB);
 
@@ -71,9 +74,9 @@ TEST(ConcatenateProcessorTest, processor) {
     EXPECT_EQ(input.getInput().getEntry(1).get().getDuration(), 0);
 
     {
-        bw_music::Track track;
+        bw_music::TrackBuilder track;
         testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65}, track);
-        input.getInput().getEntry(0).set(std::move(track));
+        input.getInput().getEntry(0).set(track.finishAndGetTrack());
     }
 
     processor.process(testEnvironment.m_log);
@@ -82,9 +85,9 @@ TEST(ConcatenateProcessorTest, processor) {
 
     processor.getInput().clearChanges();
     {
-        bw_music::Track track;
+        bw_music::TrackBuilder track;
         testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{67, 69, 71, 72}, track);
-        input.getInput().getEntry(1).set(std::move(track));
+        input.getInput().getEntry(1).set(track.finishAndGetTrack());
     }
     processor.process(testEnvironment.m_log);
 
@@ -96,9 +99,9 @@ TEST(ConcatenateProcessorTest, processor) {
         input.getInput().setSize(3);
         input.getInput().getEntry(2).set(input.getInput().getEntry(1)->getValue());
         {
-            bw_music::Track track;
+            bw_music::TrackBuilder track;
             testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{67, 65}, track);
-            input.getInput().getEntry(1).set(std::move(track));
+            input.getInput().getEntry(1).set(track.finishAndGetTrack());
         }
     }
     processor.process(testEnvironment.m_log);

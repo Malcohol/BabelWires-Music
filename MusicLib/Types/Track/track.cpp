@@ -19,48 +19,24 @@ int bw_music::Track::getNumEvents() const {
     return m_blockStream.getNumEvents();
 }
 
-bw_music::Track::CachedValues::CachedValues(ModelDuration trackDuration)
-    : m_hash(trackDuration.getHash()) {}
-
-void bw_music::Track::CachedValues::addEvent(const TrackEvent& event) {
-    m_totalEventDuration += event.getTimeSinceLastEvent();
-    babelwires::hash::mixInto(m_hash, event.getHash());
-    TrackEvent::GroupingInfo groupingInfo = event.getGroupingInfo();
-    if ((groupingInfo.m_grouping == TrackEvent::GroupingInfo::Grouping::NotInGroup) ||
-        (groupingInfo.m_grouping == TrackEvent::GroupingInfo::Grouping::StartOfGroup)) {
-        ++m_numEventGroupsByCategory[groupingInfo.m_category];
-    }
-}
-
-void bw_music::Track::ensureCache() const {
-    if (!m_cacheIsValid) {
-        CachedValues newCache(getDuration());
-        for (const TrackEvent& event : *this) {
-            newCache.addEvent(event);
-        }
-        m_cachedValues = newCache;
-        m_cacheIsValid = true;
-    }
-}
-
 bw_music::ModelDuration bw_music::Track::getDuration() const {
     return m_duration;
 }
 
 bw_music::ModelDuration bw_music::Track::getTotalEventDuration() const {
-    ensureCache();
-    return m_cachedValues.m_totalEventDuration;
+    return m_totalEventDuration;
 }
 
 void bw_music::Track::setDuration(ModelDuration d) {
-    if (d > getTotalEventDuration()) {
-        m_duration = d;
-    }
+    assert((d >= getTotalEventDuration()) && "Attempt to set a duration shorter than the event duration");
+    m_duration = d;
 }
 
 std::size_t bw_music::Track::getHash() const {
-    ensureCache();
-    return m_cachedValues.m_hash;
+    // The duration can be changed without invalidating cached info. But hash will change.
+    std::size_t hash = m_eventHash;
+    babelwires::hash::mixInto(hash, m_duration);
+    return hash;
 }
 
 bool bw_music::Track::operator==(const Value& other) const {
@@ -91,11 +67,21 @@ bool bw_music::Track::operator==(const Value& other) const {
     return true;
 }
 
+void bw_music::Track::addEvent(const TrackEvent& event) {
+    onNewEvent(m_blockStream.addEvent(event));
+}
+
+void bw_music::Track::addEvent(TrackEvent&& event) {
+    onNewEvent(m_blockStream.addEvent(std::move(event)));
+};
+
 void bw_music::Track::onNewEvent(const TrackEvent& event) {
-    ensureCache();
-    m_cachedValues.addEvent(event);
-    if (getTotalEventDuration() > m_duration) {
-        m_duration = getTotalEventDuration();
+    m_totalEventDuration += event.getTimeSinceLastEvent();
+    babelwires::hash::mixInto(m_eventHash, event.getHash());
+    TrackEvent::GroupingInfo groupingInfo = event.getGroupingInfo();
+    if ((groupingInfo.m_grouping == TrackEvent::GroupingInfo::Grouping::NotInGroup) ||
+        (groupingInfo.m_grouping == TrackEvent::GroupingInfo::Grouping::StartOfGroup)) {
+        ++m_numEventGroupsByCategory[groupingInfo.m_category];
     }
 }
 
@@ -107,7 +93,15 @@ bw_music::Track::const_iterator bw_music::Track::begin() const {
     return m_blockStream.begin_impl<TrackEvent>();
 }
 
+std::reverse_iterator<bw_music::Track::const_iterator> bw_music::Track::rbegin() const {
+    return m_blockStream.rbegin_impl<TrackEvent>();
+}
+
+std::reverse_iterator<bw_music::Track::const_iterator> bw_music::Track::rend() const {
+    return m_blockStream.rend_impl<TrackEvent>();
+}
+
+
 const std::unordered_map<const char*, int>& bw_music::Track::getNumEventGroupsByCategory() const {
-    ensureCache();
-    return m_cachedValues.m_numEventGroupsByCategory;
+    return m_numEventGroupsByCategory;
 }

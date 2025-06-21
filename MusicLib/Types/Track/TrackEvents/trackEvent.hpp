@@ -12,9 +12,13 @@
 #include <Common/Utilities/enumFlags.hpp>
 #include <MusicLib/musicTypes.hpp>
 
+#include <Common/BlockStream/streamEventHolder.hpp>
+
 namespace bw_music {
 
     class Track;
+    class TrackEvent;
+    using TrackEventHolder = babelwires::StreamEventHolder<TrackEvent>;
 
     /// TrackEvents are usually stored in a BlockStream, which is why they are StreamEvents.
     /// A track can carry arbitrary events. However, tracks often contain events which are
@@ -22,7 +26,7 @@ namespace bw_music {
     /// and a noteOff event, all sharing the same pitch.
     class TrackEvent : public babelwires::StreamEvent {
       public:
-        STREAM_EVENT(TrackEvent);
+        STREAM_EVENT_ABSTRACT(TrackEvent);
         TrackEvent() = default;
         TrackEvent(ModelDuration timeSinceLastEvent) : m_timeSinceLastEvent(timeSinceLastEvent) {}
 
@@ -44,12 +48,18 @@ namespace bw_music {
 
         bool operator!=(const TrackEvent& other) const;
 
+        /// To correctly terminate truncated groups, a start event can be asked to construct a matching end event
+        /// of the same category and value. The default implementation asserts;
+        // MAYBEDO Consider providing an iterator so the implementation can traverse the group.
+        // MAYBEDO If this returns nullptr for a start event, then it means the group cannot be truncated and the
+        // group should be removed.
+        virtual void createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const = 0;
+
         /// A value which describes how this event can participate in a group of similar events:
         /// For example, a noteOn event, a sequence of after-touch events, and a noteOff event,
         /// all of the same pitch.
-        struct GroupingInfo {
-            /// A static string can act as a category.
-            // TODO Use an identifier for this.
+        struct EventGroup {
+            /// A pointer to a static string can act as a category.
             using Category = const char*;
 
             /// A category that can be used for events of no particular category.
@@ -59,11 +69,15 @@ namespace bw_music {
             /// E.g. notes or chords.
             Category m_category = s_genericCategory;
 
+            auto operator<=>(const EventGroup&) const = default;
+
             /// A value which is expected to agree for all events in the same group.
             using GroupValue = std::uint64_t;
             constexpr static GroupValue c_notAValue = -1;
             GroupValue m_groupValue = c_notAValue;
+        };
 
+        struct GroupingInfo : EventGroup {
             /// A value which determines the way in which this event belongs to a group.
             enum class Grouping : std::uint8_t {
                 /// This is a stand-alone event.

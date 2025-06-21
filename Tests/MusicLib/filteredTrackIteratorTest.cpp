@@ -1,43 +1,24 @@
 #include <gtest/gtest.h>
 
 #include <MusicLib/Utilities/filteredTrackIterator.hpp>
-
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 #include <MusicLib/Types/Track/TrackEvents/trackEvent.hpp>
 
-namespace {
-    struct TestEvent : bw_music::TrackEvent {
-        STREAM_EVENT(TestEvent);
-        TestEvent(bw_music::ModelDuration d, int value)
-            : m_value(value) {
-            setTimeSinceLastEvent(d);
-        }
-
-        int m_value;
-    };
-
-    struct TestEvent2 : bw_music::TrackEvent {
-        STREAM_EVENT(TestEvent2);
-        TestEvent2(bw_music::ModelDuration d, float value)
-            : m_value(value) {
-            setTimeSinceLastEvent(d);
-        }
-
-        float m_value;
-    };
-} // namespace
+#include <Tests/TestUtils/testTrackEvents.hpp>
 
 TEST(FilteredTrackIterator, Basic) {
-    bw_music::Track track;
+    bw_music::TrackBuilder trackBuilder;
 
     for (int i = 0; i < 100; ++i) {
-        track.addEvent(TestEvent(1, 2 * i));
-        track.addEvent(TestEvent(0, (2 * i) + 1));
-        track.addEvent(TestEvent2(0, 2 * i));
-        track.addEvent(TestEvent2(1, (2 * i) + 1));
+        trackBuilder.addEvent(testUtils::TestTrackEvent(1, 2 * i));
+        trackBuilder.addEvent(testUtils::TestTrackEvent(0, (2 * i) + 1));
+        trackBuilder.addEvent(testUtils::TestTrackEvent2(0, 2 * i));
+        trackBuilder.addEvent(testUtils::TestTrackEvent2(1, (2 * i) + 1));
     }
+    bw_music::Track track = trackBuilder.finishAndGetTrack();
 
     {
-        auto [testEventsBegin, testEventsEnd] = bw_music::iterateOver<TestEvent>(track);
+        auto [testEventsBegin, testEventsEnd] = bw_music::iterateOver<testUtils::TestTrackEvent>(track);
 
         int count = 0;
         bw_music::ModelDuration d = 0;
@@ -51,7 +32,7 @@ TEST(FilteredTrackIterator, Basic) {
     }
 
     {
-        auto [testEventsBegin, testEventsEnd] = bw_music::iterateOver<TestEvent2>(track);
+        auto [testEventsBegin, testEventsEnd] = bw_music::iterateOver<testUtils::TestTrackEvent2>(track);
 
         int count = 0;
         bw_music::ModelDuration d = 0;

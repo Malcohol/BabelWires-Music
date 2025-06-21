@@ -7,8 +7,7 @@
  **/
 #include <MusicLib/Functions/quantizeFunction.hpp>
 
-#include <MusicLib/Types/Track/TrackEvents/trackEventHolder.hpp>
-#include <MusicLib/Functions/sanitizingFunctions.hpp>
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 
 namespace {
     bw_music::ModelDuration getIdealTime(bw_music::ModelDuration time, bw_music::ModelDuration beat) {
@@ -24,7 +23,7 @@ bw_music::Track bw_music::quantize(const Track& trackIn, ModelDuration beat) {
 
     using Group = std::tuple<TrackEvent::GroupingInfo::Category, TrackEvent::GroupingInfo::GroupValue>;
 
-    Track trackOut;
+    TrackBuilder track;
 
     ModelDuration currentTimeSinceLastEvent;
 
@@ -42,13 +41,12 @@ bw_music::Track bw_music::quantize(const Track& trackIn, ModelDuration beat) {
             const ModelDuration newTimeSinceLastEvent = idealTime - trackOutAbsoluteTime;
             TrackEventHolder event = *it;
             event->setTimeSinceLastEvent(newTimeSinceLastEvent);
-            trackOut.addEvent(event.release());
+            track.addEvent(event.release());
             trackOutAbsoluteTime += newTimeSinceLastEvent;
         } else {
-            trackOut.addEvent(*it);
+            track.addEvent(*it);
         }
     }
     const ModelDuration idealDuration = getIdealTime(trackIn.getDuration(), beat);
-    trackOut.setDuration(idealDuration);
-    return removeZeroDurationGroups(trackOut);
+    return track.finishAndGetTrack(idealDuration);
 }

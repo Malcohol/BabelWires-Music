@@ -19,23 +19,24 @@
 #include <vector>
 
 namespace bw_music {
+    class TrackBuilder;
+    class UnsafeTrack;
+
     /// A track carries a stream of TrackEvents.
-    /// Tracks are not editable: they can be manipulated only using Processors and can be serialized/deserialized only
-    /// using SourceFileFormats and TargetFileFormats formats.
+    /// Construct a track using a TrackBuilder.
+    /// From the point of view of the project, Tracks are not editable: they can be manipulated only using Processors
+    /// and can be serialized/deserialized only using SourceFileFormats and TargetFileFormats formats.
+    /// The events in a track can belong to groups and those groups are subject to rules, see TrackBuilder.
     class Track : public babelwires::Value {
       public:
         CLONEABLE(Track);
 
         Track();
+
         /// Create an empty track with a given duration.
         Track(ModelDuration duration);
 
-        /// Add a TrackEvent by moving or copying it into the track.
-        template <typename EVENT, typename = std::enable_if_t<std::is_convertible_v<EVENT&, const TrackEvent&>>>
-        void addEvent(EVENT&& srcEvent) {
-            onNewEvent(m_blockStream.addEvent(std::forward<EVENT>(srcEvent)));
-        };
-
+      public:
         /// Get the total number of events in the track.
         int getNumEvents() const;
 
@@ -46,38 +47,40 @@ namespace bw_music {
         /// in which case, the operation is ignored.
         void setDuration(ModelDuration d);
 
+        /// Determine whether the data in this track and the other are exactly the same.
+        /// Note: This is unconcerned with how events are laid out in their streams.
+        bool operator==(const Value& other) const override;
+
         /// Return the total duration of the events in the track (which may be smaller than m_duration).
         ModelDuration getTotalEventDuration() const;
 
         /// Get a hash corresponding to the state of the track's contents
         std::size_t getHash() const override;
 
-        /// Determine whether the data in this track and the other are exactly the same.
-        /// Note: This is unconcerned with how events are laid out in their streams.
-        bool operator==(const Value& other) const override;
-
         /// Get a summary of the track contents, by category.
         const std::unordered_map<const char*, int>& getNumEventGroupsByCategory() const;
+
+      private:
+        friend TrackBuilder;
+        friend UnsafeTrack;
+
+        /// Add a TrackEvent by copying it into the track.
+        void addEvent(const TrackEvent& event);
+
+        /// Add a TrackEvent by moving it into the track.
+        void addEvent(TrackEvent&& event);
 
       public:
         using const_iterator = babelwires::BlockStream::Iterator<const babelwires::BlockStream, const TrackEvent>;
         const_iterator begin() const;
         const_iterator end() const;
 
-        // IMPORTANT: Don't offer non-const begin and end. They would have to invalidate the cache, and might
-        // be chosen instead of the const versions when iterating. Instead, offer an accessor that returns
-        // a span.
-        // using iterator = bw_music::BlockStream::Iterator<bw_music::BlockStream, TrackEvent>;
-      protected:
-        /// Update the cached values.
-        void onNewEvent(const TrackEvent& event);
+        std::reverse_iterator<const_iterator> rbegin() const;
+        std::reverse_iterator<const_iterator> rend() const;
 
-        /// Ensure the cached values are up-to-date.
-        /// TODO: This is not thread-safe and will be dangerous when we multithread the project.
-        /// TODO: Might be important to distinguish data which is only needed for the UI (e.g.
-        /// m_numEventGroupsByCategory) since the UI will probably remain single-threaded) from those needed for
-        /// processing (m_totalEventDuration and hash).
-        void ensureCache() const;
+      protected:
+        /// Update the cached info.
+        void onNewEvent(const TrackEvent& event);
 
       protected:
         /// The track's events are stored in a BlockStream.
@@ -87,18 +90,19 @@ namespace bw_music {
         /// May be longer than the events duration, but may not be shorter.
         ModelDuration m_duration;
 
-        mutable struct CachedValues {
-            CachedValues(ModelDuration trackDuration);
-            void addEvent(const TrackEvent& event);
-            /// The total duration of the events in the track.
-            ModelDuration m_totalEventDuration = 0;
-            std::size_t m_hash = 0;
+        /// The total duration of the events in the track.
+        ModelDuration m_totalEventDuration = 0;
 
-            /// A summary of information about the track.
-            std::unordered_map<const char*, int> m_numEventGroupsByCategory;
-        } m_cachedValues = CachedValues(0);
+        /// A hash computed from the events.
+        std::size_t m_eventHash = 0;
 
-        /// Are the values in the cache up-to-date, or do they need to be recalculated.
-        mutable bool m_cacheIsValid = true;
+        /// A summary of information about the track.
+        std::unordered_map<const char*, int> m_numEventGroupsByCategory;
+    };
+
+    /// This is only intended for testing tracks.
+    class UnsafeTrack : public Track {
+      public:
+        using Track::addEvent;
     };
 } // namespace bw_music

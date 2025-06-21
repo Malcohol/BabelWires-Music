@@ -1,29 +1,10 @@
 #include <gtest/gtest.h>
 
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 #include <MusicLib/Utilities/filteredTrackIterator.hpp>
 #include <MusicLib/Utilities/trackTraverser.hpp>
 
-namespace {
-    struct TestEvent : bw_music::TrackEvent {
-        STREAM_EVENT(TestEvent);
-        TestEvent(bw_music::ModelDuration d, int value)
-            : m_value(value) {
-            setTimeSinceLastEvent(d);
-        }
-
-        int m_value;
-    };
-
-    struct TestEvent2 : bw_music::TrackEvent {
-        STREAM_EVENT(TestEvent2);
-        TestEvent2(bw_music::ModelDuration d, float value)
-            : m_value(value) {
-            setTimeSinceLastEvent(d);
-        }
-
-        float m_value;
-    };
-} // namespace
+#include <Tests/TestUtils/testTrackEvents.hpp>
 
 TEST(TrackTraverser, leastUpperBoundDuration) {
     bw_music::Track track;
@@ -46,13 +27,15 @@ TEST(TrackTraverser, leastUpperBoundDuration) {
 }
 
 TEST(TrackTraverser, greatestLowerBoundNextEvent) {
-    bw_music::Track track1;
-    bw_music::Track track2;
-    bw_music::Track track3;
-
-    track1.addEvent(TestEvent(10, 0));
-    track2.addEvent(TestEvent(5, 0));
-    track3.addEvent(TestEvent2(20, 0));
+    bw_music::TrackBuilder track1Builder;
+    bw_music::TrackBuilder track2Builder;
+    bw_music::TrackBuilder track3Builder;
+    track1Builder.addEvent(testUtils::TestTrackEvent(10, 0));
+    track2Builder.addEvent(testUtils::TestTrackEvent(5, 0));
+    track3Builder.addEvent(testUtils::TestTrackEvent2(20, 0));
+    bw_music::Track track1 = track1Builder.finishAndGetTrack();
+    bw_music::Track track2 = track2Builder.finishAndGetTrack();
+    bw_music::Track track3 = track3Builder.finishAndGetTrack();
 
     bw_music::TrackTraverser traverser1(track1, track1);
     bw_music::TrackTraverser traverser2(track2, track2);
@@ -70,19 +53,20 @@ TEST(TrackTraverser, greatestLowerBoundNextEvent) {
 }
 
 TEST(TrackTraverser, filteredIteration) {
-    bw_music::Track track;
+    bw_music::TrackBuilder trackBuilder;
 
     for (int i = 0; i < 10; ++i) {
-        track.addEvent(TestEvent(1, 2 * i));
-        track.addEvent(TestEvent(0, (2 * i) + 1));
-        track.addEvent(TestEvent2(0, 2 * i));
-        track.addEvent(TestEvent2(1, (2 * i) + 1));
+        trackBuilder.addEvent(testUtils::TestTrackEvent(1, 2 * i));
+        trackBuilder.addEvent(testUtils::TestTrackEvent(0, (2 * i) + 1));
+        trackBuilder.addEvent(testUtils::TestTrackEvent2(0, 2 * i));
+        trackBuilder.addEvent(testUtils::TestTrackEvent2(1, (2 * i) + 1));
     }
+    bw_music::Track track = trackBuilder.finishAndGetTrack();
 
-    bw_music::TrackTraverser<bw_music::FilteredTrackIterator<TestEvent>> traverser1(
-        track, bw_music::iterateOver<TestEvent>(track));
-    bw_music::TrackTraverser<bw_music::FilteredTrackIterator<TestEvent2>> traverser2(
-        track, bw_music::iterateOver<TestEvent2>(track));
+    bw_music::TrackTraverser<bw_music::FilteredTrackIterator<testUtils::TestTrackEvent>> traverser1(
+        track, bw_music::iterateOver<testUtils::TestTrackEvent>(track));
+    bw_music::TrackTraverser<bw_music::FilteredTrackIterator<testUtils::TestTrackEvent2>> traverser2(
+        track, bw_music::iterateOver<testUtils::TestTrackEvent2>(track));
 
     bw_music::ModelDuration trackDuration = 0;
     traverser1.leastUpperBoundDuration(trackDuration);

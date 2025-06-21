@@ -6,7 +6,7 @@
 #include <MusicLib/Processors/monophonicSubtracksProcessor.hpp>
 #include <MusicLib/Types/Track/TrackEvents/chordEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
-#include <MusicLib/Types/Track/TrackEvents/trackEventHolder.hpp>
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 #include <MusicLib/libRegistration.hpp>
 
 #include <Tests/BabelWiresLib/TestUtils/testEnvironment.hpp>
@@ -15,7 +15,7 @@
 
 namespace {
     bw_music::Track getSamplePolyphonicTrack() {
-        bw_music::Track track;
+        bw_music::TrackBuilder track;
         track.addEvent(bw_music::NoteOnEvent{0, 72});
         track.addEvent(bw_music::NoteOnEvent{0, 48});
         track.addEvent(
@@ -38,11 +38,11 @@ namespace {
         track.addEvent(bw_music::NoteOffEvent{babelwires::Rational(1, 4), 77});
         track.addEvent(bw_music::NoteOffEvent{0, 53});
         track.addEvent(bw_music::ChordOffEvent{0});
-        return track;
+        return track.finishAndGetTrack();
     }
 
     bw_music::Track getStaggeredPolyphonicTrack() {
-        bw_music::Track track;
+        bw_music::TrackBuilder track;
         track.addEvent(
             bw_music::ChordOnEvent{0, {bw_music::PitchClass::Value::C, bw_music::ChordType::ChordType::Value::M}});
         track.addEvent(bw_music::NoteOnEvent{0, 48});
@@ -67,11 +67,11 @@ namespace {
         track.addEvent(bw_music::NoteOffEvent{babelwires::Rational(1, 4), 60});
         track.addEvent(bw_music::NoteOffEvent{babelwires::Rational(1, 4), 72});
         track.addEvent(bw_music::ChordOffEvent{0});
-        return track;
+        return track.finishAndGetTrack();
     }
 
     bw_music::Track getStaggeredPolyphonicTrack2() {
-        bw_music::Track track;
+        bw_music::TrackBuilder track;
         track.addEvent(
             bw_music::ChordOnEvent{0, {bw_music::PitchClass::Value::C, bw_music::ChordType::ChordType::Value::M}});
         track.addEvent(bw_music::NoteOnEvent{0, 72});
@@ -96,7 +96,7 @@ namespace {
         track.addEvent(bw_music::NoteOffEvent{babelwires::Rational(1, 4), 60});
         track.addEvent(bw_music::NoteOffEvent{babelwires::Rational(1, 4), 48});
         track.addEvent(bw_music::ChordOffEvent{0});
-        return track;
+        return track.finishAndGetTrack();
     }
 } // namespace
 

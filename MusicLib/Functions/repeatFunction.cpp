@@ -8,7 +8,6 @@
 #include <MusicLib/Functions/repeatFunction.hpp>
 
 #include <MusicLib/Functions/appendTrackFunction.hpp>
-#include <MusicLib/Types/Track/TrackEvents/trackEventHolder.hpp>
 
 #include <BabelWiresLib/ValueTree/modelExceptions.hpp>
 

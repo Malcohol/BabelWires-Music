@@ -30,6 +30,8 @@ namespace bw_music {
         void setVelocity(Velocity velocity) { m_velocity = velocity; }
         Velocity getVelocity() const { return m_velocity; }
 
+        void createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const override;
+        
         Pitch m_pitch;
         Velocity m_velocity;
     };

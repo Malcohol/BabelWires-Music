@@ -7,6 +7,7 @@
  **/
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 
+
 #include <Common/Hash/hash.hpp>
 
 #include <sstream>
@@ -14,6 +15,10 @@
 #include <algorithm>
 
 bw_music::TrackEvent::GroupingInfo::Category bw_music::NoteEvent::s_noteEventCategory = "Notes";
+
+void bw_music::NoteEvent::createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const {
+    dest = NoteOffEvent(timeSinceLastEvent, m_pitch, m_velocity);
+}
 
 void bw_music::NoteEvent::transpose(int pitchOffset) {
     m_pitch = std::clamp(m_pitch + pitchOffset, 0, 127);

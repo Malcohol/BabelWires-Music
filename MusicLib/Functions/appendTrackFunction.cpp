@@ -6,27 +6,26 @@
  * Licensed under the GPLv3.0. See LICENSE file.
  **/
 #include <MusicLib/Functions/appendTrackFunction.hpp>
-
-#include <MusicLib/Types/Track/TrackEvents/trackEventHolder.hpp>
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 
 #include <BabelWiresLib/ValueTree/modelExceptions.hpp>
 
 void bw_music::appendTrack(Track& targetTrack, const Track& sourceTrack) {
-    assert((&targetTrack != &sourceTrack) && "You cannot have source and target track being the same");
-
     const ModelDuration initialDuration = targetTrack.getDuration();
     const ModelDuration gapAtEnd = targetTrack.getDuration() - targetTrack.getTotalEventDuration();
+
+    TrackBuilder resultTrack(std::move(targetTrack));
 
     auto it = sourceTrack.begin();
     if (it != sourceTrack.end()) {
         TrackEventHolder firstEventInSequence = *it;
         firstEventInSequence->setTimeSinceLastEvent(firstEventInSequence->getTimeSinceLastEvent() + gapAtEnd);
-        targetTrack.addEvent(firstEventInSequence.release());
+        resultTrack.addEvent(firstEventInSequence.release());
 
         for (++it; it != sourceTrack.end(); ++it) {
-            targetTrack.addEvent(*it);
+            resultTrack.addEvent(*it);
         }
     }
     
-    targetTrack.setDuration(initialDuration + sourceTrack.getDuration());
+    targetTrack = resultTrack.finishAndGetTrack(initialDuration + sourceTrack.getDuration());
 }

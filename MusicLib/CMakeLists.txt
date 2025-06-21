@@ -21,7 +21,6 @@ SET( MUSICLIB_SRCS
 	Functions/mergeFunction.cpp
 	Functions/monophonicSubtracksFunction.cpp
 	Functions/quantizeFunction.cpp
-	Functions/sanitizingFunctions.cpp
 	Functions/splitAtPitchFunction.cpp
 	Functions/transposeFunction.cpp
 	Types/Track/TrackEvents/chordEvents.cpp
@@ -38,6 +37,8 @@ SET( MUSICLIB_SRCS
 	Percussion/percussionSetWithPitchMap.cpp
 	pitch.cpp
 	Utilities/monophonicNoteIterator.cpp
+	Types/Track/trackBuilder.cpp
+	Utilities/trackValidator.cpp
 	libRegistration.cpp
    )
 

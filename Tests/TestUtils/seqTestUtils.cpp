@@ -3,10 +3,11 @@
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/chordEvents.hpp>
 #include <MusicLib/Types/Track/track.hpp>
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 
 #include <gtest/gtest.h>
 
-void testUtils::addSimpleNotes(const std::vector<bw_music::Pitch>& expectedPitches, bw_music::Track& track) {
+void testUtils::addSimpleNotes(const std::vector<bw_music::Pitch>& expectedPitches, bw_music::TrackBuilder& track) {
     for (auto pitch : expectedPitches) {
         track.addEvent(bw_music::NoteOnEvent{ 0, pitch });
         track.addEvent(bw_music::NoteOffEvent{ babelwires::Rational(1, 4), pitch });
@@ -43,7 +44,7 @@ void testUtils::testSimpleNotes(const std::vector<bw_music::Pitch>& expectedPitc
     EXPECT_EQ(track.getDuration(), expectedNoteDuration * expectedPitches.size());
 }
 
-void testUtils::addNotes(const std::vector<NoteInfo>& notes, bw_music::Track& track) {
+void testUtils::addNotes(const std::vector<NoteInfo>& notes, bw_music::TrackBuilder& track) {
     for (auto note : notes) {
         track.addEvent(bw_music::NoteOnEvent{ note.m_noteOnTime, note.m_pitch });
         track.addEvent(bw_music::NoteOffEvent{ note.m_noteOffTime, note.m_pitch });
@@ -53,6 +54,8 @@ void testUtils::addNotes(const std::vector<NoteInfo>& notes, bw_music::Track& tr
 void testUtils::testNotes(const std::vector<NoteInfo>& expectedNotes, const bw_music::Track& track) {
     auto noteIterator = track.begin();
     const auto endIterator = track.end();
+
+    bw_music::ModelDuration durationSoFar;
 
     for (unsigned int i = 0; i < expectedNotes.size(); ++i) {
         auto note = expectedNotes[i];
@@ -69,13 +72,18 @@ void testUtils::testNotes(const std::vector<NoteInfo>& expectedNotes, const bw_m
         ASSERT_NE(noteOff, nullptr);
         EXPECT_EQ(noteOff->getTimeSinceLastEvent(), note.m_noteOffTime);
         EXPECT_EQ(noteOff->m_pitch, note.m_pitch);
-        EXPECT_EQ(noteOff->m_velocity, 64);
+        durationSoFar += note.m_noteOnTime + note.m_noteOffTime;
+        if (durationSoFar != track.getDuration()) {
+            // The last events in the track may be artificial noteOff events to close off truncated groups.
+            // In this case, we cannot assume the velocity will be correct.
+            EXPECT_EQ(noteOff->m_velocity, 64);
+        }
         ++noteIterator;
     }
     EXPECT_EQ(noteIterator, endIterator);
 }
 
-void testUtils::addChords(const std::vector<ChordInfo>& chords, bw_music::Track& track) {
+void testUtils::addChords(const std::vector<ChordInfo>& chords, bw_music::TrackBuilder& track) {
     for (auto expectedChord : chords) {
         track.addEvent(bw_music::ChordOnEvent(expectedChord.m_chordOnTime, expectedChord.m_chord));
         track.addEvent(bw_music::ChordOffEvent(expectedChord.m_chordOffTime));

@@ -6,12 +6,13 @@
 #include <MusicLib/Processors/quantizeProcessor.hpp>
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/libRegistration.hpp>
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 
 #include <Tests/BabelWiresLib/TestUtils/testEnvironment.hpp>
 #include <Tests/TestUtils/seqTestUtils.hpp>
 
 TEST(QuantizeProcessorTest, funcSimple) {
-    bw_music::Track trackIn;
+    bw_music::TrackBuilder trackBuilderIn;
 
     testUtils::addNotes(
         {
@@ -20,8 +21,9 @@ TEST(QuantizeProcessorTest, funcSimple) {
             {64, babelwires::Rational(1, 17), babelwires::Rational(18, 17)},
             {65, babelwires::Rational(1, 17), babelwires::Rational(22, 17)},
         },
-        trackIn);
+        trackBuilderIn);
 
+    bw_music::Track trackIn = trackBuilderIn.finishAndGetTrack();
     {
         auto trackOut = bw_music::quantize(trackIn, babelwires::Rational(1, 2));
         testUtils::testNotes({{60, 0, babelwires::Rational(1, 1)},
@@ -52,7 +54,7 @@ TEST(QuantizeProcessorTest, funcSimple) {
 }
 
 TEST(QuantizeProcessorTest, funcCollapsedGroup) {
-    bw_music::Track trackIn;
+    bw_music::TrackBuilder trackIn;
 
     testUtils::addNotes(
         {
@@ -64,7 +66,7 @@ TEST(QuantizeProcessorTest, funcCollapsedGroup) {
         },
         trackIn);
 
-    auto trackOut = bw_music::quantize(trackIn, babelwires::Rational(1, 8));
+    auto trackOut = bw_music::quantize(trackIn.finishAndGetTrack(), babelwires::Rational(1, 8));
     testUtils::testNotes({{60, 0, 1}, {64, 0, 1}, {65, 0, 1}}, trackOut);
 }
 
@@ -101,7 +103,7 @@ TEST(QuantizeProcessorTest, processor) {
 
     {
         in.getBeat().set(babelwires::Rational(1, 8));
-        bw_music::Track track;
+        bw_music::TrackBuilder track;
         testUtils::addNotes(
             {
                 {60, babelwires::Rational(1, 17), babelwires::Rational(16, 17)},
@@ -110,7 +112,7 @@ TEST(QuantizeProcessorTest, processor) {
                 {65, babelwires::Rational(1, 17), babelwires::Rational(22, 17)},
             },
             track);
-        inArray.getEntry(0).set(std::move(track));
+        inArray.getEntry(0).set(track.finishAndGetTrack());
     }
     processor.process(testEnvironment.m_log);
 
@@ -132,7 +134,7 @@ TEST(QuantizeProcessorTest, processor) {
 
     processor.getInput().clearChanges();
     {
-        bw_music::Track track;
+        bw_music::TrackBuilder track;
         testUtils::addNotes(
             {
                 {60, babelwires::Rational(1, 17), babelwires::Rational(16, 17)},
@@ -141,7 +143,7 @@ TEST(QuantizeProcessorTest, processor) {
                 {65, babelwires::Rational(1, 17), babelwires::Rational(22, 17)},
             },
             track);
-        inArray.getEntry(0).set(std::move(track));
+        inArray.getEntry(0).set(track.finishAndGetTrack());
     }
     processor.process(testEnvironment.m_log);
 

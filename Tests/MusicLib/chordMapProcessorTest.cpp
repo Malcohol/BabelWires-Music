@@ -8,6 +8,7 @@
 #include <MusicLib/chord.hpp>
 #include <MusicLib/libRegistration.hpp>
 #include <MusicLib/Functions/mergeFunction.hpp>
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/Enum/enumValue.hpp>
@@ -131,7 +132,7 @@ namespace {
     }
 
     bw_music::Track getTestInputTrack() {
-        bw_music::Track track;
+        bw_music::TrackBuilder track;
 
         testUtils::addChords({{bw_music::PitchClass::Value::C, bw_music::ChordType::ChordType::Value::M,
                                babelwires::Rational(1, 2), babelwires::Rational(1, 2)},
@@ -145,9 +146,7 @@ namespace {
                               {bw_music::PitchClass::Value::Csh, bw_music::ChordType::ChordType::Value::M7s11}},
                              track);
 
-        track.setDuration(babelwires::Rational(11, 2));
-
-        return track;
+        return track.finishAndGetTrack(bw_music::ModelDuration(11, 2));
     }
 
     void testOutputTrack(const bw_music::Track& outputTrack, SourceMode sourceMode, TargetMode targetMode,
@@ -301,7 +300,7 @@ TEST(ChordMapProcessorTest, chordsAndNotes) {
 
     bw_music::Track chordTrack = getTestInputTrack();
 
-    bw_music::Track noteTrack;
+    bw_music::TrackBuilder noteTrackBuilder;
 
     testUtils::addNotes(
     {
@@ -313,7 +312,8 @@ TEST(ChordMapProcessorTest, chordsAndNotes) {
         {69, babelwires::Rational(1, 4), babelwires::Rational(1, 4)},
         {71, babelwires::Rational(0, 4), babelwires::Rational(3, 4)},
         {72, babelwires::Rational(1, 4), babelwires::Rational(1, 4)},
-    }, noteTrack);
+    }, noteTrackBuilder);
+    bw_music::Track noteTrack = noteTrackBuilder.finishAndGetTrack();
 
     bw_music::Track preCombinedInput = bw_music::mergeTracks({&noteTrack, &chordTrack});
     bw_music::Track preCombinedOutput = bw_music::mapChordsFunction(testEnvironment.m_typeSystem, preCombinedInput, chordMap);

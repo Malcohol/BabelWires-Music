@@ -7,12 +7,17 @@
  **/
 #include <MusicLib/Types/Track/TrackEvents/chordEvents.hpp>
 
+
 #include <Common/Hash/hash.hpp>
 
 #include <sstream>
 #include <typeinfo>
 
 bw_music::TrackEvent::GroupingInfo::Category bw_music::ChordEvent::s_chordEventCategory = "Chords";
+
+void bw_music::ChordEvent::createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const {
+    dest = ChordOffEvent(timeSinceLastEvent);
+}
 
 bool bw_music::ChordOnEvent::operator==(const TrackEvent& other) const {
     if (typeid(other) != typeid(*this)) {
@@ -51,5 +56,5 @@ std::size_t bw_music::ChordOffEvent::getHash() const {
 }
 
 bw_music::TrackEvent::GroupingInfo bw_music::ChordOffEvent::getGroupingInfo() const {
-    return {s_chordEventCategory, 0, GroupingInfo::Grouping::StartOfGroup};
+    return {s_chordEventCategory, 0, GroupingInfo::Grouping::EndOfGroup};
 }

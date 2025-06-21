@@ -10,7 +10,7 @@
 #include <MusicLib/Percussion/percussionTypeTag.hpp>
 #include <MusicLib/Percussion/builtInPercussionInstruments.hpp>
 #include <MusicLib/Types/Track/TrackEvents/percussionEvents.hpp>
-#include <MusicLib/Types/Track/TrackEvents/trackEventHolder.hpp>
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 
 #include <BabelWiresLib/ValueTree/modelExceptions.hpp>
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
@@ -63,7 +63,9 @@ bw_music::Track bw_music::mapPercussionFunction(const babelwires::TypeSystem& ty
     babelwires::UnorderedMapApplicator<babelwires::ShortId, babelwires::ShortId> mapApplicator{
         percussionMapValue, enumToIdentifierAdapter, enumToIdentifierAdapter};
 
-    Track trackOut;
+    // The map could make two overlapping notes use the same instrument, which violates the track invariants.
+    // Using the TrackBuilder ensures this is fixed.
+    TrackBuilder trackOut;
     // If an event is dropped, then we need to carry its time forward for the next event.
     ModelDuration timeFromDroppedEvent;
 
@@ -90,7 +92,5 @@ bw_music::Track bw_music::mapPercussionFunction(const babelwires::TypeSystem& ty
             trackOut.addEvent(*it);
         }
     }
-    trackOut.setDuration(trackIn.getDuration());
-
-    return trackOut;
+    return trackOut.finishAndGetTrack(trackIn.getDuration());
 }

@@ -7,17 +7,17 @@
 #include <MusicLib/Processors/splitAtPitchProcessor.hpp>
 #include <MusicLib/Types/Track/TrackEvents/chordEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
-#include <MusicLib/Types/Track/TrackEvents/trackEventHolder.hpp>
 #include <MusicLib/libRegistration.hpp>
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 
 #include <Tests/BabelWiresLib/TestUtils/testEnvironment.hpp>
 #include <Tests/TestUtils/seqTestUtils.hpp>
 
 TEST(SplitAtPitchProcessorTest, monophonicSplit) {
-    bw_music::Track track;
+    bw_music::TrackBuilder track;
     testUtils::addSimpleNotes({60, 62, 64, 65, 67, 69, 71, 72}, track);
 
-    bw_music::SplitAtPitchResult result = bw_music::splitAtPitch(67, track);
+    bw_music::SplitAtPitchResult result = bw_music::splitAtPitch(67, track.finishAndGetTrack());
 
     const std::vector<testUtils::NoteInfo> expectedNotesAbove{
         {67, 1, babelwires::Rational(1, 4)},
@@ -41,29 +41,31 @@ TEST(SplitAtPitchProcessorTest, monophonicSplit) {
 }
 
 TEST(SplitAtPitchProcessorTest, aboveAndBelowSplit) {
-    bw_music::Track track;
-    track.addEvent(bw_music::NoteOnEvent{0, 72});
-    track.addEvent(bw_music::NoteOnEvent{0, 48});
-    track.addEvent(bw_music::ChordOnEvent{
+    bw_music::TrackBuilder trackBuilder;
+    trackBuilder.addEvent(bw_music::NoteOnEvent{0, 72});
+    trackBuilder.addEvent(bw_music::NoteOnEvent{0, 48});
+    trackBuilder.addEvent(bw_music::ChordOnEvent{
         0, {bw_music::PitchClass::PitchClass::Value::C, bw_music::ChordType::ChordType::Value::M}});
-    track.addEvent(bw_music::NoteOffEvent{babelwires::Rational(1, 4), 72});
-    track.addEvent(bw_music::NoteOffEvent{0, 48});
-    track.addEvent(bw_music::NoteOnEvent{0, 74});
-    track.addEvent(bw_music::NoteOnEvent{0, 50});
-    track.addEvent(bw_music::NoteOffEvent{babelwires::Rational(1, 4), 74});
-    track.addEvent(bw_music::NoteOffEvent{0, 50});
-    track.addEvent(bw_music::ChordOffEvent{0});
-    track.addEvent(bw_music::NoteOnEvent{0, 76});
-    track.addEvent(bw_music::NoteOnEvent{0, 52});
-    track.addEvent(bw_music::ChordOnEvent{
+    trackBuilder.addEvent(bw_music::NoteOffEvent{babelwires::Rational(1, 4), 72});
+    trackBuilder.addEvent(bw_music::NoteOffEvent{0, 48});
+    trackBuilder.addEvent(bw_music::NoteOnEvent{0, 74});
+    trackBuilder.addEvent(bw_music::NoteOnEvent{0, 50});
+    trackBuilder.addEvent(bw_music::NoteOffEvent{babelwires::Rational(1, 4), 74});
+    trackBuilder.addEvent(bw_music::NoteOffEvent{0, 50});
+    trackBuilder.addEvent(bw_music::ChordOffEvent{0});
+    trackBuilder.addEvent(bw_music::NoteOnEvent{0, 76});
+    trackBuilder.addEvent(bw_music::NoteOnEvent{0, 52});
+    trackBuilder.addEvent(bw_music::ChordOnEvent{
         0, {bw_music::PitchClass::PitchClass::Value::D, bw_music::ChordType::ChordType::Value::m}});
-    track.addEvent(bw_music::NoteOffEvent{babelwires::Rational(1, 4), 76});
-    track.addEvent(bw_music::NoteOffEvent{0, 52});
-    track.addEvent(bw_music::NoteOnEvent{0, 77});
-    track.addEvent(bw_music::NoteOnEvent{0, 53});
-    track.addEvent(bw_music::NoteOffEvent{babelwires::Rational(1, 4), 77});
-    track.addEvent(bw_music::NoteOffEvent{0, 53});
-    track.addEvent(bw_music::ChordOffEvent{0});
+    trackBuilder.addEvent(bw_music::NoteOffEvent{babelwires::Rational(1, 4), 76});
+    trackBuilder.addEvent(bw_music::NoteOffEvent{0, 52});
+    trackBuilder.addEvent(bw_music::NoteOnEvent{0, 77});
+    trackBuilder.addEvent(bw_music::NoteOnEvent{0, 53});
+    trackBuilder.addEvent(bw_music::NoteOffEvent{babelwires::Rational(1, 4), 77});
+    trackBuilder.addEvent(bw_music::NoteOffEvent{0, 53});
+    trackBuilder.addEvent(bw_music::ChordOffEvent{0});
+
+    bw_music::Track track = trackBuilder.finishAndGetTrack();
     ASSERT_EQ(track.getDuration(), 1);
 
     bw_music::SplitAtPitchResult result = bw_music::splitAtPitch(60, track);
@@ -92,9 +94,9 @@ TEST(SplitAtPitchProcessorTest, processor) {
 
     input.getPitch().set(babelwires::EnumValue(input.getPitch().getInstanceType().getIdentifierFromIndex(67)));
     {
-        bw_music::Track track;
+        bw_music::TrackBuilder track;
         testUtils::addSimpleNotes({60, 62, 64, 65, 67, 69, 71, 72}, track);
-        input.getInput().set(std::move(track));
+        input.getInput().set(track.finishAndGetTrack());
     }
     processor.process(testEnvironment.m_log);
 

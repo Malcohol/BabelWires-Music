@@ -5,18 +5,20 @@
 #include <MusicLib/Functions/mergeFunction.hpp>
 #include <MusicLib/Processors/mergeProcessor.hpp>
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
-#include <MusicLib/Types/Track/TrackEvents/trackEventHolder.hpp>
 #include <MusicLib/libRegistration.hpp>
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 
 #include <Tests/BabelWiresLib/TestUtils/testEnvironment.hpp>
 #include <Tests/TestUtils/seqTestUtils.hpp>
 
 TEST(MergeProcessorTest, simpleFunction) {
-    bw_music::Track trackA;
-    testUtils::addSimpleNotes({72, 74, 76, 77}, trackA);
+    bw_music::TrackBuilder trackBuilderA;
+    testUtils::addSimpleNotes({72, 74, 76, 77}, trackBuilderA);
+    bw_music::Track trackA = trackBuilderA.finishAndGetTrack();
 
-    bw_music::Track trackB;
-    testUtils::addSimpleNotes({48, 50, 52, 53, 55, 57}, trackB);
+    bw_music::TrackBuilder trackBuilderB;
+    testUtils::addSimpleNotes({48, 50, 52, 53, 55, 57}, trackBuilderB);
+    bw_music::Track trackB = trackBuilderB.finishAndGetTrack();
 
     bw_music::Track track = bw_music::mergeTracks({&trackA, &trackB});
     ASSERT_EQ(track.getDuration(), babelwires::Rational(3, 2));
@@ -58,6 +60,52 @@ TEST(MergeProcessorTest, simpleFunction) {
     EXPECT_EQ(it, end);
 }
 
+TEST(MergeProcessorTest, functionOverlaps) {
+    bw_music::TrackBuilder trackBuilderA;
+    testUtils::addSimpleNotes({72, 74, 76, 77}, trackBuilderA);
+    bw_music::Track trackA = trackBuilderA.finishAndGetTrack();
+
+    bw_music::TrackBuilder trackBuilderB;
+    testUtils::addSimpleNotes({71, 72, 77, 76}, trackBuilderB);
+    bw_music::Track trackB = trackBuilderB.finishAndGetTrack();
+
+    bw_music::Track track = bw_music::mergeTracks({&trackA, &trackB});
+    ASSERT_EQ(track.getDuration(), babelwires::Rational(1, 1));
+    ASSERT_EQ(track.getNumEvents(), 16);
+
+    std::vector<bw_music::TrackEventHolder> expectedEvents = {bw_music::NoteOnEvent{0, 72},
+                                                              bw_music::NoteOnEvent{0, 71},
+                                                              bw_music::NoteOffEvent{babelwires::Rational(1, 4), 72},
+                                                              bw_music::NoteOnEvent{0, 74},
+                                                              bw_music::NoteOffEvent{0, 71},
+                                                              bw_music::NoteOnEvent{0, 72},
+                                                              bw_music::NoteOffEvent{babelwires::Rational(1, 4), 74},
+                                                              bw_music::NoteOnEvent{0, 76},
+                                                              bw_music::NoteOffEvent{0, 72},
+                                                              bw_music::NoteOnEvent{0, 77},
+                                                              bw_music::NoteOffEvent{babelwires::Rational(1, 4), 76},
+                                                              bw_music::NoteOffEvent{0, 77}, // This event got swapped with the next one.
+                                                              bw_music::NoteOnEvent{0, 77},
+                                                              bw_music::NoteOnEvent{0, 76},
+                                                              bw_music::NoteOffEvent{babelwires::Rational(1, 4), 77},
+                                                              bw_music::NoteOffEvent{0, 76}};
+
+    auto it = track.begin();
+    const auto end = track.end();
+
+    for (auto e : expectedEvents) {
+        ASSERT_NE(it, end);
+        EXPECT_EQ(it->getTimeSinceLastEvent(), e->getTimeSinceLastEvent());
+        EXPECT_NE(it->as<bw_music::NoteEvent>(), nullptr);
+        EXPECT_EQ((it->as<bw_music::NoteOnEvent>() == nullptr), (e->as<bw_music::NoteOnEvent>() == nullptr));
+        EXPECT_EQ((it->as<bw_music::NoteOffEvent>() == nullptr), (e->as<bw_music::NoteOffEvent>() == nullptr));
+        EXPECT_EQ(it->as<bw_music::NoteEvent>()->m_pitch, e->as<bw_music::NoteEvent>()->m_pitch);
+        EXPECT_EQ(it->as<bw_music::NoteEvent>()->m_velocity, e->as<bw_music::NoteEvent>()->m_velocity);
+        ++it;
+    }
+    EXPECT_EQ(it, end);
+}
+
 TEST(MergeProcessorTest, processor) {
     testUtils::TestEnvironment testEnvironment;
     bw_music::registerLib(testEnvironment.m_projectContext);
@@ -76,9 +124,9 @@ TEST(MergeProcessorTest, processor) {
     EXPECT_EQ(input.getInput().getEntry(1).get().getDuration(), 0);
 
     {
-        bw_music::Track track;
+        bw_music::TrackBuilder track;
         testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{72, 74}, track);
-        input.getInput().getEntry(0).set(std::move(track));
+        input.getInput().getEntry(0).set(track.finishAndGetTrack());
     }
 
     processor.process(testEnvironment.m_log);
@@ -89,9 +137,9 @@ TEST(MergeProcessorTest, processor) {
 
     processor.getInput().clearChanges();
     {
-        bw_music::Track track;
+        bw_music::TrackBuilder track;
         testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{48, 50}, track);
-        input.getInput().getEntry(1).set(std::move(track));
+        input.getInput().getEntry(1).set(track.finishAndGetTrack());
     }
     processor.process(testEnvironment.m_log);
 
@@ -129,9 +177,9 @@ TEST(MergeProcessorTest, processor) {
         input.getInput().setSize(3);
         input.getInput().getEntry(2).set(input.getInput().getEntry(1)->getValue());
 
-        bw_music::Track track;
+        bw_music::TrackBuilder track;
         testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62}, track);
-        input.getInput().getEntry(1).set(std::move(track));
+        input.getInput().getEntry(1).set(track.finishAndGetTrack());
     }
     processor.process(testEnvironment.m_log);
 

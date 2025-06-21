@@ -9,7 +9,7 @@
 
 #include <Common/Hash/hash.hpp>
 
-const char* bw_music::TrackEvent::GroupingInfo::s_genericCategory = "Generic";
+const char* bw_music::TrackEvent::EventGroup::s_genericCategory = "Generic";
 
 bool bw_music::TrackEvent::operator!=(const TrackEvent& other) const {
     return !(*this == other);

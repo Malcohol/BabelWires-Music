@@ -7,37 +7,38 @@
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/Types/Track/trackInstance.hpp>
 #include <MusicLib/libRegistration.hpp>
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 
 #include <Tests/BabelWiresLib/TestUtils/testEnvironment.hpp>
 #include <Tests/TestUtils/seqTestUtils.hpp>
 
 TEST(RepeatProcessorTest, funcSimpleZero) {
-    bw_music::Track trackIn;
+    bw_music::TrackBuilder trackIn;
 
     testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65}, trackIn);
 
-    auto trackOut = bw_music::repeatTrack(trackIn, 0);
+    auto trackOut = bw_music::repeatTrack(trackIn.finishAndGetTrack(), 0);
 
     EXPECT_EQ(trackOut.getNumEvents(), 0);
     EXPECT_EQ(trackOut.getDuration(), 0);
 }
 
 TEST(RepeatProcessorTest, funcSimpleOnce) {
-    bw_music::Track trackIn;
+    bw_music::TrackBuilder trackIn;
 
     testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65}, trackIn);
 
-    auto trackOut = bw_music::repeatTrack(trackIn, 1);
+    auto trackOut = bw_music::repeatTrack(trackIn.finishAndGetTrack(), 1);
 
     testUtils::testSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65}, trackOut);
 }
 
 TEST(RepeatProcessorTest, funcSimpleTwice) {
-    bw_music::Track trackIn;
+    bw_music::TrackBuilder trackIn;
 
     testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65}, trackIn);
 
-    auto trackOut = bw_music::repeatTrack(trackIn, 2);
+    auto trackOut = bw_music::repeatTrack(trackIn.finishAndGetTrack(), 2);
 
     testUtils::testSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65, 60, 62, 64, 65}, trackOut);
 }
@@ -74,9 +75,9 @@ TEST(RepeatProcessorTest, processor) {
     EXPECT_EQ(outArray.getEntry(0).get().getDuration(), 0);
 
     {
-        bw_music::Track track;
+        bw_music::TrackBuilder track;
         testUtils::addSimpleNotes({60, 62, 64, 65}, track);
-        inArray.getEntry(0).set(std::move(track));
+        inArray.getEntry(0).set(track.finishAndGetTrack());
     }
     processor.process(testEnvironment.m_log);
 
@@ -93,9 +94,9 @@ TEST(RepeatProcessorTest, processor) {
     {
         inArray.setSize(2);
         {
-            bw_music::Track track;
+            bw_music::TrackBuilder track;
             testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{48, 50, 52, 53}, track);
-            inArray.getEntry(1).set(std::move(track));
+            inArray.getEntry(1).set(track.finishAndGetTrack());
         }
     }
     processor.process(testEnvironment.m_log);
