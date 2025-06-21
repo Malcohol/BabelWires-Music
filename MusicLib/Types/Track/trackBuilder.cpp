@@ -168,6 +168,10 @@ void bw_music::TrackBuilder::endActiveGroups() {
                 const auto activeGroupIt = m_activeGroups.find(groupInfo);
                 if (activeGroupIt != m_activeGroups.end()) {
                     it->createEndEvent(endEventsToAdd.emplace_back(), initialTime);
+                    assert(endEventsToAdd.back().hasEvent() && "A start event failed to create a corresponding end event");
+                    assert(endEventsToAdd.back()->getGroupingInfo().m_grouping == TrackEvent::GroupingInfo::Grouping::EndOfGroup && "A start event created an event that was not an end event");
+                    assert(endEventsToAdd.back()->getGroupingInfo().m_category == groupInfo.m_category && "A start event created an end event of the wrong category");
+                    assert(endEventsToAdd.back()->getGroupingInfo().m_groupValue == groupInfo.m_groupValue && "A start event created an end event of the wrong value");
                     initialTime = 0;
                     m_activeGroups.erase(activeGroupIt);
                     if (m_activeGroups.empty()) {
@@ -178,7 +182,6 @@ void bw_music::TrackBuilder::endActiveGroups() {
             ++it;
         }
         assert(m_activeGroups.empty());
-        // TODO Need to use event duration here.
         for (auto& endEvent : endEventsToAdd) {
             m_track.addEvent(endEvent.release());
         }
