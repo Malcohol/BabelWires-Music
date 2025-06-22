@@ -25,6 +25,7 @@
     X(aug, "aug", "430cf87e-5e5f-4075-b4fa-bee132085f8b")                                                              \
     X(m, "min", "59870eb3-9bb9-459e-8f81-601dd2c4d1f4")                                                                \
     X(m6, "min6", "1f1d80ea-f34a-4bc6-a3ec-0984088a502a")                                                              \
+    X(m6_9, "min6(9)", "1647d18d-db2a-4672-8e19-168ba1f53944")                                                          \
     X(m7, "min7", "d7d0154d-799f-4f96-afaf-23cda7de5b20")                                                              \
     X(m7b5, "min7b5", "7fa7e272-25f9-4cc7-afdd-0c4f2dfed16b")                                                          \
     X(m9, "min(9)", "7c12b85b-e490-420f-97de-dad20d31082c")                                                            \
