@@ -52,6 +52,8 @@ namespace {
     const auto recognizedIntervals = std::to_array<IntervalSetToChordType>({
         // clang-format off
         // This must be sorted (the alphabetic sort of a typical editor will work to keep this sorted).
+        //    CBAAGGFFEDDCC
+        //      # # #  # #
         {0b0000000000000111, s_cancelChord},
         {0b0000000000001101, bw_music::ChordType::Value::m9},
         {0b0000000000010101, bw_music::ChordType::Value::M9},
