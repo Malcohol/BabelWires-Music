@@ -50,7 +50,7 @@
     X(_1p8, "1+8", "63f443e4-93d5-4609-b91a-5a6491ac19be")                                                             \
     X(_1p5, "1+5", "a513bc99-e978-4699-bc7c-7e30d71f33d0")                                                             \
     X(sus4, "sus4", "ce218a4b-4600-47de-8a77-45a490457ff4")                                                            \
-    /* TODO: Is this the same as sus2 or is a separate chord type required ? */                                        \                                           
+    /* TODO: Is this the same as sus2 or is a separate chord type required ? */                                        \
     X(_1p2p5, "1+2+5", "28875d31-45c8-488f-9cc3-9172c0ad7929")                                                         \
     /* In the XF specification, "Cancel Chord" (CC) is in this position, but that's not an actual chord. */            \
     /* The following are not in the XF spec v2.01 but available on more recent keyboards. */                           \
