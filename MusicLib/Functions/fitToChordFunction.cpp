@@ -116,20 +116,37 @@ namespace {
     }
 
     struct PitchMap {
-        PitchMap(bw_music::ChordType::Value chordType) : m_pitchIndexMap(getPitchIndexMap(chordType)) {}
+        /// This determines which chords get transposed upwards and which chords get transposed down.
+        /// Value 6 means that C#..F get transposed upwards, while F#..B get transposed downwards.
+        constexpr static int s_topChordRoot = 6;
+
+        PitchMap(const bw_music::Chord& chord) : m_pitchIndexMap(getPitchIndexMap(chord.m_chordType)) {
+            // Calculate the pitch offset based on the root of the chord.
+            const int rootPitchIndex = static_cast<unsigned int>(chord.m_root);
+            m_rootOffset = (rootPitchIndex > s_topChordRoot) ? (rootPitchIndex - 12)
+                                                                    : rootPitchIndex;
+        }
 
         bw_music::Pitch operator()(bw_music::Pitch pitch) const {
             // Map the pitch to the corresponding index in the chord.
-            const auto [octave, pitchIndex] = std::div(pitch, 12);
-            const unsigned int mappedIndex = m_pitchIndexMap[pitchIndex];
+            const auto [octave, pitchIndex] = std::div(static_cast<int>(pitch), 12);
+            const int mappedIndex = m_pitchIndexMap[pitchIndex];
             assert(mappedIndex < 12 && "Mapped index out of range");
-            return static_cast<bw_music::Pitch>((octave * 12) + mappedIndex);
+            int targetPitch = (octave * 12) + mappedIndex + m_rootOffset;
+            if (targetPitch < 0) {
+                targetPitch += 12;
+            } else if (targetPitch >= 127) {
+                targetPitch -= 12;
+            }
+
+            return static_cast<bw_music::Pitch>(targetPitch);
         }
 
         PitchIndexMap m_pitchIndexMap;
+        int m_rootOffset;
     };
 
-    bw_music::Track fitToChordFunctionInternal(const PitchMap& pitchMap, const bw_music::Track& sourceTrack, const bw_music::ChordType::Value& chordType) {
+    bw_music::Track fitToChordFunctionInternal(const PitchMap& pitchMap, const bw_music::Track& sourceTrack, const bw_music::Chord& chord) {
         bw_music::TrackBuilder resultTrack;
 
         // Iterate through the source track and adjust each note to fit the chord.
@@ -150,21 +167,21 @@ namespace {
 
 } // namespace
 
-bw_music::Track bw_music::fitToChordFunction(const Track& sourceTrack, const ChordType::Value& chordType) {
-    const PitchMap pitchMap(chordType);
+bw_music::Track bw_music::fitToChordFunction(const Track& sourceTrack, const Chord& chord) {
+    const PitchMap pitchMap(chord);
 
-    return fitToChordFunctionInternal(pitchMap, sourceTrack, chordType);
+    return fitToChordFunctionInternal(pitchMap, sourceTrack, chord);
 }
 
 // Produce a value the matches the input value, but adjusts any notes in any tracks to the given chord type.
 babelwires::ValueHolder bw_music::fitToChordFunction(const babelwires::TypeSystem& typeSystem, const babelwires::Type& type, const babelwires::ValueHolder& sourceValue,
-                                        const bw_music::ChordType::Value& chordType) {
+                                        const bw_music::Chord& chord) {
     babelwires::ValueHolder result = sourceValue;
     
     babelwires::applyToSubvaluesOfType<TrackType>(typeSystem, type, result,
-        [&chordType](const babelwires::Type& t, babelwires::Value& v) {
+        [&chord](const babelwires::Type& t, babelwires::Value& v) {
             auto& track = v.is<bw_music::Track>();
-            track = bw_music::fitToChordFunction(track, chordType);
+            track = bw_music::fitToChordFunction(track, chord);
         });
 
     return result;
