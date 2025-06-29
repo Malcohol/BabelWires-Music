@@ -39,6 +39,7 @@ namespace bw_music {
         DECLARE_INSTANCE_END()
     };
 
+    // MAYBEDO: A better name might be "BuildAccompanimentProcessor".
     class FitToChordsProcessor : public babelwires::Processor {
       public:
         BW_PROCESSOR_WITH_DEFAULT_FACTORY("FitToChords", "Fit to Chords", "d604f85c-110d-4c11-aa99-3684cf12ab58");
