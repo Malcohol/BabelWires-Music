@@ -7,17 +7,16 @@
  **/
 #include <MusicLib/Functions/fitToChordFunction.hpp>
 
+#include <BabelWiresLib/Utilities/applyToSubvalues.hpp>
+
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/Types/Track/trackBuilder.hpp>
+#include <MusicLib/Types/Track/trackType.hpp>
 #include <MusicLib/chord.hpp>
 
 #include <map>
 
 namespace {
-    template <typename T> int sgn(T val) {
-        return (T(0) < val) - (val < T(0));
-    }
-
     using DegreeAdjustment = std::map<unsigned int, int>;
     using ChordDegreeAdjustments = std::map<bw_music::ChordType::Value, DegreeAdjustment>;
 
@@ -82,8 +81,8 @@ namespace {
         assert(it != chordDegreeAdjustments.end() && "Chord type not found in adjustments map");
         DegreeAdjustment adjustments = it->second;
 
-        // Apply defaults
-        adjustments[1] = 0; // Degree 0 (root) is always present.
+        // Apply defaults (could provide a policy to this behaviour configurable).
+        adjustments[1] = 0; // Degree 1 (root) is always present.
         adjustments.insert_or_assign(5, 0); // Degree 5 is assumed unless specified.
 
         for (const auto& [degree, adjustment] : adjustments) {
@@ -121,34 +120,53 @@ namespace {
 
         bw_music::Pitch operator()(bw_music::Pitch pitch) const {
             // Map the pitch to the corresponding index in the chord.
-            auto [octave, pitchIndex] = std::div(pitch, 12);
+            const auto [octave, pitchIndex] = std::div(pitch, 12);
             const unsigned int mappedIndex = m_pitchIndexMap[pitchIndex];
             assert(mappedIndex < 12 && "Mapped index out of range");
             return static_cast<bw_music::Pitch>((octave * 12) + mappedIndex);
         }
 
         PitchIndexMap m_pitchIndexMap;
-
     };
+
+    bw_music::Track fitToChordFunctionInternal(const PitchMap& pitchMap, const bw_music::Track& sourceTrack, const bw_music::ChordType::Value& chordType) {
+        bw_music::TrackBuilder resultTrack;
+
+        // Iterate through the source track and adjust each note to fit the chord.
+        for (const auto& event : sourceTrack) {
+            if (const auto note = event.as<bw_music::NoteEvent>()) {
+                bw_music::TrackEventHolder newNote = *note;
+                newNote->is<bw_music::NoteEvent>().setPitch(pitchMap(note->getPitch()));
+                resultTrack.addEvent(newNote.release());
+            } else {
+                // If the event is not a NoteEvent, just copy it to the result track.
+                resultTrack.addEvent(event);
+            }
+        }
+
+        return resultTrack.finishAndGetTrack(sourceTrack.getDuration());
+
+    }
 
 } // namespace
 
-bw_music::Track bw_music::fitToChordFunction(const Track& sourceTrack, const Chord& chord) {
-    TrackBuilder resultTrack;
+bw_music::Track bw_music::fitToChordFunction(const Track& sourceTrack, const ChordType::Value& chordType) {
+    const PitchMap pitchMap(chordType);
 
-    const PitchMap pitchMap(chord.m_chordType);
-
-    // Iterate through the source track and adjust each note to fit the chord.
-    for (const auto& event : sourceTrack) {
-        if (const auto note = event.as<NoteEvent>()) {
-            TrackEventHolder newNote = *note;
-            newNote->is<NoteEvent>().setPitch(pitchMap(note->getPitch()));
-            resultTrack.addEvent(newNote.release());
-        } else {
-            // If the event is not a NoteEvent, just copy it to the result track.
-            resultTrack.addEvent(event);
-        }
-    }
-
-    return resultTrack.finishAndGetTrack(sourceTrack.getDuration());
+    return fitToChordFunctionInternal(pitchMap, sourceTrack, chordType);
 }
+
+// Produce a value the matches the input value, but adjusts any notes in any tracks to the given chord type.
+babelwires::ValueHolder bw_music::fitToChordFunction(const babelwires::TypeSystem& typeSystem, const babelwires::Type& type, const babelwires::ValueHolder& sourceValue,
+                                        const bw_music::ChordType::Value& chordType) {
+    babelwires::ValueHolder result = sourceValue;
+    
+    babelwires::applyToSubvaluesOfType<TrackType>(typeSystem, type, result,
+        [&chordType](const babelwires::Type& t, babelwires::Value& v) {
+            auto& track = v.is<bw_music::Track>();
+            track = bw_music::fitToChordFunction(track, chordType);
+        });
+
+    return result;
+}
+
