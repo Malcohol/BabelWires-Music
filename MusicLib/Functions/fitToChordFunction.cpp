@@ -22,7 +22,7 @@ namespace {
 
     const ChordDegreeAdjustments chordDegreeAdjustments = {
         // How each chord requires and/or modifies certain degrees of the scale.
-        // Degree 1 and 5 don't need to be specified if default.
+        // Degree 1 is assumed and degree 5 don't need to be specified if default.
         // The adjustments are in semitones.
         {bw_music::ChordType::Value::M, {{3, 0}}},
         {bw_music::ChordType::Value::M6, {{3, 0}, {6, 0}}},
@@ -81,7 +81,7 @@ namespace {
         assert(it != chordDegreeAdjustments.end() && "Chord type not found in adjustments map");
         DegreeAdjustment adjustments = it->second;
 
-        // Apply defaults (could provide a policy to this behaviour configurable).
+        // Apply defaults (could provide a policy to make this behaviour configurable).
         adjustments[1] = 0; // Degree 1 (root) is always present.
         adjustments.insert_or_assign(5, 0); // Degree 5 is assumed unless specified.
 
