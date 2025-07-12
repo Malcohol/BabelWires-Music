@@ -8,7 +8,7 @@
 #pragma once
 
 #include <BabelWiresLib/Types/Enum/enumWithCppEnum.hpp>
-#include <BabelWiresLib/TypeSystem/primitiveType.hpp>
+#include <BabelWiresLib/TypeSystem/registeredType.hpp>
 
 #include <Common/Math/rational.hpp>
 #include <Common/types.hpp>
@@ -40,7 +40,7 @@ namespace bw_music {
     /// An Enum corresponding to the twelve pitch classes of the western scale.
     class PitchClass : public babelwires::EnumType {
       public:
-        PRIMITIVE_TYPE("PitchClass", "Pitch Class", "0c7fed24-9923-42d3-9ad1-5879bf1c8af6", 1);
+        REGISTERED_TYPE("PitchClass", "Pitch Class", "0c7fed24-9923-42d3-9ad1-5879bf1c8af6", 1);
         PitchClass();
 
         ENUM_DEFINE_CPP_ENUM(PITCH_CLASS_VALUES);
@@ -62,7 +62,7 @@ namespace bw_music {
     // TODO: The UI dropdown presents this in a counter-intuitive order.
     class PitchEnum : public babelwires::EnumType {
       public:
-        PRIMITIVE_TYPE("Pitch", "Pitch", "c3acb960-b472-488b-a6da-8672b584dfb1", 1);
+        REGISTERED_TYPE("Pitch", "Pitch", "c3acb960-b472-488b-a6da-8672b584dfb1", 1);
         PitchEnum();
     };
 

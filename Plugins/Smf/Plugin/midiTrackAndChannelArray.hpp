@@ -8,7 +8,7 @@
 #pragma once
 
 #include <BabelWiresLib/ValueTree/valueTreeNode.hpp>
-#include <BabelWiresLib/TypeSystem/primitiveType.hpp>
+#include <BabelWiresLib/TypeSystem/registeredType.hpp>
 #include <BabelWiresLib/Types/Array/arrayType.hpp>
 #include <Plugins/Smf/Plugin/midiTrackAndChannel.hpp>
 
@@ -17,7 +17,7 @@ namespace smf {
     // TODO: Just use a type constructor for this rather than a C++ class?
     class MidiTrackAndChannelArray : public babelwires::ArrayType {
       public:
-        PRIMITIVE_TYPE("MidiTrackArray", "MIDI Track and Channels", "b5462658-be68-4570-b0a5-d2dcb03f4d8e", 1);
+        REGISTERED_TYPE("MidiTrackArray", "MIDI Track and Channels", "b5462658-be68-4570-b0a5-d2dcb03f4d8e", 1);
         MidiTrackAndChannelArray();
     };
 } // namespace smf

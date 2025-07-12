@@ -7,7 +7,7 @@
  **/
 #pragma once
 
-#include <BabelWiresLib/TypeSystem/primitiveType.hpp>
+#include <BabelWiresLib/TypeSystem/registeredType.hpp>
 
 #include <MusicLib/Types/Track/track.hpp>
 
@@ -22,7 +22,7 @@ namespace bw_music {
     /// a "Cancel Chord" event is observed (three consecutive pitches).
     class FingeredChordsSustainPolicyEnum : public babelwires::EnumType {
       public:
-        PRIMITIVE_TYPE("FingeredPolicy", "Fingered Chords Sustain Policy", "64bb3fa9-1b77-4629-b691-431713fe2eee", 1);
+        REGISTERED_TYPE("FingeredPolicy", "Fingered Chords Sustain Policy", "64bb3fa9-1b77-4629-b691-431713fe2eee", 1);
         FingeredChordsSustainPolicyEnum();
 
         ENUM_DEFINE_CPP_ENUM(FINGERED_CHORDS_SUSTAIN_POLICY);
