@@ -28,9 +28,9 @@ bw_music::PercussionMapType::constructType(const babelwires::TypeSystem& typeSys
                                            const std::vector<babelwires::EditableValueHolder>& valueArguments) const {
 
     std::vector<babelwires::TypeRef> sourceSummands;
-    auto percussionTypes = typeSystem.getTaggedPrimitiveTypes(bw_music::percussionTypeTag());
+    auto percussionTypes = typeSystem.getTaggedRegisteredTypes(bw_music::percussionTypeTag());
     std::for_each(percussionTypes.begin(), percussionTypes.end(),
-                  [&sourceSummands](babelwires::PrimitiveTypeId typeId) { sourceSummands.emplace_back(typeId); });
+                  [&sourceSummands](babelwires::RegisteredTypeId typeId) { sourceSummands.emplace_back(typeId); });
 
     const auto it =
         std::find(sourceSummands.begin(), sourceSummands.end(), bw_music::BuiltInPercussionInstruments::getThisType());

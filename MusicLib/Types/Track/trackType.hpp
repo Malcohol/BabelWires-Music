@@ -34,6 +34,6 @@ namespace bw_music {
     /// The standard TrackType which creates empty Tracks with 0 duration.
     class DefaultTrackType : public TrackType {
       public:
-        PRIMITIVE_TYPE("track", "Track", "346ec14c-25dd-43fc-a942-d24722be6802", 1);
+        REGISTERED_TYPE("track", "Track", "346ec14c-25dd-43fc-a942-d24722be6802", 1);
     };
 } // namespace bw_music

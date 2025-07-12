@@ -10,7 +10,7 @@
 #include <MusicLib/musicTypes.hpp>
 
 #include <BabelWiresLib/Types/Enum/enumWithCppEnum.hpp>
-#include <BabelWiresLib/TypeSystem/primitiveType.hpp>
+#include <BabelWiresLib/TypeSystem/registeredType.hpp>
 
 #include <optional>
 
@@ -229,7 +229,7 @@ namespace bw_music {
     /// mapping to pitch values.
     class BuiltInPercussionInstruments : public babelwires::EnumType {
       public:
-        PRIMITIVE_TYPE("BuiltInPerc", "Built In Percussion", "c67f1a9e-653d-42b5-bf73-1fdc2f8a9b1a", 1);
+        REGISTERED_TYPE("BuiltInPerc", "Built In Percussion", "c67f1a9e-653d-42b5-bf73-1fdc2f8a9b1a", 1);
 
         BuiltInPercussionInstruments();
 

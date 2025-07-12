@@ -14,13 +14,13 @@
 #include <BabelWiresLib/Instance/instance.hpp>
 #include <BabelWiresLib/Processors/processorFactory.hpp>
 #include <BabelWiresLib/Processors/processor.hpp>
-#include <BabelWiresLib/TypeSystem/primitiveType.hpp>
+#include <BabelWiresLib/TypeSystem/registeredType.hpp>
 #include <BabelWiresLib/Types/Record/recordType.hpp>
 
 namespace bw_music {
     class SplitAtPitchProcessorInput : public babelwires::RecordType {
       public:
-        PRIMITIVE_TYPE("PitchSplitIn", "Split At Pitch Input", "f901af3a-c27b-449c-961a-8f43dee7d9a6", 1);
+        REGISTERED_TYPE("PitchSplitIn", "Split At Pitch Input", "f901af3a-c27b-449c-961a-8f43dee7d9a6", 1);
 
         SplitAtPitchProcessorInput();
 
@@ -32,7 +32,7 @@ namespace bw_music {
 
     class SplitAtPitchProcessorOutput : public babelwires::RecordType {
       public:
-        PRIMITIVE_TYPE("PitchSplitOut", "Split At Pitch Output", "50f790e1-0ef3-4f34-ad14-5a6762772e19", 1);
+        REGISTERED_TYPE("PitchSplitOut", "Split At Pitch Output", "50f790e1-0ef3-4f34-ad14-5a6762772e19", 1);
 
         SplitAtPitchProcessorOutput();
 

@@ -12,13 +12,13 @@
 #include <BabelWiresLib/Instance/instance.hpp>
 #include <BabelWiresLib/Processors/processorFactory.hpp>
 #include <BabelWiresLib/Processors/processor.hpp>
-#include <BabelWiresLib/TypeSystem/primitiveType.hpp>
+#include <BabelWiresLib/TypeSystem/registeredType.hpp>
 #include <BabelWiresLib/Types/Record/recordType.hpp>
 
 namespace bw_music {
     class FingeredChordsProcessorInput : public babelwires::RecordType {
       public:
-        PRIMITIVE_TYPE("FingrChordsIn", "Fingered Chords Input", "c9f26551-f557-4b27-ba0c-385298a2e51e", 1);
+        REGISTERED_TYPE("FingrChordsIn", "Fingered Chords Input", "c9f26551-f557-4b27-ba0c-385298a2e51e", 1);
 
         FingeredChordsProcessorInput();
 
@@ -30,7 +30,7 @@ namespace bw_music {
 
     class FingeredChordsProcessorOutput : public babelwires::RecordType {
       public:
-        PRIMITIVE_TYPE("FingrChordsOut", "Fingered Chords Output", "f53cb215-1f8e-491b-8baf-868a5a5d0173", 1);
+        REGISTERED_TYPE("FingrChordsOut", "Fingered Chords Output", "f53cb215-1f8e-491b-8baf-868a5a5d0173", 1);
 
         FingeredChordsProcessorOutput();
 

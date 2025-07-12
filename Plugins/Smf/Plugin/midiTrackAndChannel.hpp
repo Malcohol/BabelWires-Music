@@ -11,7 +11,7 @@
 #include <Plugins/Smf/Plugin/smfCommon.hpp>
 
 #include <BabelWiresLib/Instance/instance.hpp>
-#include <BabelWiresLib/TypeSystem/primitiveType.hpp>
+#include <BabelWiresLib/TypeSystem/registeredType.hpp>
 #include <BabelWiresLib/Types/Record/recordType.hpp>
 
 #include <MusicLib/Types/Track/trackInstance.hpp>
@@ -36,7 +36,7 @@ namespace smf {
     /// the smaller became the larger.
     class MidiTrackAndChannel : public babelwires::RecordType {
       public:
-        PRIMITIVE_TYPE("TrackChannel", "Track and Channel", "5e9b395c-ec13-4bdb-9b2b-b060ba7fb707", 1);
+        REGISTERED_TYPE("TrackChannel", "Track and Channel", "5e9b395c-ec13-4bdb-9b2b-b060ba7fb707", 1);
         MidiTrackAndChannel();
 
         static babelwires::ShortId getTrackIdFromChannel(unsigned int channel);

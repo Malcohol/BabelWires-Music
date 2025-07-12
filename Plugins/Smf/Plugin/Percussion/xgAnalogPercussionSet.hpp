@@ -9,14 +9,14 @@
 
 #include <MusicLib/Percussion/percussionSetWithPitchMap.hpp>
 
-#include <BabelWiresLib/TypeSystem/primitiveType.hpp>
+#include <BabelWiresLib/TypeSystem/registeredType.hpp>
 
 namespace smf {
     /// A PercussionSet corresponding to the instruments of XG Analog percussion set.
     /// This also works as the XG Standard 2 percussion set.
     class XgAnalogPercussionSet : public bw_music::PercussionSetWithPitchMap {
       public:
-        PRIMITIVE_TYPE("XGAnalogPerc", "Yamaha XG Analog Percussion", "f172fe57-7ec0-43de-9031-3a4ebe3da84d", 1);
+        REGISTERED_TYPE("XGAnalogPerc", "Yamaha XG Analog Percussion", "f172fe57-7ec0-43de-9031-3a4ebe3da84d", 1);
 
         XgAnalogPercussionSet(const bw_music::BuiltInPercussionInstruments& builtInInstruments);
     };

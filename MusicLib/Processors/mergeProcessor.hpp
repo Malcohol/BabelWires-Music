@@ -13,13 +13,13 @@
 #include <BabelWiresLib/Instance/instance.hpp>
 #include <BabelWiresLib/Processors/processorFactory.hpp>
 #include <BabelWiresLib/Processors/processor.hpp>
-#include <BabelWiresLib/TypeSystem/primitiveType.hpp>
+#include <BabelWiresLib/TypeSystem/registeredType.hpp>
 #include <BabelWiresLib/Types/Record/recordType.hpp>
 
 namespace bw_music {
     class MergeProcessorInput : public babelwires::RecordType {
       public:
-        PRIMITIVE_TYPE("MergeTracksIn", "Merge Tracks Input", "15dd4564-e67f-4087-8609-ef5985b23dd7", 1);
+        REGISTERED_TYPE("MergeTracksIn", "Merge Tracks Input", "15dd4564-e67f-4087-8609-ef5985b23dd7", 1);
 
         MergeProcessorInput();
 
@@ -30,7 +30,7 @@ namespace bw_music {
 
     class MergeProcessorOutput : public babelwires::RecordType {
       public:
-        PRIMITIVE_TYPE("MergeTracksOut", "Merge Tracks Output", "9b797596-f6c2-4900-98a4-001ec7c18be4", 1);
+        REGISTERED_TYPE("MergeTracksOut", "Merge Tracks Output", "9b797596-f6c2-4900-98a4-001ec7c18be4", 1);
 
         MergeProcessorOutput();
 

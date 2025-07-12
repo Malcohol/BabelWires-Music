@@ -13,7 +13,7 @@
 #include <BabelWiresLib/Instance/instance.hpp>
 #include <BabelWiresLib/Processors/processorFactory.hpp>
 #include <BabelWiresLib/Processors/processor.hpp>
-#include <BabelWiresLib/TypeSystem/primitiveType.hpp>
+#include <BabelWiresLib/TypeSystem/registeredType.hpp>
 #include <BabelWiresLib/Types/Record/recordType.hpp>
 
 
@@ -21,7 +21,7 @@ namespace bw_music {
 
     class ConcatenateProcessorInput : public babelwires::RecordType {
       public:
-        PRIMITIVE_TYPE("ConcatTrcksIn", "Concatenate In", "f4f21fe1-25e6-4721-a298-36fe27b532cc", 1);
+        REGISTERED_TYPE("ConcatTrcksIn", "Concatenate In", "f4f21fe1-25e6-4721-a298-36fe27b532cc", 1);
 
         ConcatenateProcessorInput();
 
@@ -32,7 +32,7 @@ namespace bw_music {
 
     class ConcatenateProcessorOutput : public babelwires::RecordType {
       public:
-        PRIMITIVE_TYPE("ConcatTrcksOut", "Concatenate Out", "2c9e13aa-eb88-494f-b3a6-7fb82504196c", 1);
+        REGISTERED_TYPE("ConcatTrcksOut", "Concatenate Out", "2c9e13aa-eb88-494f-b3a6-7fb82504196c", 1);
 
         ConcatenateProcessorOutput();
 
