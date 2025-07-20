@@ -26,8 +26,8 @@ namespace bw_music {
 
         TypeConstructorResult
         constructType(const babelwires::TypeSystem& typeSystem, babelwires::TypeRef newTypeRef,
-                      const std::vector<const babelwires::Type*>& typeArguments,
-                      const std::vector<babelwires::EditableValueHolder>& valueArguments) const override;
+                      const babelwires::TypeConstructorArguments& arguments,
+                      const std::vector<const babelwires::Type*>& resolvedTypeArguments) const override;
     };
 
     babelwires::TypeRef getPercussionMapType();

@@ -24,14 +24,14 @@ bw_music::ModelDuration bw_music::TrackTypeConstructor::extractValueArguments(
     }
 }
 
-babelwires::TypeConstructor::TypeConstructorResult bw_music::TrackTypeConstructor::constructType(const babelwires::TypeSystem& typeSystem, 
-    babelwires::TypeRef newTypeRef, const std::vector<const babelwires::Type*>& typeArguments,
-    const std::vector<babelwires::EditableValueHolder>& valueArguments) const {
-    if (typeArguments.size() != 0) {
+babelwires::TypeConstructor::TypeConstructorResult
+bw_music::TrackTypeConstructor::constructType(const babelwires::TypeSystem& typeSystem, babelwires::TypeRef newTypeRef,
+                                              const babelwires::TypeConstructorArguments& arguments,
+                                              const std::vector<const babelwires::Type*>& resolvedTypeArguments) const {
+    if (arguments.m_typeArguments.size() != 0) {
         throw babelwires::TypeSystemException()
-            << "TrackTypeConstructor does not expect type arguments but got " << typeArguments.size();
+            << "TrackTypeConstructor does not expect type arguments but got " << arguments.m_typeArguments.size();
     }
-    ModelDuration initialDuration = extractValueArguments(valueArguments);
+    ModelDuration initialDuration = extractValueArguments(arguments.m_valueArguments);
     return std::make_unique<babelwires::ConstructedType<TrackType>>(std::move(newTypeRef), initialDuration);
 }
-
