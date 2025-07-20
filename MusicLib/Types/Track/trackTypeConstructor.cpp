@@ -24,7 +24,7 @@ bw_music::ModelDuration bw_music::TrackTypeConstructor::extractValueArguments(
     }
 }
 
-std::unique_ptr<babelwires::Type> bw_music::TrackTypeConstructor::constructType(const babelwires::TypeSystem& typeSystem, 
+babelwires::TypeConstructor::TypeConstructorResult bw_music::TrackTypeConstructor::constructType(const babelwires::TypeSystem& typeSystem, 
     babelwires::TypeRef newTypeRef, const std::vector<const babelwires::Type*>& typeArguments,
     const std::vector<babelwires::EditableValueHolder>& valueArguments) const {
     if (typeArguments.size() != 0) {

@@ -22,7 +22,7 @@
 #include <BabelWiresLib/Types/Map/SumOfMaps/sumOfMapsType.hpp>
 #include <BabelWiresLib/Types/Map/standardMapIdentifiers.hpp>
 
-std::unique_ptr<babelwires::Type>
+babelwires::TypeConstructor::TypeConstructorResult
 bw_music::PercussionMapType::constructType(const babelwires::TypeSystem& typeSystem, babelwires::TypeRef newTypeRef,
                                            const std::vector<const babelwires::Type*>& typeArguments,
                                            const std::vector<babelwires::EditableValueHolder>& valueArguments) const {
