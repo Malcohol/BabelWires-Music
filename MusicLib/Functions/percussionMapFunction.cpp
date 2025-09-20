@@ -7,25 +7,25 @@
  **/
 #include <MusicLib/Functions/percussionMapFunction.hpp>
 
-#include <MusicLib/Percussion/percussionTypeTag.hpp>
 #include <MusicLib/Percussion/builtInPercussionInstruments.hpp>
+#include <MusicLib/Percussion/percussionTypeTag.hpp>
 #include <MusicLib/Types/Track/TrackEvents/percussionEvents.hpp>
 #include <MusicLib/Types/Track/trackBuilder.hpp>
 
-#include <BabelWiresLib/ValueTree/modelExceptions.hpp>
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/Enum/enumAtomTypeConstructor.hpp>
 #include <BabelWiresLib/Types/Enum/enumUnionTypeConstructor.hpp>
 #include <BabelWiresLib/Types/Map/Helpers/enumValueAdapters.hpp>
 #include <BabelWiresLib/Types/Map/Helpers/unorderedMapApplicator.hpp>
-#include <BabelWiresLib/Types/Map/mapTypeConstructor.hpp>
 #include <BabelWiresLib/Types/Map/SumOfMaps/sumOfMapsType.hpp>
+#include <BabelWiresLib/Types/Map/mapTypeConstructor.hpp>
 #include <BabelWiresLib/Types/Map/standardMapIdentifiers.hpp>
+#include <BabelWiresLib/ValueTree/modelExceptions.hpp>
 
-std::unique_ptr<babelwires::Type>
+babelwires::TypeConstructor::TypeConstructorResult
 bw_music::PercussionMapType::constructType(const babelwires::TypeSystem& typeSystem, babelwires::TypeRef newTypeRef,
-                                           const std::vector<const babelwires::Type*>& typeArguments,
-                                           const std::vector<babelwires::EditableValueHolder>& valueArguments) const {
+                                           const babelwires::TypeConstructorArguments& arguments,
+                                           const std::vector<const babelwires::Type*>& resolvedTypeArguments) const {
 
     std::vector<babelwires::TypeRef> sourceSummands;
     auto percussionTypes = typeSystem.getTaggedRegisteredTypes(bw_music::percussionTypeTag());
@@ -40,12 +40,12 @@ bw_music::PercussionMapType::constructType(const babelwires::TypeSystem& typeSys
     std::vector<babelwires::TypeRef> targetSummands;
     targetSummands.reserve(sourceSummands.size());
     for (const auto& s : sourceSummands) {
-        targetSummands.emplace_back(babelwires::EnumUnionTypeConstructor::makeTypeRef(s, 
-            babelwires::EnumAtomTypeConstructor::makeTypeRef(babelwires::getBlankValueId())));
+        targetSummands.emplace_back(babelwires::EnumUnionTypeConstructor::makeTypeRef(
+            s, babelwires::EnumAtomTypeConstructor::makeTypeRef(babelwires::getBlankValueId())));
     }
 
-    return std::make_unique<babelwires::ConstructedType<babelwires::SumOfMapsType>>(std::move(newTypeRef),
-                                                                              std::move(sourceSummands), std::move(targetSummands), indexOfDefault, indexOfDefault);
+    return std::make_unique<babelwires::ConstructedType<babelwires::SumOfMapsType>>(
+        std::move(newTypeRef), std::move(sourceSummands), std::move(targetSummands), indexOfDefault, indexOfDefault);
 }
 
 babelwires::TypeRef bw_music::getPercussionMapType() {

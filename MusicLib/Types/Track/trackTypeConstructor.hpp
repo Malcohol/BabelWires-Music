@@ -19,12 +19,13 @@ namespace bw_music {
         /// Note that the we don't represent the default in the name.
         TYPE_CONSTRUCTOR("Track", "Track", "bba2f18c-9ff1-406c-b39c-47a2e4047caa", 1);
 
-        std::unique_ptr<babelwires::Type> constructType(const babelwires::TypeSystem& typeSystem, babelwires::TypeRef newTypeRef, const std::vector<const babelwires::Type*>& typeArguments,
-                                            const std::vector<babelwires::EditableValueHolder>& valueArguments) const override;
+        TypeConstructorResult
+        constructType(const babelwires::TypeSystem& typeSystem, babelwires::TypeRef newTypeRef,
+                      const babelwires::TypeConstructorArguments& arguments,
+                      const std::vector<const babelwires::Type*>& resolvedTypeArguments) const override;
 
       private:
         /// Throws a TypeSystem exception if the arguments are not of the expect type.
-        static ModelDuration
-        extractValueArguments(const std::vector<babelwires::EditableValueHolder>& valueArguments);
+        static ModelDuration extractValueArguments(const std::vector<babelwires::EditableValueHolder>& valueArguments);
     };
-} // namespace babelwires
+} // namespace bw_music
