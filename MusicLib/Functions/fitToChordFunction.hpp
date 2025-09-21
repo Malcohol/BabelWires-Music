@@ -7,7 +7,7 @@
  **/
 #pragma once
 
-#include <BabelWiresLib/TypeSystem/primitiveType.hpp>
+#include <BabelWiresLib/TypeSystem/registeredType.hpp>
 
 #include <MusicLib/Types/Track/track.hpp>
 #include <MusicLib/chord.hpp>
