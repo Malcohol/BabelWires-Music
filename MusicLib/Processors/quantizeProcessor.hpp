@@ -18,7 +18,7 @@ namespace bw_music {
 
     class QuantizeProcessorInput : public babelwires::ParallelProcessorInputBase {
       public:
-        PRIMITIVE_TYPE("QuantTrcksIn", "Quantize In", "86a46b16-69a3-41bb-bbb3-19f8cb0a4e4d", 1);
+        REGISTERED_TYPE("QuantTrcksIn", "Quantize In", "86a46b16-69a3-41bb-bbb3-19f8cb0a4e4d", 1);
 
         QuantizeProcessorInput();
 
@@ -30,7 +30,7 @@ namespace bw_music {
 
     class QuantizeProcessorOutput : public babelwires::ParallelProcessorOutputBase {
       public:
-        PRIMITIVE_TYPE("QuantTrcksOut", "Quantize Out", "89feb462-63b1-473a-bc77-29540bda43f7", 1);
+        REGISTERED_TYPE("QuantTrcksOut", "Quantize Out", "89feb462-63b1-473a-bc77-29540bda43f7", 1);
 
         QuantizeProcessorOutput();
     };

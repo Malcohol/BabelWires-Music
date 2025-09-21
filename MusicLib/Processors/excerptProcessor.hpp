@@ -15,7 +15,7 @@ namespace bw_music {
 
     class ExcerptProcessorInput : public babelwires::ParallelProcessorInputBase {
       public:
-        PRIMITIVE_TYPE("ExcerptTrckIn", "Excerpt In", "68577705-b5c2-499c-a2db-8ab5f63e5728", 1);
+        REGISTERED_TYPE("ExcerptTrckIn", "Excerpt In", "68577705-b5c2-499c-a2db-8ab5f63e5728", 1);
 
         ExcerptProcessorInput();
 
@@ -28,7 +28,7 @@ namespace bw_music {
 
     class ExcerptProcessorOutput : public babelwires::ParallelProcessorOutputBase {
       public:
-        PRIMITIVE_TYPE("ExcerptTrckOut", "Excerpt Out", "73469491-111c-441a-b89c-2f8aceaa640c", 1);
+        REGISTERED_TYPE("ExcerptTrckOut", "Excerpt Out", "73469491-111c-441a-b89c-2f8aceaa640c", 1);
 
         ExcerptProcessorOutput();
     };

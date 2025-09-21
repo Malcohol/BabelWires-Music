@@ -15,7 +15,7 @@ namespace bw_music {
 
     class TransposeProcessorInput : public babelwires::ParallelProcessorInputBase {
       public:
-        PRIMITIVE_TYPE("TranspTrcksIn", "Transpose In", "980af793-e5fe-4fa4-861c-90f400fc4977", 1);
+        REGISTERED_TYPE("TranspTrcksIn", "Transpose In", "980af793-e5fe-4fa4-861c-90f400fc4977", 1);
 
         TransposeProcessorInput();
 
@@ -26,7 +26,7 @@ namespace bw_music {
 
     class TransposeProcessorOutput : public babelwires::ParallelProcessorOutputBase {
       public:
-        PRIMITIVE_TYPE("TranspTrcksOut", "Transpose Out", "e2c9d64e-259a-4ef5-bd9d-0883c5d67599", 1);
+        REGISTERED_TYPE("TranspTrcksOut", "Transpose Out", "e2c9d64e-259a-4ef5-bd9d-0883c5d67599", 1);
 
         TransposeProcessorOutput();
     };

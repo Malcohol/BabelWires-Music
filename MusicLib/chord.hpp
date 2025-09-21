@@ -10,7 +10,7 @@
 #include <MusicLib/musicTypes.hpp>
 
 #include <BabelWiresLib/Types/Enum/enumWithCppEnum.hpp>
-#include <BabelWiresLib/TypeSystem/primitiveType.hpp>
+#include <BabelWiresLib/TypeSystem/registeredType.hpp>
 
 /// Most chords below match the "Chord type" values from the XF Format Specifications v2.01
 /// Some additional chord types are not in the XF spec, but are needed for compatibility with
@@ -72,7 +72,7 @@ namespace bw_music {
     /// Carries the enum of chord types.
     class ChordType : public babelwires::EnumType {
       public:
-        PRIMITIVE_TYPE("ChordType", "Chord Type", "c63ea174-1562-4cb5-a456-d6c0bd89e335", 1);
+        REGISTERED_TYPE("ChordType", "Chord Type", "c63ea174-1562-4cb5-a456-d6c0bd89e335", 1);
 
         ChordType();
 
@@ -93,7 +93,7 @@ namespace bw_music {
     /// A type with a single value meaning "NoChord".
     class NoChord : public babelwires::EnumType {
       public:
-        PRIMITIVE_TYPE("NoChord", "No Chord", "5f51a358-0121-4d1d-a0ab-cce5bddf92f1", 1);
+        REGISTERED_TYPE("NoChord", "No Chord", "5f51a358-0121-4d1d-a0ab-cce5bddf92f1", 1);
 
         NoChord();
 

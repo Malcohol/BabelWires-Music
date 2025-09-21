@@ -14,13 +14,13 @@
 #include <BabelWiresLib/Instance/instance.hpp>
 #include <BabelWiresLib/Processors/processorFactory.hpp>
 #include <BabelWiresLib/Processors/processor.hpp>
-#include <BabelWiresLib/TypeSystem/primitiveType.hpp>
+#include <BabelWiresLib/TypeSystem/registeredType.hpp>
 #include <BabelWiresLib/Types/Record/recordType.hpp>
 
 namespace bw_music {
     class MonophonicSubtracksProcessorInput : public babelwires::RecordType {
       public:
-        PRIMITIVE_TYPE("MonoTracksIn", "Monophonic Tracks Input", "e8041fe6-29de-470e-9235-e1f05c5f791e", 1);
+        REGISTERED_TYPE("MonoTracksIn", "Monophonic Tracks Input", "e8041fe6-29de-470e-9235-e1f05c5f791e", 1);
 
         MonophonicSubtracksProcessorInput();
 
@@ -33,7 +33,7 @@ namespace bw_music {
 
     class MonophonicSubtracksProcessorOutput : public babelwires::RecordType {
       public:
-        PRIMITIVE_TYPE("MonoTracksOut", "Monophonic Tracks Output", "c2228921-da8a-45c0-bebf-24951d651090", 1);
+        REGISTERED_TYPE("MonoTracksOut", "Monophonic Tracks Output", "c2228921-da8a-45c0-bebf-24951d651090", 1);
 
         MonophonicSubtracksProcessorOutput();
 

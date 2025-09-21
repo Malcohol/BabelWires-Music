@@ -18,7 +18,7 @@
 namespace smf {
     class MidiMetadata : public babelwires::RecordType {
       public:
-        PRIMITIVE_TYPE("midiMetadata", "MIDI Metadata", "5032054f-d1b7-4cb4-8bac-2de60a1bc078", 1);
+        REGISTERED_TYPE("midiMetadata", "MIDI Metadata", "5032054f-d1b7-4cb4-8bac-2de60a1bc078", 1);
 
         MidiMetadata();
 

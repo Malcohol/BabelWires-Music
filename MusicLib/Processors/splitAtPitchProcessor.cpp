@@ -42,7 +42,6 @@ void bw_music::SplitAtPitchProcessor::processValue(babelwires::UserLogger& userL
         const int pitchIndex = pitch.getInstanceType().tryGetIndexFromIdentifier(pitch.get().get());
         if (pitchIndex >= 0) {
             auto newTracksOut = splitAtPitch(Pitch(pitchIndex), trackIn.get());
-            auto outputType = output.getTypeRef().toString();
             SplitAtPitchProcessorOutput::Instance out{output};
             out.getAbove().set(std::move(newTracksOut.m_equalOrAbove));
             out.getBelow().set(std::move(newTracksOut.m_below));

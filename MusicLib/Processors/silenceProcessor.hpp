@@ -13,13 +13,13 @@
 #include <BabelWiresLib/Instance/instance.hpp>
 #include <BabelWiresLib/Processors/processorFactory.hpp>
 #include <BabelWiresLib/Processors/processor.hpp>
-#include <BabelWiresLib/TypeSystem/primitiveType.hpp>
+#include <BabelWiresLib/TypeSystem/registeredType.hpp>
 #include <BabelWiresLib/Types/Record/recordType.hpp>
 
 namespace bw_music {
     class SilenceProcessorInput : public babelwires::RecordType {
       public:
-        PRIMITIVE_TYPE("SilentTrackIn", "Silence In", "b3d5c37c-aa07-47ac-9ebb-3cf81731b97b", 1);
+        REGISTERED_TYPE("SilentTrackIn", "Silence In", "b3d5c37c-aa07-47ac-9ebb-3cf81731b97b", 1);
 
         SilenceProcessorInput();
 
@@ -30,7 +30,7 @@ namespace bw_music {
 
     class SilenceProcessorOutput : public babelwires::RecordType {
       public:
-        PRIMITIVE_TYPE("SilentTrackOut", "Silence Out", "fd8b4645-1435-448c-bf9d-0cebf8999a81", 1);
+        REGISTERED_TYPE("SilentTrackOut", "Silence Out", "fd8b4645-1435-448c-bf9d-0cebf8999a81", 1);
 
         SilenceProcessorOutput();
 
