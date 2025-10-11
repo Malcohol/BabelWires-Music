@@ -13,31 +13,28 @@
 #include <BabelWiresLib/Processors/processor.hpp>
 #include <BabelWiresLib/Types/Record/recordType.hpp>
 #include <BabelWiresLib/Processors/processorFactory.hpp>
+#include <BabelWiresLib/Types/Generic/genericType.hpp>
 
 namespace bw_music {
 
-    class FitToChordsProcessorInput : public babelwires::RecordType {
+    class FitToChordsProcessorInput : public babelwires::GenericType {
       public:
-        PRIMITIVE_TYPE("FitToChordIn", "Fit To Chord In", "d1f8b0c2-3f4e-4c5a-9b6e-7c8d9e0f1a2b", 1);
+        REGISTERED_TYPE("FitToChordIn", "Fit To Chord In", "d1f8b0c2-3f4e-4c5a-9b6e-7c8d9e0f1a2b", 1);
 
         FitToChordsProcessorInput();
 
-        DECLARE_INSTANCE_BEGIN(FitToChordProcessorInput)
-        DECLARE_INSTANCE_ARRAY_FIELD(Chord, Chord)
-        DECLARE_INSTANCE_FIELD(Input, Type)
-        DECLARE_INSTANCE_END()
+        static babelwires::ShortId getIdOfChordsArray();
+        static babelwires::ShortId getIdOfInput();
     };
 
-    class FitToChordsProcessorOutput : public babelwires::RecordType {
+    class FitToChordsProcessorOutput : public babelwires::GenericType {
       public:
-        PRIMITIVE_TYPE("FitToChordOut", "Fit To Chord Out", "e3f4b5c6-7d8e-9f0a-b1c2-d3e4f5a6b7c8", 1);
+        REGISTERED_TYPE("FitToChordOut", "Fit To Chord Out", "e3f4b5c6-7d8e-9f0a-b1c2-d3e4f5a6b7c8", 1);
 
         FitToChordsProcessorOutput();
 
-        DECLARE_INSTANCE_BEGIN(FitToChordProcessorOutput)
-        DECLARE_INSTANCE_FIELD(Output, RecordType)
-        DECLARE_INSTANCE_END()
-    };
+        static babelwires::ShortId getIdOfResult();
+      };
 
     // MAYBEDO: A better name might be "BuildAccompanimentProcessor".
     class FitToChordsProcessor : public babelwires::Processor {

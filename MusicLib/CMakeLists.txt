@@ -1,9 +1,10 @@
 SET( MUSICLIB_SRCS
 	Utilities/musicUtilities.cpp
-	Processors/fingeredChordsProcessor.cpp
 	Processors/chordMapProcessor.cpp
 	Processors/concatenateProcessor.cpp
 	Processors/excerptProcessor.cpp
+	Processors/fingeredChordsProcessor.cpp
+	Processors/fitToChordsProcessor.cpp
 	Processors/mergeProcessor.cpp
 	Processors/monophonicSubtracksProcessor.cpp
 	Processors/percussionMapProcessor.cpp

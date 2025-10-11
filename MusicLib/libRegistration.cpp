@@ -15,6 +15,7 @@
 #include <MusicLib/Processors/concatenateProcessor.hpp>
 #include <MusicLib/Processors/excerptProcessor.hpp>
 #include <MusicLib/Processors/fingeredChordsProcessor.hpp>
+#include <MusicLib/Processors/fitToChordsProcessor.hpp>
 #include <MusicLib/Processors/mergeProcessor.hpp>
 #include <MusicLib/Processors/monophonicSubtracksProcessor.hpp>
 #include <MusicLib/Processors/percussionMapProcessor.hpp>
@@ -57,6 +58,10 @@ void bw_music::registerLib(babelwires::ProjectContext& context) {
     context.m_typeSystem.addEntry<FingeredChordsProcessorInput>();
     context.m_typeSystem.addEntry<FingeredChordsProcessorOutput>();
     context.m_processorReg.addProcessor<FingeredChordsProcessor>();
+
+    context.m_typeSystem.addEntry<FitToChordsProcessorInput>();
+    context.m_typeSystem.addEntry<FitToChordsProcessorOutput>();
+    context.m_processorReg.addProcessor<FitToChordsProcessor>();
 
     context.m_typeSystem.addEntry<MergeProcessorInput>();
     context.m_typeSystem.addEntry<MergeProcessorOutput>();
