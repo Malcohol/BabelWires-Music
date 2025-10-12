@@ -91,7 +91,7 @@ void bw_music::FitToChordsProcessor::processValue(babelwires::UserLogger& userLo
 
     babelwires::ValueHolder newOutputValue = output.getValue();
     outputType.setTypeVariableAssignmentAndInstantiate(typeSystem, newOutputValue, {assignedInputTypeRef});
-    const auto [outputChild, outputStep, outputChildType] = outputType.getChild(newOutputValue, 0);
+    const auto [outputChild, outputStep, outputChildType] = outputType.getChildNonConst(newOutputValue, 0);
     const auto& outputRecordType = outputChildType.resolve(typeSystem).is<babelwires::RecordType>();
 
     const auto [inputChild, inputStep, inputChildType] = inputType.getChild(inputValue, 0);
@@ -101,15 +101,19 @@ void bw_music::FitToChordsProcessor::processValue(babelwires::UserLogger& userLo
     const auto [inputStructure, inputStep1, inputChildType1] = inputRecordType.getChild(*inputChild, 1);
 
     const auto& chordType = typeSystem.getRegisteredType(ChordType::getThisIdentifier()).is<ChordType>();
+    std::vector<babelwires::ShortId> selectedChords;
     for (unsigned int i = 0; i < chordsArrayType.getNumChildren(*chordsArray); ++i) {
         const auto [chordValueHolder, chordStep, chordChildType] = chordsArrayType.getChild(*chordsArray, i);
         assert(chordChildType == ChordType::getThisType());
         const babelwires::ShortId chordId = (*chordValueHolder)->is<babelwires::EnumValue>().get();
 
-        outputRecordType.activateField(typeSystem, newOutputValue, chordId);
-        
-        // TODO Apply the function to the tracks in the input, to set the output
+        assert(std::find(outputRecordType.getOptionalFieldIds().begin(), outputRecordType.getOptionalFieldIds().end(), chordId) != outputRecordType.getOptionalFieldIds().end());
+        if (std::find(selectedChords.begin(), selectedChords.end(), chordId) != selectedChords.end()) {
+            continue;
+        }   
+        selectedChords.emplace_back(chordId);
     }
+    outputRecordType.ensureActivated(typeSystem, *outputChild, selectedChords);
 
     output.setValue(newOutputValue);
 }
