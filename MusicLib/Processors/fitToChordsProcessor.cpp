@@ -9,10 +9,10 @@
 
 #include <MusicLib/Functions/fitToChordFunction.hpp>
 
+#include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/Array/arrayTypeConstructor.hpp>
 #include <BabelWiresLib/Types/Generic/typeVariableTypeConstructor.hpp>
 #include <BabelWiresLib/Types/Record/recordTypeConstructor.hpp>
-#include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 
 bw_music::FitToChordsProcessorInput::FitToChordsProcessorInput()
     : GenericType(babelwires::RecordTypeConstructor::makeTypeRef(
@@ -28,6 +28,10 @@ babelwires::ShortId bw_music::FitToChordsProcessorInput::getIdOfChordsArray() {
 
 babelwires::ShortId bw_music::FitToChordsProcessorInput::getIdOfInput() {
     return BW_SHORT_ID("input", "input", "6c2d63fb-b1f0-4cad-a7e6-c1bca583c6f3");
+}
+
+babelwires::ShortId bw_music::FitToChordsProcessorOutput::getIdOfResult() {
+    return BW_SHORT_ID("output", "output", "91cdf142-e8e1-4b86-8811-43028e3b4154");
 }
 
 namespace {
@@ -53,10 +57,12 @@ namespace {
 } // namespace
 
 bw_music::FitToChordsProcessorOutput::FitToChordsProcessorOutput()
-    : GenericType(babelwires::TypeRef(
-                      babelwires::RecordTypeConstructor::getThisIdentifier(),
-                      babelwires::TypeConstructorArguments{getTypesForOptionalFields(), getValuesForOptionalFields()}),
-                  1) {}
+    : GenericType(
+          babelwires::TypeRef(babelwires::RecordTypeConstructor::makeTypeRef(
+              getIdOfResult(), babelwires::TypeRef(babelwires::RecordTypeConstructor::getThisIdentifier(),
+                                                   babelwires::TypeConstructorArguments{
+                                                       getTypesForOptionalFields(), getValuesForOptionalFields()}))),
+          1) {}
 
 bw_music::FitToChordsProcessor::FitToChordsProcessor(const babelwires::ProjectContext& projectContext)
     : Processor(projectContext, FitToChordsProcessorInput::getThisType(), FitToChordsProcessorOutput::getThisType()) {}
@@ -64,22 +70,19 @@ bw_music::FitToChordsProcessor::FitToChordsProcessor(const babelwires::ProjectCo
 void bw_music::FitToChordsProcessor::processValue(babelwires::UserLogger& userLogger,
                                                   const babelwires::ValueTreeNode& input,
                                                   babelwires::ValueTreeNode& output) const {
+    /*
+TODO:
+1. [X] Need to be able to query the assigned type of the input - Input is generic with one type variable.
+2. [X] Need to be able to build record types dynamically.
+- [X] Regular fields
+- [X] Optional fields
+3. [X] The output is a generic record type with optional track fields, corresponding to selected chord types.
+4. [ ] Process the input to produce the output.
 
-
-
-                                                    /*
-    TODO:
-    1. [X] Need to be able to query the assigned type of the input - Input is generic with one type variable.
-    2. [X] Need to be able to build record types dynamically.
-       - [X] Regular fields
-       - [X] Optional fields
-    3. [X] The output is a generic record type with optional track fields, corresponding to selected chord types.
-    4. [ ] Process the input to produce the output.
-    
-    Alternative: The output could be a generic type where the output record as a whole is substituted.
-    * Advantage: Might be simpler
-    * Disadvantage: More new types created any time chords are added or removed.
-    */
+Alternative: The output could be a generic type where the output record as a whole is substituted.
+* Advantage: Might be simpler
+* Disadvantage: More new types created any time chords are added or removed.
+*/
 
     const FitToChordsProcessorInput& inputType = input.getType().is<FitToChordsProcessorInput>();
     const FitToChordsProcessorOutput& outputType = output.getType().is<FitToChordsProcessorOutput>();
@@ -93,6 +96,8 @@ void bw_music::FitToChordsProcessor::processValue(babelwires::UserLogger& userLo
     outputType.setTypeVariableAssignmentAndInstantiate(typeSystem, newOutputValue, {assignedInputTypeRef});
     const auto [outputChild, outputStep, outputChildType] = outputType.getChildNonConst(newOutputValue, 0);
     const auto& outputRecordType = outputChildType.resolve(typeSystem).is<babelwires::RecordType>();
+    const auto& [resultChild, resultStep, resultChildType] = outputRecordType.getChildNonConst(*outputChild, 0);
+    const auto& resultRecordType = resultChildType.resolve(typeSystem).is<babelwires::RecordType>();
 
     const auto [inputChild, inputStep, inputChildType] = inputType.getChild(inputValue, 0);
     const auto& inputRecordType = inputChildType.resolve(typeSystem).is<babelwires::RecordType>();
@@ -107,13 +112,14 @@ void bw_music::FitToChordsProcessor::processValue(babelwires::UserLogger& userLo
         assert(chordChildType == ChordType::getThisType());
         const babelwires::ShortId chordId = (*chordValueHolder)->is<babelwires::EnumValue>().get();
 
-        assert(std::find(outputRecordType.getOptionalFieldIds().begin(), outputRecordType.getOptionalFieldIds().end(), chordId) != outputRecordType.getOptionalFieldIds().end());
+        assert(std::find(resultRecordType.getOptionalFieldIds().begin(), resultRecordType.getOptionalFieldIds().end(),
+                         chordId) != resultRecordType.getOptionalFieldIds().end());
         if (std::find(selectedChords.begin(), selectedChords.end(), chordId) != selectedChords.end()) {
             continue;
-        }   
+        }
         selectedChords.emplace_back(chordId);
     }
-    outputRecordType.ensureActivated(typeSystem, *outputChild, selectedChords);
+    resultRecordType.ensureActivated(typeSystem, *resultChild, selectedChords);
 
     output.setValue(newOutputValue);
 }
