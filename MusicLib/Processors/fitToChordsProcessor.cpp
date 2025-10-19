@@ -92,18 +92,18 @@ Alternative: The output could be a generic type where the output record as a who
 
     const babelwires::TypeSystem& typeSystem = input.getTypeSystem();
 
+    const auto [inputChild, inputStep, inputChildType] = inputType.getChild(inputValue, 0);
+    const auto& inputRecordType = inputChildType.resolve(typeSystem).is<babelwires::RecordType>();
+    const auto [chordsArray, inputStep0, inputChildType0] = inputRecordType.getChild(*inputChild, 0);
+    const auto& chordsArrayType = inputChildType0.resolve(typeSystem).is<babelwires::ArrayType>();
+    const auto [inputStructure, inputStep1, inputChildType1] = inputRecordType.getChild(*inputChild, 1);
+
     babelwires::ValueHolder newOutputValue = output.getValue();
     outputType.setTypeVariableAssignmentAndInstantiate(typeSystem, newOutputValue, {assignedInputTypeRef});
     const auto [outputChild, outputStep, outputChildType] = outputType.getChildNonConst(newOutputValue, 0);
     const auto& outputRecordType = outputChildType.resolve(typeSystem).is<babelwires::RecordType>();
     const auto& [resultChild, resultStep, resultChildType] = outputRecordType.getChildNonConst(*outputChild, 0);
     const auto& resultRecordType = resultChildType.resolve(typeSystem).is<babelwires::RecordType>();
-
-    const auto [inputChild, inputStep, inputChildType] = inputType.getChild(inputValue, 0);
-    const auto& inputRecordType = inputChildType.resolve(typeSystem).is<babelwires::RecordType>();
-    const auto [chordsArray, inputStep0, inputChildType0] = inputRecordType.getChild(*inputChild, 0);
-    const auto& chordsArrayType = inputChildType0.resolve(typeSystem).is<babelwires::ArrayType>();
-    const auto [inputStructure, inputStep1, inputChildType1] = inputRecordType.getChild(*inputChild, 1);
 
     const auto& chordType = typeSystem.getRegisteredType(ChordType::getThisIdentifier()).is<ChordType>();
     std::vector<babelwires::ShortId> selectedChords;
@@ -119,7 +119,17 @@ Alternative: The output could be a generic type where the output record as a who
         }
         selectedChords.emplace_back(chordId);
     }
+    
     resultRecordType.ensureActivated(typeSystem, *resultChild, selectedChords);
+
+    for (const auto& chordId : selectedChords) {
+        auto [fieldValueHolder, fieldTypeRef] = resultRecordType.getChildByIdNonConst(*resultChild, chordId);
+        const auto& fieldType = fieldTypeRef.resolve(typeSystem);
+        // Accompaniment always generated with a C root.
+        const bw_music::Chord chord = { bw_music::PitchClass::Value::C, chordType.getValueFromIdentifier(chordId) };
+
+        fieldValueHolder = bw_music::fitToChordFunction(typeSystem, fieldType, *inputStructure, chord);
+    }
 
     output.setValue(newOutputValue);
 }
