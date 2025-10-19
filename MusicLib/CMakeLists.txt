@@ -4,7 +4,7 @@ SET( MUSICLIB_SRCS
 	Processors/concatenateProcessor.cpp
 	Processors/excerptProcessor.cpp
 	Processors/fingeredChordsProcessor.cpp
-	Processors/fitToChordsProcessor.cpp
+	Processors/buildAccompanimentProcessor.cpp
 	Processors/mergeProcessor.cpp
 	Processors/monophonicSubtracksProcessor.cpp
 	Processors/percussionMapProcessor.cpp

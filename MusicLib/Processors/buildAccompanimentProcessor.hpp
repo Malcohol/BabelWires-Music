@@ -17,31 +17,30 @@
 
 namespace bw_music {
 
-    class FitToChordsProcessorInput : public babelwires::GenericType {
+    class BuildAccompanimentProcessorInput : public babelwires::GenericType {
       public:
-        REGISTERED_TYPE("FitToChordIn", "Fit To Chord In", "d1f8b0c2-3f4e-4c5a-9b6e-7c8d9e0f1a2b", 1);
+        REGISTERED_TYPE("BuildAccompIn", "Build Accompaniment In", "d1f8b0c2-3f4e-4c5a-9b6e-7c8d9e0f1a2b", 1);
 
-        FitToChordsProcessorInput();
+        BuildAccompanimentProcessorInput();
 
         static babelwires::ShortId getIdOfChordsArray();
         static babelwires::ShortId getIdOfInput();
     };
 
-    class FitToChordsProcessorOutput : public babelwires::GenericType {
+    class BuildAccompanimentProcessorOutput : public babelwires::GenericType {
       public:
-        REGISTERED_TYPE("FitToChordOut", "Fit To Chord Out", "e3f4b5c6-7d8e-9f0a-b1c2-d3e4f5a6b7c8", 1);
+        REGISTERED_TYPE("BuildAccompOut", "Build Accompaniment Out", "e3f4b5c6-7d8e-9f0a-b1c2-d3e4f5a6b7c8", 1);
 
-        FitToChordsProcessorOutput();
+        BuildAccompanimentProcessorOutput();
 
         static babelwires::ShortId getIdOfResult();
       };
 
-    // MAYBEDO: A better name might be "BuildAccompanimentProcessor".
-    class FitToChordsProcessor : public babelwires::Processor {
+    class BuildAccompanimentProcessor : public babelwires::Processor {
       public:
-        BW_PROCESSOR_WITH_DEFAULT_FACTORY("FitToChords", "Fit to Chords", "d604f85c-110d-4c11-aa99-3684cf12ab58");
+        BW_PROCESSOR_WITH_DEFAULT_FACTORY("BuildAccomp", "Build Accompaniment", "d604f85c-110d-4c11-aa99-3684cf12ab58");
 
-        FitToChordsProcessor(const babelwires::ProjectContext& projectContext);
+        BuildAccompanimentProcessor(const babelwires::ProjectContext& projectContext);
 
       protected:
         void processValue(babelwires::UserLogger& userLogger, const babelwires::ValueTreeNode& input,

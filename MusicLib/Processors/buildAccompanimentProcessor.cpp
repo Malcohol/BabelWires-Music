@@ -5,7 +5,7 @@
  *
  * Licensed under the GPLv3.0. See LICENSE file.
  **/
-#include <MusicLib/Processors/fitToChordsProcessor.hpp>
+#include <MusicLib/Processors/buildAccompanimentProcessor.hpp>
 
 #include <MusicLib/Functions/fitToChordFunction.hpp>
 
@@ -14,7 +14,7 @@
 #include <BabelWiresLib/Types/Generic/typeVariableTypeConstructor.hpp>
 #include <BabelWiresLib/Types/Record/recordTypeConstructor.hpp>
 
-bw_music::FitToChordsProcessorInput::FitToChordsProcessorInput()
+bw_music::BuildAccompanimentProcessorInput::BuildAccompanimentProcessorInput()
     : GenericType(babelwires::RecordTypeConstructor::makeTypeRef(
                       getIdOfChordsArray(),
                       babelwires::ArrayTypeConstructor::makeTypeRef(
@@ -22,15 +22,15 @@ bw_music::FitToChordsProcessorInput::FitToChordsProcessorInput()
                       getIdOfInput(), babelwires::TypeVariableTypeConstructor::makeTypeRef()),
                   1) {}
 
-babelwires::ShortId bw_music::FitToChordsProcessorInput::getIdOfChordsArray() {
+babelwires::ShortId bw_music::BuildAccompanimentProcessorInput::getIdOfChordsArray() {
     return BW_SHORT_ID("chords", "chords", "946fd111-1e3a-40e5-ae53-c30e4a929a01");
 }
 
-babelwires::ShortId bw_music::FitToChordsProcessorInput::getIdOfInput() {
+babelwires::ShortId bw_music::BuildAccompanimentProcessorInput::getIdOfInput() {
     return BW_SHORT_ID("input", "input", "6c2d63fb-b1f0-4cad-a7e6-c1bca583c6f3");
 }
 
-babelwires::ShortId bw_music::FitToChordsProcessorOutput::getIdOfResult() {
+babelwires::ShortId bw_music::BuildAccompanimentProcessorOutput::getIdOfResult() {
     return BW_SHORT_ID("output", "output", "91cdf142-e8e1-4b86-8811-43028e3b4154");
 }
 
@@ -56,7 +56,7 @@ namespace {
     }
 } // namespace
 
-bw_music::FitToChordsProcessorOutput::FitToChordsProcessorOutput()
+bw_music::BuildAccompanimentProcessorOutput::BuildAccompanimentProcessorOutput()
     : GenericType(
           babelwires::TypeRef(babelwires::RecordTypeConstructor::makeTypeRef(
               getIdOfResult(), babelwires::TypeRef(babelwires::RecordTypeConstructor::getThisIdentifier(),
@@ -64,10 +64,10 @@ bw_music::FitToChordsProcessorOutput::FitToChordsProcessorOutput()
                                                        getTypesForOptionalFields(), getValuesForOptionalFields()}))),
           1) {}
 
-bw_music::FitToChordsProcessor::FitToChordsProcessor(const babelwires::ProjectContext& projectContext)
-    : Processor(projectContext, FitToChordsProcessorInput::getThisType(), FitToChordsProcessorOutput::getThisType()) {}
+bw_music::BuildAccompanimentProcessor::BuildAccompanimentProcessor(const babelwires::ProjectContext& projectContext)
+    : Processor(projectContext, BuildAccompanimentProcessorInput::getThisType(), BuildAccompanimentProcessorOutput::getThisType()) {}
 
-void bw_music::FitToChordsProcessor::processValue(babelwires::UserLogger& userLogger,
+void bw_music::BuildAccompanimentProcessor::processValue(babelwires::UserLogger& userLogger,
                                                   const babelwires::ValueTreeNode& input,
                                                   babelwires::ValueTreeNode& output) const {
     /*
@@ -84,8 +84,8 @@ Alternative: The output could be a generic type where the output record as a who
 * Disadvantage: More new types created any time chords are added or removed.
 */
 
-    const FitToChordsProcessorInput& inputType = input.getType().is<FitToChordsProcessorInput>();
-    const FitToChordsProcessorOutput& outputType = output.getType().is<FitToChordsProcessorOutput>();
+    const BuildAccompanimentProcessorInput& inputType = input.getType().is<BuildAccompanimentProcessorInput>();
+    const BuildAccompanimentProcessorOutput& outputType = output.getType().is<BuildAccompanimentProcessorOutput>();
 
     const babelwires::ValueHolder& inputValue = input.getValue();
     const babelwires::TypeRef& assignedInputTypeRef = inputType.getTypeAssignment(inputValue, 0);
