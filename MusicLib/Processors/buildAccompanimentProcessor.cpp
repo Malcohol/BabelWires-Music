@@ -106,7 +106,7 @@ Alternative: The output could be a generic type where the output record as a who
     const auto& resultRecordType = resultChildType.resolve(typeSystem).is<babelwires::RecordType>();
 
     const auto& chordType = typeSystem.getRegisteredType(ChordType::getThisIdentifier()).is<ChordType>();
-    std::vector<babelwires::ShortId> selectedChords;
+    std::map<babelwires::ShortId, bool> selectedChords;
     for (unsigned int i = 0; i < chordsArrayType.getNumChildren(*chordsArray); ++i) {
         const auto [chordValueHolder, chordStep, chordChildType] = chordsArrayType.getChild(*chordsArray, i);
         assert(chordChildType == ChordType::getThisType());
@@ -114,19 +114,19 @@ Alternative: The output could be a generic type where the output record as a who
 
         assert(std::find(resultRecordType.getOptionalFieldIds().begin(), resultRecordType.getOptionalFieldIds().end(),
                          chordId) != resultRecordType.getOptionalFieldIds().end());
-        if (std::find(selectedChords.begin(), selectedChords.end(), chordId) != selectedChords.end()) {
+        if (selectedChords.find(chordId) != selectedChords.end()) {
             continue;
         }
-        selectedChords.emplace_back(chordId);
+        selectedChords[chordId] = true;
     }
     
-    resultRecordType.ensureActivated(typeSystem, *resultChild, selectedChords);
+    resultRecordType.selectOptionals(typeSystem, *resultChild, selectedChords);
 
-    for (const auto& chordId : selectedChords) {
-        auto [fieldValueHolder, fieldTypeRef] = resultRecordType.getChildByIdNonConst(*resultChild, chordId);
+    for (const auto& maplet : selectedChords) {
+        auto [fieldValueHolder, fieldTypeRef] = resultRecordType.getChildByIdNonConst(*resultChild, maplet.first);
         const auto& fieldType = fieldTypeRef.resolve(typeSystem);
         // Accompaniment always generated with a C root.
-        const bw_music::Chord chord = { bw_music::PitchClass::Value::C, chordType.getValueFromIdentifier(chordId) };
+        const bw_music::Chord chord = { bw_music::PitchClass::Value::C, chordType.getValueFromIdentifier(maplet.first) };
 
         fieldValueHolder = bw_music::fitToChordFunction(typeSystem, fieldType, *inputStructure, chord);
     }
