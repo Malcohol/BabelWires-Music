@@ -47,31 +47,31 @@ namespace {
                     pitchClassEnum.getIdentifierFromValue(bw_music::PitchClass::Value::D));
                 babelwires::EnumValue chordTypeSourceValue(
                     chordTypeEnum.getIdentifierFromValue(bw_music::ChordType::Value::m));
-                babelwires::TupleValue sourceValue({pitchClassSourceValue, chordTypeSourceValue});
+                babelwires::TupleValue sourceValue({pitchClassSourceValue.clone(), chordTypeSourceValue.clone()});
 
                 babelwires::EnumValue pitchClassTargetValue(
                     pitchClassEnum.getIdentifierFromValue(bw_music::PitchClass::Value::A));
                 babelwires::EnumValue chordTypeTargetValue(
                     chordTypeEnum.getIdentifierFromValue(bw_music::ChordType::Value::m7));
-                babelwires::TupleValue targetValue({pitchClassTargetValue, chordTypeTargetValue});
+                babelwires::TupleValue targetValue({pitchClassTargetValue.clone(), chordTypeTargetValue.clone()});
 
-                chordMaplet.setSourceValue(sourceValue);
-                chordMaplet.setTargetValue(targetValue);
+                chordMaplet.setSourceValue(sourceValue.clone());
+                chordMaplet.setTargetValue(targetValue.clone());
                 chordMap.emplaceBack(chordMaplet.clone());
             }
             if (wildcardMode == WildcardMode::Wildcards) {
                 babelwires::EnumValue wildcardValue(babelwires::getWildcardId());
                 babelwires::EnumValue chordTypeSourceValue(
                     chordTypeEnum.getIdentifierFromValue(bw_music::ChordType::Value::M7s11));
-                babelwires::TupleValue sourceValue({wildcardValue, chordTypeSourceValue});
+                babelwires::TupleValue sourceValue({wildcardValue.clone(), chordTypeSourceValue.clone()});
 
                 babelwires::EnumValue wildcardMatchValue(babelwires::getWildcardMatchId());
                 babelwires::EnumValue chordTypeTargetValue(
                     chordTypeEnum.getIdentifierFromValue(bw_music::ChordType::Value::m7));
-                babelwires::TupleValue targetValue({wildcardMatchValue, chordTypeTargetValue});
+                babelwires::TupleValue targetValue({wildcardMatchValue.clone(), chordTypeTargetValue.clone()});
 
-                chordMaplet.setSourceValue(sourceValue);
-                chordMaplet.setTargetValue(targetValue);
+                chordMaplet.setSourceValue(sourceValue.clone());
+                chordMaplet.setTargetValue(targetValue.clone());
                 chordMap.emplaceBack(chordMaplet.clone());
             }
         }
@@ -82,10 +82,10 @@ namespace {
                 pitchClassEnum.getIdentifierFromValue(bw_music::PitchClass::Value::Fsh));
             babelwires::EnumValue chordTypeTargetValue(
                 chordTypeEnum.getIdentifierFromValue(bw_music::ChordType::Value::m7_11));
-            babelwires::TupleValue targetValue({pitchClassTargetValue, chordTypeTargetValue});
+            babelwires::TupleValue targetValue({pitchClassTargetValue.clone(), chordTypeTargetValue.clone()});
 
-            chordMaplet.setSourceValue(sourceValue);
-            chordMaplet.setTargetValue(targetValue);
+            chordMaplet.setSourceValue(sourceValue.clone());
+            chordMaplet.setTargetValue(targetValue.clone());
             chordMap.emplaceBack(chordMaplet.clone());
         }
         if (targetMode == TargetMode::ChordToSilence) {
@@ -94,26 +94,26 @@ namespace {
                     pitchClassEnum.getIdentifierFromValue(bw_music::PitchClass::Value::Gsh));
                 babelwires::EnumValue chordTypeSourceValue(
                     chordTypeEnum.getIdentifierFromValue(bw_music::ChordType::Value::M6));
-                babelwires::TupleValue sourceValue({pitchClassSourceValue, chordTypeSourceValue});
+                babelwires::TupleValue sourceValue({pitchClassSourceValue.clone(), chordTypeSourceValue.clone()});
 
                 babelwires::EnumValue targetValue;
                 targetValue.set(bw_music::NoChord::getNoChordValue());
 
-                chordMaplet.setSourceValue(sourceValue);
-                chordMaplet.setTargetValue(targetValue);
+                chordMaplet.setSourceValue(sourceValue.clone());
+                chordMaplet.setTargetValue(targetValue.clone());
                 chordMap.emplaceBack(chordMaplet.clone());
             }
             if (wildcardMode == WildcardMode::Wildcards) {
                 babelwires::EnumValue pitchClassSourceValue(
                     pitchClassEnum.getIdentifierFromValue(bw_music::PitchClass::Value::Dsh));
                 babelwires::EnumValue wildcardValue(babelwires::getWildcardId());
-                babelwires::TupleValue sourceValue({pitchClassSourceValue, wildcardValue});
+                babelwires::TupleValue sourceValue({pitchClassSourceValue.clone(), wildcardValue.clone()});
 
                 babelwires::EnumValue targetValue;
                 targetValue.set(bw_music::NoChord::getNoChordValue());
 
-                chordMaplet.setSourceValue(sourceValue);
-                chordMaplet.setTargetValue(targetValue);
+                chordMaplet.setSourceValue(sourceValue.clone());
+                chordMaplet.setTargetValue(targetValue.clone());
                 chordMap.emplaceBack(chordMaplet.clone());
             }
         }
@@ -122,9 +122,9 @@ namespace {
                                                                  bw_music::getMapChordFunctionTargetTypeRef());
 
             babelwires::EnumValue wildcardValue(babelwires::getWildcardMatchId());
-            babelwires::TupleValue targetValue({wildcardValue, wildcardValue});
+            babelwires::TupleValue targetValue({wildcardValue.clone(), wildcardValue.clone()});
 
-            chordMaplet.setTargetValue(targetValue);
+            chordMaplet.setTargetValue(targetValue.clone());
 
             chordMap.emplaceBack(chordMaplet.clone());
         }

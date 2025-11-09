@@ -26,6 +26,6 @@ namespace bw_music {
 
       private:
         /// Throws a TypeSystem exception if the arguments are not of the expect type.
-        static ModelDuration extractValueArguments(const std::vector<babelwires::EditableValueHolder>& valueArguments);
+        static ModelDuration extractValueArguments(const std::vector<babelwires::ValueHolder>& valueArguments);
     };
 } // namespace bw_music
