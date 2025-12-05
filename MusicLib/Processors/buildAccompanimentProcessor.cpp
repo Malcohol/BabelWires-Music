@@ -44,9 +44,9 @@ namespace {
         return types;
     }
 
-    std::vector<babelwires::EditableValueHolder> getValuesForOptionalFields() {
+    std::vector<babelwires::ValueHolder> getValuesForOptionalFields() {
         const auto& fieldIds = bw_music::ChordType::getStaticValueSet();
-        std::vector<babelwires::EditableValueHolder> values;
+        std::vector<babelwires::ValueHolder> values;
         values.reserve(static_cast<unsigned int>(bw_music::ChordType::Value::NUM_VALUES));
         for (unsigned int i = 0; i < static_cast<unsigned int>(bw_music::ChordType::Value::NUM_VALUES); ++i) {
             values.emplace_back(
