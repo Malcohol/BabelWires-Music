@@ -44,23 +44,23 @@ namespace {
         sourceValue.set(builtInPercussion.getIdentifierFromValue(bw_music::BuiltInPercussionInstruments::Value::Clap));
         targetValue.set(
             builtInPercussion.getIdentifierFromValue(bw_music::BuiltInPercussionInstruments::Value::Cowbll));
-        maplet.setSourceValue(sourceValue);
-        maplet.setTargetValue(targetValue);
+        maplet.setSourceValue(sourceValue.clone());
+        maplet.setTargetValue(targetValue.clone());
         percussionMap.emplaceBack(maplet.clone());
 
         sourceValue.set(
             builtInPercussion.getIdentifierFromValue(bw_music::BuiltInPercussionInstruments::Value::Crash1));
         targetValue.set(
             builtInPercussion.getIdentifierFromValue(bw_music::BuiltInPercussionInstruments::Value::Crash2));
-        maplet.setSourceValue(sourceValue);
-        maplet.setTargetValue(targetValue);
+        maplet.setSourceValue(sourceValue.clone());
+        maplet.setTargetValue(targetValue.clone());
         percussionMap.emplaceBack(maplet.clone());
 
         sourceValue.set(
             builtInPercussion.getIdentifierFromValue(bw_music::BuiltInPercussionInstruments::Value::LFlTom));
         targetValue.set(babelwires::getBlankValueId());
-        maplet.setSourceValue(sourceValue);
-        maplet.setTargetValue(targetValue);
+        maplet.setSourceValue(sourceValue.clone());
+        maplet.setTargetValue(targetValue.clone());
         percussionMap.emplaceBack(maplet.clone());
 
         percussionMap.emplaceBack(std::make_unique<babelwires::AllToSameFallbackMapEntryData>());

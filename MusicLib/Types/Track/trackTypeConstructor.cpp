@@ -11,7 +11,7 @@
 #include <BabelWiresLib/Types/Rational/rationalValue.hpp>
 
 bw_music::ModelDuration bw_music::TrackTypeConstructor::extractValueArguments(
-    const std::vector<babelwires::EditableValueHolder>& valueArguments) {
+    const std::vector<babelwires::ValueHolder>& valueArguments) {
     if (valueArguments.size() != 1) {
         throw babelwires::TypeSystemException()
             << "TrackTypeConstructor expects 1 value arguments but got " << valueArguments.size();
@@ -28,10 +28,10 @@ babelwires::TypeConstructor::TypeConstructorResult
 bw_music::TrackTypeConstructor::constructType(const babelwires::TypeSystem& typeSystem, babelwires::TypeRef newTypeRef,
                                               const babelwires::TypeConstructorArguments& arguments,
                                               const std::vector<const babelwires::Type*>& resolvedTypeArguments) const {
-    if (arguments.m_typeArguments.size() != 0) {
+    if (arguments.getTypeArguments().size() != 0) {
         throw babelwires::TypeSystemException()
-            << "TrackTypeConstructor does not expect type arguments but got " << arguments.m_typeArguments.size();
+            << "TrackTypeConstructor does not expect type arguments but got " << arguments.getTypeArguments().size();
     }
-    ModelDuration initialDuration = extractValueArguments(arguments.m_valueArguments);
+    ModelDuration initialDuration = extractValueArguments(arguments.getValueArguments());
     return std::make_unique<babelwires::ConstructedType<TrackType>>(std::move(newTypeRef), initialDuration);
 }
