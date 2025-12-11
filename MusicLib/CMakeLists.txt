@@ -25,6 +25,7 @@ SET( MUSICLIB_SRCS
 	Functions/quantizeFunction.cpp
 	Functions/splitAtPitchFunction.cpp
 	Functions/transposeFunction.cpp
+	Types/chordSetType.cpp
 	Types/Track/TrackEvents/chordEvents.cpp
 	Types/Track/TrackEvents/noteEvents.cpp
 	Types/Track/TrackEvents/percussionEvents.cpp

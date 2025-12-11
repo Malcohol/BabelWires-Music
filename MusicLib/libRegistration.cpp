@@ -24,6 +24,7 @@
 #include <MusicLib/Processors/silenceProcessor.hpp>
 #include <MusicLib/Processors/splitAtPitchProcessor.hpp>
 #include <MusicLib/Processors/transposeProcessor.hpp>
+#include <MusicLib/Types/chordSetType.hpp>
 #include <MusicLib/Types/Track/trackTypeConstructor.hpp>
 #include <MusicLib/Types/tempo.hpp>
 #include <MusicLib/Types/duration.hpp>
@@ -44,6 +45,7 @@ void bw_music::registerLib(babelwires::ProjectContext& context) {
     context.m_typeSystem.addEntry<BuiltInPercussionInstruments>();
     context.m_typeSystem.addEntry<Duration>();
     context.m_typeSystem.addEntry<Tempo>();
+    context.m_typeSystem.addEntry<ChordSetType>();
 
     context.m_typeSystem.addEntry<SplitAtPitchProcessorInput>();
     context.m_typeSystem.addEntry<SplitAtPitchProcessorOutput>();

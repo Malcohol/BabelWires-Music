@@ -8,22 +8,23 @@
 #include <MusicLib/Processors/buildAccompanimentProcessor.hpp>
 
 #include <MusicLib/Functions/fitToChordFunction.hpp>
+#include <MusicLib/Types/chordSetType.hpp>
 
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/Array/arrayTypeConstructor.hpp>
 #include <BabelWiresLib/Types/Generic/typeVariableTypeConstructor.hpp>
 #include <BabelWiresLib/Types/Record/recordTypeConstructor.hpp>
 
+
 bw_music::BuildAccompanimentProcessorInput::BuildAccompanimentProcessorInput()
     : GenericType(babelwires::RecordTypeConstructor::makeTypeRef(
                       getIdOfChordsArray(),
-                      babelwires::ArrayTypeConstructor::makeTypeRef(
-                          ChordType::getThisType(), 1, static_cast<unsigned int>(ChordType::Value::NUM_VALUES), 1),
+                      ChordSetType::getThisType(),
                       getIdOfInput(), babelwires::TypeVariableTypeConstructor::makeTypeRef()),
                   1) {}
 
 babelwires::ShortId bw_music::BuildAccompanimentProcessorInput::getIdOfChordsArray() {
-    return BW_SHORT_ID("chords", "chords", "946fd111-1e3a-40e5-ae53-c30e4a929a01");
+    return BW_SHORT_ID("chords", "chord types", "946fd111-1e3a-40e5-ae53-c30e4a929a01");
 }
 
 babelwires::ShortId bw_music::BuildAccompanimentProcessorInput::getIdOfInput() {
@@ -95,7 +96,7 @@ Alternative: The output could be a generic type where the output record as a who
     const auto [inputChild, inputStep, inputChildType] = inputType.getChild(inputValue, 0);
     const auto& inputRecordType = inputChildType.resolve(typeSystem).is<babelwires::RecordType>();
     const auto [chordsArray, inputStep0, inputChildType0] = inputRecordType.getChild(*inputChild, 0);
-    const auto& chordsArrayType = inputChildType0.resolve(typeSystem).is<babelwires::ArrayType>();
+    const auto& chordsArrayType = inputChildType0.resolve(typeSystem).is<ChordSetType>();
     const auto [inputStructure, inputStep1, inputChildType1] = inputRecordType.getChild(*inputChild, 1);
 
     babelwires::ValueHolder newOutputValue = output.getValue();
@@ -106,18 +107,14 @@ Alternative: The output could be a generic type where the output record as a who
     const auto& resultRecordType = resultChildType.resolve(typeSystem).is<babelwires::RecordType>();
 
     const auto& chordType = typeSystem.getRegisteredType(ChordType::getThisIdentifier()).is<ChordType>();
-    std::map<babelwires::ShortId, bool> selectedChords;
-    for (unsigned int i = 0; i < chordsArrayType.getNumChildren(*chordsArray); ++i) {
-        const auto [chordValueHolder, chordStep, chordChildType] = chordsArrayType.getChild(*chordsArray, i);
-        assert(chordChildType == ChordType::getThisType());
-        const babelwires::ShortId chordId = (*chordValueHolder)->is<babelwires::EnumValue>().get();
 
-        assert(std::find(resultRecordType.getOptionalFieldIds().begin(), resultRecordType.getOptionalFieldIds().end(),
-                         chordId) != resultRecordType.getOptionalFieldIds().end());
-        if (selectedChords.find(chordId) != selectedChords.end()) {
-            continue;
+    std::map<babelwires::ShortId, bool> selectedChords;
+    {
+        const std::set<ChordType::Value> chordSet = chordsArrayType.getChordTypesFromValue(typeSystem, *chordsArray);
+        for (const auto& chordValue : chordSet) {
+            const babelwires::ShortId chordId = chordType.getIdentifierFromValue(chordValue);
+            selectedChords.emplace(chordId, true);
         }
-        selectedChords[chordId] = true;
     }
     
     resultRecordType.selectOptionals(typeSystem, *resultChild, selectedChords);
