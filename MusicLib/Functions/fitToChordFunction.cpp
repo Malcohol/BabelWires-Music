@@ -7,8 +7,6 @@
  **/
 #include <MusicLib/Functions/fitToChordFunction.hpp>
 
-#include <BabelWiresLib/Utilities/applyToSubvalues.hpp>
-
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/Types/Track/trackBuilder.hpp>
 #include <MusicLib/Types/Track/trackType.hpp>
@@ -22,7 +20,7 @@ namespace {
 
     const ChordDegreeAdjustments chordDegreeAdjustments = {
         // How each chord requires and/or modifies certain degrees of the scale.
-        // Degree 1 is assumed and degree 5 don't need to be specified if default.
+        // Degree 1 is assumed and degree 5 doesn't need to be specified if default.
         // The adjustments are in semitones.
         {bw_music::ChordType::Value::M, {{3, 0}}},
         {bw_music::ChordType::Value::M6, {{3, 0}, {6, 0}}},
@@ -62,6 +60,11 @@ namespace {
         {bw_music::ChordType::Value::mM7b5, {{3, -1}, {5, -1}, {7, 0}}},
         {bw_music::ChordType::Value::m6_9, {{3, -1}, {6, 0}, {9, 0}}}};
 
+    // We don't make any assumption about what pitch range the input is in,
+    // so we don't know how to distinguish, e.g. degree 2 from degree 9.
+    // Thus we flatten all notes to a single octave. This is probably not musically ideal, but it's a reasonable
+    // starting point.
+    //
     // Note    C  C# D  D# E  F  F# G  G# A  A# B
     // Degree  1     2     3  4     5     6     7
     // Degree  8     9    10 11    12    13    14
@@ -82,7 +85,7 @@ namespace {
         DegreeAdjustment adjustments = it->second;
 
         // Apply defaults (could provide a policy to make this behaviour configurable).
-        adjustments[1] = 0; // Degree 1 (root) is always present.
+        adjustments[1] = 0;                 // Degree 1 (root) is always present.
         adjustments.insert_or_assign(5, 0); // Degree 5 is assumed unless specified.
 
         for (const auto& [degree, adjustment] : adjustments) {
@@ -106,8 +109,8 @@ namespace {
                 if (gravityMap[leftNeighbour] > 0 || gravityMap[rightNeighbour] > 0) {
                     // If either neighbour is a target, pull this note towards the nearest target.
                     // This is left-biased, but I don't think it matters much.
-                    pitchIndexMap[index] = (gravityMap[leftNeighbour] > gravityMap[rightNeighbour]) ? leftNeighbour
-                                                                                                      : rightNeighbour;
+                    pitchIndexMap[index] =
+                        (gravityMap[leftNeighbour] > gravityMap[rightNeighbour]) ? leftNeighbour : rightNeighbour;
                 }
             }
         }
@@ -120,11 +123,11 @@ namespace {
         /// Value 6 means that C#..F get transposed upwards, while F#..B get transposed downwards.
         constexpr static int s_topChordRoot = 6;
 
-        PitchMap(const bw_music::Chord& chord) : m_pitchIndexMap(getPitchIndexMap(chord.m_chordType)) {
+        PitchMap(const bw_music::Chord& chord)
+            : m_pitchIndexMap(getPitchIndexMap(chord.m_chordType)) {
             // Calculate the pitch offset based on the root of the chord.
             const int rootPitchIndex = static_cast<unsigned int>(chord.m_root);
-            m_rootOffset = (rootPitchIndex > s_topChordRoot) ? (rootPitchIndex - 12)
-                                                                    : rootPitchIndex;
+            m_rootOffset = (rootPitchIndex > s_topChordRoot) ? (rootPitchIndex - 12) : rootPitchIndex;
         }
 
         bw_music::Pitch operator()(bw_music::Pitch pitch) const {
@@ -146,7 +149,8 @@ namespace {
         int m_rootOffset;
     };
 
-    bw_music::Track fitToChordFunctionInternal(const PitchMap& pitchMap, const bw_music::Track& sourceTrack, const bw_music::Chord& chord) {
+    bw_music::Track fitToChordFunctionInternal(const PitchMap& pitchMap, const bw_music::Track& sourceTrack,
+                                               const bw_music::Chord& chord) {
         bw_music::TrackBuilder resultTrack;
 
         // Iterate through the source track and adjust each note to fit the chord.
@@ -162,7 +166,6 @@ namespace {
         }
 
         return resultTrack.finishAndGetTrack(sourceTrack.getDuration());
-
     }
 
 } // namespace
@@ -172,18 +175,3 @@ bw_music::Track bw_music::fitToChordFunction(const Track& sourceTrack, const Cho
 
     return fitToChordFunctionInternal(pitchMap, sourceTrack, chord);
 }
-
-// Produce a value the matches the input value, but adjusts any notes in any tracks to the given chord type.
-babelwires::ValueHolder bw_music::fitToChordFunction(const babelwires::TypeSystem& typeSystem, const babelwires::Type& type, const babelwires::ValueHolder& sourceValue,
-                                        const bw_music::Chord& chord) {
-    babelwires::ValueHolder result = sourceValue;
-    
-    babelwires::applyToSubvaluesOfType<TrackType>(typeSystem, type, result,
-        [&chord](const babelwires::Type& t, babelwires::Value& v) {
-            auto& track = v.is<bw_music::Track>();
-            track = bw_music::fitToChordFunction(track, chord);
-        });
-
-    return result;
-}
-

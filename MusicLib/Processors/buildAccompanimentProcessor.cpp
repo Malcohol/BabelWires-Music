@@ -9,18 +9,18 @@
 
 #include <MusicLib/Functions/fitToChordFunction.hpp>
 #include <MusicLib/Types/chordTypeSet.hpp>
+#include <MusicLib/Types/Track/trackType.hpp>
 
+#include <BabelWiresLib/Utilities/applyToSubvalues.hpp>
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/Array/arrayTypeConstructor.hpp>
 #include <BabelWiresLib/Types/Generic/typeVariableTypeConstructor.hpp>
 #include <BabelWiresLib/Types/Record/recordTypeConstructor.hpp>
 
-
 bw_music::BuildAccompanimentProcessorInput::BuildAccompanimentProcessorInput()
     : GenericType(babelwires::RecordTypeConstructor::makeTypeRef(
-                      getIdOfChordsArray(),
-                      ChordTypeSet::getThisType(),
-                      getIdOfInput(), babelwires::TypeVariableTypeConstructor::makeTypeRef()),
+                      getIdOfChordsArray(), ChordTypeSet::getThisType(), getIdOfInput(),
+                      babelwires::TypeVariableTypeConstructor::makeTypeRef()),
                   1) {}
 
 babelwires::ShortId bw_music::BuildAccompanimentProcessorInput::getIdOfChordsArray() {
@@ -66,11 +66,32 @@ bw_music::BuildAccompanimentProcessorOutput::BuildAccompanimentProcessorOutput()
           1) {}
 
 bw_music::BuildAccompanimentProcessor::BuildAccompanimentProcessor(const babelwires::ProjectContext& projectContext)
-    : Processor(projectContext, BuildAccompanimentProcessorInput::getThisType(), BuildAccompanimentProcessorOutput::getThisType()) {}
+    : Processor(projectContext, BuildAccompanimentProcessorInput::getThisType(),
+                BuildAccompanimentProcessorOutput::getThisType()) {}
+
+namespace {
+
+    // apply the fitToChordFunction to all tracks in the value.
+    babelwires::ValueHolder applyFitToChordFunction(const babelwires::TypeSystem& typeSystem,
+                                                         const babelwires::Type& type,
+                                                         const babelwires::ValueHolder& sourceValue,
+                                                         const bw_music::Chord& chord) {
+        babelwires::ValueHolder result = sourceValue;
+
+        babelwires::applyToSubvaluesOfType<bw_music::TrackType>(typeSystem, type, result,
+                                                      [&chord](const babelwires::Type& t, babelwires::Value& v) {
+                                                          auto& track = v.is<bw_music::Track>();
+                                                          track = bw_music::fitToChordFunction(track, chord);
+                                                      });
+
+        return result;
+    }
+
+} // namespace
 
 void bw_music::BuildAccompanimentProcessor::processValue(babelwires::UserLogger& userLogger,
-                                                  const babelwires::ValueTreeNode& input,
-                                                  babelwires::ValueTreeNode& output) const {
+                                                         const babelwires::ValueTreeNode& input,
+                                                         babelwires::ValueTreeNode& output) const {
     /*
 TODO:
 1. [X] Need to be able to query the assigned type of the input - Input is generic with one type variable.
@@ -116,16 +137,16 @@ Alternative: The output could be a generic type where the output record as a who
             selectedChords.emplace(chordId, true);
         }
     }
-    
+
     resultRecordType.selectOptionals(typeSystem, *resultChild, selectedChords);
 
     for (const auto& maplet : selectedChords) {
         auto [fieldValueHolder, fieldTypeRef] = resultRecordType.getChildByIdNonConst(*resultChild, maplet.first);
         const auto& fieldType = fieldTypeRef.resolve(typeSystem);
         // Accompaniment always generated with a C root.
-        const bw_music::Chord chord = { bw_music::PitchClass::Value::C, chordType.getValueFromIdentifier(maplet.first) };
+        const bw_music::Chord chord = {bw_music::PitchClass::Value::C, chordType.getValueFromIdentifier(maplet.first)};
 
-        fieldValueHolder = bw_music::fitToChordFunction(typeSystem, fieldType, *inputStructure, chord);
+        fieldValueHolder = applyFitToChordFunction(typeSystem, fieldType, *inputStructure, chord);
     }
 
     output.setValue(newOutputValue);

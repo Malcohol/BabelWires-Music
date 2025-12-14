@@ -7,8 +7,6 @@
  **/
 #pragma once
 
-#include <MusicLib/Functions/fitToChordFunction.hpp>
-
 #include <BabelWiresLib/Instance/instance.hpp>
 #include <BabelWiresLib/Processors/processor.hpp>
 #include <BabelWiresLib/Types/Record/recordType.hpp>

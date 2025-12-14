@@ -13,12 +13,8 @@
 #include <MusicLib/chord.hpp>
 
 namespace bw_music {
-    /// Adjust a track of notes to fit a chord.
-    Track fitToChordFunction(const Track& sourceTrack, const Chord& chord);
-
-    /// Produce a value the matches the input value, but adjusts any notes in any tracks to the given chord type.
+    /// Adjust a track of notes to fit a chord, but adjusts any notes in any tracks to the given chord type.
     /// The input is assumed notes are assumed to be in C major.
-    babelwires::ValueHolder fitToChordFunction(const babelwires::TypeSystem& typeSystem, const babelwires::Type& type, const babelwires::ValueHolder& sourceValue,
-                                          const Chord& chord);
+    Track fitToChordFunction(const Track& sourceTrack, const Chord& chord);
 
 } // namespace bw_music
