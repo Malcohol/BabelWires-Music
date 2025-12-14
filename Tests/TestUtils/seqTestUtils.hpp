@@ -23,7 +23,7 @@ namespace testUtils {
         bw_music::ModelDuration m_noteOffTime = babelwires::Rational(1, 4);
     };
 
-    /// Add notes as described to the track. Each has quaternote duration.
+    /// Add notes as described to the track.
     void addNotes(const std::vector<NoteInfo>& notes, bw_music::TrackBuilder& track);
 
     /// Check that there is a sequence of the given notes in the track.
