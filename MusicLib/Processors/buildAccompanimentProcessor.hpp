@@ -1,5 +1,5 @@
 /**
- * Processor which adjusts notes in C major to fit other chord types.
+ * Processor that builds a record of chord-adjusted tracks from an input type and ChordTypeSet.
  *
  * (C) 2021 Malcolm Tyrrell
  *
@@ -14,7 +14,6 @@
 #include <BabelWiresLib/Types/Generic/genericType.hpp>
 
 namespace bw_music {
-
     class BuildAccompanimentProcessorInput : public babelwires::GenericType {
       public:
         REGISTERED_TYPE("BuildAccompIn", "Build Accompaniment In", "d1f8b0c2-3f4e-4c5a-9b6e-7c8d9e0f1a2b", 1);
@@ -34,6 +33,7 @@ namespace bw_music {
         static babelwires::ShortId getIdOfResult();
       };
 
+    /// Processor that builds a record of chord-adjusted tracks from an input type and ChordTypeSet.
     class BuildAccompanimentProcessor : public babelwires::Processor {
       public:
         BW_PROCESSOR_WITH_DEFAULT_FACTORY("BuildAccomp", "Build Accompaniment", "d604f85c-110d-4c11-aa99-3684cf12ab58");
