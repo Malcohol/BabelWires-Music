@@ -32,7 +32,7 @@ TEST(TrackType, defaultTrackTypeIsValidValue) {
     EXPECT_FALSE(trackType.isValidValue(typeSystem, babelwires::RationalValue(3)));
 }
 
-TEST(TrackType, defaultIntTypeGetKind) {
+TEST(TrackType, defaultTrackGetKindIsSet) {
     bw_music::DefaultTrackType trackType;
 
     EXPECT_FALSE(trackType.getFlavour().empty());
