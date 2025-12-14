@@ -40,3 +40,27 @@ TEST(ChordTypeSetTest, getChordTypesFromValue) {
     EXPECT_NE(chordTypes.find(bw_music::ChordType::Value::m7b5), chordTypes.end());
 }
 
+TEST(ChordTypeSetTest, createValueFromChordTypes) {
+    testUtils::TestEnvironment testEnvironment;
+    bw_music::registerLib(testEnvironment.m_projectContext);
+
+    const auto& typeSystem = testEnvironment.m_typeSystem;
+    const auto& chordTypeSet = typeSystem.getEntryByType<bw_music::ChordTypeSet>();
+
+    std::set<bw_music::ChordType::Value> inputChordTypes = {
+        bw_music::ChordType::Value::M,
+        bw_music::ChordType::Value::dim,
+        bw_music::ChordType::Value::aug
+    };
+
+    babelwires::ValueHolder chordSetValue =
+        chordTypeSet.createValueFromChordTypes(typeSystem, inputChordTypes);
+
+    std::set<bw_music::ChordType::Value> chordTypes =
+        chordTypeSet.getChordTypesFromValue(typeSystem, chordSetValue);
+
+    ASSERT_EQ(chordTypes.size(), inputChordTypes.size());
+    for (auto chordType : inputChordTypes) {
+        EXPECT_NE(chordTypes.find(chordType), chordTypes.end());
+    }
+}

@@ -30,3 +30,18 @@ bw_music::ChordTypeSet::getChordTypesFromValue(const babelwires::TypeSystem& typ
     }
     return selectedChords;
 }
+
+babelwires::ValueHolder
+bw_music::ChordTypeSet::createValueFromChordTypes(const babelwires::TypeSystem& typeSystem, const std::set<ChordType::Value>& chordTypes) const {
+    babelwires::ValueHolder valueHolder = createValue(typeSystem);
+    setSize(typeSystem, valueHolder, static_cast<unsigned int>(chordTypes.size()));
+    const auto& chordTypeType = typeSystem.getEntryByType<ChordType>();
+    unsigned int i = 0;
+    for (auto chordType : chordTypes) {
+        const auto [childValueHolder, childStep, childType] = getChildNonConst(valueHolder, i);
+        const babelwires::ShortId chordId = chordTypeType.getIdentifierFromValue(chordType);
+        *childValueHolder = babelwires::EnumValue(chordId);
+        ++i;
+    }
+    return valueHolder;
+}
