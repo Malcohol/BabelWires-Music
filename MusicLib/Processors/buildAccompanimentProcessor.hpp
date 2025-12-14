@@ -7,11 +7,11 @@
  **/
 #pragma once
 
-#include <BabelWiresLib/Instance/instance.hpp>
 #include <BabelWiresLib/Processors/processor.hpp>
-#include <BabelWiresLib/Types/Record/recordType.hpp>
 #include <BabelWiresLib/Processors/processorFactory.hpp>
+#include <BabelWiresLib/TypeSystem/registeredType.hpp>
 #include <BabelWiresLib/Types/Generic/genericType.hpp>
+#include <BabelWiresLib/Types/Record/recordType.hpp>
 
 namespace bw_music {
     class BuildAccompanimentProcessorInput : public babelwires::GenericType {
@@ -31,7 +31,7 @@ namespace bw_music {
         BuildAccompanimentProcessorOutput();
 
         static babelwires::ShortId getIdOfResult();
-      };
+    };
 
     /// Processor that builds a record of chord-adjusted tracks from an input type and ChordTypeSet.
     class BuildAccompanimentProcessor : public babelwires::Processor {
