@@ -7,6 +7,8 @@
 #include <MusicLib/libRegistration.hpp>
 #include <MusicLib/Types/Track/trackBuilder.hpp>
 
+#include <Tests/TestUtils/testTrackEvents.hpp>
+
 #include <Tests/BabelWiresLib/TestUtils/testEnvironment.hpp>
 #include <Tests/TestUtils/seqTestUtils.hpp>
 
@@ -24,7 +26,8 @@ class FitToChordFunctionTest : public ::testing::Test {
         trackBuilder.addEvent(bw_music::NoteOnEvent{0, pitch0});
         trackBuilder.addEvent(bw_music::NoteOnEvent{0, pitch1});
         trackBuilder.addEvent(bw_music::NoteOnEvent{0, pitch2});
-        trackBuilder.addEvent(bw_music::NoteOffEvent{babelwires::Rational(4), pitch0});
+        trackBuilder.addEvent(testUtils::TestTrackEvent{babelwires::Rational(2), 2}); // Some non-note event.
+        trackBuilder.addEvent(bw_music::NoteOffEvent{babelwires::Rational(2), pitch0});
         trackBuilder.addEvent(bw_music::NoteOffEvent{0, pitch1});
         trackBuilder.addEvent(bw_music::NoteOffEvent{0, pitch2});
 
@@ -36,26 +39,37 @@ class FitToChordFunctionTest : public ::testing::Test {
         auto noteOn0 = it->as<const bw_music::NoteOnEvent>();
         ASSERT_NE(noteOn0, nullptr);
         EXPECT_EQ(noteOn0->m_pitch, pitch0);
+        EXPECT_EQ(noteOn0->getTimeSinceLastEvent(), 0);
         ++it;
         auto noteOn1 = it->as<const bw_music::NoteOnEvent>();
         ASSERT_NE(noteOn1, nullptr);
         EXPECT_EQ(noteOn1->m_pitch, pitch1);
+        EXPECT_EQ(noteOn1->getTimeSinceLastEvent(), 0);
         ++it;
         auto noteOn2 = it->as<const bw_music::NoteOnEvent>();
         ASSERT_NE(noteOn2, nullptr);
         EXPECT_EQ(noteOn2->m_pitch, pitch2);
+        EXPECT_EQ(noteOn2->getTimeSinceLastEvent(), 0);
+        ++it;
+        auto nonNoteEvent = it->as<const testUtils::TestTrackEvent>();
+        ASSERT_NE(nonNoteEvent, nullptr);
+        EXPECT_EQ(nonNoteEvent->m_value, 2);
+        EXPECT_EQ(nonNoteEvent->getTimeSinceLastEvent(), babelwires::Rational(2));
         ++it;
         auto noteOff0 = it->as<const bw_music::NoteOffEvent>();
         ASSERT_NE(noteOff0, nullptr);
         EXPECT_EQ(noteOff0->m_pitch, pitch0);
+        EXPECT_EQ(noteOff0->getTimeSinceLastEvent(), 2);
         ++it;
         auto noteOff1 = it->as<const bw_music::NoteOffEvent>();
         ASSERT_NE(noteOff1, nullptr);
         EXPECT_EQ(noteOff1->m_pitch, pitch1);
+        EXPECT_EQ(noteOff1->getTimeSinceLastEvent(), 0);
         ++it;
         auto noteOff2 = it->as<const bw_music::NoteOffEvent>();
         ASSERT_NE(noteOff2, nullptr);
         EXPECT_EQ(noteOff2->m_pitch, pitch2);
+        EXPECT_EQ(noteOff2->getTimeSinceLastEvent(), 0);
         ++it;
         EXPECT_EQ(it, track.end());
     };
