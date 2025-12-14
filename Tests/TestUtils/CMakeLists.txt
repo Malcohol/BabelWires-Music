@@ -1,5 +1,6 @@
 SET( SEQTESTUTILS_SRCS
       seqTestUtils.cpp
+      testTrackContainer.cpp
    )
 
 ADD_LIBRARY( seqTestUtils ${SEQTESTUTILS_SRCS} )

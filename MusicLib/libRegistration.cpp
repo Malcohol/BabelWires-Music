@@ -15,6 +15,7 @@
 #include <MusicLib/Processors/concatenateProcessor.hpp>
 #include <MusicLib/Processors/excerptProcessor.hpp>
 #include <MusicLib/Processors/fingeredChordsProcessor.hpp>
+#include <MusicLib/Processors/buildAccompanimentProcessor.hpp>
 #include <MusicLib/Processors/mergeProcessor.hpp>
 #include <MusicLib/Processors/monophonicSubtracksProcessor.hpp>
 #include <MusicLib/Processors/percussionMapProcessor.hpp>
@@ -23,6 +24,7 @@
 #include <MusicLib/Processors/silenceProcessor.hpp>
 #include <MusicLib/Processors/splitAtPitchProcessor.hpp>
 #include <MusicLib/Processors/transposeProcessor.hpp>
+#include <MusicLib/Types/chordTypeSet.hpp>
 #include <MusicLib/Types/Track/trackTypeConstructor.hpp>
 #include <MusicLib/Types/tempo.hpp>
 #include <MusicLib/Types/duration.hpp>
@@ -43,6 +45,7 @@ void bw_music::registerLib(babelwires::ProjectContext& context) {
     context.m_typeSystem.addEntry<BuiltInPercussionInstruments>();
     context.m_typeSystem.addEntry<Duration>();
     context.m_typeSystem.addEntry<Tempo>();
+    context.m_typeSystem.addEntry<ChordTypeSet>();
 
     context.m_typeSystem.addEntry<SplitAtPitchProcessorInput>();
     context.m_typeSystem.addEntry<SplitAtPitchProcessorOutput>();
@@ -57,6 +60,10 @@ void bw_music::registerLib(babelwires::ProjectContext& context) {
     context.m_typeSystem.addEntry<FingeredChordsProcessorInput>();
     context.m_typeSystem.addEntry<FingeredChordsProcessorOutput>();
     context.m_processorReg.addProcessor<FingeredChordsProcessor>();
+
+    context.m_typeSystem.addEntry<BuildAccompanimentProcessorInput>();
+    context.m_typeSystem.addEntry<BuildAccompanimentProcessorOutput>();
+    context.m_processorReg.addProcessor<BuildAccompanimentProcessor>();
 
     context.m_typeSystem.addEntry<MergeProcessorInput>();
     context.m_typeSystem.addEntry<MergeProcessorOutput>();

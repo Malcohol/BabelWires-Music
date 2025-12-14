@@ -1,10 +1,13 @@
 SET( SEQUENCELIB_TESTS_SRCS
       musicLibTests.cpp
+      buildAccompanimentTest.cpp
       chordMapProcessorTest.cpp
-      fingeredChordsProcessorTest.cpp
+      chordTypeSetTest.cpp
       concatenateProcessorTest.cpp
       excerptProcessorTest.cpp
+      fingeredChordsProcessorTest.cpp
       filteredTrackIteratorTest.cpp
+      fitToChordFunctionTest.cpp
       mergeProcessorTest.cpp
       monophonicNoteIteratorTest.cpp
       monophonicSubtracksProcessorTest.cpp

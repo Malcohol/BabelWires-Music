@@ -12,7 +12,9 @@
 #include <BabelWiresLib/Types/Enum/enumWithCppEnum.hpp>
 #include <BabelWiresLib/TypeSystem/registeredType.hpp>
 
-/// These match the "Chord type" values from the XF Format Specifications v2.01
+/// Most chords below match the "Chord type" values from the XF Format Specifications v2.01
+/// Some additional chord types are not in the XF spec, but are needed for compatibility with
+/// other devices, such as the Roland PMA-5.
 // TODO Consider using \u266d (flat) and \u266f (sharp) in names.
 #define CHORD_TYPE_VALUES(X)                                                                                           \
     X(M, "Maj", "1ef34c5c-e8d4-4cac-b189-e4ac2fffefd4")                                                                \
@@ -48,13 +50,16 @@
     X(_1p8, "1+8", "63f443e4-93d5-4609-b91a-5a6491ac19be")                                                             \
     X(_1p5, "1+5", "a513bc99-e978-4699-bc7c-7e30d71f33d0")                                                             \
     X(sus4, "sus4", "ce218a4b-4600-47de-8a77-45a490457ff4")                                                            \
+    /* TODO: Is this the same as sus2 or is a separate chord type required ? */                                        \
     X(_1p2p5, "1+2+5", "28875d31-45c8-488f-9cc3-9172c0ad7929")                                                         \
-    /* In the XF specification, "Cancel Chord" (CC) is in this position */                                             \
+    /* In the XF specification, "Cancel Chord" (CC) is in this position, but that's not an actual chord. */            \
     /* The following are not in the XF spec v2.01 but available on more recent keyboards. */                           \
     /* See the hpmidifile project for values */                                                                        \
     X(M7b5, "M7b5", "54f40058-ce9a-4c75-95c0-0ac7e66039aa")                                                            \
     X(b5, "b5", "9dba6ccc-946c-4fd8-a4a1-f5f8e27b74f1")                                                                \
-    X(mM7b5, "mM7b5", "792e9dc3-c713-437f-a90e-d82e667cf2d0")
+    X(mM7b5, "mM7b5", "792e9dc3-c713-437f-a90e-d82e667cf2d0")                                                          \
+    /* See Roland PMA-5 manual, page 108 */                                                                            \
+    X(m6_9, "min6(9)", "1647d18d-db2a-4672-8e19-168ba1f53944")
 
 #define CHORD_TYPE_SELECT_FIRST_ARGUMENT(A, B, C) A,
 

@@ -49,9 +49,11 @@ namespace {
     // The "fingered chords" of many arranger-style keyboards are supported, although the root note is always required.
     // The fingering 0b0000100001010001 is ambiguous between M7b5 and M7s11. The latter has a few alternatives, so the former
     // is used.
-    const std::array<IntervalSetToChordType, 63> recognizedIntervals = {{
+    const auto recognizedIntervals = std::to_array<IntervalSetToChordType>({
         // clang-format off
         // This must be sorted (the alphabetic sort of a typical editor will work to keep this sorted).
+        //    CBAAGGFFEDDCC
+        //      # # #  # #
         {0b0000000000000111, s_cancelChord},
         {0b0000000000001101, bw_music::ChordType::Value::m9},
         {0b0000000000010101, bw_music::ChordType::Value::M9},
@@ -67,10 +69,12 @@ namespace {
         {0b0000000010101001, bw_music::ChordType::Value::m7_11},
         {0b0000000010101101, bw_music::ChordType::Value::m7_11},
         {0b0000000100010001, bw_music::ChordType::Value::aug},
+        {0b0000001000001101, bw_music::ChordType::Value::m6_9},
         {0b0000001000010101, bw_music::ChordType::Value::M6_9},
         {0b0000001001001001, bw_music::ChordType::Value::dim7},
         {0b0000001010000001, bw_music::ChordType::Value::M6},
         {0b0000001010001001, bw_music::ChordType::Value::m6},
+        {0b0000001010001101, bw_music::ChordType::Value::m6_9},
         {0b0000001010010001, bw_music::ChordType::Value::M6},
         {0b0000001010010101, bw_music::ChordType::Value::M6_9},
         {0b0000010000001001, bw_music::ChordType::Value::m7},
@@ -116,7 +120,7 @@ namespace {
         {0b0000100100010001, bw_music::ChordType::Value::Mj7aug},
         {0b0001000000000001, bw_music::ChordType::Value::_1p8},
         // clang-format on
-    }};
+    });
 
     /// Try to identify a chord type which matches the interval.
     /// Returns a ChordType::Value or -1 for cancel chord.
