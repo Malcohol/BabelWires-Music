@@ -18,7 +18,7 @@ bw_music::ChordTypeSet::ChordTypeSet()
 std::set<bw_music::ChordType::Value>
 bw_music::ChordTypeSet::getChordTypesFromValue(const babelwires::TypeSystem& typeSystem, const babelwires::ValueHolder& value) const {
     assert(value && "ValueHolder must hold a value");
-    assert(this->isValidValue(typeSystem, *value) && "ValueHolder must hold a valid value for this type");
+    assert(isValidValue(typeSystem, *value) && "ValueHolder must hold a valid value for this type");
     
     const auto& chordType = typeSystem.getRegisteredType(ChordType::getThisIdentifier()).is<ChordType>();
     std::set<bw_music::ChordType::Value> selectedChords;

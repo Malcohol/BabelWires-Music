@@ -17,8 +17,8 @@ namespace testUtils {
         TestTrackContainer();
 
         DECLARE_INSTANCE_BEGIN(TestTrackContainer)
-        DECLARE_INSTANCE_FIELD(Track1, bw_music::TrackType)
-        DECLARE_INSTANCE_FIELD(Track2, bw_music::TrackType)
+        DECLARE_INSTANCE_FIELD(track1, bw_music::TrackType)
+        DECLARE_INSTANCE_FIELD(track2, bw_music::TrackType)
         DECLARE_INSTANCE_FIELD(other, babelwires::IntType)
         DECLARE_INSTANCE_END()
     };

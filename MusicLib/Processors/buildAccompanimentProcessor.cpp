@@ -93,19 +93,6 @@ namespace {
 void bw_music::BuildAccompanimentProcessor::processValue(babelwires::UserLogger& userLogger,
                                                          const babelwires::ValueTreeNode& input,
                                                          babelwires::ValueTreeNode& output) const {
-    /*
-TODO:
-1. [X] Need to be able to query the assigned type of the input - Input is generic with one type variable.
-2. [X] Need to be able to build record types dynamically.
-- [X] Regular fields
-- [X] Optional fields
-3. [X] The output is a generic record type with optional track fields, corresponding to selected chord types.
-4. [ ] Process the input to produce the output.
-
-Alternative: The output could be a generic type where the output record as a whole is substituted.
-* Advantage: Might be simpler
-* Disadvantage: More new types created any time chords are added or removed.
-*/
 
     const BuildAccompanimentProcessorInput& inputType = input.getType().is<BuildAccompanimentProcessorInput>();
     const BuildAccompanimentProcessorOutput& outputType = output.getType().is<BuildAccompanimentProcessorOutput>();

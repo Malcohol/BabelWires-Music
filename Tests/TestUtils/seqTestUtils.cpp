@@ -14,6 +14,12 @@ void testUtils::addSimpleNotes(const std::vector<bw_music::Pitch>& expectedPitch
     }
 }
 
+bw_music::Track testUtils::getTrackOfSimpleNotes(const std::vector<bw_music::Pitch>& expectedPitches) {
+    bw_music::TrackBuilder trackBuilder;
+    addSimpleNotes(expectedPitches, trackBuilder);
+    return trackBuilder.finishAndGetTrack();
+}
+
 void testUtils::testSimpleNotes(const std::vector<bw_music::Pitch>& expectedPitches, const bw_music::Track& track) {
     const bw_music::ModelDuration expectedNoteDuration = babelwires::Rational(1, 4);
 

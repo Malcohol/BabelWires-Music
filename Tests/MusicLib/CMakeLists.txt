@@ -1,5 +1,6 @@
 SET( SEQUENCELIB_TESTS_SRCS
       musicLibTests.cpp
+      buildAccompanimentTest.cpp
       chordMapProcessorTest.cpp
       chordTypeSetTest.cpp
       concatenateProcessorTest.cpp

@@ -20,6 +20,9 @@ namespace bw_music {
 
         BuildAccompanimentProcessorInput();
 
+        // GenericTypes do not support the instance system yet, so working with these
+        // objects is unpleasant.
+        // TODO Work out how to use the instance system with Generic types.
         static babelwires::ShortId getIdOfChordsArray();
         static babelwires::ShortId getIdOfInput();
     };
