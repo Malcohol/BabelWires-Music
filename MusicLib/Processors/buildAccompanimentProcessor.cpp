@@ -8,7 +8,7 @@
 #include <MusicLib/Processors/buildAccompanimentProcessor.hpp>
 
 #include <MusicLib/Functions/fitToChordFunction.hpp>
-#include <MusicLib/Types/chordSetType.hpp>
+#include <MusicLib/Types/chordTypeSet.hpp>
 
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/Array/arrayTypeConstructor.hpp>
@@ -19,7 +19,7 @@
 bw_music::BuildAccompanimentProcessorInput::BuildAccompanimentProcessorInput()
     : GenericType(babelwires::RecordTypeConstructor::makeTypeRef(
                       getIdOfChordsArray(),
-                      ChordSetType::getThisType(),
+                      ChordTypeSet::getThisType(),
                       getIdOfInput(), babelwires::TypeVariableTypeConstructor::makeTypeRef()),
                   1) {}
 
@@ -96,7 +96,7 @@ Alternative: The output could be a generic type where the output record as a who
     const auto [inputChild, inputStep, inputChildType] = inputType.getChild(inputValue, 0);
     const auto& inputRecordType = inputChildType.resolve(typeSystem).is<babelwires::RecordType>();
     const auto [chordsArray, inputStep0, inputChildType0] = inputRecordType.getChild(*inputChild, 0);
-    const auto& chordsArrayType = inputChildType0.resolve(typeSystem).is<ChordSetType>();
+    const auto& chordsArrayType = inputChildType0.resolve(typeSystem).is<ChordTypeSet>();
     const auto [inputStructure, inputStep1, inputChildType1] = inputRecordType.getChild(*inputChild, 1);
 
     babelwires::ValueHolder newOutputValue = output.getValue();
