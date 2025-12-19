@@ -96,6 +96,12 @@ void testUtils::addChords(const std::vector<ChordInfo>& chords, bw_music::TrackB
     }
 }
 
+bw_music::Track testUtils::getTrackOfChords(const std::vector<ChordInfo>& chords) {
+    bw_music::TrackBuilder trackBuilder;
+    addChords(chords, trackBuilder);
+    return trackBuilder.finishAndGetTrack();
+}
+
 void testUtils::testChords(const std::vector<ChordInfo>& expectedChords, const bw_music::Track& track) {
     // TODO: Use filteredTrackIterator to allow testing chords when other events present.
     auto chordIterator = track.begin();

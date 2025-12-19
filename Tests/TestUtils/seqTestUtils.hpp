@@ -42,6 +42,8 @@ namespace testUtils {
     /// Add the given chords. Each has halfnote duration.
     void addChords(const std::vector<ChordInfo>& chords, bw_music::TrackBuilder& track);
 
+    bw_music::Track getTrackOfChords(const std::vector<ChordInfo>& chords);
+
     void testChords(const std::vector<ChordInfo>& expectedChords, const bw_music::Track& track);
 
     void testNotesAndChords(const std::vector<bw_music::TrackEventHolder>& expectedEvents, const bw_music::Track& track);

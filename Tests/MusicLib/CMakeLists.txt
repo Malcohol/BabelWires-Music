@@ -8,6 +8,7 @@ SET( SEQUENCELIB_TESTS_SRCS
       fingeredChordsProcessorTest.cpp
       filteredTrackIteratorTest.cpp
       fitToChordFunctionTest.cpp
+      getChordTypesProcessorTest.cpp
       mergeProcessorTest.cpp
       monophonicNoteIteratorTest.cpp
       monophonicSubtracksProcessorTest.cpp

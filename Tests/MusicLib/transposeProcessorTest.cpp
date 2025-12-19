@@ -64,19 +64,16 @@ TEST(TransposeProcessorTest, funcSimpleNegativeLimit) {
 }
 
 TEST(TransposeProcessorTest, funcSimpleChordsZero) {
-    bw_music::TrackBuilder trackIn;
-
     // Some random chords.
-    testUtils::addChords(
+    auto trackIn = testUtils::getTrackOfChords(
         {
             {bw_music::PitchClass::PitchClass::Value::C, bw_music::ChordType::ChordType::Value::M},
             {bw_music::PitchClass::PitchClass::Value::E, bw_music::ChordType::ChordType::Value::m},
             {bw_music::PitchClass::PitchClass::Value::Gsh, bw_music::ChordType::ChordType::Value::dim},
             {bw_music::PitchClass::PitchClass::Value::A, bw_music::ChordType::ChordType::Value::aug},
-        },
-        trackIn);
+        });
 
-    auto trackOut = bw_music::transposeTrack(trackIn.finishAndGetTrack(), 0);
+    auto trackOut = bw_music::transposeTrack(trackIn, 0);
 
     testUtils::testChords(
         {
@@ -89,19 +86,16 @@ TEST(TransposeProcessorTest, funcSimpleChordsZero) {
 }
 
 TEST(TransposeProcessorTest, funcSimpleChordsPositive) {
-    bw_music::TrackBuilder trackIn;
-
     // Some random chords.
-    testUtils::addChords(
+    auto trackIn = testUtils::getTrackOfChords(
         {
             {bw_music::PitchClass::PitchClass::Value::C, bw_music::ChordType::ChordType::Value::M},
             {bw_music::PitchClass::PitchClass::Value::E, bw_music::ChordType::ChordType::Value::m},
             {bw_music::PitchClass::PitchClass::Value::Gsh, bw_music::ChordType::ChordType::Value::dim},
             {bw_music::PitchClass::PitchClass::Value::B, bw_music::ChordType::ChordType::Value::aug},
-        },
-        trackIn);
+        });
 
-    auto trackOut = bw_music::transposeTrack(trackIn.finishAndGetTrack(), 1);
+    auto trackOut = bw_music::transposeTrack(trackIn, 1);
 
     testUtils::testChords(
         {
@@ -114,19 +108,16 @@ TEST(TransposeProcessorTest, funcSimpleChordsPositive) {
 }
 
 TEST(TransposeProcessorTest, funcSimpleChordsNegative) {
-    bw_music::TrackBuilder trackIn;
-
     // Some random chords.
-    testUtils::addChords(
+    auto trackIn = testUtils::getTrackOfChords(
         {
             {bw_music::PitchClass::PitchClass::Value::C, bw_music::ChordType::ChordType::Value::M},
             {bw_music::PitchClass::PitchClass::Value::E, bw_music::ChordType::ChordType::Value::m},
             {bw_music::PitchClass::PitchClass::Value::Gsh, bw_music::ChordType::ChordType::Value::dim},
             {bw_music::PitchClass::PitchClass::Value::B, bw_music::ChordType::ChordType::Value::aug},
-        },
-        trackIn);
+        });
 
-    auto trackOut = bw_music::transposeTrack(trackIn.finishAndGetTrack(), -1);
+    auto trackOut = bw_music::transposeTrack(trackIn, -1);
 
     testUtils::testChords(
         {
