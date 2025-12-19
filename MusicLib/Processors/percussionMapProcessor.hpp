@@ -23,7 +23,7 @@ namespace bw_music {
         PercussionMapProcessorInput();
 
         DECLARE_INSTANCE_BEGIN(PercussionMapProcessorInput)
-        DECLARE_INSTANCE_GENERIC_FIELD(Map)
+        DECLARE_INSTANCE_NON_INSTANCE_FIELD(Map)
         DECLARE_INSTANCE_END()
     };
 

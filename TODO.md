@@ -22,9 +22,9 @@ SMF
 * Support Format 2 files.
 
 Processors:
-* Harmonize - Attempted to adapt notes to a given chord (This is supported by arranger keyboards)
 * First note, last note - Can be combined with the excerpt processor (and possibly quantize) to trim a track.
 * Split by event category - Build a record of tracks by category
   - Would need category to be an identifier (see above)
   - Record type constructors (See BabelWires PR) OR registry of categories.
+* GetSetOfChords
 * ChordSequencer
