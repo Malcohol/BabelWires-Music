@@ -16,6 +16,7 @@ SET( MUSICLIB_SRCS
 	Functions/appendTrackFunction.cpp
 	Functions/fingeredChordsFunction.cpp
 	Functions/fitToChordFunction.cpp
+	Functions/getSetOfChordTypesFunction.cpp
 	Functions/mapChordsFunction.cpp
 	Functions/excerptFunction.cpp
 	Functions/repeatFunction.cpp
