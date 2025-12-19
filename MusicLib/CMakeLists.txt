@@ -4,6 +4,7 @@ SET( MUSICLIB_SRCS
 	Processors/concatenateProcessor.cpp
 	Processors/excerptProcessor.cpp
 	Processors/fingeredChordsProcessor.cpp
+	Processors/getChordTypesProcessor.cpp
 	Processors/buildAccompanimentProcessor.cpp
 	Processors/mergeProcessor.cpp
 	Processors/monophonicSubtracksProcessor.cpp
@@ -16,7 +17,7 @@ SET( MUSICLIB_SRCS
 	Functions/appendTrackFunction.cpp
 	Functions/fingeredChordsFunction.cpp
 	Functions/fitToChordFunction.cpp
-	Functions/getSetOfChordTypesFunction.cpp
+	Functions/getChordTypesFunction.cpp
 	Functions/mapChordsFunction.cpp
 	Functions/excerptFunction.cpp
 	Functions/repeatFunction.cpp

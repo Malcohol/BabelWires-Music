@@ -16,6 +16,6 @@
 
 namespace bw_music {
     /// Get the set of chord types used in the given chord track.
-    std::set<ChordType::Value> getSetOfChordTypesFunction(const Track& chordTrack);
+    std::set<ChordType::Value> getChordTypesFunction(const Track& chordTrack);
 
 } // namespace bw_music
