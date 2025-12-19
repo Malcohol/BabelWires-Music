@@ -35,7 +35,7 @@ namespace bw_music {
         virtual bool operator==(const TrackEvent& other) const override;
         virtual std::size_t getHash() const override;
         virtual GroupingInfo getGroupingInfo() const override;
-        virtual void transpose(int pitchOffset) override;
+        virtual bool transpose(int pitchOffset, TransposeOutOfRangePolicy outOfRangePolicy) override;
         Chord m_chord;
     };
 

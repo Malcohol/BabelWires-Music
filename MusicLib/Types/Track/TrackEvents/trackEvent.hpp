@@ -11,6 +11,7 @@
 #include <Common/Cloning/cloneable.hpp>
 #include <Common/Utilities/enumFlags.hpp>
 #include <MusicLib/musicTypes.hpp>
+#include <MusicLib/Utilities/musicUtilities.hpp>
 
 #include <Common/BlockStream/streamEventHolder.hpp>
 
@@ -95,8 +96,9 @@ namespace bw_music {
         virtual GroupingInfo getGroupingInfo() const;
 
         /// If it makes sense, transpose the pitch or pitches described by this event by the given number of semitones.
-        /// The default implementation does nothing.
-        virtual void transpose(int pitchOffset);
+        /// Return false if the event has become invalidated.
+        /// The default implementation does nothing and returns true.
+        virtual bool transpose(int pitchOffset, TransposeOutOfRangePolicy outOfRangePolicy = TransposeOutOfRangePolicy::Discard);
 
       protected:
         /// Subclasses should override this. They can assume that other is of their type.

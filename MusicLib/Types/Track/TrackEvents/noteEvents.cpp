@@ -20,8 +20,14 @@ void bw_music::NoteEvent::createEndEvent(TrackEventHolder& dest, ModelDuration t
     dest = NoteOffEvent(timeSinceLastEvent, m_pitch, m_velocity);
 }
 
-void bw_music::NoteEvent::transpose(int pitchOffset) {
-    m_pitch = std::clamp(m_pitch + pitchOffset, 0, 127);
+bool bw_music::NoteEvent::transpose(int pitchOffset, TransposeOutOfRangePolicy outOfRangePolicy) {
+    const auto newPitchOpt = bw_music::transposePitch(static_cast<int>(m_pitch), pitchOffset, outOfRangePolicy);
+    if (newPitchOpt.has_value()) {
+        m_pitch = static_cast<Pitch>(newPitchOpt.value());
+        return true;
+    } else {
+        return false;
+    }
 }
 
 bool bw_music::NoteOnEvent::operator==(const TrackEvent& other) const {

@@ -20,7 +20,7 @@ namespace bw_music {
             , m_pitch(pitch)
             , m_velocity(velocity) {}
 
-        virtual void transpose(int pitchOffset) override;
+        virtual bool transpose(int pitchOffset, TransposeOutOfRangePolicy outOfRangePolicy) override;
 
         static GroupingInfo::Category s_noteEventCategory;
 

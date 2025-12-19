@@ -18,3 +18,26 @@ int bw_music::getMinimumDenominator(const Track& track) {
 
     return denominator;
 }
+
+std::optional<int> bw_music::transposePitch(int pitch, int offset, TransposeOutOfRangePolicy outOfRangePolicy, int lowerLimit, int upperLimit) {
+    int newPitch = pitch + offset;
+
+    if (newPitch < lowerLimit) {
+        switch (outOfRangePolicy) {
+            case TransposeOutOfRangePolicy::Discard:
+                return std::nullopt;
+            case TransposeOutOfRangePolicy::MapToNearestOctave:
+                newPitch = lowerLimit + 12 + ((newPitch - lowerLimit) % 12);
+                break;
+        }
+    } else if (newPitch > upperLimit) {
+        switch (outOfRangePolicy) {
+            case TransposeOutOfRangePolicy::Discard:
+                return std::nullopt;
+            case TransposeOutOfRangePolicy::MapToNearestOctave:
+                newPitch = upperLimit - 12 + ((newPitch - upperLimit) % 12);
+                break;
+        }
+    }
+    return newPitch;
+}

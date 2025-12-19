@@ -35,12 +35,12 @@ bw_music::TrackEvent::GroupingInfo bw_music::ChordOnEvent::getGroupingInfo() con
     return {s_chordEventCategory, 0, GroupingInfo::Grouping::StartOfGroup};
 }
 
-void bw_music::ChordOnEvent::transpose(int pitchOffset) {
-    assert(pitchOffset <= 127);
-    assert(pitchOffset >= -127);
-    static_assert(static_cast<unsigned int>(PitchClass::Value::NUM_VALUES) == 12);
-    unsigned int rootPitch = (static_cast<unsigned int>(m_chord.m_root) + 132 + pitchOffset) % 12;
-    m_chord.m_root = static_cast<PitchClass::Value>(rootPitch);
+bool bw_music::ChordOnEvent::transpose(int pitchOffset, TransposeOutOfRangePolicy outOfRangePolicy) {
+    // Ignore the policy here, as chord roots are always mapped to within an octave.
+    const auto newPitchOpt = bw_music::transposePitch(static_cast<int>(m_chord.m_root), pitchOffset, TransposeOutOfRangePolicy::MapToNearestOctave, 0, 11);
+    assert(newPitchOpt.has_value());
+    m_chord.m_root = static_cast<PitchClass::Value>(newPitchOpt.value());
+    return true;
 }
 
 bool bw_music::ChordOffEvent::operator==(const TrackEvent& other) const {
