@@ -79,7 +79,7 @@ namespace {
         /// The type of fields within m_typeOfAccompanimentTracks.
         const babelwires::Type* m_fieldType;
         /// The value of the first field within m_accompanimentTracks.
-        babelwires::ValueHolder m_firstFieldValue;
+        babelwires::ValueHolder m_result;
         /// Map from chord type to child index in the record.
         std::map<bw_music::ChordType::Value, int> m_chordTypeToChildIndex;
         std::vector<TrackInStructure> m_tracksInStructure;
@@ -105,17 +105,21 @@ namespace {
                     const babelwires::Type& fieldType = fieldTypeRef.resolve(typeSystem);
                     if (m_fieldType == nullptr) {
                         m_fieldType = &fieldType;
-                        assert(!m_firstFieldValue);
-                        m_firstFieldValue = *fieldValue;
+                        assert(!m_result);
+                        // Use the first field to build the structure of tracks.
+                        findTracksInStructure(*m_fieldType, m_result);
+                        if (m_durationOfAccompanimentTracks == 0) {
+                            throw babelwires::ModelException()
+                                << "At least one accompaniment track for each chord must have a non-zero duration";
+                        }
                     } else if (m_fieldType != &fieldType) {
                         throw babelwires::ModelException()
                             << "All fields in accompanimentTracks must have the same type";
+                    } else {
+                        validateTracksInStructure(*m_fieldType, *fieldValue);
                     }
                 }
             }
-
-            // Use the first field to build the structure of tracks.
-            findTracksInStructure(*m_fieldType, m_firstFieldValue);
         }
 
         void addAccompanimentToTracks(const babelwires::ValueHolder& accompanimentForChord,
@@ -179,7 +183,8 @@ namespace {
 
                             // Offset the time since the first chord event to align accompaniment tracks.
                             assert(totalTimeSinceFirstChordEvent.has_value());
-                            auto [div, offset] = (*totalTimeSinceFirstChordEvent - timeSinceLastChordEvent).divmod(m_durationOfAccompanimentTracks);
+                            auto [div, offset] = (*totalTimeSinceFirstChordEvent - timeSinceLastChordEvent)
+                                                     .divmod(m_durationOfAccompanimentTracks);
 
                             addAccompanimentToTracks(*child, offset, timeSinceLastChordEvent, pitchOffset);
                         } else {
@@ -193,7 +198,7 @@ namespace {
 
         babelwires::ValueHolder getResultValue() {
             // Build the result value by assigning tracks back into the structure.
-            babelwires::ValueHolder result = m_firstFieldValue;
+            babelwires::ValueHolder result = m_result;
             result.copyContentsAndGetNonConst();
             assignTracksInStructure(*m_fieldType, result);
             return result;
@@ -208,6 +213,7 @@ namespace {
                     m_durationOfAccompanimentTracks = sourceTrack.getDuration();
                 } else if (sourceTrack.getDuration() != 0 &&
                            sourceTrack.getDuration() != m_durationOfAccompanimentTracks) {
+                    // TODO More detail
                     throw babelwires::ModelException()
                         << "All accompaniment tracks must have the same duration (or be empty)";
                 }
@@ -223,12 +229,44 @@ namespace {
             }
         }
 
+        void validateTracksInStructure(const babelwires::Type& currentType, const babelwires::ValueHolder& currentValue,
+                                       babelwires::Path currentPath = babelwires::Path()) const {
+            if (const auto* trackType = currentType.as<bw_music::TrackType>()) {
+                auto it = std::find_if(
+                    m_tracksInStructure.begin(), m_tracksInStructure.end(),
+                    [&currentPath](const TrackInStructure& tis) { return tis.m_pathToTrack == currentPath; });
+                if (it != m_tracksInStructure.end()) {
+                    const bw_music::Track& sourceTrack = currentValue->is<bw_music::Track>();
+                    if (sourceTrack.getDuration() != 0 &&
+                               sourceTrack.getDuration() != m_durationOfAccompanimentTracks) {
+                        // TODO More detail
+                        throw babelwires::ModelException()
+                            << "All accompaniment tracks must have the same duration (or be empty)";
+                    }
+                } else {
+                    // Ignore tracks that are not in the structure found from the first field.
+                    // They will be treated as empty in the main algorithm.
+                    // TODO Warn?
+                }
+            } else if (const auto* recordType = currentType.as<babelwires::CompoundType>()) {
+                const unsigned int numChildren = recordType->getNumChildren(currentValue);
+                for (unsigned int i = 0; i < numChildren; ++i) {
+                    auto [childValue, step, childTypeRef] = recordType->getChild(currentValue, i);
+                    const babelwires::Type& childType = childTypeRef.resolve(m_typeSystem);
+                    babelwires::Path newPath = currentPath;
+                    newPath.pushStep(*step.asField());
+                    validateTracksInStructure(childType, *childValue, newPath);
+                }
+            }
+        }
+
         void assignTracksInStructure(const babelwires::Type& currentType, babelwires::ValueHolder& currentValue,
                                      babelwires::Path currentPath = babelwires::Path()) {
             if (const auto* trackType = currentType.as<bw_music::TrackType>()) {
                 auto it = std::find_if(
                     m_tracksInStructure.begin(), m_tracksInStructure.end(),
                     [&currentPath](const TrackInStructure& tis) { return tis.m_pathToTrack == currentPath; });
+                // Since the result is duplicated from the first field, the track must exist.
                 assert(it != m_tracksInStructure.end() && "track not found for path");
                 currentValue = std::move(it->m_track);
             } else if (const auto* recordType = currentType.as<babelwires::CompoundType>()) {
