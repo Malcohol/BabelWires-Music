@@ -1,0 +1,233 @@
+/**
+ * Function which join tracks together sequencially.
+ *
+ * (C) 2025 Malcolm Tyrrell
+ *
+ * Licensed under the GPLv3.0. See LICENSE file.
+ **/
+#include <MusicLib/Functions/accompanimentSequencerFunction.hpp>
+
+#include <MusicLib/Functions/appendTrackFunction.hpp>
+#include <MusicLib/Functions/excerptFunction.hpp>
+#include <MusicLib/Functions/repeatFunction.hpp>
+#include <MusicLib/Functions/transposeFunction.hpp>
+#include <MusicLib/Types/Track/TrackEvents/chordEvents.hpp>
+#include <MusicLib/Types/Track/trackType.hpp>
+
+#include <BabelWiresLib/Path/path.hpp>
+#include <BabelWiresLib/TypeSystem/typeSystem.hpp>
+#include <BabelWiresLib/TypeSystem/valuePathUtils.hpp>
+#include <BabelWiresLib/Types/Record/recordType.hpp>
+#include <BabelWiresLib/Types/Record/recordValue.hpp>
+#include <BabelWiresLib/ValueTree/modelExceptions.hpp>
+
+#include <Common/Identifiers/identifierRegistry.hpp>
+
+namespace {
+    /// This determines which chords get transposed upwards and which chords get transposed down.
+    /// Value 6 means that C#..F get transposed upwards, while F#..B get transposed downwards.
+    // Note: There's a similar value in fitToChordFunction.cpp.
+    constexpr static int s_topChordRoot = 6;
+
+    /// Get a track segment that matches the required duration, repeating or truncating as needed.
+    bw_music::Track getTrackSegmentForDuration(const bw_music::Track& sourceTrack, bw_music::ModelDuration offset,
+                                               bw_music::ModelDuration targetDuration) {
+        assert(targetDuration > 0 && "Target duration must be positive");
+        assert(offset >= 0 && "Offset must be non-negative");
+        assert(offset < sourceTrack.getDuration() && "Offset must be within source track duration");
+
+        const bw_music::ModelDuration sourceLength = sourceTrack.getDuration();
+        if (sourceLength == 0) {
+            return bw_music::Track(targetDuration);
+        }
+
+        // Even if the offset is zero, call the first excerpt a lead-in.
+        const bw_music::ModelDuration leadInDuration = std::min(sourceLength - offset, targetDuration);
+        auto [repeatCount, remainder] = (targetDuration - leadInDuration).divmod(sourceLength);
+
+        // Start with the lead-in excerpt.
+        bw_music::Track result = bw_music::getTrackExcerpt(sourceTrack, offset, leadInDuration);
+
+        // Repeat full cycles
+        if (repeatCount > 0) {
+            bw_music::Track repeat = bw_music::repeatTrack(sourceTrack, repeatCount);
+            bw_music::appendTrack(result, repeat);
+        }
+
+        // Add the remainder if needed
+        if (remainder > 0) {
+            bw_music::Track excerptTrack = bw_music::getTrackExcerpt(sourceTrack, 0, remainder);
+            bw_music::appendTrack(result, excerptTrack);
+        }
+
+        return result;
+    }
+
+    struct AccompanimentSequencer {
+        struct TrackInStructure {
+            babelwires::Path m_pathToTrack;
+            bw_music::Track m_track;
+        };
+
+        const babelwires::TypeSystem& m_typeSystem;
+        const babelwires::RecordType& m_typeOfAccompanimentTracks;
+        const babelwires::ValueHolder& m_accompanimentTracks;
+        /// The type of fields within m_typeOfAccompanimentTracks.
+        const babelwires::Type* m_fieldType;
+        /// The value of the first field within m_accompanimentTracks.
+        babelwires::ValueHolder m_firstFieldValue;
+        /// Map from chord type to child index in the record.
+        std::map<bw_music::ChordType::Value, int> m_chordTypeToChildIndex;
+        std::vector<TrackInStructure> m_tracksInStructure;
+
+        AccompanimentSequencer(const babelwires::TypeSystem& typeSystem,
+                               const babelwires::RecordType& typeOfAccompanimentTracks,
+                               const babelwires::ValueHolder& accompanimentTracks)
+            : m_typeSystem(typeSystem)
+            , m_typeOfAccompanimentTracks(typeOfAccompanimentTracks)
+            , m_accompanimentTracks(accompanimentTracks) {
+
+            // Map chord types to child indices.
+            const babelwires::RecordType& recordType = typeOfAccompanimentTracks.is<babelwires::RecordType>();
+            const auto& chordTypeType = typeSystem.getEntryByType<bw_music::ChordType>();
+            const unsigned int numChildren = recordType.getNumChildren(accompanimentTracks);
+            for (unsigned int i = 0; i < numChildren; ++i) {
+                auto [fieldValue, step, fieldTypeRef] = recordType.getChild(accompanimentTracks, i);
+                const int enumIndex = chordTypeType.tryGetIndexFromIdentifier(*step.asField());
+                if (enumIndex >= 0) {
+                    m_chordTypeToChildIndex[static_cast<bw_music::ChordType::Value>(enumIndex)] = static_cast<int>(i);
+                    const babelwires::Type& fieldType = fieldTypeRef.resolve(typeSystem);
+                    if (m_fieldType == nullptr) {
+                        m_fieldType = &fieldType;
+                        assert(!m_firstFieldValue);
+                        m_firstFieldValue = *fieldValue;
+                    } else if (m_fieldType != &fieldType) {
+                        throw babelwires::ModelException()
+                            << "All fields in accompanimentTracks must have the same type";
+                    }
+                }
+            }
+
+            // Use the first field to build the structure of tracks.
+            findTracksInStructure(*m_fieldType, m_firstFieldValue);
+        }
+
+        void addAccompanimentToTracks(const babelwires::ValueHolder& accompanimentForChord,
+                                      bw_music::ModelDuration offset, bw_music::ModelDuration targetDuration,
+                                      int pitchOffset) {
+            for (auto& trackInStructure : m_tracksInStructure) {
+                auto optFieldValue =
+                    tryFollowPath(m_typeSystem, *m_fieldType, trackInStructure.m_pathToTrack, accompanimentForChord);
+                if (optFieldValue) {
+                    const auto& [fieldType, fieldValue] = *optFieldValue;
+                    const bw_music::Track* const accompanimentTrack = fieldValue->as<bw_music::Track>();
+                    if (accompanimentTrack) {
+                        bw_music::Track excerpt =
+                            getTrackSegmentForDuration(*accompanimentTrack, offset, targetDuration);
+                        excerpt = bw_music::transposeTrack(excerpt, pitchOffset,
+                                                           bw_music::TransposeOutOfRangePolicy::MapToNearestOctave);
+                        // Get the track segment for this duration
+                        bw_music::appendTrack(trackInStructure.m_track, excerpt);
+                        continue;
+                    }
+                }
+                bw_music::appendTrack(trackInStructure.m_track, bw_music::Track(targetDuration));
+            }
+        }
+
+        void addSilenceToTracks(bw_music::ModelDuration duration) {
+            for (auto& trackInStructure : m_tracksInStructure) {
+                bw_music::appendTrack(trackInStructure.m_track, bw_music::Track(duration));
+            }
+        }
+
+        void sequenceAccompaniment(const bw_music::Track& chordTrack) {
+            bw_music::ModelDuration timeSinceLastChordEvent = 0;
+            std::optional<bw_music::Chord> currentChord;
+
+            for (const auto& event : chordTrack) {
+                timeSinceLastChordEvent += event.getTimeSinceLastEvent();
+
+                if (const auto* chordOnEvent = event.as<bw_music::ChordOnEvent>()) {
+                    if (timeSinceLastChordEvent > 0) {
+                        addSilenceToTracks(timeSinceLastChordEvent);
+                        timeSinceLastChordEvent = 0;
+                    }
+                    currentChord = chordOnEvent->m_chord;
+                } else if (event.as<bw_music::ChordOffEvent>()) {
+                    assert(currentChord.has_value() && "ChordOffEvent without a preceding ChordOnEvent");
+                    if (timeSinceLastChordEvent > 0) {
+                        const auto childIndexIt = m_chordTypeToChildIndex.find(currentChord->m_chordType);
+                        if (childIndexIt != m_chordTypeToChildIndex.end()) {
+                            const auto& [child, _, childType] =
+                                m_typeOfAccompanimentTracks.getChild(m_accompanimentTracks, childIndexIt->second);
+                            const int currentRoot = static_cast<unsigned int>(currentChord->m_root);
+                            const int pitchOffset = (currentRoot > s_topChordRoot) ? (currentRoot - 12) : currentRoot;
+
+                            // Offset:
+                            bw_music::ModelDuration offset = 0;
+
+                            addAccompanimentToTracks(*child, offset, timeSinceLastChordEvent, pitchOffset);
+                        } else {
+                            addSilenceToTracks(timeSinceLastChordEvent);
+                        }
+                        timeSinceLastChordEvent = 0;
+                    }
+                }
+            }
+        }
+
+        babelwires::ValueHolder getResultValue() {
+            // Build the result value by assigning tracks back into the structure.
+            babelwires::ValueHolder result = m_firstFieldValue;
+            result.copyContentsAndGetNonConst();
+            assignTracksInStructure(*m_fieldType, result);
+            return result;
+        }
+
+        void findTracksInStructure(const babelwires::Type& currentType, const babelwires::ValueHolder& currentValue,
+                                   babelwires::Path currentPath = babelwires::Path()) {
+            if (const auto* trackType = currentType.as<bw_music::TrackType>()) {
+                m_tracksInStructure.push_back(TrackInStructure{currentPath});
+            } else if (const auto* recordType = currentType.as<babelwires::CompoundType>()) {
+                const unsigned int numChildren = recordType->getNumChildren(currentValue);
+                for (unsigned int i = 0; i < numChildren; ++i) {
+                    auto [childValue, step, childTypeRef] = recordType->getChild(currentValue, i);
+                    const babelwires::Type& childType = childTypeRef.resolve(m_typeSystem);
+                    babelwires::Path newPath = currentPath;
+                    newPath.pushStep(*step.asField());
+                    findTracksInStructure(childType, *childValue, newPath);
+                }
+            }
+        }
+
+        void assignTracksInStructure(const babelwires::Type& currentType, babelwires::ValueHolder& currentValue,
+                                     babelwires::Path currentPath = babelwires::Path()) {
+            if (const auto* trackType = currentType.as<bw_music::TrackType>()) {
+                auto it = std::find_if(
+                    m_tracksInStructure.begin(), m_tracksInStructure.end(),
+                    [&currentPath](const TrackInStructure& tis) { return tis.m_pathToTrack == currentPath; });
+                assert(it != m_tracksInStructure.end() && "track not found for path");
+                currentValue = std::move(it->m_track);
+            } else if (const auto* recordType = currentType.as<babelwires::CompoundType>()) {
+                const unsigned int numChildren = recordType->getNumChildren(currentValue);
+                for (unsigned int i = 0; i < numChildren; ++i) {
+                    auto [childValue, step, childTypeRef] = recordType->getChildNonConst(currentValue, i);
+                    const babelwires::Type& childType = childTypeRef.resolve(m_typeSystem);
+                    babelwires::Path newPath = currentPath;
+                    newPath.pushStep(*step.asField());
+                    assignTracksInStructure(childType, *childValue, newPath);
+                }
+            }
+        }
+    };
+} // namespace
+
+babelwires::ValueHolder bw_music::accompanimentSequencerFunction(
+    const babelwires::TypeSystem& typeSystem, const babelwires::RecordType& typeOfAccompanimentTracks,
+    const babelwires::ValueHolder& accompanimentTracks, const bw_music::Track& chordTrack) {
+
+    AccompanimentSequencer sequencer(typeSystem, typeOfAccompanimentTracks, accompanimentTracks);
+    sequencer.sequenceAccompaniment(chordTrack);
+    return sequencer.getResultValue();
+}

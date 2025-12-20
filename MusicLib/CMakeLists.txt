@@ -14,6 +14,7 @@ SET( MUSICLIB_SRCS
 	Processors/silenceProcessor.cpp
 	Processors/splitAtPitchProcessor.cpp
 	Processors/transposeProcessor.cpp
+	Functions/accompanimentSequencerFunction.cpp
 	Functions/appendTrackFunction.cpp
 	Functions/fingeredChordsFunction.cpp
 	Functions/fitToChordFunction.cpp

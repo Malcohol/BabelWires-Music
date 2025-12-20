@@ -20,6 +20,7 @@ namespace bw_music {
         TransposeProcessorInput();
 
         DECLARE_INSTANCE_BEGIN(TransposeProcessorInput)
+        // TODO Expose an enum for TransposeOutOfRangePolicy (optional?)
         DECLARE_INSTANCE_FIELD(Offset, babelwires::IntType)
         DECLARE_INSTANCE_END()
     };
