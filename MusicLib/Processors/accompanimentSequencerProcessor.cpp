@@ -9,18 +9,19 @@
 
 #include <MusicLib/Functions/accompanimentSequencerFunction.hpp>
 
-#include <BabelWiresLib/Types/Record/recordType.hpp>
+#include <BabelWiresLib/Types/Record/recordTypeConstructor.hpp>
 #include <BabelWiresLib/Types/Generic/typeVariableTypeConstructor.hpp>
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/ValueTree/valueTreeNode.hpp>
 
 bw_music::AccompanimentSequencerProcessorInput::AccompanimentSequencerProcessorInput()
-    : babelwires::RecordType(
-          {{getAccompTracksId(), babelwires::TypeVariableTypeConstructor::makeTypeRef()},
-           {getChordTrackId(), DefaultTrackType::getThisType()}}) {}
+    : babelwires::GenericType(babelwires::RecordTypeConstructor::makeTypeRef(
+          getAccompTracksId(), babelwires::TypeVariableTypeConstructor::makeTypeRef(),
+           getChordTrackId(), DefaultTrackType::getThisType()), 1) {}
 
 bw_music::AccompanimentSequencerProcessorOutput::AccompanimentSequencerProcessorOutput()
-    : babelwires::RecordType({{getResultId(), DefaultTrackType::getThisType()}}) {}
+    : babelwires::GenericType(babelwires::RecordTypeConstructor::makeTypeRef(
+          getResultId(), DefaultTrackType::getThisType()), 1) {}
 
 bw_music::AccompanimentSequencerProcessor::AccompanimentSequencerProcessor(
     const babelwires::ProjectContext& projectContext)
@@ -30,12 +31,25 @@ bw_music::AccompanimentSequencerProcessor::AccompanimentSequencerProcessor(
 void bw_music::AccompanimentSequencerProcessor::processValue(babelwires::UserLogger& userLogger,
                                                              const babelwires::ValueTreeNode& input,
                                                              babelwires::ValueTreeNode& output) const {
+    const babelwires::TypeSystem& typeSystem = input.getTypeSystem();
     const AccompanimentSequencerProcessorInput& inputType = input.getType().is<AccompanimentSequencerProcessorInput>();
+    const AccompanimentSequencerProcessorOutput& outputType = output.getType().is<AccompanimentSequencerProcessorOutput>();
+
+    const babelwires::ValueTreeNode& inputRecord = *input.getChild(0);
+    const babelwires::ValueTreeNode& inputAccompanimentTracks = *inputRecord.getChild(0);
+    const babelwires::ValueTreeNode& inputChordTrack = *inputRecord.getChild(1);
+
+    const babelwires::ValueTreeNode& outputRecord = *output.getChild(0);
+    const babelwires::ValueTreeNode& outputResult = *outputRecord.getChild(0);
 
     const babelwires::ValueHolder& inputValue = input.getValue();
-    const babelwires::TypeSystem& typeSystem = input.getTypeSystem();
+    const babelwires::TypeRef& assignedInputTypeRef = inputType.getTypeAssignment(inputValue, 0);
 
+    babelwires::ValueHolder newOutputValue = output.getValue();
+    
+    outputType.setTypeVariableAssignmentAndInstantiate(typeSystem, newOutputValue, {assignedInputTypeRef});
     /*
+    
     // Get the accompaniment tracks field (field 0)
     const auto [accompanimentTracksValueHolder, accompanimentTracksStep, accompanimentTracksTypeRef] =
         inputType.getChild(inputValue, 0);

@@ -115,7 +115,7 @@ void bw_music::BuildAccompanimentProcessor::processValue(babelwires::UserLogger&
     const auto& [resultChild, resultStep, resultChildType] = outputRecordType.getChildNonConst(*outputChild, 0);
     const auto& resultRecordType = resultChildType.resolve(typeSystem).is<babelwires::RecordType>();
 
-    const auto& chordType = typeSystem.getRegisteredType(ChordType::getThisIdentifier()).is<ChordType>();
+    const auto& chordType = typeSystem.getEntryByType<ChordType>();
 
     std::map<babelwires::ShortId, bool> selectedChords;
     {
