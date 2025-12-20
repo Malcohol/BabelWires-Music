@@ -11,6 +11,7 @@
 #include <MusicLib/Functions/monophonicSubtracksFunction.hpp>
 #include <MusicLib/Functions/percussionMapFunction.hpp>
 #include <MusicLib/Percussion/builtInPercussionInstruments.hpp>
+#include <MusicLib/Processors/accompanimentSequencerProcessor.hpp>
 #include <MusicLib/Processors/chordMapProcessor.hpp>
 #include <MusicLib/Processors/concatenateProcessor.hpp>
 #include <MusicLib/Processors/excerptProcessor.hpp>
@@ -105,6 +106,10 @@ void bw_music::registerLib(babelwires::ProjectContext& context) {
     context.m_typeSystem.addEntry<PercussionMapProcessorInput>();
     context.m_typeSystem.addEntry<PercussionMapProcessorOutput>();
     context.m_processorReg.addProcessor<PercussionMapProcessor>();
+
+    context.m_typeSystem.addEntry<AccompanimentSequencerProcessorInput>();
+    context.m_typeSystem.addEntry<AccompanimentSequencerProcessorOutput>();
+    context.m_processorReg.addProcessor<AccompanimentSequencerProcessor>();
 
     context.m_typeSystem.addTypeConstructor<TrackTypeConstructor>();
     context.m_typeSystem.addTypeConstructor<PercussionMapType>();

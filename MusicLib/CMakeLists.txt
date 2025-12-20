@@ -1,5 +1,6 @@
 SET( MUSICLIB_SRCS
 	Utilities/musicUtilities.cpp
+	Processors/accompanimentSequencerProcessor.cpp
 	Processors/chordMapProcessor.cpp
 	Processors/concatenateProcessor.cpp
 	Processors/excerptProcessor.cpp
