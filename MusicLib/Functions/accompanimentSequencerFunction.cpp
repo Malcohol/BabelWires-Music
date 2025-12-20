@@ -64,8 +64,12 @@ namespace {
     }
 
     struct AccompanimentSequencer {
+        /// Accompaniment is permitted to have arbitrary structure. To avoid the complexity of traversing typed
+        /// structures multiple times while processing the music data, we use this data structure.
         struct TrackInStructure {
+            /// The path to the track within the accompaniment for a given chord (and also within the result value.
             babelwires::Path m_pathToTrack;
+            /// The track being built.
             bw_music::Track m_track;
         };
 
@@ -79,6 +83,8 @@ namespace {
         /// Map from chord type to child index in the record.
         std::map<bw_music::ChordType::Value, int> m_chordTypeToChildIndex;
         std::vector<TrackInStructure> m_tracksInStructure;
+        /// Accompaniment tracks are expected to have this duration (or be empty).
+        bw_music::ModelDuration m_durationOfAccompanimentTracks = 0;
 
         AccompanimentSequencer(const babelwires::TypeSystem& typeSystem,
                                const babelwires::RecordType& typeOfAccompanimentTracks,
@@ -142,13 +148,20 @@ namespace {
         }
 
         void sequenceAccompaniment(const bw_music::Track& chordTrack) {
+            std::optional<bw_music::ModelDuration> totalTimeSinceFirstChordEvent;
             bw_music::ModelDuration timeSinceLastChordEvent = 0;
             std::optional<bw_music::Chord> currentChord;
 
             for (const auto& event : chordTrack) {
                 timeSinceLastChordEvent += event.getTimeSinceLastEvent();
+                if (totalTimeSinceFirstChordEvent.has_value()) {
+                    *totalTimeSinceFirstChordEvent += timeSinceLastChordEvent;
+                }
 
                 if (const auto* chordOnEvent = event.as<bw_music::ChordOnEvent>()) {
+                    if (!totalTimeSinceFirstChordEvent.has_value()) {
+                        *totalTimeSinceFirstChordEvent = timeSinceLastChordEvent;
+                    }
                     if (timeSinceLastChordEvent > 0) {
                         addSilenceToTracks(timeSinceLastChordEvent);
                         timeSinceLastChordEvent = 0;
@@ -164,8 +177,9 @@ namespace {
                             const int currentRoot = static_cast<unsigned int>(currentChord->m_root);
                             const int pitchOffset = (currentRoot > s_topChordRoot) ? (currentRoot - 12) : currentRoot;
 
-                            // Offset:
-                            bw_music::ModelDuration offset = 0;
+                            // Offset the time since the first chord event to align accompaniment tracks.
+                            assert(totalTimeSinceFirstChordEvent.has_value());
+                            auto [div, offset] = (*totalTimeSinceFirstChordEvent - timeSinceLastChordEvent).divmod(m_durationOfAccompanimentTracks);
 
                             addAccompanimentToTracks(*child, offset, timeSinceLastChordEvent, pitchOffset);
                         } else {
@@ -189,6 +203,14 @@ namespace {
                                    babelwires::Path currentPath = babelwires::Path()) {
             if (const auto* trackType = currentType.as<bw_music::TrackType>()) {
                 m_tracksInStructure.push_back(TrackInStructure{currentPath});
+                const bw_music::Track& sourceTrack = currentValue->is<bw_music::Track>();
+                if (m_durationOfAccompanimentTracks == 0) {
+                    m_durationOfAccompanimentTracks = sourceTrack.getDuration();
+                } else if (sourceTrack.getDuration() != 0 &&
+                           sourceTrack.getDuration() != m_durationOfAccompanimentTracks) {
+                    throw babelwires::ModelException()
+                        << "All accompaniment tracks must have the same duration (or be empty)";
+                }
             } else if (const auto* recordType = currentType.as<babelwires::CompoundType>()) {
                 const unsigned int numChildren = recordType->getNumChildren(currentValue);
                 for (unsigned int i = 0; i < numChildren; ++i) {
