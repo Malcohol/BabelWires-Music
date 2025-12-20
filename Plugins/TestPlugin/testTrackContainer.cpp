@@ -1,7 +1,6 @@
-#include <Domains/Music/Tests/TestUtils/testTrackContainer.hpp>
+#include <Domains/Music/Plugins/TestPlugin/testTrackContainer.hpp>
 
-
-testUtils::TestTrackContainer::TestTrackContainer()
+bw_music_testplugin::TestTrackContainer::TestTrackContainer()
     : babelwires::RecordType({{BW_SHORT_ID("track1", "Track 1", "747a4575-7e38-4408-8499-8427064dda4a"),
                                bw_music::DefaultTrackType::getThisType()},
                               {BW_SHORT_ID("track2", "Track 2", "753b5995-5172-4e32-af78-5acc0af978b1"),

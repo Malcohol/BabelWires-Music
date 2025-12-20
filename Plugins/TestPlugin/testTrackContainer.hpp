@@ -9,7 +9,7 @@
 #include <BabelWiresLib/Types/Int/intType.hpp>
 #include <BabelWiresLib/Types/Record/recordType.hpp>
 
-namespace testUtils {
+namespace bw_music_testplugin {
     /// A type that contains some tracks and other fields for testing.
     class TestTrackContainer : public babelwires::RecordType {
       public:
@@ -22,4 +22,4 @@ namespace testUtils {
         DECLARE_INSTANCE_FIELD(other, babelwires::IntType)
         DECLARE_INSTANCE_END()
     };
-} // namespace testUtils
+} // namespace bw_music_testplugin

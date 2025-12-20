@@ -9,7 +9,9 @@
 #include <MusicLib/libRegistration.hpp>
 
 #include <Tests/TestUtils/seqTestUtils.hpp>
-#include <Tests/TestUtils/testTrackContainer.hpp>
+
+#include <Domains/Music/Plugins/TestPlugin/libRegistration.hpp>
+#include <Domains/Music/Plugins/TestPlugin/testTrackContainer.hpp>
 
 #include <Tests/BabelWiresLib/TestUtils/testEnvironment.hpp>
 
@@ -20,7 +22,7 @@ namespace {
       public:
         MusicLibTestFixture() {
             bw_music::registerLib(m_testEnv.m_projectContext);
-            m_testEnv.m_typeSystem.addEntry<testUtils::TestTrackContainer>();
+            bw_music_testplugin::registerLib(m_testEnv.m_projectContext);
         }
         testUtils::TestEnvironment m_testEnv;
     };
@@ -106,11 +108,11 @@ TEST_F(BuildAccompanimentTest, trackTest) {
 TEST_F(BuildAccompanimentTest, testTrackContainerTest) {
     const auto& typeSystem = m_testEnv.m_projectContext.m_typeSystem;
 
-    instantiateInputTypeVariable(testUtils::TestTrackContainer::getThisType());
+    instantiateInputTypeVariable(bw_music_testplugin::TestTrackContainer::getThisType());
 
-    const auto& testTrackContainerType = typeSystem.getEntryByType<testUtils::TestTrackContainer>();
-    babelwires::ValueTreeRoot inputTracks(typeSystem, testUtils::TestTrackContainer::getThisType());
-    testUtils::TestTrackContainer::Instance inputTracksInstance(inputTracks);
+    const auto& testTrackContainerType = typeSystem.getEntryByType<bw_music_testplugin::TestTrackContainer>();
+    babelwires::ValueTreeRoot inputTracks(typeSystem, bw_music_testplugin::TestTrackContainer::getThisType());
+    bw_music_testplugin::TestTrackContainer::Instance inputTracksInstance(inputTracks);
     inputTracksInstance.gettrack1().set(testUtils::getTrackOfSimpleNotes({60, 62, 64, 67, 71}));
     inputTracksInstance.gettrack2().set(testUtils::getTrackOfSimpleNotes({71, 67, 64, 62, 60}));
     inputTracksInstance.getother().set(42);
@@ -128,8 +130,8 @@ TEST_F(BuildAccompanimentTest, testTrackContainerTest) {
             output.getValue(), chordType.getIdentifierFromValue(bw_music::ChordType::Value::m));
         ASSERT_NE(indexOfMinor, -1);
         const babelwires::ValueTreeNode& minorNode = *output.getChild(indexOfMinor);
-        EXPECT_TRUE(minorNode.getType().as<testUtils::TestTrackContainer>());
-        testUtils::TestTrackContainer::ConstInstance minorInstance(minorNode);
+        EXPECT_TRUE(minorNode.getType().as<bw_music_testplugin::TestTrackContainer>());
+        bw_music_testplugin::TestTrackContainer::ConstInstance minorInstance(minorNode);
         testUtils::testSimpleNotes({60, 62, 63, 67, 71}, minorInstance.gettrack1().get());
         testUtils::testSimpleNotes({71, 67, 63, 62, 60}, minorInstance.gettrack2().get());
         EXPECT_EQ(minorInstance.getother().get(), 42);
@@ -139,8 +141,8 @@ TEST_F(BuildAccompanimentTest, testTrackContainerTest) {
         output.getValue(), chordType.getIdentifierFromValue(bw_music::ChordType::Value::m7));
         ASSERT_NE(indexOfMinor7, -1);
         const babelwires::ValueTreeNode& minor7Node = *output.getChild(indexOfMinor7);
-        EXPECT_TRUE(minor7Node.getType().as<testUtils::TestTrackContainer>());
-        testUtils::TestTrackContainer::ConstInstance minor7Instance(minor7Node);
+        EXPECT_TRUE(minor7Node.getType().as<bw_music_testplugin::TestTrackContainer>());
+        bw_music_testplugin::TestTrackContainer::ConstInstance minor7Instance(minor7Node);
         testUtils::testSimpleNotes({60, 62, 63, 67, 70}, minor7Instance.gettrack1().get());
         testUtils::testSimpleNotes({70, 67, 63, 62, 60}, minor7Instance.gettrack2().get());
         EXPECT_EQ(minor7Instance.getother().get(), 42);
