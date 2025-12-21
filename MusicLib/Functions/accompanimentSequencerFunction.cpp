@@ -77,7 +77,7 @@ namespace {
         const babelwires::RecordType& m_typeOfAccompanimentTracks;
         const babelwires::ValueHolder& m_accompanimentTracks;
         /// The type of fields within m_typeOfAccompanimentTracks.
-        const babelwires::Type* m_fieldType;
+        const babelwires::Type* m_fieldType = nullptr;
         /// The value of the first field within m_accompanimentTracks.
         babelwires::ValueHolder m_result;
         /// Map from chord type to child index in the record.
@@ -106,8 +106,9 @@ namespace {
                     if (m_fieldType == nullptr) {
                         m_fieldType = &fieldType;
                         assert(!m_result);
+                        m_result = *fieldValue;
                         // Use the first field to build the structure of tracks.
-                        findTracksInStructure(*m_fieldType, m_result);
+                        findTracksInStructure(*m_fieldType, *fieldValue);
                         if (m_durationOfAccompanimentTracks == 0) {
                             throw babelwires::ModelException()
                                 << "At least one accompaniment track for each chord must have a non-zero duration";
@@ -119,6 +120,9 @@ namespace {
                         validateTracksInStructure(*m_fieldType, *fieldValue);
                     }
                 }
+            }
+            if (!m_result) {
+                throw babelwires::ModelException() << "No suitable fields found in accompanimentTracks";
             }
         }
 
@@ -164,7 +168,7 @@ namespace {
 
                 if (const auto* chordOnEvent = event.as<bw_music::ChordOnEvent>()) {
                     if (!totalTimeSinceFirstChordEvent.has_value()) {
-                        *totalTimeSinceFirstChordEvent = timeSinceLastChordEvent;
+                        totalTimeSinceFirstChordEvent = timeSinceLastChordEvent;
                     }
                     if (timeSinceLastChordEvent > 0) {
                         addSilenceToTracks(timeSinceLastChordEvent);
@@ -194,6 +198,10 @@ namespace {
                     }
                 }
             }
+        }
+
+        babelwires::TypeRef getResultTypeRef() const {
+            return m_fieldType ? m_fieldType->getTypeRef() : babelwires::TypeRef();
         }
 
         babelwires::ValueHolder getResultValue() {
@@ -238,7 +246,7 @@ namespace {
                 if (it != m_tracksInStructure.end()) {
                     const bw_music::Track& sourceTrack = currentValue->is<bw_music::Track>();
                     if (sourceTrack.getDuration() != 0 &&
-                               sourceTrack.getDuration() != m_durationOfAccompanimentTracks) {
+                        sourceTrack.getDuration() != m_durationOfAccompanimentTracks) {
                         // TODO More detail
                         throw babelwires::ModelException()
                             << "All accompaniment tracks must have the same duration (or be empty)";
@@ -283,11 +291,11 @@ namespace {
     };
 } // namespace
 
-babelwires::ValueHolder bw_music::accompanimentSequencerFunction(
+std::tuple<babelwires::TypeRef, babelwires::ValueHolder> bw_music::accompanimentSequencerFunction(
     const babelwires::TypeSystem& typeSystem, const babelwires::RecordType& typeOfAccompanimentTracks,
     const babelwires::ValueHolder& accompanimentTracks, const bw_music::Track& chordTrack) {
 
     AccompanimentSequencer sequencer(typeSystem, typeOfAccompanimentTracks, accompanimentTracks);
     sequencer.sequenceAccompaniment(chordTrack);
-    return sequencer.getResultValue();
+    return {sequencer.getResultTypeRef(), sequencer.getResultValue()};
 }

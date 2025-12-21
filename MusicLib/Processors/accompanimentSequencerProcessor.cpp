@@ -9,19 +9,22 @@
 
 #include <MusicLib/Functions/accompanimentSequencerFunction.hpp>
 
-#include <BabelWiresLib/Types/Record/recordTypeConstructor.hpp>
-#include <BabelWiresLib/Types/Generic/typeVariableTypeConstructor.hpp>
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
+#include <BabelWiresLib/Types/Generic/typeVariableTypeConstructor.hpp>
+#include <BabelWiresLib/Types/Record/recordTypeConstructor.hpp>
+#include <BabelWiresLib/ValueTree/modelExceptions.hpp>
 #include <BabelWiresLib/ValueTree/valueTreeNode.hpp>
 
 bw_music::AccompanimentSequencerProcessorInput::AccompanimentSequencerProcessorInput()
     : babelwires::GenericType(babelwires::RecordTypeConstructor::makeTypeRef(
-          getAccompTracksId(), babelwires::TypeVariableTypeConstructor::makeTypeRef(),
-           getChordTrackId(), DefaultTrackType::getThisType()), 1) {}
+                                  getChordTrackId(), DefaultTrackType::getThisType(), getAccompTracksId(),
+                                  babelwires::TypeVariableTypeConstructor::makeTypeRef()),
+                              1) {}
 
 bw_music::AccompanimentSequencerProcessorOutput::AccompanimentSequencerProcessorOutput()
     : babelwires::GenericType(babelwires::RecordTypeConstructor::makeTypeRef(
-          getResultId(), DefaultTrackType::getThisType()), 1) {}
+                                  getResultId(), babelwires::TypeVariableTypeConstructor::makeTypeRef()),
+                              1) {}
 
 bw_music::AccompanimentSequencerProcessor::AccompanimentSequencerProcessor(
     const babelwires::ProjectContext& projectContext)
@@ -33,46 +36,44 @@ void bw_music::AccompanimentSequencerProcessor::processValue(babelwires::UserLog
                                                              babelwires::ValueTreeNode& output) const {
     const babelwires::TypeSystem& typeSystem = input.getTypeSystem();
     const AccompanimentSequencerProcessorInput& inputType = input.getType().is<AccompanimentSequencerProcessorInput>();
-    const AccompanimentSequencerProcessorOutput& outputType = output.getType().is<AccompanimentSequencerProcessorOutput>();
+    const AccompanimentSequencerProcessorOutput& outputType =
+        output.getType().is<AccompanimentSequencerProcessorOutput>();
 
     const babelwires::ValueTreeNode& inputRecord = *input.getChild(0);
-    const babelwires::ValueTreeNode& inputAccompanimentTracks = *inputRecord.getChild(0);
-    const babelwires::ValueTreeNode& inputChordTrack = *inputRecord.getChild(1);
-
-    const babelwires::ValueTreeNode& outputRecord = *output.getChild(0);
-    const babelwires::ValueTreeNode& outputResult = *outputRecord.getChild(0);
+    const babelwires::ValueTreeNode& inputChordTrack = *inputRecord.getChild(0);
+    const babelwires::ValueTreeNode& inputAccompanimentTracks = *inputRecord.getChild(1);
 
     const babelwires::ValueHolder& inputValue = input.getValue();
     const babelwires::TypeRef& assignedInputTypeRef = inputType.getTypeAssignment(inputValue, 0);
+    if (!assignedInputTypeRef) {
+        return;
+    }
 
-    babelwires::ValueHolder newOutputValue = output.getValue();
-    
-    outputType.setTypeVariableAssignmentAndInstantiate(typeSystem, newOutputValue, {assignedInputTypeRef});
-    /*
-    
-    // Get the accompaniment tracks field (field 0)
-    const auto [accompanimentTracksValueHolder, accompanimentTracksStep, accompanimentTracksTypeRef] =
-        inputType.getChild(inputValue, 0);
-    const auto& accompanimentTracksRecordType =
-        accompanimentTracksTypeRef.resolve(typeSystem).is<babelwires::RecordType>();
+    const auto& chordTrack = inputChordTrack.getValue()->is<bw_music::Track>();
+    const auto& accompanimentTracksRecordType = assignedInputTypeRef.resolve(typeSystem);
 
-    // Get the chord track field (field 1)
-    const auto [chordTrackValueHolder, chordTrackStep, chordTrackTypeRef] = inputType.getChild(inputValue, 1);
-    const auto& chordTrack = (**chordTrackValueHolder).is<Track>();
-
-    // Process only if something changed
+    const auto* accompanimentRecord = accompanimentTracksRecordType.as<babelwires::RecordType>();
+    if (!accompanimentRecord) {
+        throw babelwires::ModelException()
+            << "Accompaniment tracks input is expected to be a record type with a field for each supported chord type";
+    }
     if (input.isChanged(babelwires::ValueTreeNode::Changes::SomethingChanged)) {
         // Call the function
-        babelwires::ValueHolder resultValue = accompanimentSequencerFunction(
-            typeSystem, accompanimentTracksRecordType, *accompanimentTracksValueHolder, chordTrack);
+        const auto [resultType, resultValue] = accompanimentSequencerFunction(
+            typeSystem, *accompanimentRecord, inputAccompanimentTracks.getValue(), chordTrack);
+
+        if (!resultType) {
+            return;
+        }
+
+        babelwires::ValueTreeNode& outputRecord = *output.getChild(0);
+        babelwires::ValueTreeNode& outputResult = *outputRecord.getChild(0);
+        babelwires::ValueHolder newOutputValue = output.getValue();
+
+        outputType.setTypeVariableAssignmentAndInstantiate(typeSystem, newOutputValue, {resultType});
 
         // Set the output
-        babelwires::ValueHolder outputValue = output.getValue();
-        const AccompanimentSequencerProcessorOutput& outputType = output.getType().is<AccompanimentSequencerProcessorOutput>();
-        auto [resultChild, resultStep, resultTypeRef] = outputType.getChildNonConst(outputValue, 0);
-        *resultChild = std::move(resultValue);
-        output.setValue(outputValue);
+        outputResult.setValue(resultValue);
+        output.setValue(newOutputValue);
     }
-        */
 }
-
