@@ -198,6 +198,9 @@ namespace {
                     }
                 }
             }
+            for (auto& trackInStructure : m_tracksInStructure) {
+                trackInStructure.m_track.setDuration(chordTrack.getDuration());
+            }
         }
 
         babelwires::TypeRef getResultTypeRef() const {
