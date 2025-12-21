@@ -91,7 +91,7 @@ TEST_F(FitToChordFunctionTest, AMinor) {
 
 TEST_F(FitToChordFunctionTest, GDim) {
     auto result = bw_music::fitToChordFunction(m_cMajorChordTrack, bw_music::Chord{bw_music::PitchClass::Value::G, bw_music::ChordType::Value::dim});
-    testSimpleTrack(result, 55, 58, 62); // G, A#, C#
+    testSimpleTrack(result, 55, 58, 61); // G, A#, C#
 }
 
 TEST_F(FitToChordFunctionTest, GMajLowerLimit) {
