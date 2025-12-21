@@ -27,7 +27,18 @@ bw_music::Track bw_music_testplugin::SimpleAccompaniment::getCMajorArpeggioTrack
     trackBuilder.addEvent(bw_music::NoteOffEvent(duration, 67, 64));
     trackBuilder.addEvent(bw_music::NoteOnEvent(0, 72, 100)); // C5
     trackBuilder.addEvent(bw_music::NoteOffEvent(duration, 72, 64));
-    return trackBuilder.finishAndGetTrack();
+    bw_music::Track result = trackBuilder.finishAndGetTrack();
+    assert(result.getNumEvents() == getNumEventsInTrack());
+    assert(result.getDuration() == getTrackDuration());
+    return result;
+}
+
+unsigned int bw_music_testplugin::SimpleAccompaniment::getNumEventsInTrack() {
+    return 8;
+}
+
+bw_music::ModelDuration bw_music_testplugin::SimpleAccompaniment::getTrackDuration() {
+    return 1;
 }
 
 babelwires::NewValueHolder

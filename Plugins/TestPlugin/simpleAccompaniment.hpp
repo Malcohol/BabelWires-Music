@@ -4,6 +4,7 @@
 #include <BabelWiresLib/TypeSystem/registeredType.hpp>
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/Record/recordType.hpp>
+#include <BabelWiresLib/ValueTree/valueTreePathUtils.hpp>
 
 #include <Domains/Music/Plugins/TestPlugin/testTrackContainer.hpp>
 
@@ -17,6 +18,8 @@ namespace bw_music_testplugin {
         babelwires::NewValueHolder createValue(const babelwires::TypeSystem& typeSystem) const override;
 
         static bw_music::Track getCMajorArpeggioTrack();
+        static unsigned int getNumEventsInTrack();
+        static bw_music::ModelDuration getTrackDuration();
 
         DECLARE_INSTANCE_BEGIN(SimpleAccompaniment)
         DECLARE_INSTANCE_FIELD(M, TestTrackContainer)
