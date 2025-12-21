@@ -1,4 +1,5 @@
 SET( TESTPLUGIN_SRCS
+    simpleAccompaniment.cpp
     testTrackContainer.cpp
     libRegistration.cpp
    )

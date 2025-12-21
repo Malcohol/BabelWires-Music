@@ -21,5 +21,9 @@ namespace bw_music_testplugin {
         DECLARE_INSTANCE_FIELD(track2, bw_music::TrackType)
         DECLARE_INSTANCE_FIELD(other, babelwires::IntType)
         DECLARE_INSTANCE_END()
+
+        static babelwires::ShortId getTrack1Id();
+        static babelwires::ShortId getTrack2Id();
+        static babelwires::ShortId getOtherId();
     };
 } // namespace bw_music_testplugin

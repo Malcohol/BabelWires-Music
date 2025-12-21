@@ -11,8 +11,10 @@
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 
 #include <Domains/Music/Plugins/TestPlugin/testTrackContainer.hpp>
+#include <Domains/Music/Plugins/TestPlugin/simpleAccompaniment.hpp>
 
 void bw_music_testplugin::registerLib(babelwires::ProjectContext& context) {
     // Types
     context.m_typeSystem.addEntry<bw_music_testplugin::TestTrackContainer>();
+    context.m_typeSystem.addEntry<bw_music_testplugin::SimpleAccompaniment>();
 }
