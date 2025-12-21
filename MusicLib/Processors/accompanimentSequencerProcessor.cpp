@@ -71,9 +71,9 @@ void bw_music::AccompanimentSequencerProcessor::processValue(babelwires::UserLog
         babelwires::ValueHolder newOutputValue = output.getValue();
 
         outputType.setTypeVariableAssignmentAndInstantiate(typeSystem, newOutputValue, {resultType});
+        output.setValue(newOutputValue);
 
         // Set the output
         outputResult.setValue(resultValue);
-        output.setValue(newOutputValue);
     }
 }
