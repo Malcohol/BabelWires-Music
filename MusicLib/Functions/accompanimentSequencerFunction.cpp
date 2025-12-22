@@ -168,7 +168,7 @@ namespace {
 
                 if (const auto* chordOnEvent = event.as<bw_music::ChordOnEvent>()) {
                     if (!totalTimeSinceFirstChordEvent.has_value()) {
-                        totalTimeSinceFirstChordEvent = timeSinceLastChordEvent;
+                        totalTimeSinceFirstChordEvent = 0;
                     }
                     if (timeSinceLastChordEvent > 0) {
                         addSilenceToTracks(timeSinceLastChordEvent);
