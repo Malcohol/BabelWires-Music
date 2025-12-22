@@ -50,7 +50,7 @@ TEST(TransposeProcessorTest, funcSimplePositiveLimitDiscard) {
 
     auto trackOut = bw_music::transposeTrack(trackIn.finishAndGetTrack(), 5);
 
-    testUtils::testNotes({{125, 0}, {127, 0}, {127, babelwires::Rational(3, 4)}, {125, 0}}, trackOut);
+    testUtils::testNotes({{125}, {127}, {127, babelwires::Rational(1, 4), babelwires::Rational(3, 4)}, {125}}, trackOut);
 }
 
 TEST(TransposeProcessorTest, funcSimplePositiveLimitMap) {
@@ -71,7 +71,7 @@ TEST(TransposeProcessorTest, funcSimpleNegativeLimitDiscard) {
 
     auto trackOut = bw_music::transposeTrack(trackIn.finishAndGetTrack(), -15);
 
-    testUtils::testNotes({{2, 0}, {1, 0}, {1, babelwires::Rational(3, 4)}, {2, 0}}, trackOut);
+    testUtils::testNotes({{2}, {1}, {1, babelwires::Rational(1, 4), babelwires::Rational(3, 4)}, {2}}, trackOut);
 }
 
 TEST(TransposeProcessorTest, funcSimpleNegativeLimitMap) {

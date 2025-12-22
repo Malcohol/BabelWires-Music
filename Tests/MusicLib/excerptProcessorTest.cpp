@@ -114,10 +114,10 @@ TEST(ExcerptProcessorTest, funcGaps) {
     auto trackOut = bw_music::getTrackExcerpt(trackIn.finishAndGetTrack(), babelwires::Rational(3, 8), 1);
 
     const std::vector<testUtils::NoteInfo> expectedNoteInfos{
-        {64, babelwires::Rational(1, 8), babelwires::Rational(1, 4)},
-        {65, 0, babelwires::Rational(1, 4)},
-        {67, 0, babelwires::Rational(1, 4)},
-        {69, 0, babelwires::Rational(1, 8)}};
+        {64, babelwires::Rational(1, 4), babelwires::Rational(1, 8)},
+        {65, babelwires::Rational(1, 4)},
+        {67, babelwires::Rational(1, 4)},
+        {69, babelwires::Rational(1, 8)}};
 
     testUtils::testNotes(expectedNoteInfos, trackOut);
 }
