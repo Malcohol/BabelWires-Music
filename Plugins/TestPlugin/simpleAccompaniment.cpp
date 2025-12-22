@@ -19,14 +19,14 @@ bw_music_testplugin::SimpleAccompaniment::SimpleAccompaniment()
 bw_music::Track bw_music_testplugin::SimpleAccompaniment::getCMajorArpeggioTrack() {
     bw_music::TrackBuilder trackBuilder;
     const bw_music::ModelDuration duration(1, 4);
-    trackBuilder.addEvent(bw_music::NoteOnEvent(0, 60, 100)); // C4
-    trackBuilder.addEvent(bw_music::NoteOffEvent(duration, 60, 64));
-    trackBuilder.addEvent(bw_music::NoteOnEvent(0, 64, 100)); // E4
-    trackBuilder.addEvent(bw_music::NoteOffEvent(duration, 64, 64));
-    trackBuilder.addEvent(bw_music::NoteOnEvent(0, 67, 100)); // G4
-    trackBuilder.addEvent(bw_music::NoteOffEvent(duration, 67, 64));
-    trackBuilder.addEvent(bw_music::NoteOnEvent(0, 72, 100)); // C5
-    trackBuilder.addEvent(bw_music::NoteOffEvent(duration, 72, 64));
+    trackBuilder.addEvent(bw_music::NoteOnEvent(0, 60)); // C4
+    trackBuilder.addEvent(bw_music::NoteOffEvent(duration, 60));
+    trackBuilder.addEvent(bw_music::NoteOnEvent(0, 64)); // E4
+    trackBuilder.addEvent(bw_music::NoteOffEvent(duration, 64));
+    trackBuilder.addEvent(bw_music::NoteOnEvent(0, 67)); // G4
+    trackBuilder.addEvent(bw_music::NoteOffEvent(duration, 67));
+    trackBuilder.addEvent(bw_music::NoteOnEvent(0, 72)); // C5
+    trackBuilder.addEvent(bw_music::NoteOffEvent(duration, 72));
     bw_music::Track result = trackBuilder.finishAndGetTrack();
     assert(result.getNumEvents() == getNumEventsInTrack());
     assert(result.getDuration() == getTrackDuration());
