@@ -35,7 +35,7 @@ void testUtils::testSimpleNotes(const std::vector<bw_music::Pitch>& expectedPitc
         ASSERT_NE(noteOn, nullptr);
         EXPECT_EQ(noteOn->getTimeSinceLastEvent(), 0);
         EXPECT_EQ(noteOn->m_pitch, pitch);
-        EXPECT_EQ(noteOn->m_velocity, 127);
+        EXPECT_EQ(noteOn->m_velocity, bw_music::NoteOnEvent::c_defaultVelocity);
         ++noteIterator;
 
         ASSERT_NE(noteIterator, endIterator);
@@ -43,7 +43,7 @@ void testUtils::testSimpleNotes(const std::vector<bw_music::Pitch>& expectedPitc
         ASSERT_NE(noteOff, nullptr);
         EXPECT_EQ(noteOff->getTimeSinceLastEvent(), expectedNoteDuration);
         EXPECT_EQ(noteOff->m_pitch, pitch);
-        EXPECT_EQ(noteOff->m_velocity, 64);
+        EXPECT_EQ(noteOff->m_velocity, bw_music::NoteOffEvent::c_defaultVelocity);
         ++noteIterator;
     }
     EXPECT_EQ(noteIterator, endIterator);
@@ -70,7 +70,7 @@ void testUtils::testNotes(const std::vector<NoteInfo>& expectedNotes, const bw_m
         ASSERT_NE(noteOn, nullptr);
         EXPECT_EQ(noteOn->getTimeSinceLastEvent(), note.m_gapBeforeNote);
         EXPECT_EQ(noteOn->m_pitch, note.m_pitch);
-        EXPECT_EQ(noteOn->m_velocity, 127);
+        EXPECT_EQ(noteOn->m_velocity, bw_music::NoteOnEvent::c_defaultVelocity);
         ++noteIterator;
 
         EXPECT_NE(noteIterator, endIterator);
@@ -79,11 +79,8 @@ void testUtils::testNotes(const std::vector<NoteInfo>& expectedNotes, const bw_m
         EXPECT_EQ(noteOff->getTimeSinceLastEvent(), note.m_noteDuration);
         EXPECT_EQ(noteOff->m_pitch, note.m_pitch);
         durationSoFar += note.m_gapBeforeNote + note.m_noteDuration;
-        if (durationSoFar != track.getDuration()) {
-            // The last events in the track may be artificial noteOff events to close off truncated groups.
-            // In this case, we cannot assume the velocity will be correct.
-            EXPECT_EQ(noteOff->m_velocity, 64);
-        }
+        // Note: This might be a truncated event, but the velocity in cases we test should still be the default.
+        EXPECT_EQ(noteOff->m_velocity, bw_music::NoteOffEvent::c_defaultVelocity);
         ++noteIterator;
     }
     EXPECT_EQ(noteIterator, endIterator);

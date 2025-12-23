@@ -39,8 +39,9 @@ namespace bw_music {
     /// The start of a musical note.
     struct NoteOnEvent : public NoteEvent {
         STREAM_EVENT(NoteOnEvent);
+        static constexpr const Velocity c_defaultVelocity = 127;
         NoteOnEvent() = default;
-        NoteOnEvent(ModelDuration timeSinceLastEvent, Pitch pitch, Velocity velocity = 127)
+        NoteOnEvent(ModelDuration timeSinceLastEvent, Pitch pitch, Velocity velocity = c_defaultVelocity)
             : NoteEvent(timeSinceLastEvent, pitch, velocity) {}
 
         virtual bool operator==(const TrackEvent& other) const override;
@@ -51,8 +52,9 @@ namespace bw_music {
     /// The end of a musical note.
     struct NoteOffEvent : public NoteEvent {
         STREAM_EVENT(NoteOffEvent);
+        static constexpr const Velocity c_defaultVelocity = 64;
         NoteOffEvent() = default;
-        NoteOffEvent(ModelDuration timeSinceLastEvent, Pitch pitch, Velocity velocity = 64)
+        NoteOffEvent(ModelDuration timeSinceLastEvent, Pitch pitch, Velocity velocity = c_defaultVelocity)
             : NoteEvent(timeSinceLastEvent, pitch, velocity) {}
 
         virtual bool operator==(const TrackEvent& other) const override;
