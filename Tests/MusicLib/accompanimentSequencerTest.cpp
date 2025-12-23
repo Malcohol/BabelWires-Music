@@ -165,3 +165,67 @@ TEST_F(AccompanimentSequencerTest, UnevenGapsAtStartAndEnd) {
         }, resultTrack2);
     }
 }
+
+TEST_F(AccompanimentSequencerTest, CleanGapBetweenChords) {
+    // Set a chord track
+    bw_music::Track chordTrack = testUtils::getTrackOfChords({
+        {bw_music::PitchClass::Value::C, bw_music::ChordType::Value::M, bw_music::ModelDuration(2)},
+        {bw_music::PitchClass::Value::G, bw_music::ChordType::Value::dim, bw_music::ModelDuration(3, 2), bw_music::ModelDuration(1, 2)}
+    });
+    setChordTrack(std::move(chordTrack));
+
+    // Process
+    m_processor.process(m_testEnv.m_log);
+
+    // Get the result tracks
+    {
+        bw_music::Track resultTrack1 = getResultTrack(0);
+        EXPECT_EQ(resultTrack1.getNumEvents(), (bw_music_testplugin::SimpleAccompaniment::getNumEventsInTrack() * 2 * 2) - 4);
+        EXPECT_EQ(resultTrack1.getDuration(), chordTrack.getDuration());
+        testUtils::testNotes({
+            {60}, {64}, {67}, {72}, {60}, {64}, {67}, {72},
+            /*{55}, {58},*/ {61, bw_music::ModelDuration(1, 4), bw_music::ModelDuration(1, 2)}, {67}, {55}, {58}, {61}, {67}
+        }, resultTrack1);
+    }
+    {
+        bw_music::Track resultTrack2 = getResultTrack(1);
+        EXPECT_EQ(resultTrack2.getNumEvents(), (bw_music_testplugin::SimpleAccompaniment::getNumEventsInTrack() * 2 * 2) - 4);
+        EXPECT_EQ(resultTrack2.getDuration(), chordTrack.getDuration());
+        testUtils::testNotes({
+            {72}, {76}, {79}, {84}, {72}, {76}, {79}, {84},
+            /*{67}, {70},*/ {73, bw_music::ModelDuration(1, 4), bw_music::ModelDuration(1, 2)}, {79}, {67}, {70}, {73}, {79}
+        }, resultTrack2);
+    }
+}
+
+TEST_F(AccompanimentSequencerTest, MessyGapBetweenChords) {
+    // Set a chord track
+    bw_music::Track chordTrack = testUtils::getTrackOfChords({
+        {bw_music::PitchClass::Value::C, bw_music::ChordType::Value::M, bw_music::ModelDuration(17, 8)},
+        {bw_music::PitchClass::Value::G, bw_music::ChordType::Value::dim, bw_music::ModelDuration(9, 8), bw_music::ModelDuration(6, 8)}
+    });
+    setChordTrack(std::move(chordTrack));
+
+    // Process
+    m_processor.process(m_testEnv.m_log);
+
+    // Get the result tracks
+    {
+        bw_music::Track resultTrack1 = getResultTrack(0);
+        EXPECT_EQ(resultTrack1.getNumEvents(), (bw_music_testplugin::SimpleAccompaniment::getNumEventsInTrack() * 2 * 2) - 6);
+        EXPECT_EQ(resultTrack1.getDuration(), chordTrack.getDuration());
+        testUtils::testNotes({
+            {60}, {64}, {67}, {72}, {60}, {64}, {67}, {72}, {60, bw_music::ModelDuration(1, 8)}, 
+            /*{55}, {58}, {61}, {67},*/ {55, bw_music::ModelDuration(1, 4), bw_music::ModelDuration(7, 8)}, {58}, {61}, {67}
+        }, resultTrack1);
+    }
+    {
+        bw_music::Track resultTrack2 = getResultTrack(1);
+        EXPECT_EQ(resultTrack2.getNumEvents(), (bw_music_testplugin::SimpleAccompaniment::getNumEventsInTrack() * 2 * 2) - 6);
+        EXPECT_EQ(resultTrack2.getDuration(), chordTrack.getDuration());
+        testUtils::testNotes({
+            {72}, {76}, {79}, {84}, {72}, {76}, {79}, {84}, {72, bw_music::ModelDuration(1, 8)}, 
+            /*{67}, {70}, {73}, {97},*/ {67, bw_music::ModelDuration(1, 4), bw_music::ModelDuration(7, 8)}, {70}, {73}, {79}
+        }, resultTrack2);
+    }
+}
