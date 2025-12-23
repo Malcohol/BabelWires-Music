@@ -166,6 +166,7 @@ TEST_F(AccompanimentSequencerTest, UnevenGapsAtStartAndEnd) {
     }
 }
 
+// Clean because chords change at note boundaries.
 TEST_F(AccompanimentSequencerTest, CleanGapBetweenChords) {
     // Set a chord track
     bw_music::Track chordTrack = testUtils::getTrackOfChords({
@@ -198,6 +199,7 @@ TEST_F(AccompanimentSequencerTest, CleanGapBetweenChords) {
     }
 }
 
+// Messy because some notes get truncated and some notes are not ready to start when the chord starts.
 TEST_F(AccompanimentSequencerTest, MessyGapBetweenChords) {
     // Set a chord track
     bw_music::Track chordTrack = testUtils::getTrackOfChords({
@@ -229,3 +231,4 @@ TEST_F(AccompanimentSequencerTest, MessyGapBetweenChords) {
         }, resultTrack2);
     }
 }
+
