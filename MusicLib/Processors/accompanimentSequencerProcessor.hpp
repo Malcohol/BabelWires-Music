@@ -57,6 +57,9 @@ namespace bw_music {
       protected:
         void processValue(babelwires::UserLogger& userLogger, const babelwires::ValueTreeNode& input,
                           babelwires::ValueTreeNode& output) const override;
+
+        /// This is overridden because we don't want type instantiations to be lost on failure.
+        void onFailure() const override;
     };
 
 } // namespace bw_music

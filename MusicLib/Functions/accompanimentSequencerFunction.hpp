@@ -16,12 +16,17 @@ namespace babelwires {
 }
 
 namespace bw_music {
+
+    /// The accompanimentTracks are expected to be of a record type, whose fieldIds are all chord types.
+    /// Return the first type for a chord field or an empty TypeRef if no suitable type is found.
+    babelwires::TypeRef getAccompanimentTypeForChords(const babelwires::TypeSystem& typeSystem, const babelwires::Type& typeOfAccompanimentTracks);
+
     /// The accompanimentTracks are expected to be of a record type, whose fieldIds are all chord types.
     /// The types of the fields are required to be the same.
     /// The result value has the same type as the fields, and consists of the tracks in those type concatenated in a
     /// sequence defined by the chordTrack. The tracks are truncated or repeated as necessary to fit the chord
     /// durations. Any non-track contents in the field values simply keep the value from the first chord.
-    std::tuple<babelwires::TypeRef, babelwires::ValueHolder> accompanimentSequencerFunction(
-        const babelwires::TypeSystem& typeSystem, const babelwires::RecordType& typeOfAccompanimentTracks,
+    babelwires::ValueHolder accompanimentSequencerFunction(
+        const babelwires::TypeSystem& typeSystem, const babelwires::Type& typeOfAccompanimentTracks,
         const babelwires::ValueHolder& accompanimentTracks, const bw_music::Track& chordTrack);
 } // namespace bw_music

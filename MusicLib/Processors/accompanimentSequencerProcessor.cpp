@@ -14,6 +14,7 @@
 #include <BabelWiresLib/Types/Record/recordTypeConstructor.hpp>
 #include <BabelWiresLib/ValueTree/modelExceptions.hpp>
 #include <BabelWiresLib/ValueTree/valueTreeNode.hpp>
+#include <BabelWiresLib/Types/Failure/failureType.hpp>
 
 bw_music::AccompanimentSequencerProcessorInput::AccompanimentSequencerProcessorInput()
     : babelwires::GenericType(babelwires::RecordTypeConstructor::makeTypeRef(
@@ -45,35 +46,46 @@ void bw_music::AccompanimentSequencerProcessor::processValue(babelwires::UserLog
 
     const babelwires::ValueHolder& inputValue = input.getValue();
     const babelwires::TypeRef& assignedInputTypeRef = inputType.getTypeAssignment(inputValue, 0);
-    if (!assignedInputTypeRef) {
-        return;
-    }
 
-    const auto& chordTrack = inputChordTrack.getValue()->is<bw_music::Track>();
-    const auto& accompanimentTracksRecordType = assignedInputTypeRef.resolve(typeSystem);
-
-    const auto* accompanimentRecord = accompanimentTracksRecordType.as<babelwires::RecordType>();
-    if (!accompanimentRecord) {
-        throw babelwires::ModelException()
-            << "Accompaniment tracks input is expected to be a record type with a field for each supported chord type";
-    }
     if (input.isChanged(babelwires::ValueTreeNode::Changes::SomethingChanged)) {
-        // Call the function
-        const auto [resultType, resultValue] = accompanimentSequencerFunction(
-            typeSystem, *accompanimentRecord, inputAccompanimentTracks.getValue(), chordTrack);
-
-        if (!resultType) {
-            return;
-        }
-
         babelwires::ValueTreeNode& outputRecord = *output.getChild(0);
         babelwires::ValueTreeNode& outputResult = *outputRecord.getChild(0);
         babelwires::ValueHolder newOutputValue = output.getValue();
 
-        outputType.setTypeVariableAssignmentAndInstantiate(typeSystem, newOutputValue, {resultType});
-        output.setValue(newOutputValue);
+        if (!assignedInputTypeRef) {
+            if (outputType.getTypeAssignment(newOutputValue, 0)) {
+                outputType.setTypeVariableAssignmentAndInstantiate(typeSystem, newOutputValue, {babelwires::TypeRef()});
+                output.setValue(newOutputValue);
+            }
+            return;
+        }
+
+        const auto& accompanimentTracksRecordType = assignedInputTypeRef.resolve(typeSystem);
+
+        const auto& typeForChords = getAccompanimentTypeForChords(typeSystem, accompanimentTracksRecordType);
+        if (!typeForChords) {
+            if (outputType.getTypeAssignment(newOutputValue, 0) != babelwires::FailureType::getThisType()) {
+                outputType.setTypeVariableAssignmentAndInstantiate(typeSystem, newOutputValue, {babelwires::FailureType::getThisType()});
+                output.setValue(newOutputValue);
+            }
+            throw babelwires::ModelException()
+                << "Accompaniment tracks input must have at least one field whose identifier is a chord type";
+        } else {
+            // TODO: Probably I shouldn't do this, but the build accompaniment function produces decorated types and it looks ugly.
+            const auto undecoratedType = typeForChords.resolve(typeSystem).getTypeRef();
+            outputType.setTypeVariableAssignmentAndInstantiate(typeSystem, newOutputValue, {undecoratedType});
+            output.setValue(newOutputValue);
+        }
+
+        const auto& chordTrack = inputChordTrack.getValue()->is<bw_music::Track>();
+
+        // Call the function
+        const auto resultValue = accompanimentSequencerFunction(
+            typeSystem, accompanimentTracksRecordType, inputAccompanimentTracks.getValue(), chordTrack);
 
         // Set the output
         outputResult.setValue(resultValue);
     }
 }
+
+void bw_music::AccompanimentSequencerProcessor::onFailure() const {}

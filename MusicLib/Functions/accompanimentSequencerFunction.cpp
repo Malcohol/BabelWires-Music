@@ -67,7 +67,7 @@ namespace {
         /// Accompaniment is permitted to have arbitrary structure. To avoid the complexity of traversing typed
         /// structures multiple times while processing the music data, we use this data structure.
         struct TrackInStructure {
-            /// The path to the track within the accompaniment for a given chord (and also within the result value.
+            /// The path to the track within the accompaniment for a given chord (and also within the result value).
             babelwires::Path m_pathToTrack;
             /// The track being built.
             bw_music::Track m_track;
@@ -294,11 +294,35 @@ namespace {
     };
 } // namespace
 
-std::tuple<babelwires::TypeRef, babelwires::ValueHolder> bw_music::accompanimentSequencerFunction(
-    const babelwires::TypeSystem& typeSystem, const babelwires::RecordType& typeOfAccompanimentTracks,
+babelwires::TypeRef bw_music::getAccompanimentTypeForChords(
+    const babelwires::TypeSystem& typeSystem, const babelwires::Type& typeOfAccompanimentTracks) {
+
+    const babelwires::RecordType* recordType = typeOfAccompanimentTracks.as<babelwires::RecordType>();
+    if (!recordType) {
+        return {};
+    }
+
+    const auto& chordTypeType = typeSystem.getEntryByType<bw_music::ChordType>();
+    for (auto f : recordType->getFields()) {
+        const int enumIndex = chordTypeType.tryGetIndexFromIdentifier(f.m_identifier);
+        if (enumIndex >= 0) {
+            return f.m_type;
+        }
+    }
+    // Error type.
+    return {};
+}
+
+babelwires::ValueHolder bw_music::accompanimentSequencerFunction(
+    const babelwires::TypeSystem& typeSystem, const babelwires::Type& typeOfAccompanimentTracks,
     const babelwires::ValueHolder& accompanimentTracks, const bw_music::Track& chordTrack) {
 
-    AccompanimentSequencer sequencer(typeSystem, typeOfAccompanimentTracks, accompanimentTracks);
+    const babelwires::RecordType* recordType = typeOfAccompanimentTracks.as<babelwires::RecordType>();
+    assert(recordType && "accompanimentTracks must be of a record type");
+
+    AccompanimentSequencer sequencer(typeSystem, *recordType, accompanimentTracks);
     sequencer.sequenceAccompaniment(chordTrack);
-    return {sequencer.getResultTypeRef(), sequencer.getResultValue()};
+    //assert(sequencer.getResultTypeRef() == getAccompanimentTypeForChords(typeSystem, typeOfAccompanimentTracks, accompanimentTracks) &&
+    //       "Result type does not match expected type");
+    return sequencer.getResultValue();
 }
