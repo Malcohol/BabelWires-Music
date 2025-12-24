@@ -16,7 +16,7 @@ babelwires::NewValueHolder bw_music::TrackType::createValue(const babelwires::Ty
     return babelwires::ValueHolder::makeValue<Track>(m_defaultDuration);
 }
 
-bool bw_music::TrackType::isValidValue(const babelwires::TypeSystem& typeSystem, const babelwires::Value& v) const {
+bool bw_music::TrackType::visitValue(const babelwires::TypeSystem& typeSystem, const babelwires::Value& v, ChildValueVisitor& visitor) const {
     return v.as<Track>();
 }
 

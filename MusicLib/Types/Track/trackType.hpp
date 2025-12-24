@@ -19,7 +19,7 @@ namespace bw_music {
 
         babelwires::NewValueHolder createValue(const babelwires::TypeSystem& typeSystem) const override;
 
-        bool isValidValue(const babelwires::TypeSystem& typeSystem, const babelwires::Value& v) const override;
+        bool visitValue(const babelwires::TypeSystem& typeSystem, const babelwires::Value& v, ChildValueVisitor& visitor) const override;
 
         std::string getFlavour() const override;
 
