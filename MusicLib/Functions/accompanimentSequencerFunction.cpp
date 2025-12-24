@@ -34,16 +34,16 @@ namespace {
                                                bw_music::ModelDuration targetDuration) {
         assert(targetDuration > 0 && "Target duration must be positive");
         assert(offset >= 0 && "Offset must be non-negative");
-        assert(offset < sourceTrack.getDuration() && "Offset must be within source track duration");
 
-        const bw_music::ModelDuration sourceLength = sourceTrack.getDuration();
-        if (sourceLength == 0) {
+        const bw_music::ModelDuration sourceDuration = sourceTrack.getDuration();
+        if (sourceDuration == 0) {
             return bw_music::Track(targetDuration);
         }
+        assert(offset < sourceDuration && "Offset must be within source track duration");
 
         // Even if the offset is zero, call the first excerpt a lead-in.
-        const bw_music::ModelDuration leadInDuration = std::min(sourceLength - offset, targetDuration);
-        auto [repeatCount, remainder] = (targetDuration - leadInDuration).divmod(sourceLength);
+        const bw_music::ModelDuration leadInDuration = std::min(sourceDuration - offset, targetDuration);
+        auto [repeatCount, remainder] = (targetDuration - leadInDuration).divmod(sourceDuration);
 
         // Start with the lead-in excerpt.
         bw_music::Track result = bw_music::getTrackExcerpt(sourceTrack, offset, leadInDuration);
