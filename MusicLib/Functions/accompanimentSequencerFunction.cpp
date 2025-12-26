@@ -294,25 +294,6 @@ namespace {
     };
 } // namespace
 
-babelwires::TypeRef bw_music::getAccompanimentTypeForChords(
-    const babelwires::TypeSystem& typeSystem, const babelwires::Type& typeOfAccompanimentTracks) {
-
-    const babelwires::RecordType* recordType = typeOfAccompanimentTracks.as<babelwires::RecordType>();
-    if (!recordType) {
-        return {};
-    }
-
-    const auto& chordTypeType = typeSystem.getEntryByType<bw_music::ChordType>();
-    for (auto f : recordType->getFields()) {
-        const int enumIndex = chordTypeType.tryGetIndexFromIdentifier(f.m_identifier);
-        if (enumIndex >= 0) {
-            return f.m_type;
-        }
-    }
-    // Error type.
-    return {};
-}
-
 babelwires::ValueHolder bw_music::accompanimentSequencerFunction(
     const babelwires::TypeSystem& typeSystem, const babelwires::Type& typeOfAccompanimentTracks,
     const babelwires::ValueHolder& accompanimentTracks, const bw_music::Track& chordTrack) {
@@ -322,7 +303,5 @@ babelwires::ValueHolder bw_music::accompanimentSequencerFunction(
 
     AccompanimentSequencer sequencer(typeSystem, *recordType, accompanimentTracks);
     sequencer.sequenceAccompaniment(chordTrack);
-    //assert(sequencer.getResultTypeRef() == getAccompanimentTypeForChords(typeSystem, typeOfAccompanimentTracks, accompanimentTracks) &&
-    //       "Result type does not match expected type");
     return sequencer.getResultValue();
 }
