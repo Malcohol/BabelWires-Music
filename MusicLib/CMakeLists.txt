@@ -30,6 +30,7 @@ SET( MUSICLIB_SRCS
 	Functions/splitAtPitchFunction.cpp
 	Functions/transposeFunction.cpp
 	Types/chordTypeSet.cpp
+	Types/genericAccompaniment.cpp
 	Types/Track/TrackEvents/chordEvents.cpp
 	Types/Track/TrackEvents/noteEvents.cpp
 	Types/Track/TrackEvents/percussionEvents.cpp
