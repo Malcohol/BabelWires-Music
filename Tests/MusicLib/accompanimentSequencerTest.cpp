@@ -39,8 +39,14 @@ class AccompanimentSequencerTest : public MusicLibTestFixture {
         babelwires::ValueTreeRoot& input = m_processor.getInput();
         babelwires::ValueHolder inputValue = input.getValue();
         const auto& inputType = typeSystem.getEntryByType<bw_music::AccompanimentSequencerProcessorInput>();
-        inputType.setTypeVariableAssignmentAndInstantiate(typeSystem, inputValue, {bw_music_testplugin::SimpleAccompaniment::getThisType()});
+        inputType.setTypeVariableAssignmentAndInstantiate(typeSystem, inputValue, {bw_music_testplugin::TestTrackContainer::getThisType()});
+        babelwires::ValueHolder simpleAccompanimentValue = typeSystem.getEntryByType<bw_music_testplugin::SimpleAccompaniment>()
+            .createValue(typeSystem);
         input.setValue(inputValue);
+        input.setDescendentValue(
+            babelwires::Path({babelwires::PathStep(babelwires::GenericType::getStepToValue()),
+                              babelwires::PathStep(bw_music::AccompanimentSequencerProcessorInput::getAccompTracksId())}),
+            simpleAccompanimentValue);
     }
 
     void setChordTrack(bw_music::Track chordTrack) {
