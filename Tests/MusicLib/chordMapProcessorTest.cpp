@@ -306,11 +306,11 @@ TEST(ChordMapProcessorTest, chordsAndNotes) {
     {
         {60, babelwires::Rational(1, 4), babelwires::Rational(1, 4)},
         {62, babelwires::Rational(1, 4), babelwires::Rational(1, 4)},
-        {64, babelwires::Rational(0, 4), babelwires::Rational(3, 4)},
-        {65, babelwires::Rational(0, 4), babelwires::Rational(3, 4)},
+        {64, babelwires::Rational(3, 4), babelwires::Rational(0, 4)},
+        {65, babelwires::Rational(3, 4), babelwires::Rational(0, 4)},
         {67, babelwires::Rational(1, 4), babelwires::Rational(1, 4)},
         {69, babelwires::Rational(1, 4), babelwires::Rational(1, 4)},
-        {71, babelwires::Rational(0, 4), babelwires::Rational(3, 4)},
+        {71, babelwires::Rational(3, 4), babelwires::Rational(0, 4)},
         {72, babelwires::Rational(1, 4), babelwires::Rational(1, 4)},
     }, noteTrackBuilder);
     bw_music::Track noteTrack = noteTrackBuilder.finishAndGetTrack();

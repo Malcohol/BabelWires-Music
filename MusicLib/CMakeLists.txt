@@ -1,9 +1,11 @@
 SET( MUSICLIB_SRCS
 	Utilities/musicUtilities.cpp
+	Processors/accompanimentSequencerProcessor.cpp
 	Processors/chordMapProcessor.cpp
 	Processors/concatenateProcessor.cpp
 	Processors/excerptProcessor.cpp
 	Processors/fingeredChordsProcessor.cpp
+	Processors/getChordTypesProcessor.cpp
 	Processors/buildAccompanimentProcessor.cpp
 	Processors/mergeProcessor.cpp
 	Processors/monophonicSubtracksProcessor.cpp
@@ -13,9 +15,11 @@ SET( MUSICLIB_SRCS
 	Processors/silenceProcessor.cpp
 	Processors/splitAtPitchProcessor.cpp
 	Processors/transposeProcessor.cpp
+	Functions/accompanimentSequencerFunction.cpp
 	Functions/appendTrackFunction.cpp
 	Functions/fingeredChordsFunction.cpp
 	Functions/fitToChordFunction.cpp
+	Functions/getChordTypesFunction.cpp
 	Functions/mapChordsFunction.cpp
 	Functions/excerptFunction.cpp
 	Functions/repeatFunction.cpp
@@ -26,6 +30,7 @@ SET( MUSICLIB_SRCS
 	Functions/splitAtPitchFunction.cpp
 	Functions/transposeFunction.cpp
 	Types/chordTypeSet.cpp
+	Types/genericAccompaniment.cpp
 	Types/Track/TrackEvents/chordEvents.cpp
 	Types/Track/TrackEvents/noteEvents.cpp
 	Types/Track/TrackEvents/percussionEvents.cpp

@@ -27,19 +27,19 @@ TEST(ConcatenateProcessorTest, appendFuncSimple) {
 
 TEST(ConcatenateProcessorTest, appendFuncGaps) {
     bw_music::TrackBuilder trackBuilderA;
-    const std::vector<testUtils::NoteInfo> noteInfosA{{60, 1, babelwires::Rational(1, 4)},
-                                                      {62, 0, babelwires::Rational(1, 4)},
-                                                      {64, 0, babelwires::Rational(1, 4)},
-                                                      {65, 0, babelwires::Rational(1, 4)}};
+    const std::vector<testUtils::NoteInfo> noteInfosA{{60, babelwires::Rational(1, 4), 1},
+                                                      {62, babelwires::Rational(1, 4)},
+                                                      {64, babelwires::Rational(1, 4)},
+                                                      {65, babelwires::Rational(1, 4)}};
     testUtils::addNotes(noteInfosA, trackBuilderA);
     bw_music::Track trackA = trackBuilderA.finishAndGetTrack(3);
 
     bw_music::TrackBuilder trackBuilderB;
     const std::vector<testUtils::NoteInfo> noteInfosB{
-        {67, 1, babelwires::Rational(1, 4)},
-        {69, 0, babelwires::Rational(1, 4)},
-        {71, 0, babelwires::Rational(1, 4)},
-        {72, 0, babelwires::Rational(1, 4)},
+        {67, babelwires::Rational(1, 4), 1},
+        {69, babelwires::Rational(1, 4)},
+        {71, babelwires::Rational(1, 4)},
+        {72, babelwires::Rational(1, 4)},
     };
     testUtils::addNotes(noteInfosB, trackBuilderB);
     bw_music::Track trackB = trackBuilderB.finishAndGetTrack(3);
@@ -49,9 +49,9 @@ TEST(ConcatenateProcessorTest, appendFuncGaps) {
     EXPECT_EQ(trackA.getDuration(), 6);
 
     const std::vector<testUtils::NoteInfo> expectedNoteInfos{
-        {60, 1, babelwires::Rational(1, 4)}, {62, 0, babelwires::Rational(1, 4)}, {64, 0, babelwires::Rational(1, 4)},
-        {65, 0, babelwires::Rational(1, 4)}, {67, 2, babelwires::Rational(1, 4)}, {69, 0, babelwires::Rational(1, 4)},
-        {71, 0, babelwires::Rational(1, 4)}, {72, 0, babelwires::Rational(1, 4)},
+        {60, babelwires::Rational(1, 4), 1}, {62, babelwires::Rational(1, 4)}, {64, babelwires::Rational(1, 4)},
+        {65, babelwires::Rational(1, 4)}, {67, babelwires::Rational(1, 4), 2}, {69, babelwires::Rational(1, 4)},
+        {71, babelwires::Rational(1, 4)}, {72, babelwires::Rational(1, 4)},
     };
 
     testUtils::testNotes(expectedNoteInfos, trackA);

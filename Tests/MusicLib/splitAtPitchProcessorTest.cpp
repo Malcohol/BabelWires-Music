@@ -20,16 +20,16 @@ TEST(SplitAtPitchProcessorTest, monophonicSplit) {
     bw_music::SplitAtPitchResult result = bw_music::splitAtPitch(67, track.finishAndGetTrack());
 
     const std::vector<testUtils::NoteInfo> expectedNotesAbove{
-        {67, 1, babelwires::Rational(1, 4)},
-        {69, 0, babelwires::Rational(1, 4)},
-        {71, 0, babelwires::Rational(1, 4)},
-        {72, 0, babelwires::Rational(1, 4)},
+        {67, babelwires::Rational(1, 4), 1},
+        {69, babelwires::Rational(1, 4)},
+        {71, babelwires::Rational(1, 4)},
+        {72, babelwires::Rational(1, 4)},
     };
     const std::vector<testUtils::NoteInfo> expectedNotesBelow{
-        {60, 0, babelwires::Rational(1, 4)},
-        {62, 0, babelwires::Rational(1, 4)},
-        {64, 0, babelwires::Rational(1, 4)},
-        {65, 0, babelwires::Rational(1, 4)},
+        {60, babelwires::Rational(1, 4)},
+        {62, babelwires::Rational(1, 4)},
+        {64, babelwires::Rational(1, 4)},
+        {65, babelwires::Rational(1, 4)},
     };
 
     testUtils::testNotes(expectedNotesAbove, result.m_equalOrAbove);
@@ -101,16 +101,16 @@ TEST(SplitAtPitchProcessorTest, processor) {
     processor.process(testEnvironment.m_log);
 
     std::vector<testUtils::NoteInfo> expectedNotesAbove{
-        {67, 1, babelwires::Rational(1, 4)},
-        {69, 0, babelwires::Rational(1, 4)},
-        {71, 0, babelwires::Rational(1, 4)},
-        {72, 0, babelwires::Rational(1, 4)},
+        {67, babelwires::Rational(1, 4), 1},
+        {69, babelwires::Rational(1, 4)},
+        {71, babelwires::Rational(1, 4)},
+        {72, babelwires::Rational(1, 4)},
     };
     std::vector<testUtils::NoteInfo> expectedNotesBelow{
-        {60, 0, babelwires::Rational(1, 4)},
-        {62, 0, babelwires::Rational(1, 4)},
-        {64, 0, babelwires::Rational(1, 4)},
-        {65, 0, babelwires::Rational(1, 4)},
+        {60, babelwires::Rational(1, 4)},
+        {62, babelwires::Rational(1, 4)},
+        {64, babelwires::Rational(1, 4)},
+        {65, babelwires::Rational(1, 4)},
     };
 
     testUtils::testNotes(expectedNotesAbove, output.getAbove().get());
@@ -125,16 +125,16 @@ TEST(SplitAtPitchProcessorTest, processor) {
     processor.process(testEnvironment.m_log);
 
     expectedNotesAbove = {
-        {64, babelwires::Rational(1, 2), babelwires::Rational(1, 4)},
-        {65, 0, babelwires::Rational(1, 4)},
-        {67, 0, babelwires::Rational(1, 4)},
-        {69, 0, babelwires::Rational(1, 4)},
-        {71, 0, babelwires::Rational(1, 4)},
-        {72, 0, babelwires::Rational(1, 4)},
+        {64, babelwires::Rational(1, 4), babelwires::Rational(1, 2)},
+        {65, babelwires::Rational(1, 4)},
+        {67, babelwires::Rational(1, 4)},
+        {69, babelwires::Rational(1, 4)},
+        {71, babelwires::Rational(1, 4)},
+        {72, babelwires::Rational(1, 4)},
     };
     expectedNotesBelow = {
-        {60, 0, babelwires::Rational(1, 4)},
-        {62, 0, babelwires::Rational(1, 4)},
+        {60, babelwires::Rational(1, 4)},
+        {62, babelwires::Rational(1, 4)},
     };
 
     testUtils::testNotes(expectedNotesAbove, output.getAbove().get());

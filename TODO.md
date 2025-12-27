@@ -7,6 +7,10 @@ BabelWires-Music:
   - Use new group events to denote truncated end and start. 
   - When truncated end meets truncated start, act as though event was not truncated.
 * TrackEvent::Category should be an identifier.
+* Consider changing how durations are stored:
+  - Could tracks carry a common-denominator and have notes just carry the nominators?
+  - (e.g. like MIDI tracks)
+* Consider changing the unit of duration.
 
 Seq2tape:
 * Add support for setting name and copyright from commandline.

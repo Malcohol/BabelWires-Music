@@ -19,5 +19,6 @@ bw_music::TrackEvent::GroupingInfo bw_music::TrackEvent::getGroupingInfo() const
     return GroupingInfo();
 }
 
-void bw_music::TrackEvent::transpose(int pitchOffset) {
+bool bw_music::TrackEvent::transpose(int pitchOffset, TransposeOutOfRangePolicy outOfRangePolicy) {
+    return true;
 }

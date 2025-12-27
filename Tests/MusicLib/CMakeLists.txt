@@ -1,5 +1,6 @@
 SET( SEQUENCELIB_TESTS_SRCS
       musicLibTests.cpp
+      accompanimentSequencerTest.cpp
       buildAccompanimentTest.cpp
       chordMapProcessorTest.cpp
       chordTypeSetTest.cpp
@@ -8,10 +9,12 @@ SET( SEQUENCELIB_TESTS_SRCS
       fingeredChordsProcessorTest.cpp
       filteredTrackIteratorTest.cpp
       fitToChordFunctionTest.cpp
+      getChordTypesProcessorTest.cpp
       mergeProcessorTest.cpp
       monophonicNoteIteratorTest.cpp
       monophonicSubtracksProcessorTest.cpp
       musicTypesTest.cpp
+      musicUtilitiesTest.cpp
       percussionMapProcessorTest.cpp
       percussionSetWithPitchMapTest.cpp
       quantizeProcessorTest.cpp
@@ -26,4 +29,4 @@ SET( SEQUENCELIB_TESTS_SRCS
 
 ADD_EXECUTABLE( musicLibTests ${SEQUENCELIB_TESTS_SRCS} )
 TARGET_INCLUDE_DIRECTORIES( musicLibTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../.. ${CMAKE_CURRENT_SOURCE_DIR}/../.. )
-TARGET_LINK_LIBRARIES(musicLibTests Common musicLib testUtils libTestUtils seqTestUtils gtest)
+TARGET_LINK_LIBRARIES(musicLibTests Common musicLib testUtils libTestUtils TestPluginLib seqTestUtils gtest)

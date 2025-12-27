@@ -13,7 +13,7 @@
 #include <cassert>
 
 bw_music::ChordTypeSet::ChordTypeSet()
-    : babelwires::ArrayType(ChordType::getThisType(), 1, static_cast<unsigned int>(ChordType::Value::NUM_VALUES), 1) {}
+    : babelwires::ArrayType(ChordType::getThisType(), 0, static_cast<unsigned int>(ChordType::Value::NUM_VALUES), 1) {}
 
 std::set<bw_music::ChordType::Value>
 bw_music::ChordTypeSet::getChordTypesFromValue(const babelwires::TypeSystem& typeSystem, const babelwires::ValueHolder& value) const {

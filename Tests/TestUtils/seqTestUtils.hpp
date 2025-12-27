@@ -22,8 +22,8 @@ namespace testUtils {
 
     struct NoteInfo {
         bw_music::Pitch m_pitch;
-        bw_music::ModelDuration m_noteOnTime = 0;
-        bw_music::ModelDuration m_noteOffTime = babelwires::Rational(1, 4);
+        bw_music::ModelDuration m_noteDuration = babelwires::Rational(1, 4);
+        bw_music::ModelDuration m_gapBeforeNote = 0;
     };
 
     /// Add notes as described to the track.
@@ -34,13 +34,14 @@ namespace testUtils {
 
     struct ChordInfo {
         bw_music::Chord m_chord;
-        // TODO Different order to NoteInfo: Very confusing!!!
-        bw_music::ModelDuration m_chordOffTime = babelwires::Rational(1, 2);
-        bw_music::ModelDuration m_chordOnTime = 0;
+        bw_music::ModelDuration m_chordDuration = babelwires::Rational(1, 2);
+        bw_music::ModelDuration m_gapBeforeChord = 0;
     };
 
     /// Add the given chords. Each has halfnote duration.
     void addChords(const std::vector<ChordInfo>& chords, bw_music::TrackBuilder& track);
+
+    bw_music::Track getTrackOfChords(const std::vector<ChordInfo>& chords);
 
     void testChords(const std::vector<ChordInfo>& expectedChords, const bw_music::Track& track);
 

@@ -86,7 +86,10 @@ namespace {
 
         // Apply defaults (could provide a policy to make this behaviour configurable).
         adjustments[1] = 0;                 // Degree 1 (root) is always present.
-        adjustments.insert_or_assign(5, 0); // Degree 5 is assumed unless specified.
+        // Degree 5 is assumed unless specified.
+        if (adjustments.find(5) == adjustments.end()) {
+            adjustments[5] = 0;
+        }
 
         for (const auto& [degree, adjustment] : adjustments) {
             assert(degree < degreeToPitchIndex.size() && "Degree out of range");

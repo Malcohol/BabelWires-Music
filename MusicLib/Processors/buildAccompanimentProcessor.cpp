@@ -9,6 +9,7 @@
 
 #include <MusicLib/Functions/fitToChordFunction.hpp>
 #include <MusicLib/Types/chordTypeSet.hpp>
+#include <MusicLib/Types/genericAccompaniment.hpp>
 #include <MusicLib/Types/Track/trackType.hpp>
 
 #include <BabelWiresLib/Utilities/applyToSubvalues.hpp>
@@ -36,34 +37,10 @@ babelwires::ShortId bw_music::BuildAccompanimentProcessorOutput::getIdOfResult()
     return BW_SHORT_ID("output", "output", "91cdf142-e8e1-4b86-8811-43028e3b4154");
 }
 
-namespace {
-    std::vector<babelwires::TypeRef> getTypesForOptionalFields() {
-        std::vector<babelwires::TypeRef> types;
-        types.reserve(static_cast<unsigned int>(bw_music::ChordType::Value::NUM_VALUES));
-        for (unsigned int i = 0; i < static_cast<unsigned int>(bw_music::ChordType::Value::NUM_VALUES); ++i) {
-            types.emplace_back(babelwires::TypeVariableTypeConstructor::makeTypeRef());
-        }
-        return types;
-    }
-
-    std::vector<babelwires::ValueHolder> getValuesForOptionalFields() {
-        const auto& fieldIds = bw_music::ChordType::getStaticValueSet();
-        std::vector<babelwires::ValueHolder> values;
-        values.reserve(static_cast<unsigned int>(bw_music::ChordType::Value::NUM_VALUES));
-        for (unsigned int i = 0; i < static_cast<unsigned int>(bw_music::ChordType::Value::NUM_VALUES); ++i) {
-            values.emplace_back(
-                babelwires::FieldIdValue(fieldIds[i], babelwires::RecordType::Optionality::optionalDefaultInactive));
-        }
-        return values;
-    }
-} // namespace
-
 bw_music::BuildAccompanimentProcessorOutput::BuildAccompanimentProcessorOutput()
     : GenericType(
           babelwires::TypeRef(babelwires::RecordTypeConstructor::makeTypeRef(
-              getIdOfResult(), babelwires::TypeRef(babelwires::RecordTypeConstructor::getThisIdentifier(),
-                                                   babelwires::TypeConstructorArguments{
-                                                       getTypesForOptionalFields(), getValuesForOptionalFields()}))),
+              getIdOfResult(), getGenericAccompanimentTypeRef())),
           1) {}
 
 bw_music::BuildAccompanimentProcessor::BuildAccompanimentProcessor(const babelwires::ProjectContext& projectContext)
@@ -115,7 +92,7 @@ void bw_music::BuildAccompanimentProcessor::processValue(babelwires::UserLogger&
     const auto& [resultChild, resultStep, resultChildType] = outputRecordType.getChildNonConst(*outputChild, 0);
     const auto& resultRecordType = resultChildType.resolve(typeSystem).is<babelwires::RecordType>();
 
-    const auto& chordType = typeSystem.getRegisteredType(ChordType::getThisIdentifier()).is<ChordType>();
+    const auto& chordType = typeSystem.getEntryByType<ChordType>();
 
     std::map<babelwires::ShortId, bool> selectedChords;
     {
