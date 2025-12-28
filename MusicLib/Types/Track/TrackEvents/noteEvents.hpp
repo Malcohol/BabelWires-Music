@@ -14,7 +14,6 @@ namespace bw_music {
     /// Base type for note events.
     struct NoteEvent : public TrackEvent {
         STREAM_EVENT_ABSTRACT(NoteEvent);
-        NoteEvent() = default;
         NoteEvent(ModelDuration timeSinceLastEvent, Pitch pitch, Velocity velocity)
             : TrackEvent(timeSinceLastEvent)
             , m_pitch(pitch)
@@ -40,7 +39,6 @@ namespace bw_music {
     struct NoteOnEvent : public NoteEvent {
         STREAM_EVENT(NoteOnEvent);
         static constexpr const Velocity c_defaultVelocity = 127;
-        NoteOnEvent() = default;
         NoteOnEvent(ModelDuration timeSinceLastEvent, Pitch pitch, Velocity velocity = c_defaultVelocity)
             : NoteEvent(timeSinceLastEvent, pitch, velocity) {}
 
@@ -53,7 +51,6 @@ namespace bw_music {
     struct NoteOffEvent : public NoteEvent {
         STREAM_EVENT(NoteOffEvent);
         static constexpr const Velocity c_defaultVelocity = 64;
-        NoteOffEvent() = default;
         NoteOffEvent(ModelDuration timeSinceLastEvent, Pitch pitch, Velocity velocity = c_defaultVelocity)
             : NoteEvent(timeSinceLastEvent, pitch, velocity) {}
 

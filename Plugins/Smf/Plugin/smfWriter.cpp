@@ -182,19 +182,6 @@ smf::SmfWriter::WriteTrackEventResult smf::SmfWriter::writeTrackEvent(int channe
     return WriteTrackEventResult::WrongCategory;
 }
 
-namespace {
-    struct NoteTrackIterator : bw_music::FilteredTrackIterator<> {
-        bool isEventOfInterest(const bw_music::TrackEvent& event) const { return event.as<bw_music::NoteEvent>(); }
-    };
-
-    struct PercussionTrackIterator : bw_music::FilteredTrackIterator<> {
-        bool isEventOfInterest(const bw_music::TrackEvent& event) const {
-            return event.as<bw_music::PercussionEvent>();
-        }
-    };
-
-} // namespace
-
 void smf::SmfWriter::writeNotes(const std::vector<ChannelAndTrack>& tracks) {
     const int numTracks = tracks.size();
 

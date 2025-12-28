@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
-#include <MusicLib/Utilities/monophonicNoteIterator.hpp>
 #include <MusicLib/Types/Track/trackBuilder.hpp>
+#include <MusicLib/Utilities/monophonicNoteIterator.hpp>
 
 #include <Tests/TestUtils/testTrackEvents.hpp>
 
@@ -9,22 +9,14 @@ namespace {
     bw_music::Track createTestTrack() {
         bw_music::TrackBuilder track;
 
-        bw_music::NoteOnEvent noteOn;
-        bw_music::NoteOffEvent noteOff;
-
         // Expect this note.
-        noteOn.setTimeSinceLastEvent(0);
-        noteOn.m_pitch = 40;
+        bw_music::NoteOnEvent noteOn(0, 40);
         track.addEvent(noteOn);
-
-        noteOff.setTimeSinceLastEvent(1);
-        noteOff.m_pitch = 40;
+        bw_music::NoteOffEvent noteOff(1, 40);
         track.addEvent(noteOff);
         // End of note
 
         // Expect this note.
-        noteOn.setTimeSinceLastEvent(0);
-        noteOn.m_pitch = 40;
         track.addEvent(noteOn);
 
         track.addEvent(testUtils::TestTrackEvent(1));

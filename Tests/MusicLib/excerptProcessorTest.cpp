@@ -24,10 +24,7 @@ TEST(ExcerptProcessorTest, funcSimple) {
 
 TEST(ExcerptProcessorTest, funcEmptyBefore) {
     bw_music::TrackBuilder trackIn;
-    bw_music::NoteOnEvent note;
-    note.m_pitch = 64;
-    note.m_velocity = 100;
-    note.setTimeSinceLastEvent(10);
+    bw_music::NoteOnEvent note(10, 64, 100);
     trackIn.addEvent(note);
 
     auto trackOut = bw_music::getTrackExcerpt(trackIn.finishAndGetTrack(), 3, 4);
@@ -47,15 +44,9 @@ TEST(ExcerptProcessorTest, funcEmptyAfter) {
 
 TEST(ExcerptProcessorTest, funcEmptyBetween) {
     bw_music::TrackBuilder trackIn;
-    bw_music::NoteOnEvent noteOn;
-    noteOn.m_pitch = 64;
-    noteOn.m_velocity = 100;
-    noteOn.setTimeSinceLastEvent(1);
+    bw_music::NoteOnEvent noteOn(1, 64, 100);
     trackIn.addEvent(noteOn);
-    bw_music::NoteOffEvent noteOff;
-    noteOff.m_pitch = 64;
-    noteOff.m_velocity = 100;
-    noteOff.setTimeSinceLastEvent(10);
+    bw_music::NoteOffEvent noteOff(10, 64, 100);
     trackIn.addEvent(noteOff);
 
     auto trackOut = bw_music::getTrackExcerpt(trackIn.finishAndGetTrack(), 2, 2);
@@ -66,16 +57,10 @@ TEST(ExcerptProcessorTest, funcEmptyBetween) {
 
 TEST(ExcerptProcessorTest, funcDropSpanningGroup) {
     bw_music::TrackBuilder trackIn;
-    bw_music::NoteOnEvent noteOn;
-    noteOn.m_pitch = 40;
-    noteOn.m_velocity = 100;
-    noteOn.setTimeSinceLastEvent(1);
+    bw_music::NoteOnEvent noteOn(1, 40, 100);
     trackIn.addEvent(noteOn);
     testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65, 67, 69, 71, 72}, trackIn);
-    bw_music::NoteOffEvent noteOff;
-    noteOff.m_pitch = 40;
-    noteOff.m_velocity = 100;
-    noteOff.setTimeSinceLastEvent(1);
+    bw_music::NoteOffEvent noteOff(1, 40, 100);
     trackIn.addEvent(noteOff);
 
     auto trackOut = bw_music::getTrackExcerpt(trackIn.finishAndGetTrack(), babelwires::Rational(3, 2), 1);
@@ -86,16 +71,11 @@ TEST(ExcerptProcessorTest, funcDropSpanningGroup) {
 TEST(ExcerptProcessorTest, funcDropInitialGroup) {
     bw_music::TrackBuilder trackIn;
 
-    bw_music::NoteOnEvent noteOn;
-    noteOn.m_pitch = 40;
-    noteOn.m_velocity = 100;
-    noteOn.setTimeSinceLastEvent(1);
+    bw_music::NoteOnEvent noteOn(1, 40, 100);
     trackIn.addEvent(noteOn);
     testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65}, trackIn);
 
-    bw_music::NoteOffEvent noteOff;
-    noteOff.m_pitch = 40;
-    noteOff.m_velocity = 100;
+    bw_music::NoteOffEvent noteOff(0, 40, 100);
     noteOff.setTimeSinceLastEvent(0);
     trackIn.addEvent(noteOff);
 
