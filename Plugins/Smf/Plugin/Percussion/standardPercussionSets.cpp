@@ -43,7 +43,7 @@
 #include <cassert>
 
 smf::StandardPercussionSets::StandardPercussionSets(const babelwires::ProjectContext& projectContext) {
-#define DECLARE_PERCUSSION_SET(ENUM, CLASS) m_knownSets[ENUM] = &projectContext.m_typeSystem.getEntryByType<CLASS>();
+#define DECLARE_PERCUSSION_SET(ENUM, CLASS) m_knownSets[ENUM] = projectContext.m_typeSystem.getEntryByType<CLASS>();
 
     DECLARE_PERCUSSION_SET(GM_PERCUSSION_SET, smf::GMPercussionSet)
     DECLARE_PERCUSSION_SET(GM2_STANDARD_PERCUSSION_SET, smf::GM2StandardPercussionSet)
@@ -83,19 +83,19 @@ smf::StandardPercussionSets::getDefaultPercussionSet(GMSpecType::Value gmSpec, i
     switch (gmSpec) {
         case GMSpecType::Value::GM:
             if (channelNumber == 9) {
-                return m_knownSets[GM_PERCUSSION_SET];
+                return m_knownSets[GM_PERCUSSION_SET].get();
             }
         case GMSpecType::Value::XG:
             if (channelNumber == 9) {
-                return m_knownSets[XG_STANDARD_1_PERCUSSION_SET];
+                return m_knownSets[XG_STANDARD_1_PERCUSSION_SET].get();
             }
         case GMSpecType::Value::GS:
             if (channelNumber == 9) {
-                return m_knownSets[GS_STANDARD_1_PERCUSSION_SET];
+                return m_knownSets[GS_STANDARD_1_PERCUSSION_SET].get();
             }
         case GMSpecType::Value::GM2:
             if (channelNumber == 9) {
-                return m_knownSets[GM2_STANDARD_PERCUSSION_SET];
+                return m_knownSets[GM2_STANDARD_PERCUSSION_SET].get();
             }
         case GMSpecType::Value::NONE:
         default:
@@ -112,23 +112,23 @@ smf::StandardPercussionSets::getPercussionSetFromChannelSetupInfo(GMSpecType::Va
             switch (channelSetupInfo.m_program) {
                 case 1:
                 default:
-                    return m_knownSets[GM2_STANDARD_PERCUSSION_SET];
+                    return m_knownSets[GM2_STANDARD_PERCUSSION_SET].get();
                 case 9:
-                    return m_knownSets[GM2_ROOM_PERCUSSION_SET];
+                    return m_knownSets[GM2_ROOM_PERCUSSION_SET].get();
                 case 17:
-                    return m_knownSets[GM2_POWER_PERCUSSION_SET];
+                    return m_knownSets[GM2_POWER_PERCUSSION_SET].get();
                 case 25:
-                    return m_knownSets[GM2_ELECTRONIC_PERCUSSION_SET];
+                    return m_knownSets[GM2_ELECTRONIC_PERCUSSION_SET].get();
                 case 26:
-                    return m_knownSets[GM2_ANALOG_PERCUSSION_SET];
+                    return m_knownSets[GM2_ANALOG_PERCUSSION_SET].get();
                 case 33:
-                    return m_knownSets[GM2_JAZZ_PERCUSSION_SET];
+                    return m_knownSets[GM2_JAZZ_PERCUSSION_SET].get();
                 case 41:
-                    return m_knownSets[GM2_BRUSH_PERCUSSION_SET];
+                    return m_knownSets[GM2_BRUSH_PERCUSSION_SET].get();
                 case 49:
-                    return m_knownSets[GM2_ORCHESTRA_PERCUSSION_SET];
+                    return m_knownSets[GM2_ORCHESTRA_PERCUSSION_SET].get();
                 case 57:
-                    return m_knownSets[GM2_SFX_PERCUSSION_SET];
+                    return m_knownSets[GM2_SFX_PERCUSSION_SET].get();
             }
         } else if (channelSetupInfo.m_bankMSB == 0x79) {
             // Melody
@@ -143,30 +143,30 @@ smf::StandardPercussionSets::getPercussionSetFromChannelSetupInfo(GMSpecType::Va
                 case 1:
                 case 2: /* Also used for Standard 2 */
                 default:
-                    return m_knownSets[XG_STANDARD_1_PERCUSSION_SET];
+                    return m_knownSets[XG_STANDARD_1_PERCUSSION_SET].get();
                 case 9:
-                    return m_knownSets[XG_ROOM_PERCUSSION_SET];
+                    return m_knownSets[XG_ROOM_PERCUSSION_SET].get();
                 case 17:
-                    return m_knownSets[XG_ROCK_PERCUSSION_SET];
+                    return m_knownSets[XG_ROCK_PERCUSSION_SET].get();
                 case 25:
-                    return m_knownSets[XG_ELECTRO_PERCUSSION_SET];
+                    return m_knownSets[XG_ELECTRO_PERCUSSION_SET].get();
                 case 26:
-                    return m_knownSets[XG_ANALOG_PERCUSSION_SET];
+                    return m_knownSets[XG_ANALOG_PERCUSSION_SET].get();
                 case 33:
-                    return m_knownSets[XG_JAZZ_PERCUSSION_SET];
+                    return m_knownSets[XG_JAZZ_PERCUSSION_SET].get();
                 case 41:
-                    return m_knownSets[XG_BRUSH_PERCUSSION_SET];
+                    return m_knownSets[XG_BRUSH_PERCUSSION_SET].get();
                 case 49:
-                    return m_knownSets[XG_CLASSIC_PERCUSSION_SET];
+                    return m_knownSets[XG_CLASSIC_PERCUSSION_SET].get();
             }
         } else if (channelSetupInfo.m_bankMSB == 0x7e) {
             // SFX Percussion
             switch (channelSetupInfo.m_program) {
                 case 1:
                 default:
-                    return m_knownSets[XG_SFX_1_PERCUSSION_SET];
+                    return m_knownSets[XG_SFX_1_PERCUSSION_SET].get();
                 case 2:
-                    return m_knownSets[XG_SFX_2_PERCUSSION_SET];
+                    return m_knownSets[XG_SFX_2_PERCUSSION_SET].get();
             }
         } else if (channelSetupInfo.m_bankMSB == 0x00) {
             // Voice
@@ -184,24 +184,24 @@ smf::StandardPercussionSets::getPercussionSetFromChannelSetupInfo(GMSpecType::Va
                 case 1:
                 case 2:
                 default:
-                    return m_knownSets[GS_STANDARD_1_PERCUSSION_SET];
+                    return m_knownSets[GS_STANDARD_1_PERCUSSION_SET].get();
                 case 9:
-                    return m_knownSets[GS_ROOM_PERCUSSION_SET];
+                    return m_knownSets[GS_ROOM_PERCUSSION_SET].get();
                 case 17:
-                    return m_knownSets[GS_POWER_PERCUSSION_SET];
+                    return m_knownSets[GS_POWER_PERCUSSION_SET].get();
                 case 25:
                 case 27:
-                    return m_knownSets[GS_ELECTRONIC_PERCUSSION_SET];
+                    return m_knownSets[GS_ELECTRONIC_PERCUSSION_SET].get();
                 case 26:
-                    return m_knownSets[GS_808_909_PERCUSSION_SET];
+                    return m_knownSets[GS_808_909_PERCUSSION_SET].get();
                 case 33:
-                    return m_knownSets[GS_JAZZ_PERCUSSION_SET];
+                    return m_knownSets[GS_JAZZ_PERCUSSION_SET].get();
                 case 41:
-                    return m_knownSets[GS_BRUSH_PERCUSSION_SET];
+                    return m_knownSets[GS_BRUSH_PERCUSSION_SET].get();
                 case 49:
-                    return m_knownSets[GS_ORCHESTRA_PERCUSSION_SET];
+                    return m_knownSets[GS_ORCHESTRA_PERCUSSION_SET].get();
                 case 57:
-                    return m_knownSets[GS_SFX_PERCUSSION_SET];
+                    return m_knownSets[GS_SFX_PERCUSSION_SET].get();
             }
         } else {
             // Not a percussion voice
@@ -249,7 +249,7 @@ const bw_music::PercussionSetWithPitchMap* smf::StandardPercussionSets::getBestP
             excludedInstrumentsOut.swap(candidateExclusions);
         }
     }
-    return (bestFit == NOT_PERCUSSION) ? nullptr : m_knownSets[bestFit];
+    return (bestFit == NOT_PERCUSSION) ? nullptr : m_knownSets[bestFit].get();
 }
 
 const bw_music::PercussionSetWithPitchMap*
@@ -283,7 +283,7 @@ smf::StandardPercussionSets::getBestPercussionSet(GMSpecType::Value gmSpec, int 
 
 smf::StandardPercussionSets::KnownPercussionSets smf::StandardPercussionSets::getKnownPercussionSetFromPercussionSet(
     const bw_music::PercussionSetWithPitchMap* percussionSet) {
-    const auto it = std::find(m_knownSets.begin(), m_knownSets.end(), percussionSet);
+    const auto it = std::find_if(m_knownSets.begin(), m_knownSets.end(), [&percussionSet](auto&& p){return percussionSet == p.get();});
     assert((it != m_knownSets.end()) && "Percussion set not known");
     return static_cast<KnownPercussionSets>(it - m_knownSets.begin());
 }

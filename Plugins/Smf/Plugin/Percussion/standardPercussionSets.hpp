@@ -116,7 +116,7 @@ namespace smf {
         std::optional<ChannelSetupInfo> getChannelSetupInfoFromKnownPercussionSet(KnownPercussionSets percussionSet, int channelNumber);
 
       private:
-        std::array<const bw_music::PercussionSetWithPitchMap*, NUM_KNOWN_PERCUSSION_SETS> m_knownSets;
+        std::array<babelwires::TypePtrT<const bw_music::PercussionSetWithPitchMap>, NUM_KNOWN_PERCUSSION_SETS> m_knownSets;
 
         /// This is populated on demand.
         std::array<std::unordered_set<babelwires::ShortId>, NUM_KNOWN_PERCUSSION_SETS> m_instrumentSets;

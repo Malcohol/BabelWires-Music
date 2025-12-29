@@ -99,7 +99,7 @@ namespace {
             const unsigned int numChildren = recordType.getNumChildren(accompanimentTracks);
             for (unsigned int i = 0; i < numChildren; ++i) {
                 auto [fieldValue, step, fieldTypeRef] = recordType.getChild(accompanimentTracks, i);
-                const int enumIndex = chordTypeType.tryGetIndexFromIdentifier(*step.asField());
+                const int enumIndex = chordTypeType->tryGetIndexFromIdentifier(*step.asField());
                 if (enumIndex >= 0) {
                     m_chordTypeToChildIndex[static_cast<bw_music::ChordType::Value>(enumIndex)] = static_cast<int>(i);
                     const babelwires::Type& fieldType = fieldTypeRef.resolve(typeSystem);

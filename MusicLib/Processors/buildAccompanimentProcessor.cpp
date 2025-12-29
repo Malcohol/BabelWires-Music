@@ -98,7 +98,7 @@ void bw_music::BuildAccompanimentProcessor::processValue(babelwires::UserLogger&
     {
         const std::set<ChordType::Value> chordSet = chordsArrayType.getChordTypesFromValue(typeSystem, *chordsArray);
         for (const auto& chordValue : chordSet) {
-            const babelwires::ShortId chordId = chordType.getIdentifierFromValue(chordValue);
+            const babelwires::ShortId chordId = chordType->getIdentifierFromValue(chordValue);
             selectedChords.emplace(chordId, true);
         }
     }
@@ -109,7 +109,7 @@ void bw_music::BuildAccompanimentProcessor::processValue(babelwires::UserLogger&
         auto [fieldValueHolder, fieldTypeRef] = resultRecordType.getChildByIdNonConst(*resultChild, maplet.first);
         const auto& fieldType = fieldTypeRef.resolve(typeSystem);
         // Accompaniment always generated with a C root.
-        const bw_music::Chord chord = {bw_music::PitchClass::Value::C, chordType.getValueFromIdentifier(maplet.first)};
+        const bw_music::Chord chord = {bw_music::PitchClass::Value::C, chordType->getValueFromIdentifier(maplet.first)};
 
         fieldValueHolder = applyFitToChordFunction(typeSystem, fieldType, *inputStructure, chord);
     }

@@ -24,7 +24,7 @@
 
 namespace {
     babelwires::MapValue getTestPercussionMap(const babelwires::TypeSystem& typeSystem) {
-        const bw_music::BuiltInPercussionInstruments& builtInPercussion =
+        const auto& builtInPercussion =
             typeSystem.getEntryByType<bw_music::BuiltInPercussionInstruments>();
 
         babelwires::TypeRef targetTypeRef =
@@ -41,23 +41,23 @@ namespace {
         babelwires::EnumValue sourceValue;
         babelwires::EnumValue targetValue;
 
-        sourceValue.set(builtInPercussion.getIdentifierFromValue(bw_music::BuiltInPercussionInstruments::Value::Clap));
+        sourceValue.set(builtInPercussion->getIdentifierFromValue(bw_music::BuiltInPercussionInstruments::Value::Clap));
         targetValue.set(
-            builtInPercussion.getIdentifierFromValue(bw_music::BuiltInPercussionInstruments::Value::Cowbll));
+            builtInPercussion->getIdentifierFromValue(bw_music::BuiltInPercussionInstruments::Value::Cowbll));
         maplet.setSourceValue(sourceValue.clone());
         maplet.setTargetValue(targetValue.clone());
         percussionMap.emplaceBack(maplet.clone());
 
         sourceValue.set(
-            builtInPercussion.getIdentifierFromValue(bw_music::BuiltInPercussionInstruments::Value::Crash1));
+            builtInPercussion->getIdentifierFromValue(bw_music::BuiltInPercussionInstruments::Value::Crash1));
         targetValue.set(
-            builtInPercussion.getIdentifierFromValue(bw_music::BuiltInPercussionInstruments::Value::Crash2));
+            builtInPercussion->getIdentifierFromValue(bw_music::BuiltInPercussionInstruments::Value::Crash2));
         maplet.setSourceValue(sourceValue.clone());
         maplet.setTargetValue(targetValue.clone());
         percussionMap.emplaceBack(maplet.clone());
 
         sourceValue.set(
-            builtInPercussion.getIdentifierFromValue(bw_music::BuiltInPercussionInstruments::Value::LFlTom));
+            builtInPercussion->getIdentifierFromValue(bw_music::BuiltInPercussionInstruments::Value::LFlTom));
         targetValue.set(babelwires::getBlankValueId());
         maplet.setSourceValue(sourceValue.clone());
         maplet.setTargetValue(targetValue.clone());

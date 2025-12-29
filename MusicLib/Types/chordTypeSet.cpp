@@ -20,13 +20,13 @@ bw_music::ChordTypeSet::getChordTypesFromValue(const babelwires::TypeSystem& typ
     assert(value && "ValueHolder must hold a value");
     assert(isValidValue(typeSystem, *value) && "ValueHolder must hold a valid value for this type");
     
-    const auto& chordType = typeSystem.getRegisteredType(ChordType::getThisIdentifier()).is<ChordType>();
+    const auto& chordType = typeSystem.getEntryByType<ChordType>();
     std::set<bw_music::ChordType::Value> selectedChords;
     for (unsigned int i = 0; i < getNumChildren(value); ++i) {
         const auto [chordValueHolder, chordStep, chordChildType] = getChild(value, i);
         assert(chordChildType == ChordType::getThisType());
         const babelwires::ShortId chordId = (*chordValueHolder)->is<babelwires::EnumValue>().get();
-        selectedChords.insert(chordType.getValueFromIdentifier(chordId));
+        selectedChords.insert(chordType->getValueFromIdentifier(chordId));
     }
     return selectedChords;
 }
@@ -39,7 +39,7 @@ bw_music::ChordTypeSet::createValueFromChordTypes(const babelwires::TypeSystem& 
     unsigned int i = 0;
     for (auto chordType : chordTypes) {
         const auto [childValueHolder, childStep, childType] = getChildNonConst(valueHolder, i);
-        const babelwires::ShortId chordId = chordTypeType.getIdentifierFromValue(chordType);
+        const babelwires::ShortId chordId = chordTypeType->getIdentifierFromValue(chordType);
         *childValueHolder = babelwires::EnumValue(chordId);
         ++i;
     }

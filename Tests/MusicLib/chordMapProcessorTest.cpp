@@ -30,9 +30,9 @@ namespace {
 
     babelwires::MapValue getTestChordMap(const babelwires::TypeSystem& typeSystem, SourceMode sourceMode,
                                          TargetMode targetMode, WildcardMode wildcardMode) {
-        const bw_music::ChordType& chordTypeEnum = typeSystem.getEntryByType<bw_music::ChordType>();
-        const bw_music::PitchClass& pitchClassEnum =
-            typeSystem.getEntryByType<bw_music::PitchClass>().is<bw_music::PitchClass>();
+        babelwires::TypePtrT<bw_music::ChordType> chordTypeEnum = typeSystem.getEntryByType<bw_music::ChordType>();
+        babelwires::TypePtrT<bw_music::PitchClass> pitchClassEnum =
+            typeSystem.getEntryByType<bw_music::PitchClass>();
 
         babelwires::MapValue chordMap;
         chordMap.setSourceTypeRef(bw_music::getMapChordFunctionSourceTypeRef());
@@ -44,15 +44,15 @@ namespace {
         {
             {
                 babelwires::EnumValue pitchClassSourceValue(
-                    pitchClassEnum.getIdentifierFromValue(bw_music::PitchClass::Value::D));
+                    pitchClassEnum->getIdentifierFromValue(bw_music::PitchClass::Value::D));
                 babelwires::EnumValue chordTypeSourceValue(
-                    chordTypeEnum.getIdentifierFromValue(bw_music::ChordType::Value::m));
+                    chordTypeEnum->getIdentifierFromValue(bw_music::ChordType::Value::m));
                 babelwires::TupleValue sourceValue({pitchClassSourceValue.clone(), chordTypeSourceValue.clone()});
 
                 babelwires::EnumValue pitchClassTargetValue(
-                    pitchClassEnum.getIdentifierFromValue(bw_music::PitchClass::Value::A));
+                    pitchClassEnum->getIdentifierFromValue(bw_music::PitchClass::Value::A));
                 babelwires::EnumValue chordTypeTargetValue(
-                    chordTypeEnum.getIdentifierFromValue(bw_music::ChordType::Value::m7));
+                    chordTypeEnum->getIdentifierFromValue(bw_music::ChordType::Value::m7));
                 babelwires::TupleValue targetValue({pitchClassTargetValue.clone(), chordTypeTargetValue.clone()});
 
                 chordMaplet.setSourceValue(sourceValue.clone());
@@ -62,12 +62,12 @@ namespace {
             if (wildcardMode == WildcardMode::Wildcards) {
                 babelwires::EnumValue wildcardValue(babelwires::getWildcardId());
                 babelwires::EnumValue chordTypeSourceValue(
-                    chordTypeEnum.getIdentifierFromValue(bw_music::ChordType::Value::M7s11));
+                    chordTypeEnum->getIdentifierFromValue(bw_music::ChordType::Value::M7s11));
                 babelwires::TupleValue sourceValue({wildcardValue.clone(), chordTypeSourceValue.clone()});
 
                 babelwires::EnumValue wildcardMatchValue(babelwires::getWildcardMatchId());
                 babelwires::EnumValue chordTypeTargetValue(
-                    chordTypeEnum.getIdentifierFromValue(bw_music::ChordType::Value::m7));
+                    chordTypeEnum->getIdentifierFromValue(bw_music::ChordType::Value::m7));
                 babelwires::TupleValue targetValue({wildcardMatchValue.clone(), chordTypeTargetValue.clone()});
 
                 chordMaplet.setSourceValue(sourceValue.clone());
@@ -79,9 +79,9 @@ namespace {
             babelwires::EnumValue sourceValue(bw_music::NoChord::getNoChordValue());
 
             babelwires::EnumValue pitchClassTargetValue(
-                pitchClassEnum.getIdentifierFromValue(bw_music::PitchClass::Value::Fsh));
+                pitchClassEnum->getIdentifierFromValue(bw_music::PitchClass::Value::Fsh));
             babelwires::EnumValue chordTypeTargetValue(
-                chordTypeEnum.getIdentifierFromValue(bw_music::ChordType::Value::m7_11));
+                chordTypeEnum->getIdentifierFromValue(bw_music::ChordType::Value::m7_11));
             babelwires::TupleValue targetValue({pitchClassTargetValue.clone(), chordTypeTargetValue.clone()});
 
             chordMaplet.setSourceValue(sourceValue.clone());
@@ -91,9 +91,9 @@ namespace {
         if (targetMode == TargetMode::ChordToSilence) {
             {
                 babelwires::EnumValue pitchClassSourceValue(
-                    pitchClassEnum.getIdentifierFromValue(bw_music::PitchClass::Value::Gsh));
+                    pitchClassEnum->getIdentifierFromValue(bw_music::PitchClass::Value::Gsh));
                 babelwires::EnumValue chordTypeSourceValue(
-                    chordTypeEnum.getIdentifierFromValue(bw_music::ChordType::Value::M6));
+                    chordTypeEnum->getIdentifierFromValue(bw_music::ChordType::Value::M6));
                 babelwires::TupleValue sourceValue({pitchClassSourceValue.clone(), chordTypeSourceValue.clone()});
 
                 babelwires::EnumValue targetValue;
@@ -105,7 +105,7 @@ namespace {
             }
             if (wildcardMode == WildcardMode::Wildcards) {
                 babelwires::EnumValue pitchClassSourceValue(
-                    pitchClassEnum.getIdentifierFromValue(bw_music::PitchClass::Value::Dsh));
+                    pitchClassEnum->getIdentifierFromValue(bw_music::PitchClass::Value::Dsh));
                 babelwires::EnumValue wildcardValue(babelwires::getWildcardId());
                 babelwires::TupleValue sourceValue({pitchClassSourceValue.clone(), wildcardValue.clone()});
 
@@ -330,10 +330,10 @@ TEST(ChordMapProcessorTest, processor) {
     testUtils::TestEnvironment testEnvironment;
     bw_music::registerLib(testEnvironment.m_projectContext);
 
-    const bw_music::ChordType& chordTypeEnum =
-        testEnvironment.m_typeSystem.getEntryByType<bw_music::ChordType>().is<bw_music::ChordType>();
-    const bw_music::PitchClass& pitchClassEnum =
-        testEnvironment.m_typeSystem.getEntryByType<bw_music::PitchClass>().is<bw_music::PitchClass>();
+    babelwires::TypePtrT<bw_music::ChordType> chordTypeEnum =
+        testEnvironment.m_typeSystem.getEntryByType<bw_music::ChordType>();
+    babelwires::TypePtrT<bw_music::PitchClass> pitchClassEnum =
+        testEnvironment.m_typeSystem.getEntryByType<bw_music::PitchClass>();
 
     bw_music::ChordMapProcessor processor(testEnvironment.m_projectContext);
 
