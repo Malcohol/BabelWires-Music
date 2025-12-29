@@ -12,6 +12,8 @@
 
 #include <MusicLib/Percussion/builtInPercussionInstruments.hpp>
 
+#include <BabelWiresLib/TypeSystem/typePtr.hpp>
+
 #include <unordered_set>
 
 namespace babelwires {
