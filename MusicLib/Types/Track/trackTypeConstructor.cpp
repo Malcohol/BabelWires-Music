@@ -24,10 +24,10 @@ bw_music::ModelDuration bw_music::TrackTypeConstructor::extractValueArguments(
     }
 }
 
-babelwires::TypeConstructor::TypeConstructorResult
+babelwires::TypePtr
 bw_music::TrackTypeConstructor::constructType(const babelwires::TypeSystem& typeSystem, babelwires::TypeRef newTypeRef,
                                               const babelwires::TypeConstructorArguments& arguments,
-                                              const std::vector<const babelwires::Type*>& resolvedTypeArguments) const {
+                                              const std::vector<babelwires::TypePtr>& resolvedTypeArguments) const {
     if (arguments.getTypeArguments().size() != 0) {
         throw babelwires::TypeSystemException()
             << "TrackTypeConstructor does not expect type arguments but got " << arguments.getTypeArguments().size();
