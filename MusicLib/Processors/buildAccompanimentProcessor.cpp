@@ -80,38 +80,38 @@ void bw_music::BuildAccompanimentProcessor::processValue(babelwires::UserLogger&
     const babelwires::TypeSystem& typeSystem = input.getTypeSystem();
 
     const auto [inputChild, inputStep, inputChildType] = inputType.getChild(inputValue, 0);
-    const auto& inputRecordType = inputChildType.resolve(typeSystem).is<babelwires::RecordType>();
-    const auto [chordsArray, inputStep0, inputChildType0] = inputRecordType.getChild(*inputChild, 0);
-    const auto& chordsArrayType = inputChildType0.resolve(typeSystem).is<ChordTypeSet>();
-    const auto [inputStructure, inputStep1, inputChildType1] = inputRecordType.getChild(*inputChild, 1);
+    const auto& inputRecordType = inputChildType.resolveAs<babelwires::RecordType>(typeSystem);
+    const auto [chordsArray, inputStep0, inputChildType0] = inputRecordType->getChild(*inputChild, 0);
+    const auto& chordsArrayType = inputChildType0.resolveAs<ChordTypeSet>(typeSystem);
+    const auto [inputStructure, inputStep1, inputChildType1] = inputRecordType->getChild(*inputChild, 1);
 
     babelwires::ValueHolder newOutputValue = output.getValue();
     outputType.setTypeVariableAssignmentAndInstantiate(typeSystem, newOutputValue, {assignedInputTypeRef});
     const auto [outputChild, outputStep, outputChildType] = outputType.getChildNonConst(newOutputValue, 0);
-    const auto& outputRecordType = outputChildType.resolve(typeSystem).is<babelwires::RecordType>();
-    const auto& [resultChild, resultStep, resultChildType] = outputRecordType.getChildNonConst(*outputChild, 0);
-    const auto& resultRecordType = resultChildType.resolve(typeSystem).is<babelwires::RecordType>();
+    const auto& outputRecordType = outputChildType.resolveAs<babelwires::RecordType>(typeSystem);
+    const auto& [resultChild, resultStep, resultChildType] = outputRecordType->getChildNonConst(*outputChild, 0);
+    const auto& resultRecordType = resultChildType.resolveAs<babelwires::RecordType>(typeSystem);
 
     const auto& chordType = typeSystem.getEntryByType<ChordType>();
 
     std::map<babelwires::ShortId, bool> selectedChords;
     {
-        const std::set<ChordType::Value> chordSet = chordsArrayType.getChordTypesFromValue(typeSystem, *chordsArray);
+        const std::set<ChordType::Value> chordSet = chordsArrayType->getChordTypesFromValue(typeSystem, *chordsArray);
         for (const auto& chordValue : chordSet) {
             const babelwires::ShortId chordId = chordType->getIdentifierFromValue(chordValue);
             selectedChords.emplace(chordId, true);
         }
     }
 
-    resultRecordType.selectOptionals(typeSystem, *resultChild, selectedChords);
+    resultRecordType->selectOptionals(typeSystem, *resultChild, selectedChords);
 
     for (const auto& maplet : selectedChords) {
-        auto [fieldValueHolder, fieldTypeRef] = resultRecordType.getChildByIdNonConst(*resultChild, maplet.first);
+        auto [fieldValueHolder, fieldTypeRef] = resultRecordType->getChildByIdNonConst(*resultChild, maplet.first);
         const auto& fieldType = fieldTypeRef.resolve(typeSystem);
         // Accompaniment always generated with a C root.
         const bw_music::Chord chord = {bw_music::PitchClass::Value::C, chordType->getValueFromIdentifier(maplet.first)};
 
-        fieldValueHolder = applyFitToChordFunction(typeSystem, fieldType, *inputStructure, chord);
+        fieldValueHolder = applyFitToChordFunction(typeSystem, *fieldType, *inputStructure, chord);
     }
 
     output.setValue(newOutputValue);

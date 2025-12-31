@@ -44,7 +44,7 @@ bw_music::PercussionMapType::constructType(const babelwires::TypeSystem& typeSys
             s, babelwires::EnumAtomTypeConstructor::makeTypeRef(babelwires::getBlankValueId())));
     }
 
-    return std::make_unique<babelwires::ConstructedType<babelwires::SumOfMapsType>>(
+    return babelwires::makeType<babelwires::ConstructedType<babelwires::SumOfMapsType>>(
         std::move(newTypeRef), std::move(sourceSummands), std::move(targetSummands), indexOfDefault, indexOfDefault);
 }
 

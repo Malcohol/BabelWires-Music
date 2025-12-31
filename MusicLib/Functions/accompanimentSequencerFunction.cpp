@@ -102,9 +102,9 @@ namespace {
                 const int enumIndex = chordTypeType->tryGetIndexFromIdentifier(*step.asField());
                 if (enumIndex >= 0) {
                     m_chordTypeToChildIndex[static_cast<bw_music::ChordType::Value>(enumIndex)] = static_cast<int>(i);
-                    const babelwires::Type& fieldType = fieldTypeRef.resolve(typeSystem);
+                    const babelwires::TypePtr& fieldType = fieldTypeRef.resolve(typeSystem);
                     if (m_fieldType == nullptr) {
-                        m_fieldType = &fieldType;
+                        m_fieldType = fieldType.get();
                         assert(!m_result);
                         m_result = *fieldValue;
                         // Use the first field to build the structure of tracks.
@@ -113,7 +113,7 @@ namespace {
                             throw babelwires::ModelException()
                                 << "At least one accompaniment track for each chord must have a non-zero duration";
                         }
-                    } else if (m_fieldType != &fieldType) {
+                    } else if (m_fieldType != fieldType.get()) {
                         throw babelwires::ModelException()
                             << "All fields in accompanimentTracks must have the same type";
                     } else {
@@ -232,10 +232,10 @@ namespace {
                 const unsigned int numChildren = recordType->getNumChildren(currentValue);
                 for (unsigned int i = 0; i < numChildren; ++i) {
                     auto [childValue, step, childTypeRef] = recordType->getChild(currentValue, i);
-                    const babelwires::Type& childType = childTypeRef.resolve(m_typeSystem);
+                    const babelwires::TypePtr& childType = childTypeRef.resolve(m_typeSystem);
                     babelwires::Path newPath = currentPath;
                     newPath.pushStep(*step.asField());
-                    findTracksInStructure(childType, *childValue, newPath);
+                    findTracksInStructure(*childType, *childValue, newPath);
                 }
             }
         }
@@ -263,10 +263,10 @@ namespace {
                 const unsigned int numChildren = recordType->getNumChildren(currentValue);
                 for (unsigned int i = 0; i < numChildren; ++i) {
                     auto [childValue, step, childTypeRef] = recordType->getChild(currentValue, i);
-                    const babelwires::Type& childType = childTypeRef.resolve(m_typeSystem);
+                    const babelwires::TypePtr& childType = childTypeRef.resolve(m_typeSystem);
                     babelwires::Path newPath = currentPath;
                     newPath.pushStep(*step.asField());
-                    validateTracksInStructure(childType, *childValue, newPath);
+                    validateTracksInStructure(*childType, *childValue, newPath);
                 }
             }
         }
@@ -284,10 +284,10 @@ namespace {
                 const unsigned int numChildren = recordType->getNumChildren(currentValue);
                 for (unsigned int i = 0; i < numChildren; ++i) {
                     auto [childValue, step, childTypeRef] = recordType->getChildNonConst(currentValue, i);
-                    const babelwires::Type& childType = childTypeRef.resolve(m_typeSystem);
+                    const babelwires::TypePtr& childType = childTypeRef.resolve(m_typeSystem);
                     babelwires::Path newPath = currentPath;
                     newPath.pushStep(*step.asField());
-                    assignTracksInStructure(childType, *childValue, newPath);
+                    assignTracksInStructure(*childType, *childValue, newPath);
                 }
             }
         }
