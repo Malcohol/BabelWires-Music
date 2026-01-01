@@ -14,7 +14,7 @@ namespace {
     {
         TestPercussionSet(InstrumentBlock block, bw_music::Pitch pitchOfDefaultValue) : PercussionSetWithPitchMap(std::move(block), pitchOfDefaultValue) {}
         TestPercussionSet(std::vector<InstrumentBlock> instruments, bw_music::Pitch pitchOfDefaultValue) : PercussionSetWithPitchMap(std::move(instruments), pitchOfDefaultValue) {}
-        babelwires::TypeRef getTypeRef() const {
+        babelwires::TypeExp getTypeExp() const {
             return testUtils::getTestRegisteredMediumIdentifier("Foo");
         }
     };

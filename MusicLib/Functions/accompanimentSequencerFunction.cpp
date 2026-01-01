@@ -203,8 +203,8 @@ namespace {
             }
         }
 
-        babelwires::TypeRef getResultTypeRef() const {
-            return m_fieldType ? m_fieldType->getTypeRef() : babelwires::TypeRef();
+        babelwires::TypeExp getResultTypeRef() const {
+            return m_fieldType ? m_fieldType->getTypeExp() : babelwires::TypeExp();
         }
 
         babelwires::ValueHolder getResultValue() {

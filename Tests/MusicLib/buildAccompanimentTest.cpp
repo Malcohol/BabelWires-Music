@@ -35,7 +35,7 @@ class BuildAccompanimentTest : public MusicLibTestFixture {
 
     void SetUp() override {}
 
-    void instantiateInputTypeVariable(const babelwires::TypeRef& type) {
+    void instantiateInputTypeVariable(const babelwires::TypeExp& type) {
         const auto& typeSystem = m_testEnv.m_projectContext.m_typeSystem;
         babelwires::ValueTreeRoot& input = m_processor.getInput();
         babelwires::ValueHolder inputValue = input.getValue();

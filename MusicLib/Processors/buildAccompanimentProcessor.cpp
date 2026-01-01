@@ -20,9 +20,9 @@
 #include <BabelWiresLib/ValueTree/valueTreeNode.hpp>
 
 bw_music::BuildAccompanimentProcessorInput::BuildAccompanimentProcessorInput()
-    : GenericType(babelwires::RecordTypeConstructor::makeTypeRef(
+    : GenericType(babelwires::RecordTypeConstructor::makeTypeExp(
                       getIdOfChordsArray(), ChordTypeSet::getThisType(), getIdOfInput(),
-                      babelwires::TypeVariableTypeConstructor::makeTypeRef()),
+                      babelwires::TypeVariableTypeConstructor::makeTypeExp()),
                   1) {}
 
 babelwires::ShortId bw_music::BuildAccompanimentProcessorInput::getIdOfChordsArray() {
@@ -39,7 +39,7 @@ babelwires::ShortId bw_music::BuildAccompanimentProcessorOutput::getIdOfResult()
 
 bw_music::BuildAccompanimentProcessorOutput::BuildAccompanimentProcessorOutput()
     : GenericType(
-          babelwires::TypeRef(babelwires::RecordTypeConstructor::makeTypeRef(
+          babelwires::TypeExp(babelwires::RecordTypeConstructor::makeTypeExp(
               getIdOfResult(), getGenericAccompanimentTypeRef())),
           1) {}
 
@@ -75,7 +75,7 @@ void bw_music::BuildAccompanimentProcessor::processValue(babelwires::UserLogger&
     const BuildAccompanimentProcessorOutput& outputType = output.getType().is<BuildAccompanimentProcessorOutput>();
 
     const babelwires::ValueHolder& inputValue = input.getValue();
-    const babelwires::TypeRef& assignedInputTypeRef = inputType.getTypeAssignment(inputValue, 0);
+    const babelwires::TypeExp& assignedInputTypeRef = inputType.getTypeAssignment(inputValue, 0);
 
     const babelwires::TypeSystem& typeSystem = input.getTypeSystem();
 

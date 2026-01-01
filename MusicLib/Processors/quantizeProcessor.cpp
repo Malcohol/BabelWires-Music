@@ -19,7 +19,7 @@
 bw_music::QuantizeProcessorInput::QuantizeProcessorInput()
     : babelwires::ParallelProcessorInputBase(
           {{BW_SHORT_ID("Beat", "Beat", "1651ab49-3313-4cd3-b92d-16742b7f5921"),
-            babelwires::RationalTypeConstructor::makeTypeRef(0,
+            babelwires::RationalTypeConstructor::makeTypeExp(0,
                                     std::numeric_limits<babelwires::Rational::ComponentType>::max(),
                                      babelwires::Rational(1, 16))}},
           QuantizeProcessor::getCommonArrayId(), bw_music::DefaultTrackType::getThisType()) {}

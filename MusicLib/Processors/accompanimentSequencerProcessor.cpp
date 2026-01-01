@@ -19,13 +19,13 @@
 
 bw_music::AccompanimentSequencerProcessorInput::AccompanimentSequencerProcessorInput()
     : babelwires::GenericType(
-          babelwires::RecordTypeConstructor::makeTypeRef(getChordTrackId(), DefaultTrackType::getThisType(),
+          babelwires::RecordTypeConstructor::makeTypeExp(getChordTrackId(), DefaultTrackType::getThisType(),
                                                          getAccompTracksId(), getGenericAccompanimentTypeRef()),
           1) {}
 
 bw_music::AccompanimentSequencerProcessorOutput::AccompanimentSequencerProcessorOutput()
-    : babelwires::GenericType(babelwires::RecordTypeConstructor::makeTypeRef(
-                                  getResultId(), babelwires::TypeVariableTypeConstructor::makeTypeRef()),
+    : babelwires::GenericType(babelwires::RecordTypeConstructor::makeTypeExp(
+                                  getResultId(), babelwires::TypeVariableTypeConstructor::makeTypeExp()),
                               1) {}
 
 bw_music::AccompanimentSequencerProcessor::AccompanimentSequencerProcessor(
@@ -46,14 +46,14 @@ void bw_music::AccompanimentSequencerProcessor::processValue(babelwires::UserLog
     const babelwires::ValueTreeNode& inputAccompanimentTracks = *inputRecord.getChild(1);
 
     const babelwires::ValueHolder& inputValue = input.getValue();
-    const babelwires::TypeRef& assignedInputTypeRef = inputType.getTypeAssignment(inputValue, 0);
+    const babelwires::TypeExp& assignedInputTypeRef = inputType.getTypeAssignment(inputValue, 0);
 
     if (input.isChanged(babelwires::ValueTreeNode::Changes::SomethingChanged)) {
         babelwires::ValueTreeNode& outputRecord = *output.getChild(0);
         babelwires::ValueTreeNode& outputResult = *outputRecord.getChild(0);
         babelwires::ValueHolder newOutputValue = output.getValue();
 
-        const babelwires::TypeRef& assignedInputTypeRef = inputType.getTypeAssignment(inputValue, 0);
+        const babelwires::TypeExp& assignedInputTypeRef = inputType.getTypeAssignment(inputValue, 0);
         outputType.setTypeVariableAssignmentAndInstantiate(typeSystem, newOutputValue, {assignedInputTypeRef});
         output.setValue(newOutputValue);
 

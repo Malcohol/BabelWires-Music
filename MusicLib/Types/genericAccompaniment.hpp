@@ -9,13 +9,13 @@
 
 namespace babelwires {
     class TypeSystem;
-    class TypeRef;
+    class TypeExp;
 } // namespace babelwires
 
 namespace bw_music {
 
     /// A RecordType whose field names are the chord types, and whose field types are type variables.
     /// Some processors use this to represent accompaniment data which can have contents of different types.
-    babelwires::TypeRef getGenericAccompanimentTypeRef();
+    babelwires::TypeExp getGenericAccompanimentTypeRef();
 
 } // namespace bw_music

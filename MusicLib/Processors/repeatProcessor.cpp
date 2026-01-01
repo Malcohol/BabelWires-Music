@@ -18,7 +18,7 @@
 bw_music::RepeatProcessorInput::RepeatProcessorInput()
     : babelwires::ParallelProcessorInputBase(
           {{BW_SHORT_ID("Count", "Count", "f5d2ab08-4430-47fa-b26c-0ff2154826e3"),
-            babelwires::IntTypeConstructor::makeTypeRef(0, std::numeric_limits<babelwires::IntValue::NativeType>::max(),
+            babelwires::IntTypeConstructor::makeTypeExp(0, std::numeric_limits<babelwires::IntValue::NativeType>::max(),
                                                         2)}},
           RepeatProcessor::getCommonArrayId(), bw_music::DefaultTrackType::getThisType()) {}
 

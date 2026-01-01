@@ -12,11 +12,11 @@
 #include <MusicLib/chord.hpp>
 
 namespace {
-    std::vector<babelwires::TypeRef> getTypesForOptionalFields() {
-        std::vector<babelwires::TypeRef> types;
+    std::vector<babelwires::TypeExp> getTypesForOptionalFields() {
+        std::vector<babelwires::TypeExp> types;
         types.reserve(static_cast<unsigned int>(bw_music::ChordType::Value::NUM_VALUES));
         for (unsigned int i = 0; i < static_cast<unsigned int>(bw_music::ChordType::Value::NUM_VALUES); ++i) {
-            types.emplace_back(babelwires::TypeVariableTypeConstructor::makeTypeRef());
+            types.emplace_back(babelwires::TypeVariableTypeConstructor::makeTypeExp());
         }
         return types;
     }
@@ -33,8 +33,8 @@ namespace {
     }
 } // namespace
 
-babelwires::TypeRef bw_music::getGenericAccompanimentTypeRef() {
-    return babelwires::TypeRef(
+babelwires::TypeExp bw_music::getGenericAccompanimentTypeRef() {
+    return babelwires::TypeExp(
         babelwires::RecordTypeConstructor::getThisIdentifier(),
         babelwires::TypeConstructorArguments{getTypesForOptionalFields(), getValuesForOptionalFields()});
 }

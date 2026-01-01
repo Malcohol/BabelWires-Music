@@ -20,7 +20,7 @@
 bw_music::TransposeProcessorInput::TransposeProcessorInput()
     : babelwires::ParallelProcessorInputBase(
           {{BW_SHORT_ID("Offset", "Pitch Offset", "5cfa1541-f25e-4671-ac11-2ff71c883418"),
-            babelwires::IntTypeConstructor::makeTypeRef(-127, 127, 0)}},
+            babelwires::IntTypeConstructor::makeTypeExp(-127, 127, 0)}},
           TransposeProcessor::getCommonArrayId(), bw_music::DefaultTrackType::getThisType()) {}
 
 bw_music::TransposeProcessor::TransposeProcessor(const babelwires::ProjectContext& projectContext)

@@ -25,7 +25,7 @@ bw_music::ModelDuration bw_music::TrackTypeConstructor::extractValueArguments(
 }
 
 babelwires::TypePtr
-bw_music::TrackTypeConstructor::constructType(const babelwires::TypeSystem& typeSystem, babelwires::TypeRef newTypeRef,
+bw_music::TrackTypeConstructor::constructType(const babelwires::TypeSystem& typeSystem, babelwires::TypeExp newTypeRef,
                                               const babelwires::TypeConstructorArguments& arguments,
                                               const std::vector<babelwires::TypePtr>& resolvedTypeArguments) const {
     if (arguments.getTypeArguments().size() != 0) {
