@@ -13,8 +13,8 @@ namespace babelwires {
 }
 
 namespace bw_music {
-    babelwires::TypeExp getMapChordFunctionSourceTypeRef();
-    babelwires::TypeExp getMapChordFunctionTargetTypeRef();
+    babelwires::TypeExp getMapChordFunctionSourceTypeExp();
+    babelwires::TypeExp getMapChordFunctionTargetTypeExp();
 
     /// Apply maps to chord events in the track.
     /// You can specify a chord that should be active when no chord in the sourceTrack is active

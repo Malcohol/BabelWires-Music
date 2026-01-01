@@ -20,7 +20,7 @@
 bw_music::AccompanimentSequencerProcessorInput::AccompanimentSequencerProcessorInput()
     : babelwires::GenericType(
           babelwires::RecordTypeConstructor::makeTypeExp(getChordTrackId(), DefaultTrackType::getThisType(),
-                                                         getAccompTracksId(), getGenericAccompanimentTypeRef()),
+                                                         getAccompTracksId(), getGenericAccompanimentTypeExp()),
           1) {}
 
 bw_music::AccompanimentSequencerProcessorOutput::AccompanimentSequencerProcessorOutput()
@@ -46,20 +46,20 @@ void bw_music::AccompanimentSequencerProcessor::processValue(babelwires::UserLog
     const babelwires::ValueTreeNode& inputAccompanimentTracks = *inputRecord.getChild(1);
 
     const babelwires::ValueHolder& inputValue = input.getValue();
-    const babelwires::TypeExp& assignedInputTypeRef = inputType.getTypeAssignment(inputValue, 0);
+    const babelwires::TypeExp& assignedInputTypeExp = inputType.getTypeAssignment(inputValue, 0);
 
     if (input.isChanged(babelwires::ValueTreeNode::Changes::SomethingChanged)) {
         babelwires::ValueTreeNode& outputRecord = *output.getChild(0);
         babelwires::ValueTreeNode& outputResult = *outputRecord.getChild(0);
         babelwires::ValueHolder newOutputValue = output.getValue();
 
-        const babelwires::TypeExp& assignedInputTypeRef = inputType.getTypeAssignment(inputValue, 0);
-        outputType.setTypeVariableAssignmentAndInstantiate(typeSystem, newOutputValue, {assignedInputTypeRef});
+        const babelwires::TypeExp& assignedInputTypeExp = inputType.getTypeAssignment(inputValue, 0);
+        outputType.setTypeVariableAssignmentAndInstantiate(typeSystem, newOutputValue, {assignedInputTypeExp});
         output.setValue(newOutputValue);
 
         const auto& chordTrack = inputChordTrack.getValue()->is<bw_music::Track>();
 
-        if (assignedInputTypeRef) {
+        if (assignedInputTypeExp) {
             const auto resultValue = accompanimentSequencerFunction(typeSystem, inputAccompanimentTracks.getType(),
                                                                     inputAccompanimentTracks.getValue(), chordTrack);
             outputResult.setValue(std::move(resultValue));

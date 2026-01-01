@@ -33,7 +33,7 @@ namespace {
     }
 } // namespace
 
-babelwires::TypeExp bw_music::getGenericAccompanimentTypeRef() {
+babelwires::TypeExp bw_music::getGenericAccompanimentTypeExp() {
     return babelwires::TypeExp(
         babelwires::RecordTypeConstructor::getThisIdentifier(),
         babelwires::TypeConstructorArguments{getTypesForOptionalFields(), getValuesForOptionalFields()});

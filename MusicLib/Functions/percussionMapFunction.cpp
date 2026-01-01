@@ -23,7 +23,7 @@
 #include <BabelWiresLib/ValueTree/modelExceptions.hpp>
 
 babelwires::TypePtr
-bw_music::PercussionMapType::constructType(const babelwires::TypeSystem& typeSystem, babelwires::TypeExp newTypeRef,
+bw_music::PercussionMapType::constructType(const babelwires::TypeSystem& typeSystem, babelwires::TypeExp newTypeExp,
                                            const babelwires::TypeConstructorArguments& arguments,
                                            const std::vector<babelwires::TypePtr>& resolvedTypeArguments) const {
 
@@ -45,7 +45,7 @@ bw_music::PercussionMapType::constructType(const babelwires::TypeSystem& typeSys
     }
 
     return babelwires::makeType<babelwires::ConstructedType<babelwires::SumOfMapsType>>(
-        std::move(newTypeRef), std::move(sourceSummands), std::move(targetSummands), indexOfDefault, indexOfDefault);
+        std::move(newTypeExp), std::move(sourceSummands), std::move(targetSummands), indexOfDefault, indexOfDefault);
 }
 
 babelwires::TypeExp bw_music::getPercussionMapType() {

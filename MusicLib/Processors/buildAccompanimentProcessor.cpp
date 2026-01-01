@@ -40,7 +40,7 @@ babelwires::ShortId bw_music::BuildAccompanimentProcessorOutput::getIdOfResult()
 bw_music::BuildAccompanimentProcessorOutput::BuildAccompanimentProcessorOutput()
     : GenericType(
           babelwires::TypeExp(babelwires::RecordTypeConstructor::makeTypeExp(
-              getIdOfResult(), getGenericAccompanimentTypeRef())),
+              getIdOfResult(), getGenericAccompanimentTypeExp())),
           1) {}
 
 bw_music::BuildAccompanimentProcessor::BuildAccompanimentProcessor(const babelwires::ProjectContext& projectContext)
@@ -75,7 +75,7 @@ void bw_music::BuildAccompanimentProcessor::processValue(babelwires::UserLogger&
     const BuildAccompanimentProcessorOutput& outputType = output.getType().is<BuildAccompanimentProcessorOutput>();
 
     const babelwires::ValueHolder& inputValue = input.getValue();
-    const babelwires::TypeExp& assignedInputTypeRef = inputType.getTypeAssignment(inputValue, 0);
+    const babelwires::TypeExp& assignedInputTypeExp = inputType.getTypeAssignment(inputValue, 0);
 
     const babelwires::TypeSystem& typeSystem = input.getTypeSystem();
 
@@ -86,7 +86,7 @@ void bw_music::BuildAccompanimentProcessor::processValue(babelwires::UserLogger&
     const auto [inputStructure, inputStep1, inputChildType1] = inputRecordType->getChild(*inputChild, 1);
 
     babelwires::ValueHolder newOutputValue = output.getValue();
-    outputType.setTypeVariableAssignmentAndInstantiate(typeSystem, newOutputValue, {assignedInputTypeRef});
+    outputType.setTypeVariableAssignmentAndInstantiate(typeSystem, newOutputValue, {assignedInputTypeExp});
     const auto [outputChild, outputStep, outputChildType] = outputType.getChildNonConst(newOutputValue, 0);
     const auto& outputRecordType = outputChildType.resolveAs<babelwires::RecordType>(typeSystem);
     const auto& [resultChild, resultStep, resultChildType] = outputRecordType->getChildNonConst(*outputChild, 0);
@@ -106,8 +106,8 @@ void bw_music::BuildAccompanimentProcessor::processValue(babelwires::UserLogger&
     resultRecordType->selectOptionals(typeSystem, *resultChild, selectedChords);
 
     for (const auto& maplet : selectedChords) {
-        auto [fieldValueHolder, fieldTypeRef] = resultRecordType->getChildByIdNonConst(*resultChild, maplet.first);
-        const auto& fieldType = fieldTypeRef.resolve(typeSystem);
+        auto [fieldValueHolder, fieldTypeExp] = resultRecordType->getChildByIdNonConst(*resultChild, maplet.first);
+        const auto& fieldType = fieldTypeExp.resolve(typeSystem);
         // Accompaniment always generated with a C root.
         const bw_music::Chord chord = {bw_music::PitchClass::Value::C, chordType->getValueFromIdentifier(maplet.first)};
 

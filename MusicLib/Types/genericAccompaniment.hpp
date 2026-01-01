@@ -16,6 +16,6 @@ namespace bw_music {
 
     /// A RecordType whose field names are the chord types, and whose field types are type variables.
     /// Some processors use this to represent accompaniment data which can have contents of different types.
-    babelwires::TypeExp getGenericAccompanimentTypeRef();
+    babelwires::TypeExp getGenericAccompanimentTypeExp();
 
 } // namespace bw_music

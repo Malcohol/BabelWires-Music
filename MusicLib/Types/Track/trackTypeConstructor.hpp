@@ -20,7 +20,7 @@ namespace bw_music {
         TYPE_CONSTRUCTOR("Track", "Track", "bba2f18c-9ff1-406c-b39c-47a2e4047caa", 1);
 
         babelwires::TypePtr
-        constructType(const babelwires::TypeSystem& typeSystem, babelwires::TypeExp newTypeRef,
+        constructType(const babelwires::TypeSystem& typeSystem, babelwires::TypeExp newTypeExp,
                       const babelwires::TypeConstructorArguments& arguments,
                       const std::vector<babelwires::TypePtr>& resolvedTypeArguments) const override;
 

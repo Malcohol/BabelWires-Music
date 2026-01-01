@@ -98,11 +98,11 @@ namespace {
             const auto& chordTypeType = typeSystem.getEntryByType<bw_music::ChordType>();
             const unsigned int numChildren = recordType.getNumChildren(accompanimentTracks);
             for (unsigned int i = 0; i < numChildren; ++i) {
-                auto [fieldValue, step, fieldTypeRef] = recordType.getChild(accompanimentTracks, i);
+                auto [fieldValue, step, fieldTypeExp] = recordType.getChild(accompanimentTracks, i);
                 const int enumIndex = chordTypeType->tryGetIndexFromIdentifier(*step.asField());
                 if (enumIndex >= 0) {
                     m_chordTypeToChildIndex[static_cast<bw_music::ChordType::Value>(enumIndex)] = static_cast<int>(i);
-                    const babelwires::TypePtr& fieldType = fieldTypeRef.resolve(typeSystem);
+                    const babelwires::TypePtr& fieldType = fieldTypeExp.resolve(typeSystem);
                     if (m_fieldType == nullptr) {
                         m_fieldType = fieldType.get();
                         assert(!m_result);
@@ -203,7 +203,7 @@ namespace {
             }
         }
 
-        babelwires::TypeExp getResultTypeRef() const {
+        babelwires::TypeExp getResultTypeExp() const {
             return m_fieldType ? m_fieldType->getTypeExp() : babelwires::TypeExp();
         }
 
@@ -231,8 +231,8 @@ namespace {
             } else if (const auto* recordType = currentType.as<babelwires::CompoundType>()) {
                 const unsigned int numChildren = recordType->getNumChildren(currentValue);
                 for (unsigned int i = 0; i < numChildren; ++i) {
-                    auto [childValue, step, childTypeRef] = recordType->getChild(currentValue, i);
-                    const babelwires::TypePtr& childType = childTypeRef.resolve(m_typeSystem);
+                    auto [childValue, step, childTypeExp] = recordType->getChild(currentValue, i);
+                    const babelwires::TypePtr& childType = childTypeExp.resolve(m_typeSystem);
                     babelwires::Path newPath = currentPath;
                     newPath.pushStep(*step.asField());
                     findTracksInStructure(*childType, *childValue, newPath);
@@ -262,8 +262,8 @@ namespace {
             } else if (const auto* recordType = currentType.as<babelwires::CompoundType>()) {
                 const unsigned int numChildren = recordType->getNumChildren(currentValue);
                 for (unsigned int i = 0; i < numChildren; ++i) {
-                    auto [childValue, step, childTypeRef] = recordType->getChild(currentValue, i);
-                    const babelwires::TypePtr& childType = childTypeRef.resolve(m_typeSystem);
+                    auto [childValue, step, childTypeExp] = recordType->getChild(currentValue, i);
+                    const babelwires::TypePtr& childType = childTypeExp.resolve(m_typeSystem);
                     babelwires::Path newPath = currentPath;
                     newPath.pushStep(*step.asField());
                     validateTracksInStructure(*childType, *childValue, newPath);
@@ -283,8 +283,8 @@ namespace {
             } else if (const auto* recordType = currentType.as<babelwires::CompoundType>()) {
                 const unsigned int numChildren = recordType->getNumChildren(currentValue);
                 for (unsigned int i = 0; i < numChildren; ++i) {
-                    auto [childValue, step, childTypeRef] = recordType->getChildNonConst(currentValue, i);
-                    const babelwires::TypePtr& childType = childTypeRef.resolve(m_typeSystem);
+                    auto [childValue, step, childTypeExp] = recordType->getChildNonConst(currentValue, i);
+                    const babelwires::TypePtr& childType = childTypeExp.resolve(m_typeSystem);
                     babelwires::Path newPath = currentPath;
                     newPath.pushStep(*step.asField());
                     assignTracksInStructure(*childType, *childValue, newPath);

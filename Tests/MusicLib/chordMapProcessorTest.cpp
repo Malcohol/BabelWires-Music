@@ -35,12 +35,12 @@ namespace {
             typeSystem.getEntryByType<bw_music::PitchClass>();
 
         babelwires::MapValue chordMap;
-        chordMap.setSourceTypeRef(bw_music::getMapChordFunctionSourceTypeRef());
-        chordMap.setTargetTypeRef(bw_music::getMapChordFunctionTargetTypeRef());
+        chordMap.setSourceTypeExp(bw_music::getMapChordFunctionSourceTypeExp());
+        chordMap.setTargetTypeExp(bw_music::getMapChordFunctionTargetTypeExp());
 
         // This object gets re-used.
-        babelwires::OneToOneMapEntryData chordMaplet(typeSystem, bw_music::getMapChordFunctionSourceTypeRef(),
-                                                     bw_music::getMapChordFunctionTargetTypeRef());
+        babelwires::OneToOneMapEntryData chordMaplet(typeSystem, bw_music::getMapChordFunctionSourceTypeExp(),
+                                                     bw_music::getMapChordFunctionTargetTypeExp());
         {
             {
                 babelwires::EnumValue pitchClassSourceValue(
@@ -119,7 +119,7 @@ namespace {
         }
         {
             babelwires::AllToOneFallbackMapEntryData chordMaplet(typeSystem,
-                                                                 bw_music::getMapChordFunctionTargetTypeRef());
+                                                                 bw_music::getMapChordFunctionTargetTypeExp());
 
             babelwires::EnumValue wildcardValue(babelwires::getWildcardMatchId());
             babelwires::TupleValue targetValue({wildcardValue.clone(), wildcardValue.clone()});

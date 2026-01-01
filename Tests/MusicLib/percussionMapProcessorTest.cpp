@@ -27,16 +27,16 @@ namespace {
         const auto& builtInPercussion =
             typeSystem.getEntryByType<bw_music::BuiltInPercussionInstruments>();
 
-        babelwires::TypeExp targetTypeRef =
+        babelwires::TypeExp targetTypeExp =
             babelwires::EnumUnionTypeConstructor::makeTypeExp(bw_music::BuiltInPercussionInstruments::getThisType(),
             babelwires::EnumAtomTypeConstructor::makeTypeExp(babelwires::getBlankValueId()));
 
         babelwires::MapValue percussionMap;
-        percussionMap.setSourceTypeRef(bw_music::BuiltInPercussionInstruments::getThisType());
-        percussionMap.setTargetTypeRef(targetTypeRef);
+        percussionMap.setSourceTypeExp(bw_music::BuiltInPercussionInstruments::getThisType());
+        percussionMap.setTargetTypeExp(targetTypeExp);
 
         babelwires::OneToOneMapEntryData maplet(typeSystem, bw_music::BuiltInPercussionInstruments::getThisType(),
-                                                targetTypeRef);
+                                                targetTypeExp);
 
         babelwires::EnumValue sourceValue;
         babelwires::EnumValue targetValue;

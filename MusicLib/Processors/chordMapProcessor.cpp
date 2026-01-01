@@ -20,8 +20,8 @@
 bw_music::ChordMapProcessorInput::ChordMapProcessorInput()
     : babelwires::ParallelProcessorInputBase(
           {{BW_SHORT_ID("ChrdMp", "Chord map", "6054b8e9-5f48-4e9f-8807-b6377d36d6aa"),
-            babelwires::MapTypeConstructor::makeTypeExp(bw_music::getMapChordFunctionSourceTypeRef(),
-                                                        bw_music::getMapChordFunctionTargetTypeRef(),
+            babelwires::MapTypeConstructor::makeTypeExp(bw_music::getMapChordFunctionSourceTypeExp(),
+                                                        bw_music::getMapChordFunctionTargetTypeExp(),
                                                         babelwires::MapEntryData::Kind::All21)}},
           ChordMapProcessor::getCommonArrayId(), bw_music::DefaultTrackType::getThisType()) {}
 
