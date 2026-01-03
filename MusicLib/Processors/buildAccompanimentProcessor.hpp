@@ -18,7 +18,7 @@ namespace bw_music {
       public:
         REGISTERED_TYPE("BuildAccompIn", "Build Accompaniment In", "d1f8b0c2-3f4e-4c5a-9b6e-7c8d9e0f1a2b", 1);
 
-        BuildAccompanimentProcessorInput();
+        BuildAccompanimentProcessorInput(const babelwires::TypeSystem& typeSystem);
 
         // GenericTypes do not support the instance system yet, so working with these
         // objects is unpleasant.
@@ -31,7 +31,7 @@ namespace bw_music {
       public:
         REGISTERED_TYPE("BuildAccompOut", "Build Accompaniment Out", "e3f4b5c6-7d8e-9f0a-b1c2-d3e4f5a6b7c8", 1);
 
-        BuildAccompanimentProcessorOutput();
+        BuildAccompanimentProcessorOutput(const babelwires::TypeSystem& typeSystem);
 
         static babelwires::ShortId getIdOfResult();
     };

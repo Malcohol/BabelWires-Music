@@ -8,19 +8,20 @@
 #include <MusicLib/Processors/buildAccompanimentProcessor.hpp>
 
 #include <MusicLib/Functions/fitToChordFunction.hpp>
+#include <MusicLib/Types/Track/trackType.hpp>
 #include <MusicLib/Types/chordTypeSet.hpp>
 #include <MusicLib/Types/genericAccompaniment.hpp>
-#include <MusicLib/Types/Track/trackType.hpp>
 
-#include <BabelWiresLib/Utilities/applyToSubvalues.hpp>
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/Array/arrayTypeConstructor.hpp>
 #include <BabelWiresLib/Types/Generic/typeVariableTypeConstructor.hpp>
 #include <BabelWiresLib/Types/Record/recordTypeConstructor.hpp>
+#include <BabelWiresLib/Utilities/applyToSubvalues.hpp>
 #include <BabelWiresLib/ValueTree/valueTreeNode.hpp>
 
-bw_music::BuildAccompanimentProcessorInput::BuildAccompanimentProcessorInput()
-    : GenericType(babelwires::RecordTypeConstructor::makeTypeExp(
+bw_music::BuildAccompanimentProcessorInput::BuildAccompanimentProcessorInput(const babelwires::TypeSystem& typeSystem)
+    : GenericType(typeSystem,
+                  babelwires::RecordTypeConstructor::makeTypeExp(
                       getIdOfChordsArray(), ChordTypeSet::getThisType(), getIdOfInput(),
                       babelwires::TypeVariableTypeConstructor::makeTypeExp()),
                   1) {}
@@ -37,11 +38,11 @@ babelwires::ShortId bw_music::BuildAccompanimentProcessorOutput::getIdOfResult()
     return BW_SHORT_ID("output", "output", "91cdf142-e8e1-4b86-8811-43028e3b4154");
 }
 
-bw_music::BuildAccompanimentProcessorOutput::BuildAccompanimentProcessorOutput()
-    : GenericType(
-          babelwires::TypeExp(babelwires::RecordTypeConstructor::makeTypeExp(
-              getIdOfResult(), getGenericAccompanimentTypeExp())),
-          1) {}
+bw_music::BuildAccompanimentProcessorOutput::BuildAccompanimentProcessorOutput(const babelwires::TypeSystem& typeSystem)
+    : GenericType(typeSystem,
+                  babelwires::TypeExp(babelwires::RecordTypeConstructor::makeTypeExp(getIdOfResult(),
+                                                                                     getGenericAccompanimentTypeExp())),
+                  1) {}
 
 bw_music::BuildAccompanimentProcessor::BuildAccompanimentProcessor(const babelwires::ProjectContext& projectContext)
     : Processor(projectContext, BuildAccompanimentProcessorInput::getThisType(),
@@ -51,16 +52,16 @@ namespace {
 
     // apply the fitToChordFunction to all tracks in the value.
     babelwires::ValueHolder applyFitToChordFunction(const babelwires::TypeSystem& typeSystem,
-                                                         const babelwires::Type& type,
-                                                         const babelwires::ValueHolder& sourceValue,
-                                                         const bw_music::Chord& chord) {
+                                                    const babelwires::Type& type,
+                                                    const babelwires::ValueHolder& sourceValue,
+                                                    const bw_music::Chord& chord) {
         babelwires::ValueHolder result = sourceValue;
 
-        babelwires::applyToSubvaluesOfType<bw_music::TrackType>(typeSystem, type, result,
-                                                      [&chord](const babelwires::Type& t, babelwires::Value& v) {
-                                                          auto& track = v.is<bw_music::Track>();
-                                                          track = bw_music::fitToChordFunction(track, chord);
-                                                      });
+        babelwires::applyToSubvaluesOfType<bw_music::TrackType>(
+            typeSystem, type, result, [&chord](const babelwires::Type& t, babelwires::Value& v) {
+                auto& track = v.is<bw_music::Track>();
+                track = bw_music::fitToChordFunction(track, chord);
+            });
 
         return result;
     }

@@ -21,7 +21,7 @@ namespace bw_music {
         REGISTERED_TYPE("AccompSeqIn", "Accompaniment Sequencer Input",
                         "c5f8e3b7-8d4a-4b2e-9c1f-7a6d5e2b8a0f", 1);
 
-        AccompanimentSequencerProcessorInput();
+        AccompanimentSequencerProcessorInput(const babelwires::TypeSystem& typeSystem);
 
         static babelwires::ShortId getAccompTracksId() {
             return BW_SHORT_ID("Accomp", "Accompaniment Tracks",
@@ -39,7 +39,7 @@ namespace bw_music {
         REGISTERED_TYPE("AccompSeqOut", "Accompaniment Sequencer Output",
                         "f7e3a9c2-1b5f-4c3d-8e2a-6f4d7a1c5b9e", 1);
 
-        AccompanimentSequencerProcessorOutput();
+        AccompanimentSequencerProcessorOutput(const babelwires::TypeSystem& typeSystem);
 
         static babelwires::ShortId getResultId() {
             return BW_SHORT_ID("Result", "Result track",

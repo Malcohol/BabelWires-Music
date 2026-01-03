@@ -67,8 +67,8 @@ void bw_music::registerLib(babelwires::ProjectContext& context) {
     context.m_typeSystem.addEntry<GetChordTypesProcessorOutput>();
     context.m_processorReg.addProcessor<GetChordTypesProcessor>();
 
-    context.m_typeSystem.addEntry<BuildAccompanimentProcessorInput>();
-    context.m_typeSystem.addEntry<BuildAccompanimentProcessorOutput>();
+    context.m_typeSystem.addEntry<BuildAccompanimentProcessorInput>(context.m_typeSystem);
+    context.m_typeSystem.addEntry<BuildAccompanimentProcessorOutput>(context.m_typeSystem);
     context.m_processorReg.addProcessor<BuildAccompanimentProcessor>();
 
     context.m_typeSystem.addEntry<MergeProcessorInput>();
@@ -107,8 +107,8 @@ void bw_music::registerLib(babelwires::ProjectContext& context) {
     context.m_typeSystem.addEntry<PercussionMapProcessorOutput>();
     context.m_processorReg.addProcessor<PercussionMapProcessor>();
 
-    context.m_typeSystem.addEntry<AccompanimentSequencerProcessorInput>();
-    context.m_typeSystem.addEntry<AccompanimentSequencerProcessorOutput>();
+    context.m_typeSystem.addEntry<AccompanimentSequencerProcessorInput>(context.m_typeSystem);
+    context.m_typeSystem.addEntry<AccompanimentSequencerProcessorOutput>(context.m_typeSystem);
     context.m_processorReg.addProcessor<AccompanimentSequencerProcessor>();
 
     context.m_typeSystem.addTypeConstructor<TrackTypeConstructor>();

@@ -17,14 +17,18 @@
 #include <BabelWiresLib/ValueTree/modelExceptions.hpp>
 #include <BabelWiresLib/ValueTree/valueTreeNode.hpp>
 
-bw_music::AccompanimentSequencerProcessorInput::AccompanimentSequencerProcessorInput()
+bw_music::AccompanimentSequencerProcessorInput::AccompanimentSequencerProcessorInput(
+    const babelwires::TypeSystem& typeSystem)
     : babelwires::GenericType(
+          typeSystem,
           babelwires::RecordTypeConstructor::makeTypeExp(getChordTrackId(), DefaultTrackType::getThisType(),
                                                          getAccompTracksId(), getGenericAccompanimentTypeExp()),
           1) {}
 
-bw_music::AccompanimentSequencerProcessorOutput::AccompanimentSequencerProcessorOutput()
-    : babelwires::GenericType(babelwires::RecordTypeConstructor::makeTypeExp(
+bw_music::AccompanimentSequencerProcessorOutput::AccompanimentSequencerProcessorOutput(
+    const babelwires::TypeSystem& typeSystem)
+    : babelwires::GenericType(typeSystem,
+                              babelwires::RecordTypeConstructor::makeTypeExp(
                                   getResultId(), babelwires::TypeVariableTypeConstructor::makeTypeExp()),
                               1) {}
 
