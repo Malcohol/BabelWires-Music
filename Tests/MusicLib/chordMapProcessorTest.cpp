@@ -38,9 +38,11 @@ namespace {
         chordMap.setSourceTypeExp(bw_music::getMapChordFunctionSourceTypeExp());
         chordMap.setTargetTypeExp(bw_music::getMapChordFunctionTargetTypeExp());
 
+        const auto& sourceType = chordMap.getSourceTypeExp().assertResolve(typeSystem);
+        const auto& targetType = chordMap.getTargetTypeExp().assertResolve(typeSystem);
+
         // This object gets re-used.
-        babelwires::OneToOneMapEntryData chordMaplet(typeSystem, bw_music::getMapChordFunctionSourceTypeExp(),
-                                                     bw_music::getMapChordFunctionTargetTypeExp());
+        babelwires::OneToOneMapEntryData chordMaplet(typeSystem, *sourceType, *targetType);
         {
             {
                 babelwires::EnumValue pitchClassSourceValue(
@@ -118,8 +120,7 @@ namespace {
             }
         }
         {
-            babelwires::AllToOneFallbackMapEntryData chordMaplet(typeSystem,
-                                                                 bw_music::getMapChordFunctionTargetTypeExp());
+            babelwires::AllToOneFallbackMapEntryData chordMaplet(typeSystem, *targetType);
 
             babelwires::EnumValue wildcardValue(babelwires::getWildcardMatchId());
             babelwires::TupleValue targetValue({wildcardValue.clone(), wildcardValue.clone()});
