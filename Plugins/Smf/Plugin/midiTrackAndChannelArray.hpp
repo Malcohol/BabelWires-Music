@@ -18,6 +18,6 @@ namespace smf {
     class MidiTrackAndChannelArray : public babelwires::ArrayType {
       public:
         REGISTERED_TYPE("MidiTrackArray", "MIDI Track and Channels", "b5462658-be68-4570-b0a5-d2dcb03f4d8e", 1);
-        MidiTrackAndChannelArray();
+        MidiTrackAndChannelArray(const babelwires::TypeSystem& typeSystem);
     };
 } // namespace smf

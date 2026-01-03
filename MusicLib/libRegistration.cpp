@@ -47,7 +47,7 @@ void bw_music::registerLib(babelwires::ProjectContext& context) {
     context.m_typeSystem.addEntry<BuiltInPercussionInstruments>();
     context.m_typeSystem.addEntry<Duration>();
     context.m_typeSystem.addEntry<Tempo>();
-    context.m_typeSystem.addEntry<ChordTypeSet>();
+    context.m_typeSystem.addEntry<ChordTypeSet>(context.m_typeSystem);
 
     context.m_typeSystem.addEntry<SplitAtPitchProcessorInput>();
     context.m_typeSystem.addEntry<SplitAtPitchProcessorOutput>();

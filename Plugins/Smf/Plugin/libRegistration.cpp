@@ -60,7 +60,7 @@ void smf::registerLib(babelwires::ProjectContext& context) {
     context.m_typeSystem.addEntry<MidiMetadata>();
     context.m_typeSystem.addEntry<MidiChannel>();
     context.m_typeSystem.addEntry<MidiTrackAndChannel>();
-    context.m_typeSystem.addEntry<MidiTrackAndChannelArray>();
+    context.m_typeSystem.addEntry<MidiTrackAndChannelArray>(context.m_typeSystem);
     context.m_typeSystem.addEntry<RecordOfMidiTracks>();
     context.m_typeSystem.addEntry<SmfSequence>();
 
