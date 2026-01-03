@@ -71,8 +71,8 @@ void bw_music::BuildAccompanimentProcessor::processValue(babelwires::UserLogger&
                                                          const babelwires::ValueTreeNode& input,
                                                          babelwires::ValueTreeNode& output) const {
 
-    const BuildAccompanimentProcessorInput& inputType = input.getType().is<BuildAccompanimentProcessorInput>();
-    const BuildAccompanimentProcessorOutput& outputType = output.getType().is<BuildAccompanimentProcessorOutput>();
+    const BuildAccompanimentProcessorInput& inputType = input.getType()->is<BuildAccompanimentProcessorInput>();
+    const BuildAccompanimentProcessorOutput& outputType = output.getType()->is<BuildAccompanimentProcessorOutput>();
 
     const babelwires::ValueHolder& inputValue = input.getValue();
     const babelwires::TypeExp& assignedInputTypeExp = inputType.getTypeAssignment(inputValue, 0);
