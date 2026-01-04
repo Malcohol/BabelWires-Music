@@ -49,6 +49,9 @@ void bw_music::registerLib(babelwires::ProjectContext& context) {
     context.m_typeSystem.addEntry<Tempo>();
     context.m_typeSystem.addEntry<ChordTypeSet>(context.m_typeSystem);
 
+    context.m_typeSystem.addTypeConstructor<TrackTypeConstructor>();
+    context.m_typeSystem.addTypeConstructor<PercussionMapType>();
+
     context.m_typeSystem.addEntry<SplitAtPitchProcessorInput>(context.m_typeSystem);
     context.m_typeSystem.addEntry<SplitAtPitchProcessorOutput>(context.m_typeSystem);
     context.m_processorReg.addProcessor<SplitAtPitchProcessor>();
@@ -110,7 +113,4 @@ void bw_music::registerLib(babelwires::ProjectContext& context) {
     context.m_typeSystem.addEntry<AccompanimentSequencerProcessorInput>(context.m_typeSystem);
     context.m_typeSystem.addEntry<AccompanimentSequencerProcessorOutput>(context.m_typeSystem);
     context.m_processorReg.addProcessor<AccompanimentSequencerProcessor>();
-
-    context.m_typeSystem.addTypeConstructor<TrackTypeConstructor>();
-    context.m_typeSystem.addTypeConstructor<PercussionMapType>();
 }
