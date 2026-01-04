@@ -62,7 +62,7 @@ void smf::registerLib(babelwires::ProjectContext& context) {
     context.m_typeSystem.addEntry<MidiTrackAndChannel>(context.m_typeSystem);
     context.m_typeSystem.addEntry<MidiTrackAndChannelArray>(context.m_typeSystem);
     context.m_typeSystem.addEntry<RecordOfMidiTracks>(context.m_typeSystem);
-    context.m_typeSystem.addEntry<SmfSequence>();
+    context.m_typeSystem.addEntry<SmfSequence>(context.m_typeSystem);
 
     // Percussion types
     const auto& builtInPercussion = context.m_typeSystem.getEntryByType<bw_music::BuiltInPercussionInstruments>();
