@@ -14,7 +14,7 @@ namespace bw_music_testplugin {
     class TestTrackContainer : public babelwires::RecordType {
       public:
         REGISTERED_TYPE("TrackContainer", "Test Track Container", "2bfd356b-7974-4769-8a64-ef934c44a5a0", 1);
-        TestTrackContainer();
+        TestTrackContainer(const babelwires::TypeSystem& typeSystem);
 
         DECLARE_INSTANCE_BEGIN(TestTrackContainer)
         DECLARE_INSTANCE_FIELD(track1, bw_music::TrackType)

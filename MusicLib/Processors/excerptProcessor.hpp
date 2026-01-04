@@ -17,7 +17,7 @@ namespace bw_music {
       public:
         REGISTERED_TYPE("ExcerptTrckIn", "Excerpt In", "68577705-b5c2-499c-a2db-8ab5f63e5728", 1);
 
-        ExcerptProcessorInput();
+        ExcerptProcessorInput(const babelwires::TypeSystem& typeSystem);
 
         DECLARE_INSTANCE_BEGIN(ExcerptProcessorInput)
         DECLARE_INSTANCE_FIELD(Start, babelwires::RationalType)
@@ -30,7 +30,7 @@ namespace bw_music {
       public:
         REGISTERED_TYPE("ExcerptTrckOut", "Excerpt Out", "73469491-111c-441a-b89c-2f8aceaa640c", 1);
 
-        ExcerptProcessorOutput();
+        ExcerptProcessorOutput(const babelwires::TypeSystem& typeSystem);
     };
 
     /// A processor which limits a track to events between certain points.

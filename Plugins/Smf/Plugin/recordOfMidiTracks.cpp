@@ -27,8 +27,8 @@ namespace {
         {"ch15", "Ch. 15", "46fb6f3a-15bf-4c3a-972a-78e7ba2ca5b9"}};
 } // namespace
 
-smf::RecordOfMidiTracks::RecordOfMidiTracks()
-    : babelwires::RecordType({{getTrackIdFromChannel(0), TypeOfTracks::getThisType(),
+smf::RecordOfMidiTracks::RecordOfMidiTracks(const babelwires::TypeSystem& typeSystem)
+    : babelwires::RecordType(typeSystem, {{getTrackIdFromChannel(0), TypeOfTracks::getThisType(),
                                babelwires::RecordType::Optionality::optionalDefaultInactive},
                               {getTrackIdFromChannel(1), TypeOfTracks::getThisType(),
                                babelwires::RecordType::Optionality::optionalDefaultInactive},

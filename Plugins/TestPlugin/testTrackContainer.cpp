@@ -1,7 +1,7 @@
 #include <Domains/Music/Plugins/TestPlugin/testTrackContainer.hpp>
 
-bw_music_testplugin::TestTrackContainer::TestTrackContainer()
-    : babelwires::RecordType({{getTrack1Id(), bw_music::DefaultTrackType::getThisType()},
+bw_music_testplugin::TestTrackContainer::TestTrackContainer(const babelwires::TypeSystem& typeSystem)
+    : babelwires::RecordType(typeSystem, {{getTrack1Id(), bw_music::DefaultTrackType::getThisType()},
                               {getTrack2Id(), bw_music::DefaultTrackType::getThisType()},
                               {getOtherId(), babelwires::DefaultIntType::getThisType()}}) {}
 

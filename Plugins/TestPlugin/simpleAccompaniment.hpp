@@ -13,7 +13,7 @@ namespace bw_music_testplugin {
     class SimpleAccompaniment : public babelwires::RecordType {
       public:
         REGISTERED_TYPE("SimpleAccomp", "Simple Accompaniment", "9a92a3e0-9613-46be-ad77-898896875ad4", 1);
-        SimpleAccompaniment();
+        SimpleAccompaniment(const babelwires::TypeSystem& typeSystem);
 
         babelwires::NewValueHolder createValue(const babelwires::TypeSystem& typeSystem) const override;
 

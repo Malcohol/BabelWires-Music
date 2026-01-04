@@ -22,7 +22,7 @@ namespace smf {
       public:
         REGISTERED_TYPE("recordOfTracks", "Tracks", "44244cf8-8a05-4071-91a3-af77514ee03b", 1);
 
-        RecordOfMidiTracks();
+        RecordOfMidiTracks(const babelwires::TypeSystem& typeSystem);
 
         static babelwires::ShortId getTrackIdFromChannel(unsigned int channel);
 

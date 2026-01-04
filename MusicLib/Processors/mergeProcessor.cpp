@@ -15,13 +15,13 @@
 
 #include <set>
 
-bw_music::MergeProcessorInput::MergeProcessorInput()
-    : babelwires::RecordType(
+bw_music::MergeProcessorInput::MergeProcessorInput(const babelwires::TypeSystem& typeSystem)
+    : babelwires::RecordType(typeSystem,
           {{BW_SHORT_ID("Input", "Input tracks", "80b175ae-c954-4943-96d8-eaffcd7ed6e1"),
             babelwires::ArrayTypeConstructor::makeTypeExp(DefaultTrackType::getThisType(), 2, 16)}}) {}
 
-bw_music::MergeProcessorOutput::MergeProcessorOutput()
-    : babelwires::RecordType({{BW_SHORT_ID("Output", "Output track", "ab56e996-d361-42ed-a0df-44a90a73dc20"),
+bw_music::MergeProcessorOutput::MergeProcessorOutput(const babelwires::TypeSystem& typeSystem)
+    : babelwires::RecordType(typeSystem, {{BW_SHORT_ID("Output", "Output track", "ab56e996-d361-42ed-a0df-44a90a73dc20"),
                                DefaultTrackType::getThisType()}}) {}
 
 bw_music::MergeProcessor::MergeProcessor(const babelwires::ProjectContext& projectContext)

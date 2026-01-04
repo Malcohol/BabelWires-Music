@@ -49,62 +49,62 @@ void bw_music::registerLib(babelwires::ProjectContext& context) {
     context.m_typeSystem.addEntry<Tempo>();
     context.m_typeSystem.addEntry<ChordTypeSet>(context.m_typeSystem);
 
-    context.m_typeSystem.addEntry<SplitAtPitchProcessorInput>();
-    context.m_typeSystem.addEntry<SplitAtPitchProcessorOutput>();
+    context.m_typeSystem.addEntry<SplitAtPitchProcessorInput>(context.m_typeSystem);
+    context.m_typeSystem.addEntry<SplitAtPitchProcessorOutput>(context.m_typeSystem);
     context.m_processorReg.addProcessor<SplitAtPitchProcessor>();
 
     context.m_typeSystem.addEntry<MonophonicSubtracksPolicyEnum>();
-    context.m_typeSystem.addEntry<MonophonicSubtracksProcessorInput>();
-    context.m_typeSystem.addEntry<MonophonicSubtracksProcessorOutput>();
+    context.m_typeSystem.addEntry<MonophonicSubtracksProcessorInput>(context.m_typeSystem);
+    context.m_typeSystem.addEntry<MonophonicSubtracksProcessorOutput>(context.m_typeSystem);
     context.m_processorReg.addProcessor<MonophonicSubtracksProcessor>();
 
     context.m_typeSystem.addEntry<FingeredChordsSustainPolicyEnum>();
-    context.m_typeSystem.addEntry<FingeredChordsProcessorInput>();
-    context.m_typeSystem.addEntry<FingeredChordsProcessorOutput>();
+    context.m_typeSystem.addEntry<FingeredChordsProcessorInput>(context.m_typeSystem);
+    context.m_typeSystem.addEntry<FingeredChordsProcessorOutput>(context.m_typeSystem);
     context.m_processorReg.addProcessor<FingeredChordsProcessor>();
 
-    context.m_typeSystem.addEntry<GetChordTypesProcessorInput>();
-    context.m_typeSystem.addEntry<GetChordTypesProcessorOutput>();
+    context.m_typeSystem.addEntry<GetChordTypesProcessorInput>(context.m_typeSystem);
+    context.m_typeSystem.addEntry<GetChordTypesProcessorOutput>(context.m_typeSystem);
     context.m_processorReg.addProcessor<GetChordTypesProcessor>();
 
     context.m_typeSystem.addEntry<BuildAccompanimentProcessorInput>(context.m_typeSystem);
     context.m_typeSystem.addEntry<BuildAccompanimentProcessorOutput>(context.m_typeSystem);
     context.m_processorReg.addProcessor<BuildAccompanimentProcessor>();
 
-    context.m_typeSystem.addEntry<MergeProcessorInput>();
-    context.m_typeSystem.addEntry<MergeProcessorOutput>();
+    context.m_typeSystem.addEntry<MergeProcessorInput>(context.m_typeSystem);
+    context.m_typeSystem.addEntry<MergeProcessorOutput>(context.m_typeSystem);
     context.m_processorReg.addProcessor<MergeProcessor>();
 
-    context.m_typeSystem.addEntry<SilenceProcessorInput>();
-    context.m_typeSystem.addEntry<SilenceProcessorOutput>();
+    context.m_typeSystem.addEntry<SilenceProcessorInput>(context.m_typeSystem);
+    context.m_typeSystem.addEntry<SilenceProcessorOutput>(context.m_typeSystem);
     context.m_processorReg.addProcessor<SilenceProcessor>();
 
-    context.m_typeSystem.addEntry<ConcatenateProcessorInput>();
-    context.m_typeSystem.addEntry<ConcatenateProcessorOutput>();
+    context.m_typeSystem.addEntry<ConcatenateProcessorInput>(context.m_typeSystem);
+    context.m_typeSystem.addEntry<ConcatenateProcessorOutput>(context.m_typeSystem);
     context.m_processorReg.addProcessor<ConcatenateProcessor>();
 
-    context.m_typeSystem.addEntry<ExcerptProcessorInput>();
-    context.m_typeSystem.addEntry<ExcerptProcessorOutput>();
+    context.m_typeSystem.addEntry<ExcerptProcessorInput>(context.m_typeSystem);
+    context.m_typeSystem.addEntry<ExcerptProcessorOutput>(context.m_typeSystem);
     context.m_processorReg.addProcessor<ExcerptProcessor>();
 
-    context.m_typeSystem.addEntry<RepeatProcessorInput>();
-    context.m_typeSystem.addEntry<RepeatProcessorOutput>();
+    context.m_typeSystem.addEntry<RepeatProcessorInput>(context.m_typeSystem);
+    context.m_typeSystem.addEntry<RepeatProcessorOutput>(context.m_typeSystem);
     context.m_processorReg.addProcessor<RepeatProcessor>();
 
-    context.m_typeSystem.addEntry<TransposeProcessorInput>();
-    context.m_typeSystem.addEntry<TransposeProcessorOutput>();
+    context.m_typeSystem.addEntry<TransposeProcessorInput>(context.m_typeSystem);
+    context.m_typeSystem.addEntry<TransposeProcessorOutput>(context.m_typeSystem);
     context.m_processorReg.addProcessor<TransposeProcessor>();
 
-    context.m_typeSystem.addEntry<QuantizeProcessorInput>();
-    context.m_typeSystem.addEntry<QuantizeProcessorOutput>();
+    context.m_typeSystem.addEntry<QuantizeProcessorInput>(context.m_typeSystem);
+    context.m_typeSystem.addEntry<QuantizeProcessorOutput>(context.m_typeSystem);
     context.m_processorReg.addProcessor<QuantizeProcessor>();
 
-    context.m_typeSystem.addEntry<ChordMapProcessorInput>();
-    context.m_typeSystem.addEntry<ChordMapProcessorOutput>();
+    context.m_typeSystem.addEntry<ChordMapProcessorInput>(context.m_typeSystem);
+    context.m_typeSystem.addEntry<ChordMapProcessorOutput>(context.m_typeSystem);
     context.m_processorReg.addProcessor<ChordMapProcessor>();
 
-    context.m_typeSystem.addEntry<PercussionMapProcessorInput>();
-    context.m_typeSystem.addEntry<PercussionMapProcessorOutput>();
+    context.m_typeSystem.addEntry<PercussionMapProcessorInput>(context.m_typeSystem);
+    context.m_typeSystem.addEntry<PercussionMapProcessorOutput>(context.m_typeSystem);
     context.m_processorReg.addProcessor<PercussionMapProcessor>();
 
     context.m_typeSystem.addEntry<AccompanimentSequencerProcessorInput>(context.m_typeSystem);

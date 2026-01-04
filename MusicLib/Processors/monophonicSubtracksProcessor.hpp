@@ -22,7 +22,7 @@ namespace bw_music {
       public:
         REGISTERED_TYPE("MonoTracksIn", "Monophonic Tracks Input", "e8041fe6-29de-470e-9235-e1f05c5f791e", 1);
 
-        MonophonicSubtracksProcessorInput();
+        MonophonicSubtracksProcessorInput(const babelwires::TypeSystem& typeSystem);
 
         DECLARE_INSTANCE_BEGIN(MonophonicSubtracksProcessorInput)
         DECLARE_INSTANCE_FIELD(NumTrk, babelwires::IntType)
@@ -35,7 +35,7 @@ namespace bw_music {
       public:
         REGISTERED_TYPE("MonoTracksOut", "Monophonic Tracks Output", "c2228921-da8a-45c0-bebf-24951d651090", 1);
 
-        MonophonicSubtracksProcessorOutput();
+        MonophonicSubtracksProcessorOutput(const babelwires::TypeSystem& typeSystem);
 
         DECLARE_INSTANCE_BEGIN(MonophonicSubtracksProcessorOutput)
         DECLARE_INSTANCE_ARRAY_FIELD(Sbtrks, bw_music::TrackType)

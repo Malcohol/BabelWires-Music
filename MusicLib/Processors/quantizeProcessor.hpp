@@ -20,7 +20,7 @@ namespace bw_music {
       public:
         REGISTERED_TYPE("QuantTrcksIn", "Quantize In", "86a46b16-69a3-41bb-bbb3-19f8cb0a4e4d", 1);
 
-        QuantizeProcessorInput();
+        QuantizeProcessorInput(const babelwires::TypeSystem& typeSystem);
 
         DECLARE_INSTANCE_BEGIN(QuantizeProcessorInput)
         DECLARE_INSTANCE_FIELD(Beat, babelwires::RationalType)
@@ -32,7 +32,7 @@ namespace bw_music {
       public:
         REGISTERED_TYPE("QuantTrcksOut", "Quantize Out", "89feb462-63b1-473a-bc77-29540bda43f7", 1);
 
-        QuantizeProcessorOutput();
+        QuantizeProcessorOutput(const babelwires::TypeSystem& typeSystem);
     };
 
     /// A processor which quantizes the events in a track a specified number of times.

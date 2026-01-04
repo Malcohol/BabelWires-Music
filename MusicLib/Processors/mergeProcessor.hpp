@@ -21,7 +21,7 @@ namespace bw_music {
       public:
         REGISTERED_TYPE("MergeTracksIn", "Merge Tracks Input", "15dd4564-e67f-4087-8609-ef5985b23dd7", 1);
 
-        MergeProcessorInput();
+        MergeProcessorInput(const babelwires::TypeSystem& typeSystem);
 
         DECLARE_INSTANCE_BEGIN(MergeProcessorInput)
         DECLARE_INSTANCE_ARRAY_FIELD(Input, TrackType)
@@ -32,7 +32,7 @@ namespace bw_music {
       public:
         REGISTERED_TYPE("MergeTracksOut", "Merge Tracks Output", "9b797596-f6c2-4900-98a4-001ec7c18be4", 1);
 
-        MergeProcessorOutput();
+        MergeProcessorOutput(const babelwires::TypeSystem& typeSystem);
 
         DECLARE_INSTANCE_BEGIN(MergeProcessorOutput)
         DECLARE_INSTANCE_FIELD(Output, TrackType)

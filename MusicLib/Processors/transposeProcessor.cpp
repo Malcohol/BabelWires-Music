@@ -17,8 +17,9 @@
 
 #include <set>
 
-bw_music::TransposeProcessorInput::TransposeProcessorInput()
+bw_music::TransposeProcessorInput::TransposeProcessorInput(const babelwires::TypeSystem& typeSystem)
     : babelwires::ParallelProcessorInputBase(
+          typeSystem,
           {{BW_SHORT_ID("Offset", "Pitch Offset", "5cfa1541-f25e-4671-ac11-2ff71c883418"),
             babelwires::IntTypeConstructor::makeTypeExp(-127, 127, 0)}},
           TransposeProcessor::getCommonArrayId(), bw_music::DefaultTrackType::getThisType()) {}
@@ -27,8 +28,8 @@ bw_music::TransposeProcessor::TransposeProcessor(const babelwires::ProjectContex
     : babelwires::ParallelProcessor(projectContext, TransposeProcessorInput::getThisType(),
                                     TransposeProcessorOutput::getThisType()) {}
 
-bw_music::TransposeProcessorOutput::TransposeProcessorOutput()
-    : babelwires::ParallelProcessorOutputBase(TransposeProcessor::getCommonArrayId(),
+bw_music::TransposeProcessorOutput::TransposeProcessorOutput(const babelwires::TypeSystem& typeSystem)
+    : babelwires::ParallelProcessorOutputBase(typeSystem, TransposeProcessor::getCommonArrayId(),
                                               bw_music::DefaultTrackType::getThisType()) {}
 
 babelwires::ShortId bw_music::TransposeProcessor::getCommonArrayId() {

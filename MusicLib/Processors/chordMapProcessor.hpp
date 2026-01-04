@@ -20,7 +20,7 @@ namespace bw_music {
       public:
         REGISTERED_TYPE("ChordMapIn", "ChordMap In", "9a6aac86-fc46-40e2-91ba-c0fb053ad172", 1);
 
-        ChordMapProcessorInput();
+        ChordMapProcessorInput(const babelwires::TypeSystem& typeSystem);
 
         DECLARE_INSTANCE_BEGIN(ChordMapProcessorInput)
         DECLARE_INSTANCE_MAP_FIELD(ChrdMp, babelwires::EnumType, babelwires::EnumType)
@@ -31,7 +31,7 @@ namespace bw_music {
       public:
         REGISTERED_TYPE("ChordMapOut", "ChordMap Out", "e7ed549d-d6ef-4cca-b66e-5b271d00e0b2", 1);
 
-        ChordMapProcessorOutput();
+        ChordMapProcessorOutput(const babelwires::TypeSystem& typeSystem);
     };
 
     /// A processor which chordmaps the events in a track a specified number of times.
