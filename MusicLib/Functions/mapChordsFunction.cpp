@@ -61,14 +61,13 @@ namespace {
     std::tuple<const babelwires::TypePtrT<babelwires::EnumType>, const babelwires::TypePtrT<babelwires::EnumType>>
     decomposeMapTypes(const babelwires::TypeSystem& typeSystem, const babelwires::SumType& sumType) {
         assert(sumType.getSummands().size() == 2);
-        const babelwires::TypeExp& sourceTupleTypeExp = sumType.getSummands()[0];
-        const auto& tupleType =
-            sourceTupleTypeExp.resolveAs<babelwires::TupleType>(typeSystem);
-        assert(tupleType->getComponentTypes().size() == 2);
-        const babelwires::TypeExp& pitchClassWCTypeExp = tupleType->getComponentTypes()[0];
+        const babelwires::TypePtr& sourceTupleTypeExp = sumType.getSummands()[0];
+        const auto& tupleType = sourceTupleTypeExp->is<babelwires::TupleType>();
+        assert(tupleType.getComponentTypes().size() == 2);
+        const babelwires::TypeExp& pitchClassWCTypeExp = tupleType.getComponentTypes()[0];
         const auto& sourcePitchClassWCType =
             pitchClassWCTypeExp.resolveAs<babelwires::EnumType>(typeSystem);
-        const babelwires::TypeExp& chordTypeWCTypeExp = tupleType->getComponentTypes()[1];
+        const babelwires::TypeExp& chordTypeWCTypeExp = tupleType.getComponentTypes()[1];
         const auto& sourceChordTypeWCType =
             chordTypeWCTypeExp.resolveAs<babelwires::EnumType>(typeSystem);
         return {std::move(sourcePitchClassWCType), std::move(sourceChordTypeWCType)};
