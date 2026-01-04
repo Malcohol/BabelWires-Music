@@ -64,13 +64,9 @@ namespace {
         const babelwires::TypePtr& sourceTupleTypeExp = sumType.getSummands()[0];
         const auto& tupleType = sourceTupleTypeExp->is<babelwires::TupleType>();
         assert(tupleType.getComponentTypes().size() == 2);
-        const babelwires::TypeExp& pitchClassWCTypeExp = tupleType.getComponentTypes()[0];
-        const auto& sourcePitchClassWCType =
-            pitchClassWCTypeExp.resolveAs<babelwires::EnumType>(typeSystem);
-        const babelwires::TypeExp& chordTypeWCTypeExp = tupleType.getComponentTypes()[1];
-        const auto& sourceChordTypeWCType =
-            chordTypeWCTypeExp.resolveAs<babelwires::EnumType>(typeSystem);
-        return {std::move(sourcePitchClassWCType), std::move(sourceChordTypeWCType)};
+        const babelwires::TypePtr& pitchClassWCType = tupleType.getComponentTypes()[0];
+        const babelwires::TypePtr& chordTypeWCType = tupleType.getComponentTypes()[1];
+        return {std::move(typeAs<babelwires::EnumType>(pitchClassWCType)), std::move(typeAs<babelwires::EnumType>(chordTypeWCType))};
     }
 
     std::tuple<const babelwires::TypePtrT<babelwires::EnumType>, const babelwires::TypePtrT<babelwires::EnumType>>
