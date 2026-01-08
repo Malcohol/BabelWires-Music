@@ -283,8 +283,7 @@ namespace {
             } else if (const auto* recordType = currentType.as<babelwires::CompoundType>()) {
                 const unsigned int numChildren = recordType->getNumChildren(currentValue);
                 for (unsigned int i = 0; i < numChildren; ++i) {
-                    auto [childValue, step, childTypeExp] = recordType->getChildNonConst(currentValue, i);
-                    const babelwires::TypePtr& childType = childTypeExp.resolve(m_typeSystem);
+                    auto [childValue, step, childType] = recordType->getChildNonConst(currentValue, i);
                     babelwires::Path newPath = currentPath;
                     newPath.pushStep(*step.asField());
                     assignTracksInStructure(*childType, *childValue, newPath);

@@ -89,9 +89,9 @@ void bw_music::BuildAccompanimentProcessor::processValue(babelwires::UserLogger&
     babelwires::ValueHolder newOutputValue = output.getValue();
     outputType.setTypeVariableAssignmentAndInstantiate(typeSystem, newOutputValue, {assignedInputTypeExp});
     const auto [outputChild, outputStep, outputChildType] = outputType.getChildNonConst(newOutputValue, 0);
-    const auto& outputRecordType = outputChildType.resolveAs<babelwires::RecordType>(typeSystem);
+    const auto& outputRecordType = outputChildType->as<babelwires::RecordType>();
     const auto& [resultChild, resultStep, resultChildType] = outputRecordType->getChildNonConst(*outputChild, 0);
-    const auto& resultRecordType = resultChildType.resolveAs<babelwires::RecordType>(typeSystem);
+    const auto& resultRecordType = resultChildType->as<babelwires::RecordType>();
 
     const auto& chordType = typeSystem.getEntryByType<ChordType>();
 
