@@ -24,7 +24,7 @@ bw_music::ChordTypeSet::getChordTypesFromValue(const babelwires::TypeSystem& typ
     std::set<bw_music::ChordType::Value> selectedChords;
     for (unsigned int i = 0; i < getNumChildren(value); ++i) {
         const auto [chordValueHolder, chordStep, chordChildType] = getChild(value, i);
-        assert(chordChildType == ChordType::getThisType());
+        assert(chordChildType->getTypeExp() == ChordType::getThisType());
         const babelwires::ShortId chordId = (*chordValueHolder)->is<babelwires::EnumValue>().get();
         selectedChords.insert(chordType->getValueFromIdentifier(chordId));
     }

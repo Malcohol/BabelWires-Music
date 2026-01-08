@@ -81,9 +81,9 @@ void bw_music::BuildAccompanimentProcessor::processValue(babelwires::UserLogger&
     const babelwires::TypeSystem& typeSystem = input.getTypeSystem();
 
     const auto [inputChild, inputStep, inputChildType] = inputType.getChild(inputValue, 0);
-    const auto& inputRecordType = inputChildType.resolveAs<babelwires::RecordType>(typeSystem);
+    const auto& inputRecordType = inputChildType->as<babelwires::RecordType>();
     const auto [chordsArray, inputStep0, inputChildType0] = inputRecordType->getChild(*inputChild, 0);
-    const auto& chordsArrayType = inputChildType0.resolveAs<ChordTypeSet>(typeSystem);
+    const auto& chordsArrayType = inputChildType0->as<ChordTypeSet>();
     const auto [inputStructure, inputStep1, inputChildType1] = inputRecordType->getChild(*inputChild, 1);
 
     babelwires::ValueHolder newOutputValue = output.getValue();
