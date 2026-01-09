@@ -107,8 +107,7 @@ void bw_music::BuildAccompanimentProcessor::processValue(babelwires::UserLogger&
     resultRecordType->selectOptionals(typeSystem, *resultChild, selectedChords);
 
     for (const auto& maplet : selectedChords) {
-        auto [fieldValueHolder, fieldTypeExp] = resultRecordType->getChildByIdNonConst(*resultChild, maplet.first);
-        const auto& fieldType = fieldTypeExp.resolve(typeSystem);
+        auto [fieldValueHolder, fieldType] = resultRecordType->getChildByIdNonConst(*resultChild, maplet.first);
         // Accompaniment always generated with a C root.
         const bw_music::Chord chord = {bw_music::PitchClass::Value::C, chordType->getValueFromIdentifier(maplet.first)};
 
