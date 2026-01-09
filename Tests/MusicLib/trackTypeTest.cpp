@@ -44,7 +44,7 @@ TEST(TrackType, constructedTrackTypeCreateValue) {
 
     babelwires::TypeExp trackTypeExp(bw_music::TrackTypeConstructor::getThisIdentifier(), babelwires::RationalValue(8));
 
-    const babelwires::TypePtr& type = trackTypeExp.tryResolve(testEnvironment.m_typeSystem);
+    babelwires::TypePtr type = trackTypeExp.tryResolve(testEnvironment.m_typeSystem);
 
     babelwires::ValueHolder newValue = type->createValue(testEnvironment.m_typeSystem);
     EXPECT_TRUE(newValue);

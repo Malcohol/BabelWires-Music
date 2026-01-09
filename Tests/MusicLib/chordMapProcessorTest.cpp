@@ -38,8 +38,8 @@ namespace {
         chordMap.setSourceTypeExp(bw_music::getMapChordFunctionSourceTypeExp());
         chordMap.setTargetTypeExp(bw_music::getMapChordFunctionTargetTypeExp());
 
-        const auto& sourceType = chordMap.getSourceTypeExp().assertResolve(typeSystem);
-        const auto& targetType = chordMap.getTargetTypeExp().assertResolve(typeSystem);
+        auto sourceType = chordMap.getSourceTypeExp().assertResolve(typeSystem);
+        auto targetType = chordMap.getTargetTypeExp().assertResolve(typeSystem);
 
         // This object gets re-used.
         babelwires::OneToOneMapEntryData chordMaplet(typeSystem, *sourceType, *targetType);

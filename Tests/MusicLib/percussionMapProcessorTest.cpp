@@ -34,7 +34,7 @@ namespace {
         percussionMap.setSourceTypeExp(bw_music::BuiltInPercussionInstruments::getThisType());
         percussionMap.setTargetTypeExp(targetTypeExp);
         
-        const auto& targetType = targetTypeExp.assertResolve(typeSystem);
+        babelwires::TypePtr targetType = targetTypeExp.assertResolve(typeSystem);
 
         babelwires::OneToOneMapEntryData maplet(typeSystem, *builtInPercussion, *targetType);
 

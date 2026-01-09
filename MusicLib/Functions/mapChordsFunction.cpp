@@ -72,14 +72,14 @@ namespace {
     std::tuple<const babelwires::TypePtrT<babelwires::EnumType>, const babelwires::TypePtrT<babelwires::EnumType>>
     getSourceTupleComponentTypes(const babelwires::TypeSystem& typeSystem) {
         const babelwires::TypeExp sourceTypeExp = bw_music::getMapChordFunctionSourceTypeExp();
-        const auto& sourceSumType = sourceTypeExp.resolveAs<babelwires::SumType>(typeSystem);
+        auto sourceSumType = sourceTypeExp.resolveAs<babelwires::SumType>(typeSystem);
         return decomposeMapTypes(typeSystem, *sourceSumType);
     }
 
     std::tuple<const babelwires::TypePtrT<babelwires::EnumType>, const babelwires::TypePtrT<babelwires::EnumType>>
     getTargetTupleComponentTypes(const babelwires::TypeSystem& typeSystem) {
         const babelwires::TypeExp targetTypeExp = bw_music::getMapChordFunctionTargetTypeExp();
-        const auto& targetSumType = targetTypeExp.resolveAs<babelwires::SumType>(typeSystem);
+        auto targetSumType = targetTypeExp.resolveAs<babelwires::SumType>(typeSystem);
         return decomposeMapTypes(typeSystem, *targetSumType);
     }
 
