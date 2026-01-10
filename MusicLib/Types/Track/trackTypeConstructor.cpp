@@ -33,5 +33,5 @@ bw_music::TrackTypeConstructor::constructType(const babelwires::TypeSystem& type
             << "TrackTypeConstructor does not expect type arguments but got " << arguments.getTypeArguments().size();
     }
     ModelDuration initialDuration = extractValueArguments(arguments.getValueArguments());
-    return babelwires::makeType<babelwires::ConstructedType<TrackType>>(std::move(newTypeExp), initialDuration);
+    return babelwires::makeType<TrackType>(std::move(newTypeExp), initialDuration);
 }

@@ -16,13 +16,13 @@
 #include <Common/Identifiers/registeredIdentifier.hpp>
 
 bw_music::ExcerptProcessorInput::ExcerptProcessorInput(const babelwires::TypeSystem& typeSystem)
-    : babelwires::ParallelProcessorInputBase(typeSystem,
+    : babelwires::ParallelProcessorInputBase(getThisType(), typeSystem,
           {{BW_SHORT_ID("Start", "Start", "4b95f5db-a542-4660-a8db-97d3a5f831ca"), Duration::getThisType()},
            {BW_SHORT_ID("Duratn", "Duration", "d83ebbc2-1492-4578-a3b8-4969eb6a2042"), Duration::getThisType()}},
           ExcerptProcessor::getCommonArrayId(), bw_music::DefaultTrackType::getThisType()) {}
 
 bw_music::ExcerptProcessorOutput::ExcerptProcessorOutput(const babelwires::TypeSystem& typeSystem)
-    : babelwires::ParallelProcessorOutputBase(typeSystem, ExcerptProcessor::getCommonArrayId(),
+    : babelwires::ParallelProcessorOutputBase(getThisType(), typeSystem, ExcerptProcessor::getCommonArrayId(),
                                               bw_music::DefaultTrackType::getThisType()) {}
 
 babelwires::ShortId bw_music::ExcerptProcessor::getCommonArrayId() {

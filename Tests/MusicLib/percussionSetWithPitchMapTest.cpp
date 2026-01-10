@@ -12,11 +12,8 @@
 namespace {
     struct TestPercussionSet : bw_music::PercussionSetWithPitchMap
     {
-        TestPercussionSet(InstrumentBlock block, bw_music::Pitch pitchOfDefaultValue) : PercussionSetWithPitchMap(std::move(block), pitchOfDefaultValue) {}
-        TestPercussionSet(std::vector<InstrumentBlock> instruments, bw_music::Pitch pitchOfDefaultValue) : PercussionSetWithPitchMap(std::move(instruments), pitchOfDefaultValue) {}
-        babelwires::TypeExp getTypeExp() const {
-            return testUtils::getTestRegisteredMediumIdentifier("Foo");
-        }
+        TestPercussionSet(InstrumentBlock block, bw_music::Pitch pitchOfDefaultValue) : PercussionSetWithPitchMap(testUtils::getTestRegisteredMediumIdentifier("Foo"), std::move(block), pitchOfDefaultValue) {}
+        TestPercussionSet(std::vector<InstrumentBlock> instruments, bw_music::Pitch pitchOfDefaultValue) : PercussionSetWithPitchMap(testUtils::getTestRegisteredMediumIdentifier("Foo"), std::move(instruments), pitchOfDefaultValue) {}
     };
 }
 

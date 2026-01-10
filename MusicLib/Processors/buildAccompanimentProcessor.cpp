@@ -20,7 +20,7 @@
 #include <BabelWiresLib/ValueTree/valueTreeNode.hpp>
 
 bw_music::BuildAccompanimentProcessorInput::BuildAccompanimentProcessorInput(const babelwires::TypeSystem& typeSystem)
-    : GenericType(typeSystem,
+    : GenericType(getThisType(), typeSystem,
                   babelwires::RecordTypeConstructor::makeTypeExp(
                       getIdOfChordsArray(), ChordTypeSet::getThisType(), getIdOfInput(),
                       babelwires::TypeVariableTypeConstructor::makeTypeExp()),
@@ -39,7 +39,7 @@ babelwires::ShortId bw_music::BuildAccompanimentProcessorOutput::getIdOfResult()
 }
 
 bw_music::BuildAccompanimentProcessorOutput::BuildAccompanimentProcessorOutput(const babelwires::TypeSystem& typeSystem)
-    : GenericType(typeSystem,
+    : GenericType(getThisType(), typeSystem,
                   babelwires::TypeExp(babelwires::RecordTypeConstructor::makeTypeExp(getIdOfResult(),
                                                                                      getGenericAccompanimentTypeExp())),
                   1) {}

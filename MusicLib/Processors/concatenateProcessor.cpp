@@ -13,12 +13,12 @@
 #include <BabelWiresLib/Types/Int/intTypeConstructor.hpp>
 
 bw_music::ConcatenateProcessorInput::ConcatenateProcessorInput(const babelwires::TypeSystem& typeSystem)
-    : babelwires::RecordType(typeSystem,
+    : babelwires::RecordType(getThisType(), typeSystem,
           {{BW_SHORT_ID("Input", "Input tracks", "3b8d8cd7-21d9-44a1-877e-134915fe5aca"),
             babelwires::ArrayTypeConstructor::makeTypeExp(DefaultTrackType::getThisType(), 2, 16)}}) {}
 
 bw_music::ConcatenateProcessorOutput::ConcatenateProcessorOutput(const babelwires::TypeSystem& typeSystem)
-    : babelwires::RecordType(typeSystem, {{BW_SHORT_ID("Output", "Output track", "873d5d66-c5ec-46a4-9aba-f5f4223bdfd4"),
+    : babelwires::RecordType(getThisType(), typeSystem, {{BW_SHORT_ID("Output", "Output track", "873d5d66-c5ec-46a4-9aba-f5f4223bdfd4"),
                                DefaultTrackType::getThisType()}}) {}
 
 bw_music::ConcatenateProcessor::ConcatenateProcessor(const babelwires::ProjectContext& projectContext)

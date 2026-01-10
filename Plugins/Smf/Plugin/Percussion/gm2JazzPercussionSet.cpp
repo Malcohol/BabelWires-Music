@@ -8,7 +8,7 @@
 #include <Plugins/Smf/Plugin/Percussion/gm2JazzPercussionSet.hpp>
 
 smf::GM2JazzPercussionSet::GM2JazzPercussionSet(const bw_music::BuiltInPercussionInstruments& builtInInstruments)
-    : PercussionSetWithPitchMap(InstrumentBlock{{bw_music::BuiltInPercussionInstruments::Value::HighQ,
+    : PercussionSetWithPitchMap(getThisType(), InstrumentBlock{{bw_music::BuiltInPercussionInstruments::Value::HighQ,
                                                  bw_music::BuiltInPercussionInstruments::Value::Slap,
                                                  bw_music::BuiltInPercussionInstruments::Value::ScrPsh,
                                                  bw_music::BuiltInPercussionInstruments::Value::ScrPll,

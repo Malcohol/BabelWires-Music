@@ -28,7 +28,7 @@ namespace {
 } // namespace
 
 smf::RecordOfMidiTracks::RecordOfMidiTracks(const babelwires::TypeSystem& typeSystem)
-    : babelwires::RecordType(typeSystem, {{getTrackIdFromChannel(0), TypeOfTracks::getThisType(),
+    : babelwires::RecordType(getThisType(), typeSystem, {{getTrackIdFromChannel(0), TypeOfTracks::getThisType(),
                                babelwires::RecordType::Optionality::optionalDefaultInactive},
                               {getTrackIdFromChannel(1), TypeOfTracks::getThisType(),
                                babelwires::RecordType::Optionality::optionalDefaultInactive},

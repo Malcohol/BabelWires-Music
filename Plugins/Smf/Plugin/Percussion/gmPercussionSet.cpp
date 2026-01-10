@@ -8,7 +8,7 @@
 #include <Plugins/Smf/Plugin/Percussion/gmPercussionSet.hpp>
 
 smf::GMPercussionSet::GMPercussionSet(const bw_music::BuiltInPercussionInstruments& builtInInstruments)
-    : PercussionSetWithPitchMap(InstrumentBlock{{bw_music::BuiltInPercussionInstruments::Value::AcBass,
+    : PercussionSetWithPitchMap(getThisType(), InstrumentBlock{{bw_music::BuiltInPercussionInstruments::Value::AcBass,
                                                  bw_music::BuiltInPercussionInstruments::Value::Bass1,
                                                  bw_music::BuiltInPercussionInstruments::Value::SStick,
                                                  bw_music::BuiltInPercussionInstruments::Value::AcSnr,

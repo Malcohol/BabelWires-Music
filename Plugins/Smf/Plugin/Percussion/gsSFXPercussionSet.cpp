@@ -9,7 +9,7 @@
 
 smf::GsSFXPercussionSet::GsSFXPercussionSet(const bw_music::BuiltInPercussionInstruments& builtInInstruments)
     : PercussionSetWithPitchMap(
-          InstrumentBlock{
+          getThisType(), InstrumentBlock{
               {
                   bw_music::BuiltInPercussionInstruments::Value::ScrPsh, // Scratch Push 2
                   bw_music::BuiltInPercussionInstruments::Value::ScrPll, // Scratch Push 1

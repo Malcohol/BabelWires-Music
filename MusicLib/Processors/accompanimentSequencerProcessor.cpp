@@ -19,7 +19,7 @@
 
 bw_music::AccompanimentSequencerProcessorInput::AccompanimentSequencerProcessorInput(
     const babelwires::TypeSystem& typeSystem)
-    : babelwires::GenericType(
+    : babelwires::GenericType(getThisType(), 
           typeSystem,
           babelwires::RecordTypeConstructor::makeTypeExp(getChordTrackId(), DefaultTrackType::getThisType(),
                                                          getAccompTracksId(), getGenericAccompanimentTypeExp()),
@@ -27,7 +27,7 @@ bw_music::AccompanimentSequencerProcessorInput::AccompanimentSequencerProcessorI
 
 bw_music::AccompanimentSequencerProcessorOutput::AccompanimentSequencerProcessorOutput(
     const babelwires::TypeSystem& typeSystem)
-    : babelwires::GenericType(typeSystem,
+    : babelwires::GenericType(getThisType(), typeSystem,
                               babelwires::RecordTypeConstructor::makeTypeExp(
                                   getResultId(), babelwires::TypeVariableTypeConstructor::makeTypeExp()),
                               1) {}

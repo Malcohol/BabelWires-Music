@@ -16,12 +16,12 @@
 #include <Common/Identifiers/registeredIdentifier.hpp>
 
 bw_music::PercussionMapProcessorInput::PercussionMapProcessorInput(const babelwires::TypeSystem& typeSystem)
-    : babelwires::ParallelProcessorInputBase(typeSystem, 
+    : babelwires::ParallelProcessorInputBase(getThisType(), typeSystem, 
           {{BW_SHORT_ID("Map", "Map", "b8cbf8c9-579b-4292-bdef-524b7d1010bc"), bw_music::getPercussionMapType()}},
           PercussionMapProcessor::getCommonArrayId(), bw_music::DefaultTrackType::getThisType()) {}
 
 bw_music::PercussionMapProcessorOutput::PercussionMapProcessorOutput(const babelwires::TypeSystem& typeSystem)
-    : babelwires::ParallelProcessorOutputBase(typeSystem, PercussionMapProcessor::getCommonArrayId(),
+    : babelwires::ParallelProcessorOutputBase(getThisType(), typeSystem, PercussionMapProcessor::getCommonArrayId(),
                                                    bw_music::DefaultTrackType::getThisType()) {}
 
 bw_music::PercussionMapProcessor::PercussionMapProcessor(const babelwires::ProjectContext& projectContext)

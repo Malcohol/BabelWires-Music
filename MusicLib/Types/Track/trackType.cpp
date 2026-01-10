@@ -9,8 +9,11 @@
 
 #include <MusicLib/Types/Track/track.hpp>
 
-bw_music::TrackType::TrackType(ModelDuration defaultDuration)
-    : m_defaultDuration(defaultDuration) {}
+bw_music::TrackType::TrackType(babelwires::TypeExp typeExp, ModelDuration defaultDuration)
+    : babelwires::Type(std::move(typeExp))
+    , m_defaultDuration(defaultDuration) {}
+bw_music::DefaultTrackType::DefaultTrackType()
+    : TrackType(getThisType()) {}
 
 babelwires::NewValueHolder bw_music::TrackType::createValue(const babelwires::TypeSystem& typeSystem) const {
     return babelwires::ValueHolder::makeValue<Track>(m_defaultDuration);

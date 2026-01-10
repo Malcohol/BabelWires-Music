@@ -17,7 +17,7 @@ namespace bw_music {
     class Tempo : public babelwires::IntType {
       public:
         REGISTERED_TYPE("tempo", "Tempo", "6ee26c7f-ced6-400d-a927-9464a143b39c", 1);
-        Tempo() : babelwires::IntType({0, 255}, 120) {}
+        Tempo() : babelwires::IntType(getThisType(), {0, 255}, 120) {}
     };
 
 } // namespace bw_music

@@ -14,13 +14,13 @@
 #include <Common/Identifiers/registeredIdentifier.hpp>
 
 bw_music::SplitAtPitchProcessorInput::SplitAtPitchProcessorInput(const babelwires::TypeSystem& typeSystem)
-    : babelwires::RecordType(typeSystem, {{BW_SHORT_ID("Pitch", "Pitch", "6b721baa-084f-450b-bf35-2e08a9592958"),
+    : babelwires::RecordType(getThisType(), typeSystem, {{BW_SHORT_ID("Pitch", "Pitch", "6b721baa-084f-450b-bf35-2e08a9592958"),
                                bw_music::PitchEnum::getThisType()},
                               {BW_SHORT_ID("Input", "Input Track", "9314a43f-256a-4915-b218-f2ba37133863"),
                                DefaultTrackType::getThisType()}}) {}
 
 bw_music::SplitAtPitchProcessorOutput::SplitAtPitchProcessorOutput(const babelwires::TypeSystem& typeSystem)
-    : babelwires::RecordType(typeSystem, {
+    : babelwires::RecordType(getThisType(), typeSystem, {
           {BW_SHORT_ID("Above", "Notes at/above", "4c65b7f1-e546-4df2-9891-23623b74bc23"),
            DefaultTrackType::getThisType()},
           {BW_SHORT_ID("Below", "Notes below", "ab6a1d57-8c77-4df9-baf7-4b24136d9279"),

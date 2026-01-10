@@ -18,7 +18,7 @@
 #include <Common/Identifiers/registeredIdentifier.hpp>
 
 bw_music::ChordMapProcessorInput::ChordMapProcessorInput(const babelwires::TypeSystem& typeSystem)
-    : babelwires::ParallelProcessorInputBase(typeSystem,
+    : babelwires::ParallelProcessorInputBase(getThisType(), typeSystem,
           {{BW_SHORT_ID("ChrdMp", "Chord map", "6054b8e9-5f48-4e9f-8807-b6377d36d6aa"),
             babelwires::MapTypeConstructor::makeTypeExp(bw_music::getMapChordFunctionSourceTypeExp(),
                                                         bw_music::getMapChordFunctionTargetTypeExp(),
@@ -26,7 +26,7 @@ bw_music::ChordMapProcessorInput::ChordMapProcessorInput(const babelwires::TypeS
           ChordMapProcessor::getCommonArrayId(), bw_music::DefaultTrackType::getThisType()) {}
 
 bw_music::ChordMapProcessorOutput::ChordMapProcessorOutput(const babelwires::TypeSystem& typeSystem)
-    : babelwires::ParallelProcessorOutputBase(typeSystem, ChordMapProcessor::getCommonArrayId(),
+    : babelwires::ParallelProcessorOutputBase(getThisType(), typeSystem, ChordMapProcessor::getCommonArrayId(),
                                               bw_music::DefaultTrackType::getThisType()) {}
 
 bw_music::ChordMapProcessor::ChordMapProcessor(const babelwires::ProjectContext& projectContext)

@@ -9,7 +9,7 @@
 #include <BabelWiresLib/Types/Record/recordValue.hpp>
 
 bw_music_testplugin::SimpleAccompaniment::SimpleAccompaniment(const babelwires::TypeSystem& typeSystem)
-    : babelwires::RecordType(typeSystem, {{bw_music::ChordType::getIdentifierFromValue(bw_music::ChordType::Value::M),
+    : babelwires::RecordType(getThisType(), typeSystem, {{bw_music::ChordType::getIdentifierFromValue(bw_music::ChordType::Value::M),
                                TestTrackContainer::getThisType()},
                               {bw_music::ChordType::getIdentifierFromValue(bw_music::ChordType::Value::m),
                                TestTrackContainer::getThisType()},

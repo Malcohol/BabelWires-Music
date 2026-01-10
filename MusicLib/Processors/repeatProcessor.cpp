@@ -17,14 +17,14 @@
 
 bw_music::RepeatProcessorInput::RepeatProcessorInput(const babelwires::TypeSystem& typeSystem)
     : babelwires::ParallelProcessorInputBase(
-          typeSystem,
+          getThisType(), typeSystem,
           {{BW_SHORT_ID("Count", "Count", "f5d2ab08-4430-47fa-b26c-0ff2154826e3"),
             babelwires::IntTypeConstructor::makeTypeExp(0, std::numeric_limits<babelwires::IntValue::NativeType>::max(),
                                                         2)}},
           RepeatProcessor::getCommonArrayId(), bw_music::DefaultTrackType::getThisType()) {}
 
 bw_music::RepeatProcessorOutput::RepeatProcessorOutput(const babelwires::TypeSystem& typeSystem)
-    : babelwires::ParallelProcessorOutputBase(typeSystem, RepeatProcessor::getCommonArrayId(),
+    : babelwires::ParallelProcessorOutputBase(getThisType(), typeSystem, RepeatProcessor::getCommonArrayId(),
                                               bw_music::DefaultTrackType::getThisType()) {}
 
 bw_music::RepeatProcessor::RepeatProcessor(const babelwires::ProjectContext& projectContext)

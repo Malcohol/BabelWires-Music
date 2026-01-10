@@ -18,14 +18,14 @@
 
 bw_music::QuantizeProcessorInput::QuantizeProcessorInput(const babelwires::TypeSystem& typeSystem)
     : babelwires::ParallelProcessorInputBase(
-          typeSystem,
+          getThisType(), typeSystem,
           {{BW_SHORT_ID("Beat", "Beat", "1651ab49-3313-4cd3-b92d-16742b7f5921"),
             babelwires::RationalTypeConstructor::makeTypeExp(
                 0, std::numeric_limits<babelwires::Rational::ComponentType>::max(), babelwires::Rational(1, 16))}},
           QuantizeProcessor::getCommonArrayId(), bw_music::DefaultTrackType::getThisType()) {}
 
 bw_music::QuantizeProcessorOutput::QuantizeProcessorOutput(const babelwires::TypeSystem& typeSystem)
-    : babelwires::ParallelProcessorOutputBase(typeSystem, QuantizeProcessor::getCommonArrayId(),
+    : babelwires::ParallelProcessorOutputBase(getThisType(), typeSystem, QuantizeProcessor::getCommonArrayId(),
                                               bw_music::DefaultTrackType::getThisType()) {}
 
 bw_music::QuantizeProcessor::QuantizeProcessor(const babelwires::ProjectContext& projectContext)

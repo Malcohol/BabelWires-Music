@@ -13,11 +13,11 @@
 #include <BabelWiresLib/Types/Rational/rationalValue.hpp>
 
 bw_music::GetChordTypesProcessorInput::GetChordTypesProcessorInput(const babelwires::TypeSystem& typeSystem)
-    : babelwires::RecordType(typeSystem,
+    : babelwires::RecordType(getThisType(), typeSystem,
           {{BW_SHORT_ID("Track", "Track", "0acf2346-0e45-44ed-8a5d-4c6d0c2c1244"), DefaultTrackType::getThisType()}}) {}
 
 bw_music::GetChordTypesProcessorOutput::GetChordTypesProcessorOutput(const babelwires::TypeSystem& typeSystem)
-    : babelwires::RecordType(typeSystem, {{BW_SHORT_ID("Chords", "Chords", "5f1aae17-1d3c-4a0c-9cbc-550cd2ff88a2"),
+    : babelwires::RecordType(getThisType(), typeSystem, {{BW_SHORT_ID("Chords", "Chords", "5f1aae17-1d3c-4a0c-9cbc-550cd2ff88a2"),
                                ChordTypeSet::getThisType()}}) {}
 
 bw_music::GetChordTypesProcessor::GetChordTypesProcessor(const babelwires::ProjectContext& projectContext)
