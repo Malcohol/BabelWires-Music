@@ -9,7 +9,7 @@
 
 smf::XgAnalogPercussionSet::XgAnalogPercussionSet(const bw_music::BuiltInPercussionInstruments& builtInInstruments)
     : PercussionSetWithPitchMap(
-          InstrumentBlock{{bw_music::BuiltInPercussionInstruments::Value::MSurdo,
+          getThisIdentifier(), InstrumentBlock{{bw_music::BuiltInPercussionInstruments::Value::MSurdo,
                            bw_music::BuiltInPercussionInstruments::Value::OSurdo,
                            bw_music::BuiltInPercussionInstruments::Value::HighQ,
                            bw_music::BuiltInPercussionInstruments::Value::Slap,

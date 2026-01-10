@@ -8,13 +8,13 @@
 
 #include <BabelWiresLib/Types/Record/recordValue.hpp>
 
-bw_music_testplugin::SimpleAccompaniment::SimpleAccompaniment()
-    : babelwires::RecordType({{bw_music::ChordType::getIdentifierFromValue(bw_music::ChordType::Value::M),
-                               TestTrackContainer::getThisType()},
+bw_music_testplugin::SimpleAccompaniment::SimpleAccompaniment(const babelwires::TypeSystem& typeSystem)
+    : babelwires::RecordType(getThisIdentifier(), typeSystem, {{bw_music::ChordType::getIdentifierFromValue(bw_music::ChordType::Value::M),
+                               TestTrackContainer::getThisIdentifier()},
                               {bw_music::ChordType::getIdentifierFromValue(bw_music::ChordType::Value::m),
-                               TestTrackContainer::getThisType()},
+                               TestTrackContainer::getThisIdentifier()},
                               {bw_music::ChordType::getIdentifierFromValue(bw_music::ChordType::Value::dim),
-                               TestTrackContainer::getThisType()}}) {}
+                               TestTrackContainer::getThisIdentifier()}}) {}
 
 bw_music::Track bw_music_testplugin::SimpleAccompaniment::getCMajorArpeggioTrack() {
     bw_music::TrackBuilder trackBuilder;
@@ -44,22 +44,22 @@ bw_music::ModelDuration bw_music_testplugin::SimpleAccompaniment::getTrackDurati
 babelwires::NewValueHolder
 bw_music_testplugin::SimpleAccompaniment::createValue(const babelwires::TypeSystem& typeSystem) const {
     auto newValue = RecordType::createValue(typeSystem);
-    const auto& testTrackContainer = typeSystem.getEntryByType<TestTrackContainer>();
+    const auto& testTrackContainer = typeSystem.getRegisteredType<TestTrackContainer>();
 
     auto& recordValue = newValue.m_nonConstReference.is<babelwires::RecordValue>();
     {
         auto& cmajor = recordValue.getValue(bw_music::ChordType::getIdentifierFromValue(bw_music::ChordType::Value::M));
         bw_music::Track notes = getCMajorArpeggioTrack();
         {
-            auto [track1, _] = testTrackContainer.getChildByIdNonConst(cmajor, TestTrackContainer::getTrack1Id());
+            auto [track1, _] = testTrackContainer->getChildByIdNonConst(cmajor, TestTrackContainer::getTrack1Id());
             track1.copyContentsAndGetNonConst().is<bw_music::Track>() = notes;
         }
         {
-            auto [track2, _] = testTrackContainer.getChildByIdNonConst(cmajor, TestTrackContainer::getTrack2Id());
+            auto [track2, _] = testTrackContainer->getChildByIdNonConst(cmajor, TestTrackContainer::getTrack2Id());
             track2.copyContentsAndGetNonConst().is<bw_music::Track>() = transposeTrack(notes, 12); // One octave up
         }
         {
-            auto [other, _] = testTrackContainer.getChildByIdNonConst(cmajor, TestTrackContainer::getOtherId());
+            auto [other, _] = testTrackContainer->getChildByIdNonConst(cmajor, TestTrackContainer::getOtherId());
             other.copyContentsAndGetNonConst().is<babelwires::IntValue>() = 1;
         }
     }
@@ -69,16 +69,16 @@ bw_music_testplugin::SimpleAccompaniment::createValue(const babelwires::TypeSyst
         notes =
             fitToChordFunction(notes, bw_music::Chord(bw_music::PitchClass::Value::C, bw_music::ChordType::Value::m));
         {
-            auto [track1, _] = testTrackContainer.getChildByIdNonConst(cminor, TestTrackContainer::getTrack1Id());
+            auto [track1, _] = testTrackContainer->getChildByIdNonConst(cminor, TestTrackContainer::getTrack1Id());
             track1.copyContentsAndGetNonConst().is<bw_music::Track>() = notes;
         }
         {
-            auto [track2, _] = testTrackContainer.getChildByIdNonConst(cminor, TestTrackContainer::getTrack2Id());
+            auto [track2, _] = testTrackContainer->getChildByIdNonConst(cminor, TestTrackContainer::getTrack2Id());
             track2.copyContentsAndGetNonConst().is<bw_music::Track>() =
                 transposeTrack(notes, 12); // One octave up, C minor
         }
         {
-            auto [other, _] = testTrackContainer.getChildByIdNonConst(cminor, TestTrackContainer::getOtherId());
+            auto [other, _] = testTrackContainer->getChildByIdNonConst(cminor, TestTrackContainer::getOtherId());
             other.copyContentsAndGetNonConst().is<babelwires::IntValue>() = 2;
         }
     }
@@ -89,15 +89,15 @@ bw_music_testplugin::SimpleAccompaniment::createValue(const babelwires::TypeSyst
         notes =
             fitToChordFunction(notes, bw_music::Chord(bw_music::PitchClass::Value::C, bw_music::ChordType::Value::dim));
         {
-            auto [track1, _] = testTrackContainer.getChildByIdNonConst(diminished, TestTrackContainer::getTrack1Id());
+            auto [track1, _] = testTrackContainer->getChildByIdNonConst(diminished, TestTrackContainer::getTrack1Id());
             track1.copyContentsAndGetNonConst().is<bw_music::Track>() = notes;
         }
         {
-            auto [track2, _] = testTrackContainer.getChildByIdNonConst(diminished, TestTrackContainer::getTrack2Id());
+            auto [track2, _] = testTrackContainer->getChildByIdNonConst(diminished, TestTrackContainer::getTrack2Id());
             track2.copyContentsAndGetNonConst().is<bw_music::Track>() = transposeTrack(notes, 12); // One octave up
         }
         {
-            auto [other, _] = testTrackContainer.getChildByIdNonConst(diminished, TestTrackContainer::getOtherId());
+            auto [other, _] = testTrackContainer->getChildByIdNonConst(diminished, TestTrackContainer::getOtherId());
             other.copyContentsAndGetNonConst().is<babelwires::IntValue>() = 3;
         }
     }

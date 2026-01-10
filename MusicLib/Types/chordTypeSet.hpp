@@ -24,7 +24,7 @@ namespace bw_music {
       public:
         REGISTERED_TYPE("chordSet", "Chord Type Set", "e3593036-1a41-4a0d-9227-5d091106e16d", 1);
 
-        ChordTypeSet();
+        ChordTypeSet(const babelwires::TypeSystem& typeSystem);
         
         /// Obtain the set of chords stored in the given value.
         std::set<ChordType::Value> getChordTypesFromValue(const babelwires::TypeSystem& typeSystem, const babelwires::ValueHolder& value) const;

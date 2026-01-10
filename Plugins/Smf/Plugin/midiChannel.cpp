@@ -8,4 +8,4 @@
 #include <Plugins/Smf/Plugin/midiChannel.hpp>
 
 smf::MidiChannel::MidiChannel()
-    : IntType({0, 15}, 0) {}
+    : IntType(getThisIdentifier(), {0, 15}, 0) {}

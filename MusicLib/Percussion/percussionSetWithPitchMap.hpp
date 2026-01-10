@@ -33,10 +33,10 @@ namespace bw_music {
         };
 
         /// This constructor expects instruments to be in a single contiguous block.
-        PercussionSetWithPitchMap(InstrumentBlock instruments, bw_music::Pitch pitchOfDefaultValue);
+        PercussionSetWithPitchMap(babelwires::TypeExp typeExp, InstrumentBlock instruments, bw_music::Pitch pitchOfDefaultValue);
 
         /// This constructor allows more than one, non-overlapping block of instruments.
-        PercussionSetWithPitchMap(std::vector<InstrumentBlock> instruments, bw_music::Pitch pitchOfDefaultValue);
+        PercussionSetWithPitchMap(babelwires::TypeExp typeExp, std::vector<InstrumentBlock> instruments, bw_music::Pitch pitchOfDefaultValue);
 
         /// Get the pitch of an instrument if it is in this set.
         /// The highest pitch of any duplicate instrument is returned.
@@ -49,7 +49,7 @@ namespace bw_music {
         // Private class just used to pass complex calculated arguments to the base class constructor.
         class ComplexConstructorArguments;
 
-        PercussionSetWithPitchMap(ComplexConstructorArguments&& removeDuplicates);
+        PercussionSetWithPitchMap(babelwires::TypeExp typeExp, ComplexConstructorArguments&& removeDuplicates);
 
       private:
         std::unordered_map<bw_music::Pitch, babelwires::ShortId> m_pitchToInstrument;

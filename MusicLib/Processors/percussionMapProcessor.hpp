@@ -20,7 +20,7 @@ namespace bw_music {
       public:
         REGISTERED_TYPE("PercMapIn", "PercussionMap In", "d422110c-3ea4-42a3-86b0-311332836504", 1);
 
-        PercussionMapProcessorInput();
+        PercussionMapProcessorInput(const babelwires::TypeSystem& typeSystem);
 
         DECLARE_INSTANCE_BEGIN(PercussionMapProcessorInput)
         DECLARE_INSTANCE_NON_INSTANCE_FIELD(Map)
@@ -31,7 +31,7 @@ namespace bw_music {
       public:
         REGISTERED_TYPE("PercMapOut", "PercussionMap Out", "e0940d22-c79a-4139-a0ef-00aee485ef2a", 1);
 
-        PercussionMapProcessorOutput();
+        PercussionMapProcessorOutput(const babelwires::TypeSystem& typeSystem);
     };
 
     /// A processor which percussionmaps the events in a track a specified number of times.

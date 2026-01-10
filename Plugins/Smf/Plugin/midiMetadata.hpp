@@ -20,7 +20,7 @@ namespace smf {
       public:
         REGISTERED_TYPE("midiMetadata", "MIDI Metadata", "5032054f-d1b7-4cb4-8bac-2de60a1bc078", 1);
 
-        MidiMetadata();
+        MidiMetadata(const babelwires::TypeSystem& typeSystem);
 
         DECLARE_INSTANCE_BEGIN(MidiMetadata)
         DECLARE_INSTANCE_FIELD(Spec, GMSpecType)

@@ -22,7 +22,7 @@ namespace bw_music {
       public:
         REGISTERED_TYPE("ChordTypesIn", "Get Chord Types In", "d74143a4-92c1-46a0-be85-350720a2045f", 1);
 
-        GetChordTypesProcessorInput();
+        GetChordTypesProcessorInput(const babelwires::TypeSystem& typeSystem);
         DECLARE_INSTANCE_BEGIN(GetChordTypesProcessorInput)
         DECLARE_INSTANCE_FIELD(Track, TrackType)
         DECLARE_INSTANCE_END()
@@ -32,7 +32,7 @@ namespace bw_music {
       public:
         REGISTERED_TYPE("ChordTypesOut", "Get Chord Types Out", "6336361f-1861-4cda-8363-cdfc9f0950ed", 1);
 
-        GetChordTypesProcessorOutput();
+        GetChordTypesProcessorOutput(const babelwires::TypeSystem& typeSystem);
         DECLARE_INSTANCE_BEGIN(GetChordTypesProcessorOutput)
         DECLARE_INSTANCE_NON_INSTANCE_FIELD(Chords)
         DECLARE_INSTANCE_END()

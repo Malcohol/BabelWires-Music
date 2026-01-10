@@ -16,7 +16,7 @@ namespace bw_music {
       public:
         REGISTERED_TYPE("RepeatTrcksIn", "Repeat In", "23dc427d-8171-4de4-a9b6-15c16d9ed373", 1);
 
-        RepeatProcessorInput();
+        RepeatProcessorInput(const babelwires::TypeSystem& typeSystem);
 
         DECLARE_INSTANCE_BEGIN(RepeatProcessorInput)
         DECLARE_INSTANCE_FIELD(Count, babelwires::IntType)
@@ -28,7 +28,7 @@ namespace bw_music {
       public:
         REGISTERED_TYPE("RepeatTrcksOut", "Repeat Out", "c0d3c991-8e57-4bb9-86bd-68fdbf854434", 1);
 
-        RepeatProcessorOutput();
+        RepeatProcessorOutput(const babelwires::TypeSystem& typeSystem);
     };
 
     /// A processor which repeats the events in a track a specified number of times.

@@ -18,7 +18,7 @@
 ENUM_DEFINE_ENUM_VALUE_SOURCE(bw_music::MonophonicSubtracksPolicyEnum, MONOPHONIC_SUBTRACK_POLICY);
 
 bw_music::MonophonicSubtracksPolicyEnum::MonophonicSubtracksPolicyEnum()
-    : babelwires::EnumType(getStaticValueSet(), 0) {}
+    : babelwires::EnumType(getThisIdentifier(), getStaticValueSet(), 0) {}
 
 namespace {
     struct TrackBuilders {

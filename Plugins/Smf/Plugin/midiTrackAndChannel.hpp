@@ -37,7 +37,7 @@ namespace smf {
     class MidiTrackAndChannel : public babelwires::RecordType {
       public:
         REGISTERED_TYPE("TrackChannel", "Track and Channel", "5e9b395c-ec13-4bdb-9b2b-b060ba7fb707", 1);
-        MidiTrackAndChannel();
+        MidiTrackAndChannel(const babelwires::TypeSystem& typeSystem);
 
         static babelwires::ShortId getTrackIdFromChannel(unsigned int channel);
 

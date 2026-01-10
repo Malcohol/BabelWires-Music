@@ -22,7 +22,7 @@ namespace bw_music {
       public:
         REGISTERED_TYPE("PitchSplitIn", "Split At Pitch Input", "f901af3a-c27b-449c-961a-8f43dee7d9a6", 1);
 
-        SplitAtPitchProcessorInput();
+        SplitAtPitchProcessorInput(const babelwires::TypeSystem& typeSystem);
 
         DECLARE_INSTANCE_BEGIN(SplitAtPitchProcessorInput)
         DECLARE_INSTANCE_FIELD(Pitch, bw_music::PitchEnum)
@@ -34,7 +34,7 @@ namespace bw_music {
       public:
         REGISTERED_TYPE("PitchSplitOut", "Split At Pitch Output", "50f790e1-0ef3-4f34-ad14-5a6762772e19", 1);
 
-        SplitAtPitchProcessorOutput();
+        SplitAtPitchProcessorOutput(const babelwires::TypeSystem& typeSystem);
 
         DECLARE_INSTANCE_BEGIN(SplitAtPitchProcessorOutput)
         DECLARE_INSTANCE_FIELD(Above, bw_music::TrackType)

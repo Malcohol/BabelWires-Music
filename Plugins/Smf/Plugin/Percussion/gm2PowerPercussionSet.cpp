@@ -8,7 +8,7 @@
 #include <Plugins/Smf/Plugin/Percussion/gm2PowerPercussionSet.hpp>
 
 smf::GM2PowerPercussionSet::GM2PowerPercussionSet(const bw_music::BuiltInPercussionInstruments& builtInInstruments)
-    : PercussionSetWithPitchMap(InstrumentBlock{{bw_music::BuiltInPercussionInstruments::Value::HighQ,
+    : PercussionSetWithPitchMap(getThisIdentifier(), InstrumentBlock{{bw_music::BuiltInPercussionInstruments::Value::HighQ,
                                                  bw_music::BuiltInPercussionInstruments::Value::Slap,
                                                  bw_music::BuiltInPercussionInstruments::Value::ScrPsh,
                                                  bw_music::BuiltInPercussionInstruments::Value::ScrPll,

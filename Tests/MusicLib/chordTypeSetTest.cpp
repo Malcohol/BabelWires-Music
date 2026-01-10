@@ -12,28 +12,28 @@ TEST(ChordTypeSetTest, getChordTypesFromValue) {
     bw_music::registerLib(testEnvironment.m_projectContext);
 
     const auto& typeSystem = testEnvironment.m_typeSystem;
-    const auto& chordTypeSet = typeSystem.getEntryByType<bw_music::ChordTypeSet>();
+    const auto& chordTypeSet = typeSystem.getRegisteredType<bw_music::ChordTypeSet>();
 
-    babelwires::ValueHolder chordSetValue = chordTypeSet.createValue(typeSystem);
+    babelwires::ValueHolder chordSetValue = chordTypeSet->createValue(typeSystem);
     ASSERT_TRUE(chordSetValue);
 
-    chordTypeSet.setSize(typeSystem, chordSetValue, 2);
+    chordTypeSet->setSize(typeSystem, chordSetValue, 2);
 
     // Add C Major and A Minor to the set.
-    const auto& chordType = typeSystem.getEntryByType<bw_music::ChordType>();
+    const auto& chordType = typeSystem.getRegisteredType<bw_music::ChordType>();
     {
-        auto [childValue, _, childType] = chordTypeSet.getChildNonConst(chordSetValue, 0);
-        ASSERT_EQ(childType, bw_music::ChordType::getThisType());
-        *childValue = babelwires::ValueHolder::makeValue<babelwires::EnumValue>(chordType.getIdentifierFromValue(bw_music::ChordType::Value::m));
+        auto [childValue, _, childType] = chordTypeSet->getChildNonConst(chordSetValue, 0);
+        ASSERT_EQ(childType->getTypeExp(), bw_music::ChordType::getThisIdentifier());
+        *childValue = babelwires::ValueHolder::makeValue<babelwires::EnumValue>(chordType->getIdentifierFromValue(bw_music::ChordType::Value::m));
     }
     {
-        auto [childValue, _, childType] = chordTypeSet.getChildNonConst(chordSetValue, 1);
-        ASSERT_EQ(childType, bw_music::ChordType::getThisType());
-        *childValue = babelwires::ValueHolder::makeValue<babelwires::EnumValue>(chordType.getIdentifierFromValue(bw_music::ChordType::Value::m7b5));
+        auto [childValue, _, childType] = chordTypeSet->getChildNonConst(chordSetValue, 1);
+        ASSERT_EQ(childType->getTypeExp(), bw_music::ChordType::getThisIdentifier());
+        *childValue = babelwires::ValueHolder::makeValue<babelwires::EnumValue>(chordType->getIdentifierFromValue(bw_music::ChordType::Value::m7b5));
     }
     
     std::set<bw_music::ChordType::Value> chordTypes =
-        chordTypeSet.getChordTypesFromValue(typeSystem, chordSetValue);
+        chordTypeSet->getChordTypesFromValue(typeSystem, chordSetValue);
 
     ASSERT_EQ(chordTypes.size(), 2);
     EXPECT_NE(chordTypes.find(bw_music::ChordType::Value::m), chordTypes.end());
@@ -45,7 +45,7 @@ TEST(ChordTypeSetTest, createValueFromChordTypes) {
     bw_music::registerLib(testEnvironment.m_projectContext);
 
     const auto& typeSystem = testEnvironment.m_typeSystem;
-    const auto& chordTypeSet = typeSystem.getEntryByType<bw_music::ChordTypeSet>();
+    const auto& chordTypeSet = typeSystem.getRegisteredType<bw_music::ChordTypeSet>();
 
     std::set<bw_music::ChordType::Value> inputChordTypes = {
         bw_music::ChordType::Value::M,
@@ -54,10 +54,10 @@ TEST(ChordTypeSetTest, createValueFromChordTypes) {
     };
 
     babelwires::ValueHolder chordSetValue =
-        chordTypeSet.createValueFromChordTypes(typeSystem, inputChordTypes);
+        chordTypeSet->createValueFromChordTypes(typeSystem, inputChordTypes);
 
     std::set<bw_music::ChordType::Value> chordTypes =
-        chordTypeSet.getChordTypesFromValue(typeSystem, chordSetValue);
+        chordTypeSet->getChordTypesFromValue(typeSystem, chordSetValue);
 
     ASSERT_EQ(chordTypes.size(), inputChordTypes.size());
     for (auto chordType : inputChordTypes) {

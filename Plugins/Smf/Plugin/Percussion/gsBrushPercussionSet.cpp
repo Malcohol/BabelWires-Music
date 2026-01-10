@@ -9,7 +9,7 @@
 
 smf::GsBrushPercussionSet::GsBrushPercussionSet(const bw_music::BuiltInPercussionInstruments& builtInInstruments)
     : PercussionSetWithPitchMap(
-          InstrumentBlock{{bw_music::BuiltInPercussionInstruments::Value::SnrRll,
+          getThisIdentifier(), InstrumentBlock{{bw_music::BuiltInPercussionInstruments::Value::SnrRll,
                            bw_music::BuiltInPercussionInstruments::Value::FngSnp,
                            bw_music::BuiltInPercussionInstruments::Value::HighQ,
                            bw_music::BuiltInPercussionInstruments::Value::Slap,

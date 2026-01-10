@@ -17,7 +17,7 @@
 ENUM_DEFINE_ENUM_VALUE_SOURCE(bw_music::FingeredChordsSustainPolicyEnum, FINGERED_CHORDS_SUSTAIN_POLICY);
 
 bw_music::FingeredChordsSustainPolicyEnum::FingeredChordsSustainPolicyEnum()
-    : babelwires::EnumType(getStaticValueSet(), 0) {}
+    : babelwires::EnumType(getThisIdentifier(), getStaticValueSet(), 0) {}
 
 namespace {
     using IntervalSet = std::uint16_t;

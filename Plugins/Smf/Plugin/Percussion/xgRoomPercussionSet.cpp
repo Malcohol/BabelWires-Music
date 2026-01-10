@@ -8,7 +8,7 @@
 #include <Plugins/Smf/Plugin/Percussion/xgRoomPercussionSet.hpp>
 
 smf::XgRoomPercussionSet::XgRoomPercussionSet(const bw_music::BuiltInPercussionInstruments& builtInInstruments)
-    : PercussionSetWithPitchMap(InstrumentBlock{{bw_music::BuiltInPercussionInstruments::Value::MSurdo,
+    : PercussionSetWithPitchMap(getThisIdentifier(), InstrumentBlock{{bw_music::BuiltInPercussionInstruments::Value::MSurdo,
                                                  bw_music::BuiltInPercussionInstruments::Value::OSurdo,
                                                  bw_music::BuiltInPercussionInstruments::Value::HighQ,
                                                  bw_music::BuiltInPercussionInstruments::Value::Slap,

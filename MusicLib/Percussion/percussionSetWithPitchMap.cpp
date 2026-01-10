@@ -61,20 +61,20 @@ class bw_music::PercussionSetWithPitchMap::ComplexConstructorArguments {
     std::unordered_set<babelwires::ShortId> m_alreadySeen;
 };
 
-bw_music::PercussionSetWithPitchMap::PercussionSetWithPitchMap(ComplexConstructorArguments&& removeDuplicates)
-    : EnumType(std::move(removeDuplicates.m_enumValues), removeDuplicates.m_indexOfDefaultValue)
+bw_music::PercussionSetWithPitchMap::PercussionSetWithPitchMap(babelwires::TypeExp typeExp, ComplexConstructorArguments&& removeDuplicates)
+    : EnumType(std::move(typeExp), std::move(removeDuplicates.m_enumValues), removeDuplicates.m_indexOfDefaultValue)
     , m_pitchToInstrument(std::move(removeDuplicates.m_pitchToInstrument))
     , m_instrumentToPitch(std::move(removeDuplicates.m_instrumentToPitch)) {
     addTag(percussionTypeTag());
 }
 
-bw_music::PercussionSetWithPitchMap::PercussionSetWithPitchMap(InstrumentBlock instruments,
+bw_music::PercussionSetWithPitchMap::PercussionSetWithPitchMap(babelwires::TypeExp typeExp, InstrumentBlock instruments,
                                                                bw_music::Pitch pitchOfDefaultInstrument)
-    : PercussionSetWithPitchMap(ComplexConstructorArguments(instruments, pitchOfDefaultInstrument)) {}
+    : PercussionSetWithPitchMap(std::move(typeExp), ComplexConstructorArguments(instruments, pitchOfDefaultInstrument)) {}
 
-bw_music::PercussionSetWithPitchMap::PercussionSetWithPitchMap(std::vector<InstrumentBlock> instruments,
+bw_music::PercussionSetWithPitchMap::PercussionSetWithPitchMap(babelwires::TypeExp typeExp, std::vector<InstrumentBlock> instruments,
                                                                bw_music::Pitch pitchOfDefaultInstrument)
-    : PercussionSetWithPitchMap(ComplexConstructorArguments(instruments, pitchOfDefaultInstrument)) {}
+    : PercussionSetWithPitchMap(std::move(typeExp), ComplexConstructorArguments(instruments, pitchOfDefaultInstrument)) {}
 
 std::optional<bw_music::Pitch>
 bw_music::PercussionSetWithPitchMap::tryGetPitchFromInstrument(babelwires::ShortId identifier) const {

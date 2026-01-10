@@ -15,20 +15,21 @@
 
 #include <Common/Identifiers/registeredIdentifier.hpp>
 
-bw_music::RepeatProcessorInput::RepeatProcessorInput()
+bw_music::RepeatProcessorInput::RepeatProcessorInput(const babelwires::TypeSystem& typeSystem)
     : babelwires::ParallelProcessorInputBase(
+          getThisIdentifier(), typeSystem,
           {{BW_SHORT_ID("Count", "Count", "f5d2ab08-4430-47fa-b26c-0ff2154826e3"),
-            babelwires::IntTypeConstructor::makeTypeRef(0, std::numeric_limits<babelwires::IntValue::NativeType>::max(),
+            babelwires::IntTypeConstructor::makeTypeExp(0, std::numeric_limits<babelwires::IntValue::NativeType>::max(),
                                                         2)}},
-          RepeatProcessor::getCommonArrayId(), bw_music::DefaultTrackType::getThisType()) {}
+          RepeatProcessor::getCommonArrayId(), bw_music::DefaultTrackType::getThisIdentifier()) {}
 
-bw_music::RepeatProcessorOutput::RepeatProcessorOutput()
-    : babelwires::ParallelProcessorOutputBase(RepeatProcessor::getCommonArrayId(),
-                                              bw_music::DefaultTrackType::getThisType()) {}
+bw_music::RepeatProcessorOutput::RepeatProcessorOutput(const babelwires::TypeSystem& typeSystem)
+    : babelwires::ParallelProcessorOutputBase(getThisIdentifier(), typeSystem, RepeatProcessor::getCommonArrayId(),
+                                              bw_music::DefaultTrackType::getThisIdentifier()) {}
 
 bw_music::RepeatProcessor::RepeatProcessor(const babelwires::ProjectContext& projectContext)
-    : babelwires::ParallelProcessor(projectContext, RepeatProcessorInput::getThisType(),
-                                    RepeatProcessorOutput::getThisType()) {}
+    : babelwires::ParallelProcessor(projectContext, RepeatProcessorInput::getThisIdentifier(),
+                                    RepeatProcessorOutput::getThisIdentifier()) {}
 
 babelwires::ShortId bw_music::RepeatProcessor::getCommonArrayId() {
     return BW_SHORT_ID("Tracks", "Tracks", "f727937f-0215-4527-bab4-0eca269d6c5c");

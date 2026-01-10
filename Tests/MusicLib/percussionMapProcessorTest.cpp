@@ -24,40 +24,40 @@
 
 namespace {
     babelwires::MapValue getTestPercussionMap(const babelwires::TypeSystem& typeSystem) {
-        const bw_music::BuiltInPercussionInstruments& builtInPercussion =
-            typeSystem.getEntryByType<bw_music::BuiltInPercussionInstruments>();
+        const auto& builtInPercussion = typeSystem.getRegisteredType<bw_music::BuiltInPercussionInstruments>();
 
-        babelwires::TypeRef targetTypeRef =
-            babelwires::EnumUnionTypeConstructor::makeTypeRef(bw_music::BuiltInPercussionInstruments::getThisType(),
-            babelwires::EnumAtomTypeConstructor::makeTypeRef(babelwires::getBlankValueId()));
+        babelwires::TypeExp targetTypeExp = babelwires::EnumUnionTypeConstructor::makeTypeExp(
+            bw_music::BuiltInPercussionInstruments::getThisIdentifier(),
+            babelwires::EnumAtomTypeConstructor::makeTypeExp(babelwires::getBlankValueId()));
 
         babelwires::MapValue percussionMap;
-        percussionMap.setSourceTypeRef(bw_music::BuiltInPercussionInstruments::getThisType());
-        percussionMap.setTargetTypeRef(targetTypeRef);
+        percussionMap.setSourceTypeExp(bw_music::BuiltInPercussionInstruments::getThisIdentifier());
+        percussionMap.setTargetTypeExp(targetTypeExp);
+        
+        babelwires::TypePtr targetType = targetTypeExp.assertResolve(typeSystem);
 
-        babelwires::OneToOneMapEntryData maplet(typeSystem, bw_music::BuiltInPercussionInstruments::getThisType(),
-                                                targetTypeRef);
+        babelwires::OneToOneMapEntryData maplet(typeSystem, *builtInPercussion, *targetType);
 
         babelwires::EnumValue sourceValue;
         babelwires::EnumValue targetValue;
 
-        sourceValue.set(builtInPercussion.getIdentifierFromValue(bw_music::BuiltInPercussionInstruments::Value::Clap));
+        sourceValue.set(builtInPercussion->getIdentifierFromValue(bw_music::BuiltInPercussionInstruments::Value::Clap));
         targetValue.set(
-            builtInPercussion.getIdentifierFromValue(bw_music::BuiltInPercussionInstruments::Value::Cowbll));
+            builtInPercussion->getIdentifierFromValue(bw_music::BuiltInPercussionInstruments::Value::Cowbll));
         maplet.setSourceValue(sourceValue.clone());
         maplet.setTargetValue(targetValue.clone());
         percussionMap.emplaceBack(maplet.clone());
 
         sourceValue.set(
-            builtInPercussion.getIdentifierFromValue(bw_music::BuiltInPercussionInstruments::Value::Crash1));
+            builtInPercussion->getIdentifierFromValue(bw_music::BuiltInPercussionInstruments::Value::Crash1));
         targetValue.set(
-            builtInPercussion.getIdentifierFromValue(bw_music::BuiltInPercussionInstruments::Value::Crash2));
+            builtInPercussion->getIdentifierFromValue(bw_music::BuiltInPercussionInstruments::Value::Crash2));
         maplet.setSourceValue(sourceValue.clone());
         maplet.setTargetValue(targetValue.clone());
         percussionMap.emplaceBack(maplet.clone());
 
         sourceValue.set(
-            builtInPercussion.getIdentifierFromValue(bw_music::BuiltInPercussionInstruments::Value::LFlTom));
+            builtInPercussion->getIdentifierFromValue(bw_music::BuiltInPercussionInstruments::Value::LFlTom));
         targetValue.set(babelwires::getBlankValueId());
         maplet.setSourceValue(sourceValue.clone());
         maplet.setTargetValue(targetValue.clone());
@@ -103,8 +103,8 @@ TEST(PercussionMapProcessorTest, funcSimple) {
     testUtils::TestLog log;
 
     babelwires::TypeSystem typeSystem;
-    const bw_music::BuiltInPercussionInstruments* const builtInPercussion =
-        typeSystem.addEntry<bw_music::BuiltInPercussionInstruments>();
+    const babelwires::TypePtrT<bw_music::BuiltInPercussionInstruments> builtInPercussion =
+        typeSystem.addAndGetType<bw_music::BuiltInPercussionInstruments>();
     typeSystem.addTypeConstructor<babelwires::EnumAtomTypeConstructor>();
     typeSystem.addTypeConstructor<babelwires::EnumUnionTypeConstructor>();
 

@@ -23,7 +23,7 @@ namespace bw_music {
       public:
         REGISTERED_TYPE("ConcatTrcksIn", "Concatenate In", "f4f21fe1-25e6-4721-a298-36fe27b532cc", 1);
 
-        ConcatenateProcessorInput();
+        ConcatenateProcessorInput(const babelwires::TypeSystem& typeSystem);
 
         DECLARE_INSTANCE_BEGIN(ConcatenateProcessorInput)
         DECLARE_INSTANCE_ARRAY_FIELD(Input, TrackType)
@@ -34,7 +34,7 @@ namespace bw_music {
       public:
         REGISTERED_TYPE("ConcatTrcksOut", "Concatenate Out", "2c9e13aa-eb88-494f-b3a6-7fb82504196c", 1);
 
-        ConcatenateProcessorOutput();
+        ConcatenateProcessorOutput(const babelwires::TypeSystem& typeSystem);
 
         DECLARE_INSTANCE_BEGIN(ConcatenateProcessorOutput)
         DECLARE_INSTANCE_FIELD(Output, TrackType)

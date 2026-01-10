@@ -26,7 +26,7 @@ namespace smf {
     class SmfSequence : public babelwires::RecordWithVariantsType {
       public:
         REGISTERED_TYPE("SmfSeqType", "Standard MIDI File", "d4c70fb2-fb67-4e69-82ca-328ec242b0a8", 1);
-        SmfSequence();
+        SmfSequence(const babelwires::TypeSystem& typeSystem);
 
         DECLARE_INSTANCE_BEGIN(SmfSequence)
         DECLARE_INSTANCE_FIELD(Meta, MidiMetadata)

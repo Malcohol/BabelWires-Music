@@ -17,7 +17,7 @@ namespace bw_music {
       public:
         REGISTERED_TYPE("TranspTrcksIn", "Transpose In", "980af793-e5fe-4fa4-861c-90f400fc4977", 1);
 
-        TransposeProcessorInput();
+        TransposeProcessorInput(const babelwires::TypeSystem& typeSystem);
 
         DECLARE_INSTANCE_BEGIN(TransposeProcessorInput)
         // TODO Expose an enum for TransposeOutOfRangePolicy (optional?)
@@ -29,7 +29,7 @@ namespace bw_music {
       public:
         REGISTERED_TYPE("TranspTrcksOut", "Transpose Out", "e2c9d64e-259a-4ef5-bd9d-0883c5d67599", 1);
 
-        TransposeProcessorOutput();
+        TransposeProcessorOutput(const babelwires::TypeSystem& typeSystem);
     };
 
 

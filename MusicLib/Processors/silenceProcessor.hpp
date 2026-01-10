@@ -21,7 +21,7 @@ namespace bw_music {
       public:
         REGISTERED_TYPE("SilentTrackIn", "Silence In", "b3d5c37c-aa07-47ac-9ebb-3cf81731b97b", 1);
 
-        SilenceProcessorInput();
+        SilenceProcessorInput(const babelwires::TypeSystem& typeSystem);
 
         DECLARE_INSTANCE_BEGIN(SilenceProcessorInput)
         DECLARE_INSTANCE_FIELD(Durn, babelwires::RationalType)
@@ -32,7 +32,7 @@ namespace bw_music {
       public:
         REGISTERED_TYPE("SilentTrackOut", "Silence Out", "fd8b4645-1435-448c-bf9d-0cebf8999a81", 1);
 
-        SilenceProcessorOutput();
+        SilenceProcessorOutput(const babelwires::TypeSystem& typeSystem);
 
         DECLARE_INSTANCE_BEGIN(SilenceProcessorOutput)
         DECLARE_INSTANCE_FIELD(Track, TrackType)

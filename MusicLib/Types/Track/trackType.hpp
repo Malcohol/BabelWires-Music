@@ -15,7 +15,7 @@ namespace bw_music {
     /// TrackType is the type of Tracks.
     class TrackType : public babelwires::Type {
       public:
-        TrackType(ModelDuration defaultDuration = 0);
+        TrackType(babelwires::TypeExp&& typeExpOfThis, ModelDuration defaultDuration = 0);
 
         babelwires::NewValueHolder createValue(const babelwires::TypeSystem& typeSystem) const override;
 
@@ -35,5 +35,6 @@ namespace bw_music {
     class DefaultTrackType : public TrackType {
       public:
         REGISTERED_TYPE("track", "Track", "346ec14c-25dd-43fc-a942-d24722be6802", 1);
+        DefaultTrackType();
     };
 } // namespace bw_music

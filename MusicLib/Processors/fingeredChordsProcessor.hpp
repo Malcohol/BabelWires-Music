@@ -20,7 +20,7 @@ namespace bw_music {
       public:
         REGISTERED_TYPE("FingrChordsIn", "Fingered Chords Input", "c9f26551-f557-4b27-ba0c-385298a2e51e", 1);
 
-        FingeredChordsProcessorInput();
+        FingeredChordsProcessorInput(const babelwires::TypeSystem& typeSystem);
 
         DECLARE_INSTANCE_BEGIN(FingeredChordsProcessorInput)
         DECLARE_INSTANCE_FIELD(Policy, FingeredChordsSustainPolicyEnum)
@@ -32,7 +32,7 @@ namespace bw_music {
       public:
         REGISTERED_TYPE("FingrChordsOut", "Fingered Chords Output", "f53cb215-1f8e-491b-8baf-868a5a5d0173", 1);
 
-        FingeredChordsProcessorOutput();
+        FingeredChordsProcessorOutput(const babelwires::TypeSystem& typeSystem);
 
         DECLARE_INSTANCE_BEGIN(FingeredChordsProcessorOutput)
         DECLARE_INSTANCE_FIELD(Chords, bw_music::TrackType)

@@ -1,9 +1,9 @@
 #include <Domains/Music/Plugins/TestPlugin/testTrackContainer.hpp>
 
-bw_music_testplugin::TestTrackContainer::TestTrackContainer()
-    : babelwires::RecordType({{getTrack1Id(), bw_music::DefaultTrackType::getThisType()},
-                              {getTrack2Id(), bw_music::DefaultTrackType::getThisType()},
-                              {getOtherId(), babelwires::DefaultIntType::getThisType()}}) {}
+bw_music_testplugin::TestTrackContainer::TestTrackContainer(const babelwires::TypeSystem& typeSystem)
+    : babelwires::RecordType(getThisIdentifier(), typeSystem, {{getTrack1Id(), bw_music::DefaultTrackType::getThisIdentifier()},
+                              {getTrack2Id(), bw_music::DefaultTrackType::getThisIdentifier()},
+                              {getOtherId(), babelwires::DefaultIntType::getThisIdentifier()}}) {}
 
 babelwires::ShortId bw_music_testplugin::TestTrackContainer::getTrack1Id() {
     return BW_SHORT_ID("track1", "Track 1", "3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f");

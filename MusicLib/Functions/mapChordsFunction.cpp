@@ -27,28 +27,28 @@
 
 #include <optional>
 
-babelwires::TypeRef bw_music::getMapChordFunctionSourceTypeRef() {
-    return babelwires::SumTypeConstructor::makeTypeRef(
-        {babelwires::TupleTypeConstructor::makeTypeRef(
-             {babelwires::EnumUnionTypeConstructor::makeTypeRef(
-                  babelwires::EnumAtomTypeConstructor::makeTypeRef(babelwires::getWildcardId()),
-                  bw_music::PitchClass::getThisType()),
-              babelwires::EnumUnionTypeConstructor::makeTypeRef(
-                  babelwires::EnumAtomTypeConstructor::makeTypeRef(babelwires::getWildcardId()),
-                  bw_music::ChordType::getThisType())}),
-         bw_music::NoChord::getThisType()});
+babelwires::TypeExp bw_music::getMapChordFunctionSourceTypeExp() {
+    return babelwires::SumTypeConstructor::makeTypeExp(
+        {babelwires::TupleTypeConstructor::makeTypeExp(
+             {babelwires::EnumUnionTypeConstructor::makeTypeExp(
+                  babelwires::EnumAtomTypeConstructor::makeTypeExp(babelwires::getWildcardId()),
+                  bw_music::PitchClass::getThisIdentifier()),
+              babelwires::EnumUnionTypeConstructor::makeTypeExp(
+                  babelwires::EnumAtomTypeConstructor::makeTypeExp(babelwires::getWildcardId()),
+                  bw_music::ChordType::getThisIdentifier())}),
+         bw_music::NoChord::getThisIdentifier()});
 }
 
-babelwires::TypeRef bw_music::getMapChordFunctionTargetTypeRef() {
-    return babelwires::SumTypeConstructor::makeTypeRef(
-        {babelwires::TupleTypeConstructor::makeTypeRef(
-             {babelwires::EnumUnionTypeConstructor::makeTypeRef(
-                  babelwires::EnumAtomTypeConstructor::makeTypeRef(babelwires::getWildcardMatchId()),
-                  bw_music::PitchClass::getThisType()),
-              babelwires::EnumUnionTypeConstructor::makeTypeRef(
-                  babelwires::EnumAtomTypeConstructor::makeTypeRef(babelwires::getWildcardMatchId()),
-                  bw_music::ChordType::getThisType())}),
-         bw_music::NoChord::getThisType()});
+babelwires::TypeExp bw_music::getMapChordFunctionTargetTypeExp() {
+    return babelwires::SumTypeConstructor::makeTypeExp(
+        {babelwires::TupleTypeConstructor::makeTypeExp(
+             {babelwires::EnumUnionTypeConstructor::makeTypeExp(
+                  babelwires::EnumAtomTypeConstructor::makeTypeExp(babelwires::getWildcardMatchId()),
+                  bw_music::PitchClass::getThisIdentifier()),
+              babelwires::EnumUnionTypeConstructor::makeTypeExp(
+                  babelwires::EnumAtomTypeConstructor::makeTypeExp(babelwires::getWildcardMatchId()),
+                  bw_music::ChordType::getThisIdentifier())}),
+         bw_music::NoChord::getThisIdentifier()});
 }
 
 namespace {
@@ -58,40 +58,29 @@ namespace {
     // enum from parts means I cannot use the native enum adapters and have to convert to and from indices
     // in the helper above.
 
-    std::tuple<const babelwires::EnumType&, const babelwires::EnumType&>
-    getSourceTupleComponentTypes(const babelwires::TypeSystem& typeSystem) {
-        const babelwires::TypeRef sourceTypeRef = bw_music::getMapChordFunctionSourceTypeRef();
-        const babelwires::SumType& sourceSumType = sourceTypeRef.resolve(typeSystem).is<babelwires::SumType>();
-        assert(sourceSumType.getSummands().size() == 2);
-        const babelwires::TypeRef& sourceTupleTypeRef = sourceSumType.getSummands()[0];
-        const babelwires::TupleType& sourceTupleType =
-            sourceTupleTypeRef.resolve(typeSystem).is<babelwires::TupleType>();
-        assert(sourceTupleType.getComponentTypes().size() == 2);
-        const babelwires::TypeRef& sourcePitchClassWCTypeRef = sourceTupleType.getComponentTypes()[0];
-        const babelwires::EnumType& sourcePitchClassWCType =
-            sourcePitchClassWCTypeRef.resolve(typeSystem).is<babelwires::EnumType>();
-        const babelwires::TypeRef& sourceChordTypeWCTypeRef = sourceTupleType.getComponentTypes()[1];
-        const babelwires::EnumType& sourceChordTypeWCType =
-            sourceChordTypeWCTypeRef.resolve(typeSystem).is<babelwires::EnumType>();
-        return {sourcePitchClassWCType, sourceChordTypeWCType};
+    std::tuple<const babelwires::TypePtrT<babelwires::EnumType>, const babelwires::TypePtrT<babelwires::EnumType>>
+    decomposeMapTypes(const babelwires::TypeSystem& typeSystem, const babelwires::SumType& sumType) {
+        assert(sumType.getSummands().size() == 2);
+        const babelwires::TypePtr& sourceTupleTypeExp = sumType.getSummands()[0];
+        const auto& tupleType = sourceTupleTypeExp->is<babelwires::TupleType>();
+        assert(tupleType.getComponentTypes().size() == 2);
+        const babelwires::TypePtr& pitchClassWCType = tupleType.getComponentTypes()[0];
+        const babelwires::TypePtr& chordTypeWCType = tupleType.getComponentTypes()[1];
+        return {std::move(typeAs<babelwires::EnumType>(pitchClassWCType)), std::move(typeAs<babelwires::EnumType>(chordTypeWCType))};
     }
 
-    std::tuple<const babelwires::EnumType&, const babelwires::EnumType&>
+    std::tuple<const babelwires::TypePtrT<babelwires::EnumType>, const babelwires::TypePtrT<babelwires::EnumType>>
+    getSourceTupleComponentTypes(const babelwires::TypeSystem& typeSystem) {
+        const babelwires::TypeExp sourceTypeExp = bw_music::getMapChordFunctionSourceTypeExp();
+        auto sourceSumType = sourceTypeExp.resolveAs<babelwires::SumType>(typeSystem);
+        return decomposeMapTypes(typeSystem, *sourceSumType);
+    }
+
+    std::tuple<const babelwires::TypePtrT<babelwires::EnumType>, const babelwires::TypePtrT<babelwires::EnumType>>
     getTargetTupleComponentTypes(const babelwires::TypeSystem& typeSystem) {
-        const babelwires::TypeRef targetTypeRef = bw_music::getMapChordFunctionTargetTypeRef();
-        const babelwires::SumType& targetSumType = targetTypeRef.resolve(typeSystem).is<babelwires::SumType>();
-        assert(targetSumType.getSummands().size() == 2);
-        const babelwires::TypeRef& targetTupleTypeRef = targetSumType.getSummands()[0];
-        const babelwires::TupleType& targetTupleType =
-            targetTupleTypeRef.resolve(typeSystem).is<babelwires::TupleType>();
-        assert(targetTupleType.getComponentTypes().size() == 2);
-        const babelwires::TypeRef& targetPitchClassWCTypeRef = targetTupleType.getComponentTypes()[0];
-        const babelwires::EnumType& targetPitchClassWCType =
-            targetPitchClassWCTypeRef.resolve(typeSystem).is<babelwires::EnumType>();
-        const babelwires::TypeRef& targetChordTypeWCTypeRef = targetTupleType.getComponentTypes()[1];
-        const babelwires::EnumType& targetChordTypeWCType =
-            targetChordTypeWCTypeRef.resolve(typeSystem).is<babelwires::EnumType>();
-        return {targetPitchClassWCType, targetChordTypeWCType};
+        const babelwires::TypeExp targetTypeExp = bw_music::getMapChordFunctionTargetTypeExp();
+        auto targetSumType = targetTypeExp.resolveAs<babelwires::SumType>(typeSystem);
+        return decomposeMapTypes(typeSystem, *targetSumType);
     }
 
     /// As yet, there is no generic handling of wildcards when they occur within tuples, as in this case.
@@ -190,8 +179,8 @@ namespace {
       private:
         ChordMapApplicator(
             const babelwires::MapValue& mapValue,
-            std::tuple<const babelwires::EnumType&, const babelwires::EnumType&> sourceTupleComponentTypes,
-            std::tuple<const babelwires::EnumType&, const babelwires::EnumType&> targetTupleComponentTypes)
+            std::tuple<const babelwires::TypePtrT<babelwires::EnumType>, const babelwires::TypePtrT<babelwires::EnumType>> sourceTupleComponentTypes,
+            std::tuple<const babelwires::TypePtrT<babelwires::EnumType>, const babelwires::TypePtrT<babelwires::EnumType>> targetTupleComponentTypes)
             : m_mapValue(mapValue)
             , m_sourcePitchClassAdapter(std::get<0>(sourceTupleComponentTypes))
             , m_sourceChordTypeAdapter(std::get<1>(sourceTupleComponentTypes))
