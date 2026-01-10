@@ -9,12 +9,12 @@
 #include <BabelWiresLib/Types/Record/recordValue.hpp>
 
 bw_music_testplugin::SimpleAccompaniment::SimpleAccompaniment(const babelwires::TypeSystem& typeSystem)
-    : babelwires::RecordType(getThisType(), typeSystem, {{bw_music::ChordType::getIdentifierFromValue(bw_music::ChordType::Value::M),
-                               TestTrackContainer::getThisType()},
+    : babelwires::RecordType(getThisIdentifier(), typeSystem, {{bw_music::ChordType::getIdentifierFromValue(bw_music::ChordType::Value::M),
+                               TestTrackContainer::getThisIdentifier()},
                               {bw_music::ChordType::getIdentifierFromValue(bw_music::ChordType::Value::m),
-                               TestTrackContainer::getThisType()},
+                               TestTrackContainer::getThisIdentifier()},
                               {bw_music::ChordType::getIdentifierFromValue(bw_music::ChordType::Value::dim),
-                               TestTrackContainer::getThisType()}}) {}
+                               TestTrackContainer::getThisIdentifier()}}) {}
 
 bw_music::Track bw_music_testplugin::SimpleAccompaniment::getCMajorArpeggioTrack() {
     bw_music::TrackBuilder trackBuilder;

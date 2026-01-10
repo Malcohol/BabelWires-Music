@@ -75,7 +75,7 @@ class BuildAccompanimentTest : public MusicLibTestFixture {
 TEST_F(BuildAccompanimentTest, trackTest) {
     const auto& typeSystem = m_testEnv.m_projectContext.m_typeSystem;
 
-    instantiateInputTypeVariable(bw_music::DefaultTrackType::getThisType());
+    instantiateInputTypeVariable(bw_music::DefaultTrackType::getThisIdentifier());
 
     babelwires::ValueHolder track = testUtils::getTrackOfSimpleNotes({60, 62, 64, 67, 71});
 
@@ -108,10 +108,10 @@ TEST_F(BuildAccompanimentTest, trackTest) {
 TEST_F(BuildAccompanimentTest, testTrackContainerTest) {
     const auto& typeSystem = m_testEnv.m_projectContext.m_typeSystem;
 
-    instantiateInputTypeVariable(bw_music_testplugin::TestTrackContainer::getThisType());
+    instantiateInputTypeVariable(bw_music_testplugin::TestTrackContainer::getThisIdentifier());
 
     const auto& testTrackContainerType = typeSystem.getEntryByType<bw_music_testplugin::TestTrackContainer>();
-    babelwires::ValueTreeRoot inputTracks(typeSystem, bw_music_testplugin::TestTrackContainer::getThisType());
+    babelwires::ValueTreeRoot inputTracks(typeSystem, bw_music_testplugin::TestTrackContainer::getThisIdentifier());
     bw_music_testplugin::TestTrackContainer::Instance inputTracksInstance(inputTracks);
     inputTracksInstance.gettrack1().set(testUtils::getTrackOfSimpleNotes({60, 62, 64, 67, 71}));
     inputTracksInstance.gettrack2().set(testUtils::getTrackOfSimpleNotes({71, 67, 64, 62, 60}));

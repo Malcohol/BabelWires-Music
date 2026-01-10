@@ -15,12 +15,12 @@ namespace {
 }
 
 smf::SmfSequence::SmfSequence(const babelwires::TypeSystem& typeSystem)
-    : babelwires::RecordWithVariantsType(getThisType(), typeSystem, 
+    : babelwires::RecordWithVariantsType(getThisIdentifier(), typeSystem, 
           REGISTERED_ID_VECTOR(formatIdentifiersSource),
-          {{BW_SHORT_ID("Meta", "Metadata", "72bbbcee-2b53-4fb2-bfb8-4f5e495f9166"), MidiMetadata::getThisType(), {}},
+          {{BW_SHORT_ID("Meta", "Metadata", "72bbbcee-2b53-4fb2-bfb8-4f5e495f9166"), MidiMetadata::getThisIdentifier(), {}},
            {BW_SHORT_ID("Trcks0", "Tracks", "9ec1a1af-82dc-4085-9f97-f5dbbfb9f837"),
-            RecordOfMidiTracks::getThisType(),
+            RecordOfMidiTracks::getThisIdentifier(),
             {"SMF0"}},
            {BW_SHORT_ID("Trcks1", "Tracks", "38ae4e20-1468-4dce-890b-981454e6dbe0"),
-            MidiTrackAndChannelArray::getThisType(),
+            MidiTrackAndChannelArray::getThisIdentifier(),
             {"SMF1"}}}) {}

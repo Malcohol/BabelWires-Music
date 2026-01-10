@@ -9,7 +9,7 @@
 
 smf::XgSFX1PercussionSet::XgSFX1PercussionSet(const bw_music::BuiltInPercussionInstruments& builtInInstruments)
     : PercussionSetWithPitchMap(
-          getThisType(), std::vector<InstrumentBlock>{
+          getThisIdentifier(), std::vector<InstrumentBlock>{
               {{bw_music::BuiltInPercussionInstruments::Value::GCutUp, // Guitar Cutting Noise
                 bw_music::BuiltInPercussionInstruments::Value::GCutDn, // Guitar Cutting Noise 2
                 bw_music::BuiltInPercussionInstruments::Value::DCutNs,

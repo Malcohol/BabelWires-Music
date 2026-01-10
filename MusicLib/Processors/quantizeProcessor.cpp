@@ -18,19 +18,19 @@
 
 bw_music::QuantizeProcessorInput::QuantizeProcessorInput(const babelwires::TypeSystem& typeSystem)
     : babelwires::ParallelProcessorInputBase(
-          getThisType(), typeSystem,
+          getThisIdentifier(), typeSystem,
           {{BW_SHORT_ID("Beat", "Beat", "1651ab49-3313-4cd3-b92d-16742b7f5921"),
             babelwires::RationalTypeConstructor::makeTypeExp(
                 0, std::numeric_limits<babelwires::Rational::ComponentType>::max(), babelwires::Rational(1, 16))}},
-          QuantizeProcessor::getCommonArrayId(), bw_music::DefaultTrackType::getThisType()) {}
+          QuantizeProcessor::getCommonArrayId(), bw_music::DefaultTrackType::getThisIdentifier()) {}
 
 bw_music::QuantizeProcessorOutput::QuantizeProcessorOutput(const babelwires::TypeSystem& typeSystem)
-    : babelwires::ParallelProcessorOutputBase(getThisType(), typeSystem, QuantizeProcessor::getCommonArrayId(),
-                                              bw_music::DefaultTrackType::getThisType()) {}
+    : babelwires::ParallelProcessorOutputBase(getThisIdentifier(), typeSystem, QuantizeProcessor::getCommonArrayId(),
+                                              bw_music::DefaultTrackType::getThisIdentifier()) {}
 
 bw_music::QuantizeProcessor::QuantizeProcessor(const babelwires::ProjectContext& projectContext)
-    : babelwires::ParallelProcessor(projectContext, QuantizeProcessorInput::getThisType(),
-                                    QuantizeProcessorOutput::getThisType()) {}
+    : babelwires::ParallelProcessor(projectContext, QuantizeProcessorInput::getThisIdentifier(),
+                                    QuantizeProcessorOutput::getThisIdentifier()) {}
 
 babelwires::ShortId bw_music::QuantizeProcessor::getCommonArrayId() {
     return BW_SHORT_ID("Tracks", "Tracks", "e00623bf-c0f0-4fee-b6c4-4f65df896bf3");

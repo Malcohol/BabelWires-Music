@@ -16,22 +16,22 @@
 #include <Common/Identifiers/registeredIdentifier.hpp>
 
 bw_music::ExcerptProcessorInput::ExcerptProcessorInput(const babelwires::TypeSystem& typeSystem)
-    : babelwires::ParallelProcessorInputBase(getThisType(), typeSystem,
-          {{BW_SHORT_ID("Start", "Start", "4b95f5db-a542-4660-a8db-97d3a5f831ca"), Duration::getThisType()},
-           {BW_SHORT_ID("Duratn", "Duration", "d83ebbc2-1492-4578-a3b8-4969eb6a2042"), Duration::getThisType()}},
-          ExcerptProcessor::getCommonArrayId(), bw_music::DefaultTrackType::getThisType()) {}
+    : babelwires::ParallelProcessorInputBase(getThisIdentifier(), typeSystem,
+          {{BW_SHORT_ID("Start", "Start", "4b95f5db-a542-4660-a8db-97d3a5f831ca"), Duration::getThisIdentifier()},
+           {BW_SHORT_ID("Duratn", "Duration", "d83ebbc2-1492-4578-a3b8-4969eb6a2042"), Duration::getThisIdentifier()}},
+          ExcerptProcessor::getCommonArrayId(), bw_music::DefaultTrackType::getThisIdentifier()) {}
 
 bw_music::ExcerptProcessorOutput::ExcerptProcessorOutput(const babelwires::TypeSystem& typeSystem)
-    : babelwires::ParallelProcessorOutputBase(getThisType(), typeSystem, ExcerptProcessor::getCommonArrayId(),
-                                              bw_music::DefaultTrackType::getThisType()) {}
+    : babelwires::ParallelProcessorOutputBase(getThisIdentifier(), typeSystem, ExcerptProcessor::getCommonArrayId(),
+                                              bw_music::DefaultTrackType::getThisIdentifier()) {}
 
 babelwires::ShortId bw_music::ExcerptProcessor::getCommonArrayId() {
     return BW_SHORT_ID("Tracks", "Tracks", "983b3bcb-7086-4791-8e18-d8c7550d45d3");
 }
 
 bw_music::ExcerptProcessor::ExcerptProcessor(const babelwires::ProjectContext& projectContext)
-    : babelwires::ParallelProcessor(projectContext, ExcerptProcessorInput::getThisType(),
-                                    ExcerptProcessorOutput::getThisType()) {}
+    : babelwires::ParallelProcessor(projectContext, ExcerptProcessorInput::getThisIdentifier(),
+                                    ExcerptProcessorOutput::getThisIdentifier()) {}
 
 void bw_music::ExcerptProcessor::processEntry(babelwires::UserLogger& userLogger,
                                               const babelwires::ValueTreeNode& input,

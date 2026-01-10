@@ -19,7 +19,7 @@
 ENUM_DEFINE_ENUM_VALUE_SOURCE(bw_music::PitchClass, PITCH_CLASS_VALUES);
 
 bw_music::PitchClass::PitchClass()
-    : EnumType(getThisType(), getStaticValueSet(), 0) {}
+    : EnumType(getThisIdentifier(), getStaticValueSet(), 0) {}
 
 #define JUST_IDENTIFIERS(A, B, C) #A,
 #define JUST_NAMES(A, B, C) B,
@@ -156,4 +156,4 @@ namespace {
 } // namespace
 
 bw_music::PitchEnum::PitchEnum()
-    : EnumType(getThisType(), getPitchEnumValues(), 60) {}
+    : EnumType(getThisIdentifier(), getPitchEnumValues(), 60) {}

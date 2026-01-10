@@ -32,11 +32,11 @@ babelwires::TypeExp bw_music::getMapChordFunctionSourceTypeExp() {
         {babelwires::TupleTypeConstructor::makeTypeExp(
              {babelwires::EnumUnionTypeConstructor::makeTypeExp(
                   babelwires::EnumAtomTypeConstructor::makeTypeExp(babelwires::getWildcardId()),
-                  bw_music::PitchClass::getThisType()),
+                  bw_music::PitchClass::getThisIdentifier()),
               babelwires::EnumUnionTypeConstructor::makeTypeExp(
                   babelwires::EnumAtomTypeConstructor::makeTypeExp(babelwires::getWildcardId()),
-                  bw_music::ChordType::getThisType())}),
-         bw_music::NoChord::getThisType()});
+                  bw_music::ChordType::getThisIdentifier())}),
+         bw_music::NoChord::getThisIdentifier()});
 }
 
 babelwires::TypeExp bw_music::getMapChordFunctionTargetTypeExp() {
@@ -44,11 +44,11 @@ babelwires::TypeExp bw_music::getMapChordFunctionTargetTypeExp() {
         {babelwires::TupleTypeConstructor::makeTypeExp(
              {babelwires::EnumUnionTypeConstructor::makeTypeExp(
                   babelwires::EnumAtomTypeConstructor::makeTypeExp(babelwires::getWildcardMatchId()),
-                  bw_music::PitchClass::getThisType()),
+                  bw_music::PitchClass::getThisIdentifier()),
               babelwires::EnumUnionTypeConstructor::makeTypeExp(
                   babelwires::EnumAtomTypeConstructor::makeTypeExp(babelwires::getWildcardMatchId()),
-                  bw_music::ChordType::getThisType())}),
-         bw_music::NoChord::getThisType()});
+                  bw_music::ChordType::getThisIdentifier())}),
+         bw_music::NoChord::getThisIdentifier()});
 }
 
 namespace {

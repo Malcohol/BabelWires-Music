@@ -20,9 +20,9 @@
 #include <BabelWiresLib/ValueTree/valueTreeNode.hpp>
 
 bw_music::BuildAccompanimentProcessorInput::BuildAccompanimentProcessorInput(const babelwires::TypeSystem& typeSystem)
-    : GenericType(getThisType(), typeSystem,
+    : GenericType(getThisIdentifier(), typeSystem,
                   babelwires::RecordTypeConstructor::makeTypeExp(
-                      getIdOfChordsArray(), ChordTypeSet::getThisType(), getIdOfInput(),
+                      getIdOfChordsArray(), ChordTypeSet::getThisIdentifier(), getIdOfInput(),
                       babelwires::TypeVariableTypeConstructor::makeTypeExp()),
                   1) {}
 
@@ -39,14 +39,14 @@ babelwires::ShortId bw_music::BuildAccompanimentProcessorOutput::getIdOfResult()
 }
 
 bw_music::BuildAccompanimentProcessorOutput::BuildAccompanimentProcessorOutput(const babelwires::TypeSystem& typeSystem)
-    : GenericType(getThisType(), typeSystem,
+    : GenericType(getThisIdentifier(), typeSystem,
                   babelwires::TypeExp(babelwires::RecordTypeConstructor::makeTypeExp(getIdOfResult(),
                                                                                      getGenericAccompanimentTypeExp())),
                   1) {}
 
 bw_music::BuildAccompanimentProcessor::BuildAccompanimentProcessor(const babelwires::ProjectContext& projectContext)
-    : Processor(projectContext, BuildAccompanimentProcessorInput::getThisType(),
-                BuildAccompanimentProcessorOutput::getThisType()) {}
+    : Processor(projectContext, BuildAccompanimentProcessorInput::getThisIdentifier(),
+                BuildAccompanimentProcessorOutput::getThisIdentifier()) {}
 
 namespace {
 

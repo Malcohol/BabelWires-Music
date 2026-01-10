@@ -33,7 +33,7 @@ bw_music::PercussionMapType::constructType(const babelwires::TypeSystem& typeSys
                   [&sourceSummands](babelwires::RegisteredTypeId typeId) { sourceSummands.emplace_back(typeId); });
 
     const auto it =
-        std::find(sourceSummands.begin(), sourceSummands.end(), bw_music::BuiltInPercussionInstruments::getThisType());
+        std::find(sourceSummands.begin(), sourceSummands.end(), bw_music::BuiltInPercussionInstruments::getThisIdentifier());
     assert(it != sourceSummands.end());
     unsigned int indexOfDefault = std::distance(sourceSummands.begin(), it);
 

@@ -23,12 +23,12 @@ TEST(ChordTypeSetTest, getChordTypesFromValue) {
     const auto& chordType = typeSystem.getEntryByType<bw_music::ChordType>();
     {
         auto [childValue, _, childType] = chordTypeSet->getChildNonConst(chordSetValue, 0);
-        ASSERT_EQ(childType->getTypeExp(), bw_music::ChordType::getThisType());
+        ASSERT_EQ(childType->getTypeExp(), bw_music::ChordType::getThisIdentifier());
         *childValue = babelwires::ValueHolder::makeValue<babelwires::EnumValue>(chordType->getIdentifierFromValue(bw_music::ChordType::Value::m));
     }
     {
         auto [childValue, _, childType] = chordTypeSet->getChildNonConst(chordSetValue, 1);
-        ASSERT_EQ(childType->getTypeExp(), bw_music::ChordType::getThisType());
+        ASSERT_EQ(childType->getTypeExp(), bw_music::ChordType::getThisIdentifier());
         *childValue = babelwires::ValueHolder::makeValue<babelwires::EnumValue>(chordType->getIdentifierFromValue(bw_music::ChordType::Value::m7b5));
     }
     

@@ -9,7 +9,7 @@
 
 // Follow GM2 and do not distinguish Jazz toms from regular toms.
 smf::XgJazzPercussionSet::XgJazzPercussionSet(const bw_music::BuiltInPercussionInstruments& builtInInstruments)
-    : PercussionSetWithPitchMap(getThisType(), InstrumentBlock{{bw_music::BuiltInPercussionInstruments::Value::MSurdo,
+    : PercussionSetWithPitchMap(getThisIdentifier(), InstrumentBlock{{bw_music::BuiltInPercussionInstruments::Value::MSurdo,
                                                  bw_music::BuiltInPercussionInstruments::Value::OSurdo,
                                                  bw_music::BuiltInPercussionInstruments::Value::HighQ,
                                                  bw_music::BuiltInPercussionInstruments::Value::Slap,

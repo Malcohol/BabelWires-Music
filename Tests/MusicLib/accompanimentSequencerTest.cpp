@@ -40,7 +40,7 @@ class AccompanimentSequencerTest : public MusicLibTestFixture {
         babelwires::ValueHolder inputValue = input.getValue();
         const auto& inputType = typeSystem.getEntryByType<bw_music::AccompanimentSequencerProcessorInput>();
         inputType->setTypeVariableAssignmentAndInstantiate(typeSystem, inputValue,
-                                                           {bw_music_testplugin::TestTrackContainer::getThisType()});
+                                                           {bw_music_testplugin::TestTrackContainer::getThisIdentifier()});
         babelwires::ValueHolder simpleAccompanimentValue =
             typeSystem.getEntryByType<bw_music_testplugin::SimpleAccompaniment>()->createValue(typeSystem);
         input.setValue(inputValue);

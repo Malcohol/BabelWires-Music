@@ -19,23 +19,23 @@
 
 bw_music::AccompanimentSequencerProcessorInput::AccompanimentSequencerProcessorInput(
     const babelwires::TypeSystem& typeSystem)
-    : babelwires::GenericType(getThisType(), 
+    : babelwires::GenericType(getThisIdentifier(), 
           typeSystem,
-          babelwires::RecordTypeConstructor::makeTypeExp(getChordTrackId(), DefaultTrackType::getThisType(),
+          babelwires::RecordTypeConstructor::makeTypeExp(getChordTrackId(), DefaultTrackType::getThisIdentifier(),
                                                          getAccompTracksId(), getGenericAccompanimentTypeExp()),
           1) {}
 
 bw_music::AccompanimentSequencerProcessorOutput::AccompanimentSequencerProcessorOutput(
     const babelwires::TypeSystem& typeSystem)
-    : babelwires::GenericType(getThisType(), typeSystem,
+    : babelwires::GenericType(getThisIdentifier(), typeSystem,
                               babelwires::RecordTypeConstructor::makeTypeExp(
                                   getResultId(), babelwires::TypeVariableTypeConstructor::makeTypeExp()),
                               1) {}
 
 bw_music::AccompanimentSequencerProcessor::AccompanimentSequencerProcessor(
     const babelwires::ProjectContext& projectContext)
-    : Processor(projectContext, AccompanimentSequencerProcessorInput::getThisType(),
-                AccompanimentSequencerProcessorOutput::getThisType()) {}
+    : Processor(projectContext, AccompanimentSequencerProcessorInput::getThisIdentifier(),
+                AccompanimentSequencerProcessorOutput::getThisIdentifier()) {}
 
 void bw_music::AccompanimentSequencerProcessor::processValue(babelwires::UserLogger& userLogger,
                                                              const babelwires::ValueTreeNode& input,

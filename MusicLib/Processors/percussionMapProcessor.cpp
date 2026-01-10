@@ -16,17 +16,17 @@
 #include <Common/Identifiers/registeredIdentifier.hpp>
 
 bw_music::PercussionMapProcessorInput::PercussionMapProcessorInput(const babelwires::TypeSystem& typeSystem)
-    : babelwires::ParallelProcessorInputBase(getThisType(), typeSystem, 
+    : babelwires::ParallelProcessorInputBase(getThisIdentifier(), typeSystem, 
           {{BW_SHORT_ID("Map", "Map", "b8cbf8c9-579b-4292-bdef-524b7d1010bc"), bw_music::getPercussionMapType()}},
-          PercussionMapProcessor::getCommonArrayId(), bw_music::DefaultTrackType::getThisType()) {}
+          PercussionMapProcessor::getCommonArrayId(), bw_music::DefaultTrackType::getThisIdentifier()) {}
 
 bw_music::PercussionMapProcessorOutput::PercussionMapProcessorOutput(const babelwires::TypeSystem& typeSystem)
-    : babelwires::ParallelProcessorOutputBase(getThisType(), typeSystem, PercussionMapProcessor::getCommonArrayId(),
-                                                   bw_music::DefaultTrackType::getThisType()) {}
+    : babelwires::ParallelProcessorOutputBase(getThisIdentifier(), typeSystem, PercussionMapProcessor::getCommonArrayId(),
+                                                   bw_music::DefaultTrackType::getThisIdentifier()) {}
 
 bw_music::PercussionMapProcessor::PercussionMapProcessor(const babelwires::ProjectContext& projectContext)
-    : babelwires::ParallelProcessor(projectContext, PercussionMapProcessorInput::getThisType(),
-                                         PercussionMapProcessorOutput::getThisType()) {}
+    : babelwires::ParallelProcessor(projectContext, PercussionMapProcessorInput::getThisIdentifier(),
+                                         PercussionMapProcessorOutput::getThisIdentifier()) {}
 
 babelwires::ShortId bw_music::PercussionMapProcessor::getCommonArrayId() {
     return BW_SHORT_ID("Tracks", "Tracks", "fe71b1c6-6604-430b-a731-f40b2692d2cf");

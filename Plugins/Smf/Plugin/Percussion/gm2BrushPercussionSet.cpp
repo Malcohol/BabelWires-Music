@@ -9,7 +9,7 @@
 
 smf::GM2BrushPercussionSet::GM2BrushPercussionSet(const bw_music::BuiltInPercussionInstruments& builtInInstruments)
     : bw_music::PercussionSetWithPitchMap(
-                    getThisType(), InstrumentBlock{{bw_music::BuiltInPercussionInstruments::Value::HighQ,
+                    getThisIdentifier(), InstrumentBlock{{bw_music::BuiltInPercussionInstruments::Value::HighQ,
                                      bw_music::BuiltInPercussionInstruments::Value::Slap,
                                      bw_music::BuiltInPercussionInstruments::Value::ScrPsh,
                                      bw_music::BuiltInPercussionInstruments::Value::ScrPll,

@@ -12,4 +12,4 @@
 ENUM_DEFINE_ENUM_VALUE_SOURCE(smf::GMSpecType, GM_SPEC_VALUES);
 
 smf::GMSpecType::GMSpecType()
-    : EnumType(getThisType(), getStaticValueSet(), 1) {}
+    : EnumType(getThisIdentifier(), getStaticValueSet(), 1) {}

@@ -16,16 +16,16 @@
 #include <set>
 
 bw_music::MergeProcessorInput::MergeProcessorInput(const babelwires::TypeSystem& typeSystem)
-    : babelwires::RecordType(getThisType(), typeSystem,
+    : babelwires::RecordType(getThisIdentifier(), typeSystem,
           {{BW_SHORT_ID("Input", "Input tracks", "80b175ae-c954-4943-96d8-eaffcd7ed6e1"),
-            babelwires::ArrayTypeConstructor::makeTypeExp(DefaultTrackType::getThisType(), 2, 16)}}) {}
+            babelwires::ArrayTypeConstructor::makeTypeExp(DefaultTrackType::getThisIdentifier(), 2, 16)}}) {}
 
 bw_music::MergeProcessorOutput::MergeProcessorOutput(const babelwires::TypeSystem& typeSystem)
-    : babelwires::RecordType(getThisType(), typeSystem, {{BW_SHORT_ID("Output", "Output track", "ab56e996-d361-42ed-a0df-44a90a73dc20"),
-                               DefaultTrackType::getThisType()}}) {}
+    : babelwires::RecordType(getThisIdentifier(), typeSystem, {{BW_SHORT_ID("Output", "Output track", "ab56e996-d361-42ed-a0df-44a90a73dc20"),
+                               DefaultTrackType::getThisIdentifier()}}) {}
 
 bw_music::MergeProcessor::MergeProcessor(const babelwires::ProjectContext& projectContext)
-    : Processor(projectContext, MergeProcessorInput::getThisType(), MergeProcessorOutput::getThisType()) {}
+    : Processor(projectContext, MergeProcessorInput::getThisIdentifier(), MergeProcessorOutput::getThisIdentifier()) {}
 
 void bw_music::MergeProcessor::processValue(babelwires::UserLogger& userLogger, const babelwires::ValueTreeNode& input,
                                             babelwires::ValueTreeNode& output) const {

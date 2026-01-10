@@ -9,7 +9,7 @@
 
 smf::XgSFX2PercussionSet::XgSFX2PercussionSet(const bw_music::BuiltInPercussionInstruments& builtInInstruments)
     : PercussionSetWithPitchMap(
-          getThisType(), std::vector<InstrumentBlock>{
+          getThisIdentifier(), std::vector<InstrumentBlock>{
               {{bw_music::BuiltInPercussionInstruments::Value::DialTn,
                 bw_music::BuiltInPercussionInstruments::Value::DoorCr,
                 bw_music::BuiltInPercussionInstruments::Value::Door,   // Door Slam

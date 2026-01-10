@@ -9,7 +9,7 @@
 
 smf::GsOrchestraPercussionSet::GsOrchestraPercussionSet(
     const bw_music::BuiltInPercussionInstruments& builtInInstruments)
-    : PercussionSetWithPitchMap(getThisType(), InstrumentBlock{{bw_music::BuiltInPercussionInstruments::Value::SnrRll,
+    : PercussionSetWithPitchMap(getThisIdentifier(), InstrumentBlock{{bw_music::BuiltInPercussionInstruments::Value::SnrRll,
                                                  bw_music::BuiltInPercussionInstruments::Value::FngSnp,
                                                  bw_music::BuiltInPercussionInstruments::Value::ClHH2,
                                                  bw_music::BuiltInPercussionInstruments::Value::PdHHat,

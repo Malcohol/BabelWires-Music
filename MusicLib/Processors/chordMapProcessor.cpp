@@ -18,20 +18,20 @@
 #include <Common/Identifiers/registeredIdentifier.hpp>
 
 bw_music::ChordMapProcessorInput::ChordMapProcessorInput(const babelwires::TypeSystem& typeSystem)
-    : babelwires::ParallelProcessorInputBase(getThisType(), typeSystem,
+    : babelwires::ParallelProcessorInputBase(getThisIdentifier(), typeSystem,
           {{BW_SHORT_ID("ChrdMp", "Chord map", "6054b8e9-5f48-4e9f-8807-b6377d36d6aa"),
             babelwires::MapTypeConstructor::makeTypeExp(bw_music::getMapChordFunctionSourceTypeExp(),
                                                         bw_music::getMapChordFunctionTargetTypeExp(),
                                                         babelwires::MapEntryData::Kind::All21)}},
-          ChordMapProcessor::getCommonArrayId(), bw_music::DefaultTrackType::getThisType()) {}
+          ChordMapProcessor::getCommonArrayId(), bw_music::DefaultTrackType::getThisIdentifier()) {}
 
 bw_music::ChordMapProcessorOutput::ChordMapProcessorOutput(const babelwires::TypeSystem& typeSystem)
-    : babelwires::ParallelProcessorOutputBase(getThisType(), typeSystem, ChordMapProcessor::getCommonArrayId(),
-                                              bw_music::DefaultTrackType::getThisType()) {}
+    : babelwires::ParallelProcessorOutputBase(getThisIdentifier(), typeSystem, ChordMapProcessor::getCommonArrayId(),
+                                              bw_music::DefaultTrackType::getThisIdentifier()) {}
 
 bw_music::ChordMapProcessor::ChordMapProcessor(const babelwires::ProjectContext& projectContext)
-    : babelwires::ParallelProcessor(projectContext, ChordMapProcessorInput::getThisType(),
-                                    ChordMapProcessorOutput::getThisType()) {}
+    : babelwires::ParallelProcessor(projectContext, ChordMapProcessorInput::getThisIdentifier(),
+                                    ChordMapProcessorOutput::getThisIdentifier()) {}
 
 babelwires::ShortId bw_music::ChordMapProcessor::getCommonArrayId() {
     return BW_SHORT_ID("Tracks", "Tracks", "24e56b0d-eb1e-4c93-97fd-ba4d639e112a");

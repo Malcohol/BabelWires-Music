@@ -13,7 +13,7 @@
 #include <cassert>
 
 bw_music::ChordTypeSet::ChordTypeSet(const babelwires::TypeSystem& typeSystem)
-    : babelwires::ArrayType(getThisType(), typeSystem.getEntryByType<ChordType>(), 0, static_cast<unsigned int>(ChordType::Value::NUM_VALUES), 1) {}
+    : babelwires::ArrayType(getThisIdentifier(), typeSystem.getEntryByType<ChordType>(), 0, static_cast<unsigned int>(ChordType::Value::NUM_VALUES), 1) {}
 
 std::set<bw_music::ChordType::Value>
 bw_music::ChordTypeSet::getChordTypesFromValue(const babelwires::TypeSystem& typeSystem, const babelwires::ValueHolder& value) const {
@@ -24,7 +24,7 @@ bw_music::ChordTypeSet::getChordTypesFromValue(const babelwires::TypeSystem& typ
     std::set<bw_music::ChordType::Value> selectedChords;
     for (unsigned int i = 0; i < getNumChildren(value); ++i) {
         const auto [chordValueHolder, chordStep, chordChildType] = getChild(value, i);
-        assert(chordChildType->getTypeExp() == ChordType::getThisType());
+        assert(chordChildType->getTypeExp() == ChordType::getThisIdentifier());
         const babelwires::ShortId chordId = (*chordValueHolder)->is<babelwires::EnumValue>().get();
         selectedChords.insert(chordType->getValueFromIdentifier(chordId));
     }

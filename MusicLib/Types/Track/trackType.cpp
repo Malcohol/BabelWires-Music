@@ -13,7 +13,7 @@ bw_music::TrackType::TrackType(babelwires::TypeExp&& typeExpOfThis, ModelDuratio
     : babelwires::Type(std::move(typeExpOfThis))
     , m_defaultDuration(defaultDuration) {}
 bw_music::DefaultTrackType::DefaultTrackType()
-    : TrackType(getThisType()) {}
+    : TrackType(getThisIdentifier()) {}
 
 babelwires::NewValueHolder bw_music::TrackType::createValue(const babelwires::TypeSystem& typeSystem) const {
     return babelwires::ValueHolder::makeValue<Track>(m_defaultDuration);
