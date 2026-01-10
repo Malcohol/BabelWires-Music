@@ -20,7 +20,7 @@ namespace {
 TEST(PercussionSetWithPitchMapTest, oneInstrumentBlockAllBuiltIn) {
     testUtils::TestEnvironment testEnvironment;
     const bw_music::BuiltInPercussionInstruments* const builtIns =
-        testEnvironment.m_typeSystem.addEntry<bw_music::BuiltInPercussionInstruments>();
+        testEnvironment.m_typeSystem.addType<bw_music::BuiltInPercussionInstruments>();
 
     bw_music::PercussionSetWithPitchMap::InstrumentBlock block = {{bw_music::BuiltInPercussionInstruments::Value::HBongo,
                                                        bw_music::BuiltInPercussionInstruments::Value::Claves,
@@ -77,7 +77,7 @@ TEST(PercussionSetWithPitchMapTest, oneInstrumentBlockAllNew) {
 TEST(PercussionSetWithPitchMapTest, oneInstrumentBlockMixed) {
     testUtils::TestEnvironment testEnvironment;
     const bw_music::BuiltInPercussionInstruments* const builtIns =
-        testEnvironment.m_typeSystem.addEntry<bw_music::BuiltInPercussionInstruments>();
+        testEnvironment.m_typeSystem.addType<bw_music::BuiltInPercussionInstruments>();
 
     bw_music::PercussionSetWithPitchMap::InstrumentBlock block = {{testUtils::getTestRegisteredIdentifier("Bar"),
                                                        bw_music::BuiltInPercussionInstruments::Value::Claves},
@@ -105,7 +105,7 @@ TEST(PercussionSetWithPitchMapTest, oneInstrumentBlockMixed) {
 TEST(PercussionSetWithPitchMapTest, twoInstrumentBlocks) {
     testUtils::TestEnvironment testEnvironment;
     const bw_music::BuiltInPercussionInstruments* const builtIns =
-        testEnvironment.m_typeSystem.addEntry<bw_music::BuiltInPercussionInstruments>();
+        testEnvironment.m_typeSystem.addType<bw_music::BuiltInPercussionInstruments>();
 
     bw_music::PercussionSetWithPitchMap::InstrumentBlock block0 = {{bw_music::BuiltInPercussionInstruments::Value::HBongo,
                                                        bw_music::BuiltInPercussionInstruments::Value::Claves,
@@ -152,7 +152,7 @@ TEST(PercussionSetWithPitchMapTest, twoInstrumentBlocks) {
 TEST(PercussionSetWithPitchMapTest, duplicates) {
     testUtils::TestEnvironment testEnvironment;
     const bw_music::BuiltInPercussionInstruments* const builtIns =
-        testEnvironment.m_typeSystem.addEntry<bw_music::BuiltInPercussionInstruments>();
+        testEnvironment.m_typeSystem.addType<bw_music::BuiltInPercussionInstruments>();
 
     bw_music::PercussionSetWithPitchMap::InstrumentBlock block0 = {{bw_music::BuiltInPercussionInstruments::Value::HBongo,
                                                        bw_music::BuiltInPercussionInstruments::Value::Claves,
