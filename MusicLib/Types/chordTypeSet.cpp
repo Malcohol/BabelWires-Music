@@ -13,14 +13,14 @@
 #include <cassert>
 
 bw_music::ChordTypeSet::ChordTypeSet(const babelwires::TypeSystem& typeSystem)
-    : babelwires::ArrayType(getThisIdentifier(), typeSystem.getEntryByType<ChordType>(), 0, static_cast<unsigned int>(ChordType::Value::NUM_VALUES), 1) {}
+    : babelwires::ArrayType(getThisIdentifier(), typeSystem.getRegisteredType<ChordType>(), 0, static_cast<unsigned int>(ChordType::Value::NUM_VALUES), 1) {}
 
 std::set<bw_music::ChordType::Value>
 bw_music::ChordTypeSet::getChordTypesFromValue(const babelwires::TypeSystem& typeSystem, const babelwires::ValueHolder& value) const {
     assert(value && "ValueHolder must hold a value");
     assert(isValidValue(typeSystem, *value) && "ValueHolder must hold a valid value for this type");
     
-    const auto& chordType = typeSystem.getEntryByType<ChordType>();
+    const auto& chordType = typeSystem.getRegisteredType<ChordType>();
     std::set<bw_music::ChordType::Value> selectedChords;
     for (unsigned int i = 0; i < getNumChildren(value); ++i) {
         const auto [chordValueHolder, chordStep, chordChildType] = getChild(value, i);
@@ -35,7 +35,7 @@ babelwires::ValueHolder
 bw_music::ChordTypeSet::createValueFromChordTypes(const babelwires::TypeSystem& typeSystem, const std::set<ChordType::Value>& chordTypes) const {
     babelwires::ValueHolder valueHolder = createValue(typeSystem);
     setSize(typeSystem, valueHolder, static_cast<unsigned int>(chordTypes.size()));
-    const auto& chordTypeType = typeSystem.getEntryByType<ChordType>();
+    const auto& chordTypeType = typeSystem.getRegisteredType<ChordType>();
     unsigned int i = 0;
     for (auto chordType : chordTypes) {
         const auto [childValueHolder, childStep, childType] = getChildNonConst(valueHolder, i);

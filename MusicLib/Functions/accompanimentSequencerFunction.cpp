@@ -95,7 +95,7 @@ namespace {
 
             // Map chord types to child indices.
             const babelwires::RecordType& recordType = typeOfAccompanimentTracks.is<babelwires::RecordType>();
-            const auto& chordTypeType = typeSystem.getEntryByType<bw_music::ChordType>();
+            const auto& chordTypeType = typeSystem.getRegisteredType<bw_music::ChordType>();
             const unsigned int numChildren = recordType.getNumChildren(accompanimentTracks);
             for (unsigned int i = 0; i < numChildren; ++i) {
                 auto [fieldValue, step, fieldType] = recordType.getChild(accompanimentTracks, i);

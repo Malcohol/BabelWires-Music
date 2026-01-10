@@ -24,7 +24,7 @@
 
 namespace {
     babelwires::MapValue getTestPercussionMap(const babelwires::TypeSystem& typeSystem) {
-        const auto& builtInPercussion = typeSystem.getEntryByType<bw_music::BuiltInPercussionInstruments>();
+        const auto& builtInPercussion = typeSystem.getRegisteredType<bw_music::BuiltInPercussionInstruments>();
 
         babelwires::TypeExp targetTypeExp = babelwires::EnumUnionTypeConstructor::makeTypeExp(
             bw_music::BuiltInPercussionInstruments::getThisIdentifier(),

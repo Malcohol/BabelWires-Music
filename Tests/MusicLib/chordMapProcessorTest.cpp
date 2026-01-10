@@ -30,9 +30,9 @@ namespace {
 
     babelwires::MapValue getTestChordMap(const babelwires::TypeSystem& typeSystem, SourceMode sourceMode,
                                          TargetMode targetMode, WildcardMode wildcardMode) {
-        babelwires::TypePtrT<bw_music::ChordType> chordTypeEnum = typeSystem.getEntryByType<bw_music::ChordType>();
+        babelwires::TypePtrT<bw_music::ChordType> chordTypeEnum = typeSystem.getRegisteredType<bw_music::ChordType>();
         babelwires::TypePtrT<bw_music::PitchClass> pitchClassEnum =
-            typeSystem.getEntryByType<bw_music::PitchClass>();
+            typeSystem.getRegisteredType<bw_music::PitchClass>();
 
         babelwires::MapValue chordMap;
         chordMap.setSourceTypeExp(bw_music::getMapChordFunctionSourceTypeExp());
@@ -332,9 +332,9 @@ TEST(ChordMapProcessorTest, processor) {
     bw_music::registerLib(testEnvironment.m_projectContext);
 
     babelwires::TypePtrT<bw_music::ChordType> chordTypeEnum =
-        testEnvironment.m_typeSystem.getEntryByType<bw_music::ChordType>();
+        testEnvironment.m_typeSystem.getRegisteredType<bw_music::ChordType>();
     babelwires::TypePtrT<bw_music::PitchClass> pitchClassEnum =
-        testEnvironment.m_typeSystem.getEntryByType<bw_music::PitchClass>();
+        testEnvironment.m_typeSystem.getRegisteredType<bw_music::PitchClass>();
 
     bw_music::ChordMapProcessor processor(testEnvironment.m_projectContext);
 

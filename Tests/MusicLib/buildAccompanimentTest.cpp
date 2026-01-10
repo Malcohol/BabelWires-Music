@@ -39,7 +39,7 @@ class BuildAccompanimentTest : public MusicLibTestFixture {
         const auto& typeSystem = m_testEnv.m_projectContext.m_typeSystem;
         babelwires::ValueTreeRoot& input = m_processor.getInput();
         babelwires::ValueHolder inputValue = input.getValue();
-        const auto& inputType = typeSystem.getEntryByType<bw_music::BuildAccompanimentProcessorInput>();
+        const auto& inputType = typeSystem.getRegisteredType<bw_music::BuildAccompanimentProcessorInput>();
         inputType->setTypeVariableAssignmentAndInstantiate(typeSystem, inputValue, {type});
         input.setValue(inputValue);
     }
@@ -48,7 +48,7 @@ class BuildAccompanimentTest : public MusicLibTestFixture {
         const auto& typeSystem = m_testEnv.m_projectContext.m_typeSystem;
         babelwires::ValueTreeRoot& input = m_processor.getInput();
         const babelwires::ValueHolder& inputValue = input.getValue();
-        const auto& chordType = typeSystem.getEntryByType<bw_music::ChordTypeSet>();
+        const auto& chordType = typeSystem.getRegisteredType<bw_music::ChordTypeSet>();
 
         input.setDescendentValue(
             babelwires::Path({babelwires::PathStep(babelwires::GenericType::getStepToValue()),
@@ -81,7 +81,7 @@ TEST_F(BuildAccompanimentTest, trackTest) {
 
     setInputValues({bw_music::ChordType::Value::m, bw_music::ChordType::Value::m7}, track);
 
-    const auto& chordType = typeSystem.getEntryByType<bw_music::ChordType>();
+    const auto& chordType = typeSystem.getRegisteredType<bw_music::ChordType>();
 
     m_processor.process(m_testEnv.m_log);
 
@@ -110,7 +110,7 @@ TEST_F(BuildAccompanimentTest, testTrackContainerTest) {
 
     instantiateInputTypeVariable(bw_music_testplugin::TestTrackContainer::getThisIdentifier());
 
-    const auto& testTrackContainerType = typeSystem.getEntryByType<bw_music_testplugin::TestTrackContainer>();
+    const auto& testTrackContainerType = typeSystem.getRegisteredType<bw_music_testplugin::TestTrackContainer>();
     babelwires::ValueTreeRoot inputTracks(typeSystem, bw_music_testplugin::TestTrackContainer::getThisIdentifier());
     bw_music_testplugin::TestTrackContainer::Instance inputTracksInstance(inputTracks);
     inputTracksInstance.gettrack1().set(testUtils::getTrackOfSimpleNotes({60, 62, 64, 67, 71}));
@@ -121,7 +121,7 @@ TEST_F(BuildAccompanimentTest, testTrackContainerTest) {
 
     m_processor.process(m_testEnv.m_log);
 
-    const auto& chordType = typeSystem.getEntryByType<bw_music::ChordType>();
+    const auto& chordType = typeSystem.getRegisteredType<bw_music::ChordType>();
 
     const babelwires::ValueTreeNode& output = getAccompanimentOutput();
     ASSERT_EQ(output.getNumChildren(), 2);

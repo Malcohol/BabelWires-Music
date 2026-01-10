@@ -44,7 +44,7 @@ bw_music::ModelDuration bw_music_testplugin::SimpleAccompaniment::getTrackDurati
 babelwires::NewValueHolder
 bw_music_testplugin::SimpleAccompaniment::createValue(const babelwires::TypeSystem& typeSystem) const {
     auto newValue = RecordType::createValue(typeSystem);
-    const auto& testTrackContainer = typeSystem.getEntryByType<TestTrackContainer>();
+    const auto& testTrackContainer = typeSystem.getRegisteredType<TestTrackContainer>();
 
     auto& recordValue = newValue.m_nonConstReference.is<babelwires::RecordValue>();
     {

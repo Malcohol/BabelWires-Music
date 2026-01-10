@@ -65,7 +65,7 @@ void smf::registerLib(babelwires::ProjectContext& context) {
     context.m_typeSystem.addEntry<SmfSequence>(context.m_typeSystem);
 
     // Percussion types
-    const auto& builtInPercussion = context.m_typeSystem.getEntryByType<bw_music::BuiltInPercussionInstruments>();
+    const auto& builtInPercussion = context.m_typeSystem.getRegisteredType<bw_music::BuiltInPercussionInstruments>();
     context.m_typeSystem.addEntry<GMPercussionSet>(*builtInPercussion);
     context.m_typeSystem.addEntry<GM2StandardPercussionSet>(*builtInPercussion);
     context.m_typeSystem.addEntry<GM2RoomPercussionSet>(*builtInPercussion);

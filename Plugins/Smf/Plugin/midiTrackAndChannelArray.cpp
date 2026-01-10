@@ -10,4 +10,4 @@
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 
 smf::MidiTrackAndChannelArray::MidiTrackAndChannelArray(const babelwires::TypeSystem& typeSystem)
-    : ArrayType(getThisIdentifier(), typeSystem.getEntryByType<smf::MidiTrackAndChannel>(), 1, 16, 1) {}
+    : ArrayType(getThisIdentifier(), typeSystem.getRegisteredType<smf::MidiTrackAndChannel>(), 1, 16, 1) {}

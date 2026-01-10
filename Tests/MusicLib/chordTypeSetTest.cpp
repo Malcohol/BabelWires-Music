@@ -12,7 +12,7 @@ TEST(ChordTypeSetTest, getChordTypesFromValue) {
     bw_music::registerLib(testEnvironment.m_projectContext);
 
     const auto& typeSystem = testEnvironment.m_typeSystem;
-    const auto& chordTypeSet = typeSystem.getEntryByType<bw_music::ChordTypeSet>();
+    const auto& chordTypeSet = typeSystem.getRegisteredType<bw_music::ChordTypeSet>();
 
     babelwires::ValueHolder chordSetValue = chordTypeSet->createValue(typeSystem);
     ASSERT_TRUE(chordSetValue);
@@ -20,7 +20,7 @@ TEST(ChordTypeSetTest, getChordTypesFromValue) {
     chordTypeSet->setSize(typeSystem, chordSetValue, 2);
 
     // Add C Major and A Minor to the set.
-    const auto& chordType = typeSystem.getEntryByType<bw_music::ChordType>();
+    const auto& chordType = typeSystem.getRegisteredType<bw_music::ChordType>();
     {
         auto [childValue, _, childType] = chordTypeSet->getChildNonConst(chordSetValue, 0);
         ASSERT_EQ(childType->getTypeExp(), bw_music::ChordType::getThisIdentifier());
@@ -45,7 +45,7 @@ TEST(ChordTypeSetTest, createValueFromChordTypes) {
     bw_music::registerLib(testEnvironment.m_projectContext);
 
     const auto& typeSystem = testEnvironment.m_typeSystem;
-    const auto& chordTypeSet = typeSystem.getEntryByType<bw_music::ChordTypeSet>();
+    const auto& chordTypeSet = typeSystem.getRegisteredType<bw_music::ChordTypeSet>();
 
     std::set<bw_music::ChordType::Value> inputChordTypes = {
         bw_music::ChordType::Value::M,
