@@ -9,8 +9,8 @@
 
 #include <MusicLib/Types/Track/track.hpp>
 
-bw_music::TrackType::TrackType(babelwires::TypeExp&& typeExp, ModelDuration defaultDuration)
-    : babelwires::Type(std::move(typeExp))
+bw_music::TrackType::TrackType(babelwires::TypeExp&& typeExpOfThis, ModelDuration defaultDuration)
+    : babelwires::Type(std::move(typeExpOfThis))
     , m_defaultDuration(defaultDuration) {}
 bw_music::DefaultTrackType::DefaultTrackType()
     : TrackType(getThisType()) {}
