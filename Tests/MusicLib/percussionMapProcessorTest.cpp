@@ -103,8 +103,8 @@ TEST(PercussionMapProcessorTest, funcSimple) {
     testUtils::TestLog log;
 
     babelwires::TypeSystem typeSystem;
-    const bw_music::BuiltInPercussionInstruments* const builtInPercussion =
-        typeSystem.addType<bw_music::BuiltInPercussionInstruments>();
+    const babelwires::TypePtrT<bw_music::BuiltInPercussionInstruments> builtInPercussion =
+        typeSystem.addAndGetType<bw_music::BuiltInPercussionInstruments>();
     typeSystem.addTypeConstructor<babelwires::EnumAtomTypeConstructor>();
     typeSystem.addTypeConstructor<babelwires::EnumUnionTypeConstructor>();
 

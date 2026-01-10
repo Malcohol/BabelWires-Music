@@ -10,23 +10,25 @@
 #include <Tests/TestUtils/testIdentifiers.hpp>
 
 namespace {
-    struct TestPercussionSet : bw_music::PercussionSetWithPitchMap
-    {
-        TestPercussionSet(InstrumentBlock block, bw_music::Pitch pitchOfDefaultValue) : PercussionSetWithPitchMap(testUtils::getTestRegisteredMediumIdentifier("Foo"), std::move(block), pitchOfDefaultValue) {}
-        TestPercussionSet(std::vector<InstrumentBlock> instruments, bw_music::Pitch pitchOfDefaultValue) : PercussionSetWithPitchMap(testUtils::getTestRegisteredMediumIdentifier("Foo"), std::move(instruments), pitchOfDefaultValue) {}
+    struct TestPercussionSet : bw_music::PercussionSetWithPitchMap {
+        TestPercussionSet(InstrumentBlock block, bw_music::Pitch pitchOfDefaultValue)
+            : PercussionSetWithPitchMap(testUtils::getTestRegisteredMediumIdentifier("Foo"), std::move(block),
+                                        pitchOfDefaultValue) {}
+        TestPercussionSet(std::vector<InstrumentBlock> instruments, bw_music::Pitch pitchOfDefaultValue)
+            : PercussionSetWithPitchMap(testUtils::getTestRegisteredMediumIdentifier("Foo"), std::move(instruments),
+                                        pitchOfDefaultValue) {}
     };
-}
+} // namespace
 
 TEST(PercussionSetWithPitchMapTest, oneInstrumentBlockAllBuiltIn) {
     testUtils::TestEnvironment testEnvironment;
-    const bw_music::BuiltInPercussionInstruments* const builtIns =
-        testEnvironment.m_typeSystem.addType<bw_music::BuiltInPercussionInstruments>();
+    const auto builtIns = testEnvironment.m_typeSystem.addAndGetType<bw_music::BuiltInPercussionInstruments>();
 
-    bw_music::PercussionSetWithPitchMap::InstrumentBlock block = {{bw_music::BuiltInPercussionInstruments::Value::HBongo,
-                                                       bw_music::BuiltInPercussionInstruments::Value::Claves,
-                                                       bw_music::BuiltInPercussionInstruments::Value::Bass1},
-                                                      40,
-                                                      builtIns};
+    bw_music::PercussionSetWithPitchMap::InstrumentBlock block = {
+        {bw_music::BuiltInPercussionInstruments::Value::HBongo, bw_music::BuiltInPercussionInstruments::Value::Claves,
+         bw_music::BuiltInPercussionInstruments::Value::Bass1},
+        40,
+        builtIns.get()};
 
     TestPercussionSet percussionSet(block, 41);
 
@@ -52,9 +54,8 @@ TEST(PercussionSetWithPitchMapTest, oneInstrumentBlockAllBuiltIn) {
 
 TEST(PercussionSetWithPitchMapTest, oneInstrumentBlockAllNew) {
     // No need to supply a point to BuiltInPercussionInstruments in this case.
-    bw_music::PercussionSetWithPitchMap::InstrumentBlock block = {{testUtils::getTestRegisteredIdentifier("Bar"),
-                                                       testUtils::getTestRegisteredIdentifier("Boo")},
-                                                      50};
+    bw_music::PercussionSetWithPitchMap::InstrumentBlock block = {
+        {testUtils::getTestRegisteredIdentifier("Bar"), testUtils::getTestRegisteredIdentifier("Boo")}, 50};
 
     TestPercussionSet percussionSet(block, 50);
 
@@ -76,13 +77,12 @@ TEST(PercussionSetWithPitchMapTest, oneInstrumentBlockAllNew) {
 
 TEST(PercussionSetWithPitchMapTest, oneInstrumentBlockMixed) {
     testUtils::TestEnvironment testEnvironment;
-    const bw_music::BuiltInPercussionInstruments* const builtIns =
-        testEnvironment.m_typeSystem.addType<bw_music::BuiltInPercussionInstruments>();
+    const auto builtIns = testEnvironment.m_typeSystem.addAndGetType<bw_music::BuiltInPercussionInstruments>();
 
-    bw_music::PercussionSetWithPitchMap::InstrumentBlock block = {{testUtils::getTestRegisteredIdentifier("Bar"),
-                                                       bw_music::BuiltInPercussionInstruments::Value::Claves},
-                                                      50,
-                                                      builtIns};
+    bw_music::PercussionSetWithPitchMap::InstrumentBlock block = {
+        {testUtils::getTestRegisteredIdentifier("Bar"), bw_music::BuiltInPercussionInstruments::Value::Claves},
+        50,
+        builtIns.get()};
 
     TestPercussionSet percussionSet(block, 50);
 
@@ -104,20 +104,18 @@ TEST(PercussionSetWithPitchMapTest, oneInstrumentBlockMixed) {
 
 TEST(PercussionSetWithPitchMapTest, twoInstrumentBlocks) {
     testUtils::TestEnvironment testEnvironment;
-    const bw_music::BuiltInPercussionInstruments* const builtIns =
-        testEnvironment.m_typeSystem.addType<bw_music::BuiltInPercussionInstruments>();
+    const auto builtIns = testEnvironment.m_typeSystem.addAndGetType<bw_music::BuiltInPercussionInstruments>();
 
-    bw_music::PercussionSetWithPitchMap::InstrumentBlock block0 = {{bw_music::BuiltInPercussionInstruments::Value::HBongo,
-                                                       bw_music::BuiltInPercussionInstruments::Value::Claves,
-                                                       bw_music::BuiltInPercussionInstruments::Value::Bass1},
-                                                      40,
-                                                      builtIns};
+    bw_music::PercussionSetWithPitchMap::InstrumentBlock block0 = {
+        {bw_music::BuiltInPercussionInstruments::Value::HBongo, bw_music::BuiltInPercussionInstruments::Value::Claves,
+         bw_music::BuiltInPercussionInstruments::Value::Bass1},
+        40,
+        builtIns.get()};
 
-    bw_music::PercussionSetWithPitchMap::InstrumentBlock block1 = {{testUtils::getTestRegisteredIdentifier("Bar"),
-                                                       testUtils::getTestRegisteredIdentifier("Boo")},
-                                                      50};
+    bw_music::PercussionSetWithPitchMap::InstrumentBlock block1 = {
+        {testUtils::getTestRegisteredIdentifier("Bar"), testUtils::getTestRegisteredIdentifier("Boo")}, 50};
 
-    TestPercussionSet percussionSet({ block0, block1 }, 41);
+    TestPercussionSet percussionSet({block0, block1}, 41);
 
     EXPECT_TRUE(testUtils::areEqualSets(percussionSet.getValueSet(), {"HBongo", "Claves", "Bass1", "Bar", "Boo"}));
     EXPECT_EQ(percussionSet.getValueSet().size(), 5);
@@ -151,22 +149,20 @@ TEST(PercussionSetWithPitchMapTest, twoInstrumentBlocks) {
 
 TEST(PercussionSetWithPitchMapTest, duplicates) {
     testUtils::TestEnvironment testEnvironment;
-    const bw_music::BuiltInPercussionInstruments* const builtIns =
-        testEnvironment.m_typeSystem.addType<bw_music::BuiltInPercussionInstruments>();
+    const auto builtIns = testEnvironment.m_typeSystem.addAndGetType<bw_music::BuiltInPercussionInstruments>();
 
-    bw_music::PercussionSetWithPitchMap::InstrumentBlock block0 = {{bw_music::BuiltInPercussionInstruments::Value::HBongo,
-                                                       bw_music::BuiltInPercussionInstruments::Value::Claves,
-                                                       bw_music::BuiltInPercussionInstruments::Value::Bass1,
-                                                       bw_music::BuiltInPercussionInstruments::Value::Claves},
-                                                      40,
-                                                      builtIns};
+    bw_music::PercussionSetWithPitchMap::InstrumentBlock block0 = {
+        {bw_music::BuiltInPercussionInstruments::Value::HBongo, bw_music::BuiltInPercussionInstruments::Value::Claves,
+         bw_music::BuiltInPercussionInstruments::Value::Bass1, bw_music::BuiltInPercussionInstruments::Value::Claves},
+        40,
+        builtIns.get()};
 
-    bw_music::PercussionSetWithPitchMap::InstrumentBlock block1 = {{testUtils::getTestRegisteredIdentifier("Bar"),
-                                                       bw_music::BuiltInPercussionInstruments::Value::Claves},
-                                                      50,
-                                                      builtIns};
+    bw_music::PercussionSetWithPitchMap::InstrumentBlock block1 = {
+        {testUtils::getTestRegisteredIdentifier("Bar"), bw_music::BuiltInPercussionInstruments::Value::Claves},
+        50,
+        builtIns.get()};
 
-    TestPercussionSet percussionSet({ block0, block1 }, 41);
+    TestPercussionSet percussionSet({block0, block1}, 41);
 
     EXPECT_TRUE(testUtils::areEqualSets(percussionSet.getValueSet(), {"HBongo", "Claves", "Bass1", "Bar"}));
     EXPECT_EQ(percussionSet.getValueSet().size(), 4);
