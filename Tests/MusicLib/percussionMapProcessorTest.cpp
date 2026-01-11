@@ -129,9 +129,9 @@ TEST(PercussionMapProcessorTest, processor) {
     const babelwires::ValueTreeNode& output = processor.getOutput();
 
     babelwires::ValueTreeNode& inputArray =
-        input.getChildFromStep(bw_music::PercussionMapProcessor::getCommonArrayId()).is<babelwires::ValueTreeNode>();
+        input.getChildFromStep(bw_music::PercussionMapProcessor::getCommonArrayId()).as<babelwires::ValueTreeNode>();
     const babelwires::ValueTreeNode& outputArray =
-        output.getChildFromStep(bw_music::PercussionMapProcessor::getCommonArrayId()).is<babelwires::ValueTreeNode>();
+        output.getChildFromStep(bw_music::PercussionMapProcessor::getCommonArrayId()).as<babelwires::ValueTreeNode>();
 
     babelwires::ArrayInstanceImpl<babelwires::ValueTreeNode, bw_music::TrackType> inArray(inputArray);
     const babelwires::ArrayInstanceImpl<const babelwires::ValueTreeNode, bw_music::TrackType> outArray(outputArray);

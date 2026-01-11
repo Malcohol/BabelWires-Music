@@ -40,7 +40,7 @@ std::size_t bw_music::Track::getHash() const {
 }
 
 bool bw_music::Track::operator==(const Value& other) const {
-    const Track* const otherTrack = other.as<Track>();
+    const Track* const otherTrack = other.tryAs<Track>();
     if (!otherTrack) {
         return false;
     }

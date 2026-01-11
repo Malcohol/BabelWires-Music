@@ -11,7 +11,7 @@ namespace {
             , m_pitch(pitch) {}
 
         virtual bool isEventOfInterest(const bw_music::TrackEvent& event) override {
-            if (const bw_music::NoteEvent* noteEvent = event.as<bw_music::NoteEvent>()) {
+            if (const bw_music::NoteEvent* noteEvent = event.tryAs<bw_music::NoteEvent>()) {
                 return noteEvent->m_pitch >= m_pitch;
             }
             return false;
@@ -26,7 +26,7 @@ namespace {
             , m_pitch(pitch) {}
 
         virtual bool isEventOfInterest(const bw_music::TrackEvent& event) override {
-            if (const bw_music::NoteEvent* noteEvent = event.as<bw_music::NoteEvent>()) {
+            if (const bw_music::NoteEvent* noteEvent = event.tryAs<bw_music::NoteEvent>()) {
                 return noteEvent->m_pitch < m_pitch;
             }
             return false;
@@ -40,7 +40,7 @@ namespace {
             : bw_music::FilteredTrackIterator<>(track) {}
 
         virtual bool isEventOfInterest(const bw_music::TrackEvent& event) override {
-            return event.as<bw_music::NoteEvent>() == nullptr;
+            return event.tryAs<bw_music::NoteEvent>() == nullptr;
         }
 
         bw_music::Pitch m_pitch;

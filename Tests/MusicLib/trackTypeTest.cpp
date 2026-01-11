@@ -17,7 +17,7 @@ TEST(TrackType, defaultTrackTypeCreateValue) {
     babelwires::ValueHolder newValue = trackType.createValue(typeSystem);
     EXPECT_TRUE(newValue);
 
-    const auto* const newTrackValue = newValue->as<bw_music::Track>();
+    const auto* const newTrackValue = newValue->tryAs<bw_music::Track>();
     EXPECT_NE(newTrackValue, nullptr);
     EXPECT_EQ(newTrackValue->getDuration(), 0);
 }
@@ -49,7 +49,7 @@ TEST(TrackType, constructedTrackTypeCreateValue) {
     babelwires::ValueHolder newValue = type->createValue(testEnvironment.m_typeSystem);
     EXPECT_TRUE(newValue);
 
-    const auto* const newTrack = newValue->as<bw_music::Track>();
+    const auto* const newTrack = newValue->tryAs<bw_music::Track>();
     EXPECT_NE(newTrack, nullptr);
     EXPECT_EQ(newTrack->getDuration(), 8);
 }

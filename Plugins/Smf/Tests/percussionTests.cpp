@@ -48,7 +48,7 @@ TEST_P(SmfStandardPercussionTest, saveLoad) {
         babelwires::ValueTreeRoot smfFeature(testEnvironment.m_projectContext.m_typeSystem, babelwires::FileTypeT<smf::SmfSequence>::getThisIdentifier());
         smfFeature.setToDefault();
 
-        smf::SmfSequence::Instance smfType{smfFeature.getChild(0)->is<babelwires::ValueTreeNode>()};
+        smf::SmfSequence::Instance smfType{smfFeature.getChild(0)->as<babelwires::ValueTreeNode>()};
         smfType.getMeta().getSpec().set(testData.m_specificationId);
 
         auto track9 = smfType.getTrcks0().activateAndGetTrack(9);
@@ -74,7 +74,7 @@ TEST_P(SmfStandardPercussionTest, saveLoad) {
         const auto feature = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
         ASSERT_NE(feature, nullptr);
 
-        smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->is<babelwires::ValueTreeNode>()};
+        smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
         ASSERT_EQ(smfSequence.getInstanceType().getIndexOfTag(smfSequence.getSelectedTag()), 0);
 
         auto tracks = smfSequence.getTrcks0();
@@ -93,22 +93,22 @@ TEST_P(SmfStandardPercussionTest, saveLoad) {
 
         auto it = span.begin();
         ASSERT_NE(it, span.end());
-        EXPECT_EQ(it->as<bw_music::PercussionOnEvent>()->getInstrument(), testData.m_instrumentId0);
+        EXPECT_EQ(it->tryAs<bw_music::PercussionOnEvent>()->getInstrument(), testData.m_instrumentId0);
         ++it;
         ASSERT_NE(it, span.end());
-        EXPECT_EQ(it->as<bw_music::PercussionOffEvent>()->getInstrument(), testData.m_instrumentId0);
+        EXPECT_EQ(it->tryAs<bw_music::PercussionOffEvent>()->getInstrument(), testData.m_instrumentId0);
         ++it;
         ASSERT_NE(it, span.end());
-        EXPECT_EQ(it->as<bw_music::PercussionOnEvent>()->getInstrument(), testData.m_instrumentId1);
+        EXPECT_EQ(it->tryAs<bw_music::PercussionOnEvent>()->getInstrument(), testData.m_instrumentId1);
         ++it;
         ASSERT_NE(it, span.end());
-        EXPECT_EQ(it->as<bw_music::PercussionOffEvent>()->getInstrument(), testData.m_instrumentId1);
+        EXPECT_EQ(it->tryAs<bw_music::PercussionOffEvent>()->getInstrument(), testData.m_instrumentId1);
         ++it;
         ASSERT_NE(it, span.end());
-        EXPECT_EQ(it->as<bw_music::PercussionOnEvent>()->getInstrument(), testData.m_instrumentId2);
+        EXPECT_EQ(it->tryAs<bw_music::PercussionOnEvent>()->getInstrument(), testData.m_instrumentId2);
         ++it;
         ASSERT_NE(it, span.end());
-        EXPECT_EQ(it->as<bw_music::PercussionOffEvent>()->getInstrument(), testData.m_instrumentId2);
+        EXPECT_EQ(it->tryAs<bw_music::PercussionOffEvent>()->getInstrument(), testData.m_instrumentId2);
         ++it;
         EXPECT_EQ(it, span.end());
     }
@@ -174,7 +174,7 @@ TEST_P(SmfTrackAllocationPercussionTest, trackAllocation) {
         babelwires::ValueTreeRoot smfFeature(testEnvironment.m_projectContext.m_typeSystem, babelwires::FileTypeT<smf::SmfSequence>::getThisIdentifier());
         smfFeature.setToDefault();
 
-        smf::SmfSequence::Instance smfType{smfFeature.getChild(0)->is<babelwires::ValueTreeNode>()};
+        smf::SmfSequence::Instance smfType{smfFeature.getChild(0)->as<babelwires::ValueTreeNode>()};
         smfType.getMeta().getSpec().set(testData.m_specificationId);
         auto tracks = smfType.getTrcks0();
 
@@ -204,7 +204,7 @@ TEST_P(SmfTrackAllocationPercussionTest, trackAllocation) {
         const auto feature = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
         ASSERT_NE(feature, nullptr);
 
-        smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->is<babelwires::ValueTreeNode>()};
+        smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
         ASSERT_EQ(smfSequence.getInstanceType().getIndexOfTag(smfSequence.getSelectedTag()), 0);
 
         auto tracks = smfSequence.getTrcks0();

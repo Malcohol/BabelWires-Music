@@ -232,9 +232,9 @@ bw_music::Track bw_music::fingeredChordsFunction(const Track& sourceTrack, Finge
 
         timeSinceLastChordEvent += event.getTimeSinceLastEvent();
 
-        if (const auto* noteOnEvent = event.as<NoteOnEvent>()) {
+        if (const auto* noteOnEvent = event.tryAs<NoteOnEvent>()) {
             activePitches.addPitch(noteOnEvent->m_pitch);
-        } else if (const auto* noteOffEvent = event.as<NoteOffEvent>()) {
+        } else if (const auto* noteOffEvent = event.tryAs<NoteOffEvent>()) {
             activePitches.removePitch(noteOffEvent->m_pitch);
         }
     }

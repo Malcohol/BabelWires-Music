@@ -158,9 +158,9 @@ namespace {
 
         // Iterate through the source track and adjust each note to fit the chord.
         for (const auto& event : sourceTrack) {
-            if (const auto note = event.as<bw_music::NoteEvent>()) {
+            if (const auto note = event.tryAs<bw_music::NoteEvent>()) {
                 bw_music::TrackEventHolder newNote = *note;
-                newNote->is<bw_music::NoteEvent>().setPitch(pitchMap(note->getPitch()));
+                newNote->as<bw_music::NoteEvent>().setPitch(pitchMap(note->getPitch()));
                 resultTrack.addEvent(newNote.release());
             } else {
                 // If the event is not a NoteEvent, just copy it to the result track.

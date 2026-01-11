@@ -45,7 +45,7 @@ void bw_music::ChordMapProcessor::processEntry(babelwires::UserLogger& userLogge
     babelwires::ConstInstance<TrackType> entryIn{inputEntry};
     babelwires::Instance<TrackType> entryOut{outputEntry};
 
-    const auto& chordMap = in.getChrdMp()->getValue()->is<babelwires::MapValue>();
+    const auto& chordMap = in.getChrdMp()->getValue()->as<babelwires::MapValue>();
 
     entryOut.set(mapChordsFunction(in->getTypeSystem(), entryIn.get(), chordMap));
 }

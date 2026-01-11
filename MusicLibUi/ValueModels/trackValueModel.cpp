@@ -14,13 +14,13 @@
 #include <cassert>
 
 QString bw_musicUi::TrackValueModel::getRichText() const {
-    const bw_music::Track& value = getValue()->is<bw_music::Track>();
+    const bw_music::Track& value = getValue()->as<bw_music::Track>();
     const babelwires::Rational duration = value.getDuration();
     return duration.toHtmlString().c_str();
 }
 
 QString bw_musicUi::TrackValueModel::getTooltip() const {
-    const bw_music::Track& track = getValue()->is<bw_music::Track>();
+    const bw_music::Track& track = getValue()->as<bw_music::Track>();
     const auto& numEventGroupsByCategory = track.getNumEventGroupsByCategory();
     if (!numEventGroupsByCategory.empty()) {
         QString summary;

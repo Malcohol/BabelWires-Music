@@ -94,7 +94,7 @@ namespace {
             , m_accompanimentTracks(accompanimentTracks) {
 
             // Map chord types to child indices.
-            const babelwires::RecordType& recordType = typeOfAccompanimentTracks.is<babelwires::RecordType>();
+            const babelwires::RecordType& recordType = typeOfAccompanimentTracks.as<babelwires::RecordType>();
             const auto& chordTypeType = typeSystem.getRegisteredType<bw_music::ChordType>();
             const unsigned int numChildren = recordType.getNumChildren(accompanimentTracks);
             for (unsigned int i = 0; i < numChildren; ++i) {
@@ -133,7 +133,7 @@ namespace {
                     tryFollowPath(m_typeSystem, *m_fieldType, trackInStructure.m_pathToTrack, accompanimentForChord);
                 if (optFieldValue) {
                     const auto& [fieldType, fieldValue] = *optFieldValue;
-                    const bw_music::Track* const accompanimentTrack = fieldValue->as<bw_music::Track>();
+                    const bw_music::Track* const accompanimentTrack = fieldValue->tryAs<bw_music::Track>();
                     if (accompanimentTrack) {
                         bw_music::Track excerpt =
                             getTrackSegmentForDuration(*accompanimentTrack, offset, targetDuration);
@@ -165,7 +165,7 @@ namespace {
                     *totalTimeSinceFirstChordEvent += timeSinceLastChordEvent;
                 }
 
-                if (const auto* chordOnEvent = event.as<bw_music::ChordOnEvent>()) {
+                if (const auto* chordOnEvent = event.tryAs<bw_music::ChordOnEvent>()) {
                     if (!totalTimeSinceFirstChordEvent.has_value()) {
                         totalTimeSinceFirstChordEvent = 0;
                     }
@@ -174,7 +174,7 @@ namespace {
                         timeSinceLastChordEvent = 0;
                     }
                     currentChord = chordOnEvent->m_chord;
-                } else if (event.as<bw_music::ChordOffEvent>()) {
+                } else if (event.tryAs<bw_music::ChordOffEvent>()) {
                     assert(currentChord.has_value() && "ChordOffEvent without a preceding ChordOnEvent");
                     if (timeSinceLastChordEvent > 0) {
                         const auto childIndexIt = m_chordTypeToChildIndex.find(currentChord->m_chordType);
@@ -216,9 +216,9 @@ namespace {
 
         void findTracksInStructure(const babelwires::Type& currentType, const babelwires::ValueHolder& currentValue,
                                    babelwires::Path currentPath = babelwires::Path()) {
-            if (const auto* trackType = currentType.as<bw_music::TrackType>()) {
+            if (const auto* trackType = currentType.tryAs<bw_music::TrackType>()) {
                 m_tracksInStructure.push_back(TrackInStructure{currentPath});
-                const bw_music::Track& sourceTrack = currentValue->is<bw_music::Track>();
+                const bw_music::Track& sourceTrack = currentValue->as<bw_music::Track>();
                 if (m_durationOfAccompanimentTracks == 0) {
                     m_durationOfAccompanimentTracks = sourceTrack.getDuration();
                 } else if (sourceTrack.getDuration() != 0 &&
@@ -227,7 +227,7 @@ namespace {
                     throw babelwires::ModelException()
                         << "All accompaniment tracks must have the same duration (or be empty)";
                 }
-            } else if (const auto* recordType = currentType.as<babelwires::CompoundType>()) {
+            } else if (const auto* recordType = currentType.tryAs<babelwires::CompoundType>()) {
                 const unsigned int numChildren = recordType->getNumChildren(currentValue);
                 for (unsigned int i = 0; i < numChildren; ++i) {
                     auto [childValue, step, childType] = recordType->getChild(currentValue, i);
@@ -240,12 +240,12 @@ namespace {
 
         void validateTracksInStructure(const babelwires::Type& currentType, const babelwires::ValueHolder& currentValue,
                                        babelwires::Path currentPath = babelwires::Path()) const {
-            if (const auto* trackType = currentType.as<bw_music::TrackType>()) {
+            if (const auto* trackType = currentType.tryAs<bw_music::TrackType>()) {
                 auto it = std::find_if(
                     m_tracksInStructure.begin(), m_tracksInStructure.end(),
                     [&currentPath](const TrackInStructure& tis) { return tis.m_pathToTrack == currentPath; });
                 if (it != m_tracksInStructure.end()) {
-                    const bw_music::Track& sourceTrack = currentValue->is<bw_music::Track>();
+                    const bw_music::Track& sourceTrack = currentValue->as<bw_music::Track>();
                     if (sourceTrack.getDuration() != 0 &&
                         sourceTrack.getDuration() != m_durationOfAccompanimentTracks) {
                         // TODO More detail
@@ -257,7 +257,7 @@ namespace {
                     // They will be treated as empty in the main algorithm.
                     // TODO Warn?
                 }
-            } else if (const auto* recordType = currentType.as<babelwires::CompoundType>()) {
+            } else if (const auto* recordType = currentType.tryAs<babelwires::CompoundType>()) {
                 const unsigned int numChildren = recordType->getNumChildren(currentValue);
                 for (unsigned int i = 0; i < numChildren; ++i) {
                     auto [childValue, step, childType] = recordType->getChild(currentValue, i);
@@ -270,14 +270,14 @@ namespace {
 
         void assignTracksInStructure(const babelwires::Type& currentType, babelwires::ValueHolder& currentValue,
                                      babelwires::Path currentPath = babelwires::Path()) {
-            if (const auto* trackType = currentType.as<bw_music::TrackType>()) {
+            if (const auto* trackType = currentType.tryAs<bw_music::TrackType>()) {
                 auto it = std::find_if(
                     m_tracksInStructure.begin(), m_tracksInStructure.end(),
                     [&currentPath](const TrackInStructure& tis) { return tis.m_pathToTrack == currentPath; });
                 // Since the result is duplicated from the first field, the track must exist.
                 assert(it != m_tracksInStructure.end() && "track not found for path");
                 currentValue = std::move(it->m_track);
-            } else if (const auto* recordType = currentType.as<babelwires::CompoundType>()) {
+            } else if (const auto* recordType = currentType.tryAs<babelwires::CompoundType>()) {
                 const unsigned int numChildren = recordType->getNumChildren(currentValue);
                 for (unsigned int i = 0; i < numChildren; ++i) {
                     auto [childValue, step, childType] = recordType->getChildNonConst(currentValue, i);
@@ -294,7 +294,7 @@ babelwires::ValueHolder bw_music::accompanimentSequencerFunction(
     const babelwires::TypeSystem& typeSystem, const babelwires::Type& typeOfAccompanimentTracks,
     const babelwires::ValueHolder& accompanimentTracks, const bw_music::Track& chordTrack) {
 
-    const babelwires::RecordType* recordType = typeOfAccompanimentTracks.as<babelwires::RecordType>();
+    const babelwires::RecordType* recordType = typeOfAccompanimentTracks.tryAs<babelwires::RecordType>();
     assert(recordType && "accompanimentTracks must be of a record type");
 
     AccompanimentSequencer sequencer(typeSystem, *recordType, accompanimentTracks);

@@ -30,7 +30,7 @@ void bw_music::GetChordTypesProcessor::processValue(babelwires::UserLogger& user
     GetChordTypesProcessorInput::ConstInstance in{input};
     if (in->isChanged(babelwires::ValueTreeNode::Changes::SomethingChanged)) {
         GetChordTypesProcessorOutput::Instance out{output};
-        const ChordTypeSet& chordTypeSetType = out.getChords()->getType()->is<ChordTypeSet>();
+        const ChordTypeSet& chordTypeSetType = out.getChords()->getType()->as<ChordTypeSet>();
         auto setOfChordTypes = bw_music::getChordTypesFunction(in.getTrack().get());
         out.getChords()->setValue(chordTypeSetType.createValueFromChordTypes(in->getTypeSystem(), setOfChordTypes));
     }

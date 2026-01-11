@@ -20,7 +20,7 @@ babelwires::NewValueHolder bw_music::TrackType::createValue(const babelwires::Ty
 }
 
 bool bw_music::TrackType::visitValue(const babelwires::TypeSystem& typeSystem, const babelwires::Value& v, ChildValueVisitor& visitor) const {
-    return v.as<Track>();
+    return v.tryAs<Track>();
 }
 
 std::string bw_music::TrackType::getFlavour() const {
@@ -30,7 +30,7 @@ std::string bw_music::TrackType::getFlavour() const {
 std::optional<babelwires::SubtypeOrder>
 bw_music::TrackType::compareSubtypeHelper(const babelwires::TypeSystem& typeSystem,
                                                      const babelwires::Type& other) const {
-    const babelwires::Type* const otherTrackType = other.as<TrackType>();
+    const babelwires::Type* const otherTrackType = other.tryAs<TrackType>();
     if (!otherTrackType) {
         return {};
     }
@@ -38,6 +38,6 @@ bw_music::TrackType::compareSubtypeHelper(const babelwires::TypeSystem& typeSyst
 }
 
 std::string bw_music::TrackType::valueToString(const babelwires::TypeSystem& typeSystem, const babelwires::ValueHolder& v) const { 
-    const Track& track = v->is<Track>();
+    const Track& track = v->as<Track>();
     return track.getDuration().toString();
 }

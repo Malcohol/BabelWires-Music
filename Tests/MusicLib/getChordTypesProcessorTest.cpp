@@ -66,7 +66,7 @@ TEST_F(GetChordTypesProcessorTest, processorBasic) {
 
     processor.process(testEnvironment.m_log);
 
-    auto chordTypeSetType = output.getChords()->getType()->as<bw_music::ChordTypeSet>();
+    auto chordTypeSetType = output.getChords()->getType()->tryAs<bw_music::ChordTypeSet>();
     EXPECT_NE(chordTypeSetType, nullptr);
 
     auto chordTypes = chordTypeSetType->getChordTypesFromValue(

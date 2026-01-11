@@ -88,20 +88,20 @@ TEST_F(BuildAccompanimentTest, trackTest) {
     const babelwires::ValueTreeNode& output = getAccompanimentOutput();
     ASSERT_EQ(output.getNumChildren(), 2);
     {
-        unsigned int indexOfMinor = output.getType()->is<babelwires::RecordType>().getChildIndexFromStep(
+        unsigned int indexOfMinor = output.getType()->as<babelwires::RecordType>().getChildIndexFromStep(
             output.getValue(), chordType->getIdentifierFromValue(bw_music::ChordType::Value::m));
         ASSERT_NE(indexOfMinor, -1);
         const babelwires::ValueTreeNode& minorNode = *output.getChild(indexOfMinor);
-        EXPECT_TRUE(minorNode.getType()->as<bw_music::DefaultTrackType>());
-        testUtils::testSimpleNotes({60, 62, 63, 67, 71}, minorNode.getValue()->is<bw_music::Track>());
+        EXPECT_TRUE(minorNode.getType()->tryAs<bw_music::DefaultTrackType>());
+        testUtils::testSimpleNotes({60, 62, 63, 67, 71}, minorNode.getValue()->as<bw_music::Track>());
     }
     {
-        unsigned int indexOfMinor7 = output.getType()->is<babelwires::RecordType>().getChildIndexFromStep(
+        unsigned int indexOfMinor7 = output.getType()->as<babelwires::RecordType>().getChildIndexFromStep(
         output.getValue(), chordType->getIdentifierFromValue(bw_music::ChordType::Value::m7));
         ASSERT_NE(indexOfMinor7, -1);
         const babelwires::ValueTreeNode& minor7Node = *output.getChild(indexOfMinor7);
-        EXPECT_TRUE(minor7Node.getType()->as<bw_music::DefaultTrackType>());
-        testUtils::testSimpleNotes({60, 62, 63, 67, 70}, minor7Node.getValue()->is<bw_music::Track>());
+        EXPECT_TRUE(minor7Node.getType()->tryAs<bw_music::DefaultTrackType>());
+        testUtils::testSimpleNotes({60, 62, 63, 67, 70}, minor7Node.getValue()->as<bw_music::Track>());
     }
 }
 
@@ -126,22 +126,22 @@ TEST_F(BuildAccompanimentTest, testTrackContainerTest) {
     const babelwires::ValueTreeNode& output = getAccompanimentOutput();
     ASSERT_EQ(output.getNumChildren(), 2);
     {
-        unsigned int indexOfMinor = output.getType()->is<babelwires::RecordType>().getChildIndexFromStep(
+        unsigned int indexOfMinor = output.getType()->as<babelwires::RecordType>().getChildIndexFromStep(
             output.getValue(), chordType->getIdentifierFromValue(bw_music::ChordType::Value::m));
         ASSERT_NE(indexOfMinor, -1);
         const babelwires::ValueTreeNode& minorNode = *output.getChild(indexOfMinor);
-        EXPECT_TRUE(minorNode.getType()->as<bw_music_testplugin::TestTrackContainer>());
+        EXPECT_TRUE(minorNode.getType()->tryAs<bw_music_testplugin::TestTrackContainer>());
         bw_music_testplugin::TestTrackContainer::ConstInstance minorInstance(minorNode);
         testUtils::testSimpleNotes({60, 62, 63, 67, 71}, minorInstance.gettrack1().get());
         testUtils::testSimpleNotes({71, 67, 63, 62, 60}, minorInstance.gettrack2().get());
         EXPECT_EQ(minorInstance.getother().get(), 42);
     }
     {
-        unsigned int indexOfMinor7 = output.getType()->is<babelwires::RecordType>().getChildIndexFromStep(
+        unsigned int indexOfMinor7 = output.getType()->as<babelwires::RecordType>().getChildIndexFromStep(
         output.getValue(), chordType->getIdentifierFromValue(bw_music::ChordType::Value::m7));
         ASSERT_NE(indexOfMinor7, -1);
         const babelwires::ValueTreeNode& minor7Node = *output.getChild(indexOfMinor7);
-        EXPECT_TRUE(minor7Node.getType()->as<bw_music_testplugin::TestTrackContainer>());
+        EXPECT_TRUE(minor7Node.getType()->tryAs<bw_music_testplugin::TestTrackContainer>());
         bw_music_testplugin::TestTrackContainer::ConstInstance minor7Instance(minor7Node);
         testUtils::testSimpleNotes({60, 62, 63, 67, 70}, minor7Instance.gettrack1().get());
         testUtils::testSimpleNotes({70, 67, 63, 62, 60}, minor7Instance.gettrack2().get());

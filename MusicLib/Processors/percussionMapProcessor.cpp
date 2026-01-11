@@ -40,7 +40,7 @@ void bw_music::PercussionMapProcessor::processEntry(babelwires::UserLogger& user
     babelwires::ConstInstance<TrackType> entryIn{inputEntry};
     babelwires::Instance<TrackType> entryOut{outputEntry};
 
-    const auto& percMap = in.getMap()->getValue()->is<babelwires::MapValue>();
+    const auto& percMap = in.getMap()->getValue()->as<babelwires::MapValue>();
 
     entryOut.set(mapPercussionFunction(in->getTypeSystem(), entryIn.get(), percMap));
 }

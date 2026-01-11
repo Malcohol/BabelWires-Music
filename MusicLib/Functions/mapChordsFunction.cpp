@@ -62,7 +62,7 @@ namespace {
     decomposeMapTypes(const babelwires::TypeSystem& typeSystem, const babelwires::SumType& sumType) {
         assert(sumType.getSummands().size() == 2);
         const babelwires::TypePtr& sourceTupleTypeExp = sumType.getSummands()[0];
-        const auto& tupleType = sourceTupleTypeExp->is<babelwires::TupleType>();
+        const auto& tupleType = sourceTupleTypeExp->as<babelwires::TupleType>();
         assert(tupleType.getComponentTypes().size() == 2);
         const babelwires::TypePtr& pitchClassWCType = tupleType.getComponentTypes()[0];
         const babelwires::TypePtr& chordTypeWCType = tupleType.getComponentTypes()[1];
@@ -97,21 +97,21 @@ namespace {
             // Since the map is valid, the last entry only will be a fallback.
             for (int i = 0; i < m_mapValue.getNumMapEntries() - 1; ++i) {
                 const babelwires::MapEntryData& entry = m_mapValue.getMapEntry(i);
-                if (entry.getSourceValue()->as<babelwires::EnumValue>()) {
-                    assert(entry.getSourceValue()->as<babelwires::EnumValue>()->get() ==
+                if (entry.getSourceValue()->tryAs<babelwires::EnumValue>()) {
+                    assert(entry.getSourceValue()->tryAs<babelwires::EnumValue>()->get() ==
                                bw_music::NoChord::getNoChordValue() &&
                            "Bare EnumValue in ChordMap source that wasn't the NoChord value");
-                    if (entry.getTargetValue()->as<babelwires::EnumValue>()) {
-                        assert(entry.getTargetValue()->as<babelwires::EnumValue>()->get() ==
+                    if (entry.getTargetValue()->tryAs<babelwires::EnumValue>()) {
+                        assert(entry.getTargetValue()->tryAs<babelwires::EnumValue>()->get() ==
                                    bw_music::NoChord::getNoChordValue() &&
                                "Bare EnumValue in ChordMap target that wasn't the NoChord value");
                         return {};
                     } else {
-                        const babelwires::TupleValue& target = entry.getTargetValue()->is<babelwires::TupleValue>();
+                        const babelwires::TupleValue& target = entry.getTargetValue()->as<babelwires::TupleValue>();
                         const unsigned int pitchClassIndex =
-                            m_targetPitchClassAdapter(target.getValue(0)->is<babelwires::EnumValue>());
+                            m_targetPitchClassAdapter(target.getValue(0)->as<babelwires::EnumValue>());
                         const unsigned int chordTypeIndex =
-                            m_targetChordTypeAdapter(target.getValue(1)->is<babelwires::EnumValue>());
+                            m_targetChordTypeAdapter(target.getValue(1)->as<babelwires::EnumValue>());
                         if ((pitchClassIndex == 0) || (chordTypeIndex == 0)) {
                             throw babelwires::ModelException() << "NoChord cannot be mapped to wildcard value";
                         }
@@ -133,11 +133,11 @@ namespace {
                 while (matchingEntry < m_mapValue.getNumMapEntries() - 1) {
                     const babelwires::MapEntryData& entry = m_mapValue.getMapEntry(matchingEntry);
                     if (const babelwires::TupleValue* sourceTuple =
-                            entry.getSourceValue()->as<babelwires::TupleValue>()) {
+                            entry.getSourceValue()->tryAs<babelwires::TupleValue>()) {
                         const unsigned int pitchClassIndex =
-                            m_sourcePitchClassAdapter(sourceTuple->getValue(0)->is<babelwires::EnumValue>());
+                            m_sourcePitchClassAdapter(sourceTuple->getValue(0)->as<babelwires::EnumValue>());
                         const unsigned int chordTypeIndex =
-                            m_sourceChordTypeAdapter(sourceTuple->getValue(1)->is<babelwires::EnumValue>());
+                            m_sourceChordTypeAdapter(sourceTuple->getValue(1)->as<babelwires::EnumValue>());
                         if (((static_cast<unsigned int>(chord.m_root) + 1 == pitchClassIndex) ||
                              (pitchClassIndex == 0)) &&
                             ((static_cast<unsigned int>(chord.m_chordType) + 1 == chordTypeIndex) ||
@@ -149,22 +149,22 @@ namespace {
                     ++matchingEntry;
                 }
                 const babelwires::MapEntryData& entry = m_mapValue.getMapEntry(matchingEntry);
-                if (entry.getTargetValue()->as<babelwires::EnumValue>()) {
-                    assert(entry.getTargetValue()->as<babelwires::EnumValue>()->get() ==
+                if (entry.getTargetValue()->tryAs<babelwires::EnumValue>()) {
+                    assert(entry.getTargetValue()->tryAs<babelwires::EnumValue>()->get() ==
                                bw_music::NoChord::getNoChordValue() &&
                            "Bare EnumValue in ChordMap target that wasn't the NoChord value");
                     newCode = -1;
                 } else {
-                    const babelwires::TupleValue& target = entry.getTargetValue()->is<babelwires::TupleValue>();
+                    const babelwires::TupleValue& target = entry.getTargetValue()->as<babelwires::TupleValue>();
                     unsigned int targetPitchClassIndex =
-                        m_targetPitchClassAdapter(target.getValue(0)->is<babelwires::EnumValue>());
+                        m_targetPitchClassAdapter(target.getValue(0)->as<babelwires::EnumValue>());
                     bw_music::PitchClass::Value newPitchClass =
                         (targetPitchClassIndex == 0)
                             ? chord.m_root
                             : static_cast<bw_music::PitchClass::Value>(targetPitchClassIndex - 1);
 
                     unsigned int targetChordTypeIndex =
-                        m_targetChordTypeAdapter(target.getValue(1)->is<babelwires::EnumValue>());
+                        m_targetChordTypeAdapter(target.getValue(1)->as<babelwires::EnumValue>());
                     bw_music::ChordType::Value newChordType =
                         (targetChordTypeIndex == 0) ? chord.m_chordType
                                                     : static_cast<bw_music::ChordType::Value>(targetChordTypeIndex - 1);
@@ -242,9 +242,9 @@ bw_music::Track bw_music::mapChordsFunction(const babelwires::TypeSystem& typeSy
             state = silenceToChord;
         }
 
-        if (it->as<ChordOnEvent>()) {
+        if (it->tryAs<ChordOnEvent>()) {
             TrackEventHolder holder(*it);
-            Chord& chord = holder->is<ChordOnEvent>().m_chord;
+            Chord& chord = holder->as<ChordOnEvent>().m_chord;
             if (std::optional<bw_music::Chord> targetChord = mapApplicator[chord]) {
                 if (state == silenceToChord) {
                     trackOut.addEvent(ChordOffEvent(timeSinceLastEvent));
@@ -258,10 +258,10 @@ bw_music::Track bw_music::mapChordsFunction(const babelwires::TypeSystem& typeSy
             } else {
                 state = chordToSilence;
             }
-        } else if ((state == chordToSilence) && it->as<ChordOffEvent>()) {
+        } else if ((state == chordToSilence) && it->tryAs<ChordOffEvent>()) {
             state = chordToSilencePending;
         } else {
-            if (it->as<ChordOffEvent>()) {
+            if (it->tryAs<ChordOffEvent>()) {
                 state = pending;
             }
             // Write the event.

@@ -143,7 +143,7 @@ smf::SmfWriter::WriteTrackEventResult smf::SmfWriter::writeTrackEvent(int channe
 
     if (const bw_music::PercussionSetWithPitchMap* const kitIfPercussion =
             m_channelSetup[channelNumber].m_kitIfPercussion) {
-        if (const bw_music::PercussionOnEvent* percussionOn = e.as<bw_music::PercussionOnEvent>()) {
+        if (const bw_music::PercussionOnEvent* percussionOn = e.tryAs<bw_music::PercussionOnEvent>()) {
             if (auto maybePitch = kitIfPercussion->tryGetPitchFromInstrument(percussionOn->getInstrument())) {
                 writeModelDuration(timeSinceLastEvent);
                 m_os->put(0b10010000 | channelNumber);
@@ -153,7 +153,7 @@ smf::SmfWriter::WriteTrackEventResult smf::SmfWriter::writeTrackEvent(int channe
             } else {
                 return WriteTrackEventResult::NotInPercussionSet;
             }
-        } else if (const bw_music::PercussionOffEvent* percussionOff = e.as<bw_music::PercussionOffEvent>()) {
+        } else if (const bw_music::PercussionOffEvent* percussionOff = e.tryAs<bw_music::PercussionOffEvent>()) {
             if (auto maybePitch = kitIfPercussion->tryGetPitchFromInstrument(percussionOff->getInstrument())) {
                 writeModelDuration(timeSinceLastEvent);
                 m_os->put(0b10000000 | channelNumber);
@@ -165,13 +165,13 @@ smf::SmfWriter::WriteTrackEventResult smf::SmfWriter::writeTrackEvent(int channe
             }
         }
     } else {
-        if (const bw_music::NoteOnEvent* noteOn = e.as<bw_music::NoteOnEvent>()) {
+        if (const bw_music::NoteOnEvent* noteOn = e.tryAs<bw_music::NoteOnEvent>()) {
             writeModelDuration(timeSinceLastEvent);
             m_os->put(0b10010000 | channelNumber);
             m_os->put(noteOn->m_pitch);
             m_os->put(noteOn->m_velocity);
             return WriteTrackEventResult::Written;
-        } else if (const bw_music::NoteOffEvent* noteOff = e.as<bw_music::NoteOffEvent>()) {
+        } else if (const bw_music::NoteOffEvent* noteOff = e.tryAs<bw_music::NoteOffEvent>()) {
             writeModelDuration(timeSinceLastEvent);
             m_os->put(0b10000000 | channelNumber);
             m_os->put(noteOff->m_pitch);

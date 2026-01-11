@@ -15,7 +15,7 @@ std::set<bw_music::ChordType::Value> bw_music::getChordTypesFunction(const Track
 
     // Iterate through the chord track and collect unique chord types.
     for (const auto& event : chordTrack) {
-        if (const auto chordEvent = event.as<ChordOnEvent>()) {
+        if (const auto chordEvent = event.tryAs<ChordOnEvent>()) {
             chordTypes.insert(chordEvent->m_chord.m_chordType);
         }
     }

@@ -59,7 +59,7 @@ namespace {
 
         babelwires::applyToSubvaluesOfType<bw_music::TrackType>(
             typeSystem, type, result, [&chord](const babelwires::Type& t, babelwires::Value& v) {
-                auto& track = v.is<bw_music::Track>();
+                auto& track = v.as<bw_music::Track>();
                 track = bw_music::fitToChordFunction(track, chord);
             });
 
@@ -72,8 +72,8 @@ void bw_music::BuildAccompanimentProcessor::processValue(babelwires::UserLogger&
                                                          const babelwires::ValueTreeNode& input,
                                                          babelwires::ValueTreeNode& output) const {
 
-    const BuildAccompanimentProcessorInput& inputType = input.getType()->is<BuildAccompanimentProcessorInput>();
-    const BuildAccompanimentProcessorOutput& outputType = output.getType()->is<BuildAccompanimentProcessorOutput>();
+    const BuildAccompanimentProcessorInput& inputType = input.getType()->as<BuildAccompanimentProcessorInput>();
+    const BuildAccompanimentProcessorOutput& outputType = output.getType()->as<BuildAccompanimentProcessorOutput>();
 
     const babelwires::ValueHolder& inputValue = input.getValue();
     const babelwires::TypeExp& assignedInputTypeExp = inputType.getTypeAssignment(inputValue, 0);
@@ -81,17 +81,17 @@ void bw_music::BuildAccompanimentProcessor::processValue(babelwires::UserLogger&
     const babelwires::TypeSystem& typeSystem = input.getTypeSystem();
 
     const auto [inputChild, inputStep, inputChildType] = inputType.getChild(inputValue, 0);
-    const auto& inputRecordType = inputChildType->as<babelwires::RecordType>();
+    const auto& inputRecordType = inputChildType->tryAs<babelwires::RecordType>();
     const auto [chordsArray, inputStep0, inputChildType0] = inputRecordType->getChild(*inputChild, 0);
-    const auto& chordsArrayType = inputChildType0->as<ChordTypeSet>();
+    const auto& chordsArrayType = inputChildType0->tryAs<ChordTypeSet>();
     const auto [inputStructure, inputStep1, inputChildType1] = inputRecordType->getChild(*inputChild, 1);
 
     babelwires::ValueHolder newOutputValue = output.getValue();
     outputType.setTypeVariableAssignmentAndInstantiate(typeSystem, newOutputValue, {assignedInputTypeExp});
     const auto [outputChild, outputStep, outputChildType] = outputType.getChildNonConst(newOutputValue, 0);
-    const auto& outputRecordType = outputChildType->as<babelwires::RecordType>();
+    const auto& outputRecordType = outputChildType->tryAs<babelwires::RecordType>();
     const auto& [resultChild, resultStep, resultChildType] = outputRecordType->getChildNonConst(*outputChild, 0);
-    const auto& resultRecordType = resultChildType->as<babelwires::RecordType>();
+    const auto& resultRecordType = resultChildType->tryAs<babelwires::RecordType>();
 
     const auto& chordType = typeSystem.getRegisteredType<ChordType>();
 

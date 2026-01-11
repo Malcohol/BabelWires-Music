@@ -65,7 +65,7 @@ class AccompanimentSequencerTest : public MusicLibTestFixture {
                                       bw_music::AccompanimentSequencerProcessorOutput::getResultId()});
         pathToTrack.pushStep((i == 0) ? bw_music_testplugin::TestTrackContainer::getTrack1Id()
                                       : bw_music_testplugin::TestTrackContainer::getTrack2Id());
-        return babelwires::followPath(pathToTrack, output).getValue()->is<bw_music::Track>();
+        return babelwires::followPath(pathToTrack, output).getValue()->as<bw_music::Track>();
     }
 
     bw_music::AccompanimentSequencerProcessor m_processor;

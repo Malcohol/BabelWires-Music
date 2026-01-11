@@ -8,18 +8,18 @@
 #include <MusicLib/Utilities/monophonicNoteIterator.hpp>
 
 bool bw_music::MonophonicNoteIterator::isEventOfInterest(const TrackEvent& event) {
-    if (const NoteOnEvent* noteOn = event.as<NoteOnEvent>()) {
+    if (const NoteOnEvent* noteOn = event.tryAs<NoteOnEvent>()) {
         if (!m_noteIsActive) {
             m_activePitch = noteOn->m_pitch;
             m_noteIsActive = true;
             return true;
         }
-    } else if (const NoteOffEvent* noteOff = event.as<NoteOffEvent>()) {
+    } else if (const NoteOffEvent* noteOff = event.tryAs<NoteOffEvent>()) {
         if (m_noteIsActive && (noteOff->m_pitch == m_activePitch)) {
             m_noteIsActive = false;
             return true;
         }
-    } else if (const NoteEvent* note = event.as<NoteEvent>()) {
+    } else if (const NoteEvent* note = event.tryAs<NoteEvent>()) {
         if ((m_interiorEventFilter == AllEvents) && m_noteIsActive && (note->m_pitch == m_activePitch)) {
             return true;
         }

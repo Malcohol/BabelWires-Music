@@ -17,7 +17,7 @@ bw_music::ModelDuration bw_music::TrackTypeConstructor::extractValueArguments(
             << "TrackTypeConstructor expects 1 value arguments but got " << valueArguments.size();
     }
 
-    if (const babelwires::RationalValue* rationalValue = valueArguments[0]->as<babelwires::RationalValue>()) {
+    if (const babelwires::RationalValue* rationalValue = valueArguments[0]->tryAs<babelwires::RationalValue>()) {
         return rationalValue->get();
     } else {
         throw babelwires::TypeSystemException() << "Argument 0 given to TrackTypeConstructor was not a RationalValue";

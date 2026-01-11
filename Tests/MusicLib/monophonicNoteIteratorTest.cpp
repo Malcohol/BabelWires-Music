@@ -75,39 +75,39 @@ TEST(MonophonicNoteIterator, OnOffOnly) {
     auto [it, end] = bw_music::iterateOverMonotonicNotes(track, bw_music::MonophonicNoteIterator::OnOffOnly);
 
     ASSERT_NE(it, end);
-    ASSERT_NE(it->as<bw_music::NoteOnEvent>(), nullptr);
-    EXPECT_EQ(it->as<bw_music::NoteOnEvent>()->m_pitch, 40);
-    EXPECT_EQ(it->as<bw_music::NoteOnEvent>()->getTimeSinceLastEvent(), 0);
+    ASSERT_NE(it->tryAs<bw_music::NoteOnEvent>(), nullptr);
+    EXPECT_EQ(it->tryAs<bw_music::NoteOnEvent>()->m_pitch, 40);
+    EXPECT_EQ(it->tryAs<bw_music::NoteOnEvent>()->getTimeSinceLastEvent(), 0);
 
     ++it;
     ASSERT_NE(it, end);
-    ASSERT_NE(it->as<bw_music::NoteOffEvent>(), nullptr);
-    EXPECT_EQ(it->as<bw_music::NoteOffEvent>()->m_pitch, 40);
-    EXPECT_EQ(it->as<bw_music::NoteOffEvent>()->getTimeSinceLastEvent(), 1);
+    ASSERT_NE(it->tryAs<bw_music::NoteOffEvent>(), nullptr);
+    EXPECT_EQ(it->tryAs<bw_music::NoteOffEvent>()->m_pitch, 40);
+    EXPECT_EQ(it->tryAs<bw_music::NoteOffEvent>()->getTimeSinceLastEvent(), 1);
 
     ++it;
     ASSERT_NE(it, end);
-    ASSERT_NE(it->as<bw_music::NoteOnEvent>(), nullptr);
-    EXPECT_EQ(it->as<bw_music::NoteOnEvent>()->m_pitch, 40);
-    EXPECT_EQ(it->as<bw_music::NoteOnEvent>()->getTimeSinceLastEvent(), 0);
+    ASSERT_NE(it->tryAs<bw_music::NoteOnEvent>(), nullptr);
+    EXPECT_EQ(it->tryAs<bw_music::NoteOnEvent>()->m_pitch, 40);
+    EXPECT_EQ(it->tryAs<bw_music::NoteOnEvent>()->getTimeSinceLastEvent(), 0);
 
     ++it;
     ASSERT_NE(it, end);
-    ASSERT_NE(it->as<bw_music::NoteOffEvent>(), nullptr);
-    EXPECT_EQ(it->as<bw_music::NoteOffEvent>()->m_pitch, 40);
-    EXPECT_EQ(it->as<bw_music::NoteOffEvent>()->getTimeSinceLastEvent(), 2);
+    ASSERT_NE(it->tryAs<bw_music::NoteOffEvent>(), nullptr);
+    EXPECT_EQ(it->tryAs<bw_music::NoteOffEvent>()->m_pitch, 40);
+    EXPECT_EQ(it->tryAs<bw_music::NoteOffEvent>()->getTimeSinceLastEvent(), 2);
 
     ++it;
     ASSERT_NE(it, end);
-    ASSERT_NE(it->as<bw_music::NoteOnEvent>(), nullptr);
-    EXPECT_EQ(it->as<bw_music::NoteOnEvent>()->m_pitch, 50);
-    EXPECT_EQ(it->as<bw_music::NoteOnEvent>()->getTimeSinceLastEvent(), 5);
+    ASSERT_NE(it->tryAs<bw_music::NoteOnEvent>(), nullptr);
+    EXPECT_EQ(it->tryAs<bw_music::NoteOnEvent>()->m_pitch, 50);
+    EXPECT_EQ(it->tryAs<bw_music::NoteOnEvent>()->getTimeSinceLastEvent(), 5);
 
     ++it;
     ASSERT_NE(it, end);
-    ASSERT_NE(it->as<bw_music::NoteOffEvent>(), nullptr);
-    EXPECT_EQ(it->as<bw_music::NoteOffEvent>()->m_pitch, 50);
-    EXPECT_EQ(it->as<bw_music::NoteOffEvent>()->getTimeSinceLastEvent(), 7);
+    ASSERT_NE(it->tryAs<bw_music::NoteOffEvent>(), nullptr);
+    EXPECT_EQ(it->tryAs<bw_music::NoteOffEvent>()->m_pitch, 50);
+    EXPECT_EQ(it->tryAs<bw_music::NoteOffEvent>()->getTimeSinceLastEvent(), 7);
 
     ++it;
     ASSERT_EQ(it, end);

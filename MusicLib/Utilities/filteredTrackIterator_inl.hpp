@@ -35,13 +35,13 @@ template <typename EVENT> bw_music::FilteredTrackIterator<EVENT>& bw_music::Filt
 
 template <typename EVENT> const EVENT& bw_music::FilteredTrackIterator<EVENT>::operator*() const {
     assert(m_isInitialized && "The iterator is not initialized. Call initBegin or initEnd.");
-    assert(m_iterator->as<EVENT>() && "m_iterator should never stop on an event of the wrong type.");
+    assert(m_iterator->tryAs<EVENT>() && "m_iterator should never stop on an event of the wrong type.");
     return m_event.hasEvent() ? *m_event : static_cast<const EVENT&>(*m_iterator);
 }
 
 template <typename EVENT> const EVENT* bw_music::FilteredTrackIterator<EVENT>::operator->() const {
     assert(m_isInitialized && "The iterator is not initialized. Call initBegin or initEnd.");
-    assert(m_iterator->as<EVENT>() && "m_iterator should never stop on an event of the wrong type.");
+    assert(m_iterator->tryAs<EVENT>() && "m_iterator should never stop on an event of the wrong type.");
     return m_event.hasEvent() ? &*m_event : static_cast<const EVENT*>(&*m_iterator);
 }
 
@@ -65,7 +65,7 @@ template <typename EVENT> void bw_music::FilteredTrackIterator<EVENT>::advance()
         if (isEventOfInterest(*m_iterator)) {
             // Only copy the event into the StreamEventHolder if necessary.
             if (timeSinceLastEvent != m_iterator->getTimeSinceLastEvent()) {
-                assert(m_iterator->as<EVENT>() &&
+                assert(m_iterator->tryAs<EVENT>() &&
                        "m_iterator should never stop on an event of the wrong type.");
                 m_event = static_cast<const EVENT&>(*m_iterator);
                 m_event->setTimeSinceLastEvent(timeSinceLastEvent);

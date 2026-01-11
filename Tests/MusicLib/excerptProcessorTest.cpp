@@ -116,10 +116,10 @@ TEST(ExcerptProcessorTest, processor) {
 
     babelwires::ValueTreeNode& inputArray =
         input.getChildFromStep(bw_music::ExcerptProcessor::getCommonArrayId())
-            .is<babelwires::ValueTreeNode>();
+            .as<babelwires::ValueTreeNode>();
     const babelwires::ValueTreeNode& outputArray =
         output.getChildFromStep(bw_music::ExcerptProcessor::getCommonArrayId())
-            .is<babelwires::ValueTreeNode>();
+            .as<babelwires::ValueTreeNode>();
 
     babelwires::ArrayInstanceImpl<babelwires::ValueTreeNode, bw_music::TrackType> inArray(inputArray);
     const babelwires::ArrayInstanceImpl<const babelwires::ValueTreeNode, bw_music::TrackType> outArray(outputArray);

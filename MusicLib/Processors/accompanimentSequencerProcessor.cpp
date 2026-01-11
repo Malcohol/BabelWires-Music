@@ -41,9 +41,9 @@ void bw_music::AccompanimentSequencerProcessor::processValue(babelwires::UserLog
                                                              const babelwires::ValueTreeNode& input,
                                                              babelwires::ValueTreeNode& output) const {
     const babelwires::TypeSystem& typeSystem = input.getTypeSystem();
-    const AccompanimentSequencerProcessorInput& inputType = input.getType()->is<AccompanimentSequencerProcessorInput>();
+    const AccompanimentSequencerProcessorInput& inputType = input.getType()->as<AccompanimentSequencerProcessorInput>();
     const AccompanimentSequencerProcessorOutput& outputType =
-        output.getType()->is<AccompanimentSequencerProcessorOutput>();
+        output.getType()->as<AccompanimentSequencerProcessorOutput>();
 
     const babelwires::ValueTreeNode& inputRecord = *input.getChild(0);
     const babelwires::ValueTreeNode& inputChordTrack = *inputRecord.getChild(0);
@@ -61,7 +61,7 @@ void bw_music::AccompanimentSequencerProcessor::processValue(babelwires::UserLog
         outputType.setTypeVariableAssignmentAndInstantiate(typeSystem, newOutputValue, {assignedInputTypeExp});
         output.setValue(newOutputValue);
 
-        const auto& chordTrack = inputChordTrack.getValue()->is<bw_music::Track>();
+        const auto& chordTrack = inputChordTrack.getValue()->as<bw_music::Track>();
 
         if (assignedInputTypeExp) {
             const auto resultValue = accompanimentSequencerFunction(typeSystem, *inputAccompanimentTracks.getType(),

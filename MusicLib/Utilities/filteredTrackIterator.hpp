@@ -23,7 +23,7 @@ namespace bw_music {
         using value_type = EVENT;
 
         /// The default implementation just selects by type
-        virtual bool isEventOfInterest(const TrackEvent& event) { return event.as<EVENT>(); }
+        virtual bool isEventOfInterest(const TrackEvent& event) { return event.tryAs<EVENT>(); }
 
         /// The iterator must be initialized after construction by called initBegin or initEnd.
         FilteredTrackIterator(const Track& track);
