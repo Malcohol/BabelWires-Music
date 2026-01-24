@@ -12,7 +12,7 @@
 #include <Seq2tapeExe/Alsa/alsaAudioSource.hpp>
 #include <Seq2tapeExe/Alsa/alsaCommon.hpp>
 
-#include <Common/Identifiers/registeredIdentifier.hpp>
+#include <BaseLib/Identifiers/registeredIdentifier.hpp>
 
 #include <alsa/asoundlib.h>
 

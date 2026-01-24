@@ -7,7 +7,7 @@
  **/
 #pragma once
 
-#include <Common/BlockStream/streamEventHolder.hpp>
+#include <BaseLib/BlockStream/streamEventHolder.hpp>
 #include <MusicLib/Types/Track/track.hpp>
 
 #include <functional>

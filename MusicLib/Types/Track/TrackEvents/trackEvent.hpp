@@ -7,13 +7,13 @@
  **/
 #pragma once
 
-#include <Common/BlockStream/blockStream.hpp>
-#include <Common/Cloning/cloneable.hpp>
-#include <Common/Utilities/enumFlags.hpp>
+#include <BaseLib/BlockStream/blockStream.hpp>
+#include <BaseLib/Cloning/cloneable.hpp>
+#include <BaseLib/Utilities/enumFlags.hpp>
 #include <MusicLib/musicTypes.hpp>
 #include <MusicLib/Utilities/musicUtilities.hpp>
 
-#include <Common/BlockStream/streamEventHolder.hpp>
+#include <BaseLib/BlockStream/streamEventHolder.hpp>
 
 namespace bw_music {
 

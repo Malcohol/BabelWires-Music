@@ -7,7 +7,7 @@
  **/
 #pragma once
 
-#include <Common/Registry/registry.hpp>
+#include <BaseLib/Registry/registry.hpp>
 
 namespace babelwires {
 

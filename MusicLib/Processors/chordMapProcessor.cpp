@@ -15,7 +15,7 @@
 #include <BabelWiresLib/Types/Map/mapTypeConstructor.hpp>
 #include <BabelWiresLib/Types/Map/mapValue.hpp>
 
-#include <Common/Identifiers/registeredIdentifier.hpp>
+#include <BaseLib/Identifiers/registeredIdentifier.hpp>
 
 bw_music::ChordMapProcessorInput::ChordMapProcessorInput(const babelwires::TypeSystem& typeSystem)
     : babelwires::ParallelProcessorInputBase(getThisIdentifier(), typeSystem,

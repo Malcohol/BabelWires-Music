@@ -7,7 +7,7 @@
  **/
 #include <Plugins/Smf/Plugin/smfSequence.hpp>
 
-#include <Common/Identifiers/registeredIdentifier.hpp>
+#include <BaseLib/Identifiers/registeredIdentifier.hpp>
 
 namespace {
     const babelwires::IdentifiersSource formatIdentifiersSource = {

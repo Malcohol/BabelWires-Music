@@ -11,7 +11,7 @@
 
 #include <BabelWiresLib/ValueTree/modelExceptions.hpp>
 
-#include <Common/Identifiers/registeredIdentifier.hpp>
+#include <BaseLib/Identifiers/registeredIdentifier.hpp>
 
 bw_music::SplitAtPitchProcessorInput::SplitAtPitchProcessorInput(const babelwires::TypeSystem& typeSystem)
     : babelwires::RecordType(getThisIdentifier(), typeSystem, {{BW_SHORT_ID("Pitch", "Pitch", "6b721baa-084f-450b-bf35-2e08a9592958"),

@@ -13,7 +13,7 @@
 #include <BabelWiresLib/Types/Int/intTypeConstructor.hpp>
 #include <BabelWiresLib/Types/Int/intValue.hpp>
 
-#include <Common/Identifiers/registeredIdentifier.hpp>
+#include <BaseLib/Identifiers/registeredIdentifier.hpp>
 
 bw_music::RepeatProcessorInput::RepeatProcessorInput(const babelwires::TypeSystem& typeSystem)
     : babelwires::ParallelProcessorInputBase(

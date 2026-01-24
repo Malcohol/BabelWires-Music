@@ -13,8 +13,8 @@
 #include <Plugins/Smf/Plugin/smfParser.hpp>
 #include <Plugins/Smf/Plugin/smfWriter.hpp>
 
-#include <Common/IO/fileDataSource.hpp>
-#include <Common/IO/outFileStream.hpp>
+#include <BaseLib/IO/fileDataSource.hpp>
+#include <BaseLib/IO/outFileStream.hpp>
 
 namespace {
 

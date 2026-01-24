@@ -10,7 +10,7 @@
 
 #include <Seq2tapeExe/Alsa/alsaCommon.hpp>
 
-#include <Common/exceptions.hpp>
+#include <BaseLib/exceptions.hpp>
 
 #include <alsa/asoundlib.h>
 

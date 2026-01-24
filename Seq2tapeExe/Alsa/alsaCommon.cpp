@@ -8,7 +8,7 @@
 
 #include <Seq2tapeExe/Alsa/alsaCommon.hpp>
 
-#include <Common/exceptions.hpp>
+#include <BaseLib/exceptions.hpp>
 
 babelwires_alsa::HardwareParameters::HardwareParameters() {
     const int ret = snd_pcm_hw_params_malloc(&m_params);

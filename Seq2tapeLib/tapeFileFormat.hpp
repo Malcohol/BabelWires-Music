@@ -7,8 +7,8 @@
  **/
 #pragma once
 
-#include <Common/Registry/fileTypeRegistry.hpp>
-#include <Common/productInfo.hpp>
+#include <BaseLib/Registry/fileTypeRegistry.hpp>
+#include <BaseLib/productInfo.hpp>
 #include <Seq2tapeLib/tapeFile.hpp>
 
 #include <memory>

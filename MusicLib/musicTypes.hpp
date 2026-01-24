@@ -9,8 +9,8 @@
 
 #include <MusicLib/pitch.hpp>
 
-#include <Common/Math/rational.hpp>
-#include <Common/types.hpp>
+#include <BaseLib/Math/rational.hpp>
+#include <BaseLib/common.hpp>
 
 #include <cstdint>
 #include <string>

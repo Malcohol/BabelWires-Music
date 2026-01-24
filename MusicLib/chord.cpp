@@ -7,7 +7,7 @@
  **/
 #include <MusicLib/chord.hpp>
 
-#include <Common/Identifiers/identifierRegistry.hpp>
+#include <BaseLib/Identifiers/identifierRegistry.hpp>
 
 ENUM_DEFINE_ENUM_VALUE_SOURCE(bw_music::ChordType, CHORD_TYPE_VALUES);
 

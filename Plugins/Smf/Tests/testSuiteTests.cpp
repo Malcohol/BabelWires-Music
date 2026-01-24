@@ -9,7 +9,7 @@
 #include <MusicLib/Utilities/filteredTrackIterator.hpp>
 #include <MusicLib/libRegistration.hpp>
 
-#include <Common/IO/fileDataSource.hpp>
+#include <BaseLib/IO/fileDataSource.hpp>
 
 #include <Tests/BabelWiresLib/TestUtils/testEnvironment.hpp>
 

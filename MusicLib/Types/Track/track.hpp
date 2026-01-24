@@ -12,7 +12,7 @@
 
 #include <BabelWiresLib/TypeSystem/value.hpp>
 
-#include <Common/types.hpp>
+#include <BaseLib/common.hpp>
 
 #include <cassert>
 #include <unordered_map>

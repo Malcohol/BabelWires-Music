@@ -7,8 +7,8 @@
  **/
 #pragma once
 
-#include <Common/exceptions.hpp>
-#include <Common/types.hpp>
+#include <BaseLib/exceptions.hpp>
+#include <BaseLib/common.hpp>
 
 namespace babelwires {
 

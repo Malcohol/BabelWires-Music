@@ -7,8 +7,8 @@
  **/
 #include <MusicLib/pitch.hpp>
 
-#include <Common/Identifiers/identifierRegistry.hpp>
-#include <Common/exceptions.hpp>
+#include <BaseLib/Identifiers/identifierRegistry.hpp>
+#include <BaseLib/exceptions.hpp>
 
 #include <cassert>
 #include <cctype>

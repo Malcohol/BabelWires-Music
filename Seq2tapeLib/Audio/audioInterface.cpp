@@ -9,7 +9,7 @@
 
 #include <Seq2tapeLib/Audio/audioDest.hpp>
 #include <Seq2tapeLib/Audio/audioSource.hpp>
-#include <Common/Log/debugLogger.hpp>
+#include <BaseLib/Log/debugLogger.hpp>
 
 #include <sstream>
 

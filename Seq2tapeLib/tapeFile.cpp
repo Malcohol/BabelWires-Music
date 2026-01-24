@@ -7,9 +7,9 @@
  **/
 #include <Seq2tapeLib/tapeFile.hpp>
 
-#include <Common/IO/dataSource.hpp>
-#include <Common/exceptions.hpp>
-#include <Common/types.hpp>
+#include <BaseLib/IO/dataSource.hpp>
+#include <BaseLib/exceptions.hpp>
+#include <BaseLib/common.hpp>
 
 #include <cassert>
 #include <cstring>

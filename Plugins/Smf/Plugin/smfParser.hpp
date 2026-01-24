@@ -13,8 +13,8 @@
 
 #include <MusicLib/musicTypes.hpp>
 
-#include <Common/IO/dataSource.hpp>
-#include <Common/Log/userLogger.hpp>
+#include <BaseLib/IO/dataSource.hpp>
+#include <BaseLib/Log/userLogger.hpp>
 
 #include <cstdint>
 #include <memory>

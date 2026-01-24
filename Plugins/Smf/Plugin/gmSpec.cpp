@@ -7,7 +7,7 @@
  **/
 #include <Plugins/Smf/Plugin/gmSpec.hpp>
 
-#include <Common/Identifiers/identifierRegistry.hpp>
+#include <BaseLib/Identifiers/identifierRegistry.hpp>
 
 ENUM_DEFINE_ENUM_VALUE_SOURCE(smf::GMSpecType, GM_SPEC_VALUES);
 

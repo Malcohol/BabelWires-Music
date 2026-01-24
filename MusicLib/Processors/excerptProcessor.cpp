@@ -13,7 +13,7 @@
 
 #include <BabelWiresLib/Types/Rational/rationalValue.hpp>
 
-#include <Common/Identifiers/registeredIdentifier.hpp>
+#include <BaseLib/Identifiers/registeredIdentifier.hpp>
 
 bw_music::ExcerptProcessorInput::ExcerptProcessorInput(const babelwires::TypeSystem& typeSystem)
     : babelwires::ParallelProcessorInputBase(getThisIdentifier(), typeSystem,

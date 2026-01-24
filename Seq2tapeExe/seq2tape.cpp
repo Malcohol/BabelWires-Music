@@ -16,10 +16,10 @@
 #include <Seq2tapeLib/tapeFile.hpp>
 #include <Seq2tapeLib/tapeFileFormat.hpp>
 
-#include <Common/IO/fileDataSource.hpp>
-#include <Common/IO/outFileStream.hpp>
-#include <Common/Identifiers/identifierRegistry.hpp>
-#include <Common/Log/unifiedLog.hpp>
+#include <BaseLib/IO/fileDataSource.hpp>
+#include <BaseLib/IO/outFileStream.hpp>
+#include <BaseLib/Identifiers/identifierRegistry.hpp>
+#include <BaseLib/Log/unifiedLog.hpp>
 
 #include <cassert>
 #include <fstream>

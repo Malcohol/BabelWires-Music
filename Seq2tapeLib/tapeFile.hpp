@@ -7,8 +7,8 @@
  **/
 #pragma once
 
-#include <Common/types.hpp>
-#include <Common/Identifiers/identifier.hpp>
+#include <BaseLib/common.hpp>
+#include <BaseLib/Identifiers/identifier.hpp>
 
 #include <memory>
 #include <string>

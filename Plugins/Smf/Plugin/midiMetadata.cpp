@@ -14,7 +14,7 @@
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/String/stringType.hpp>
 
-#include <Common/Identifiers/registeredIdentifier.hpp>
+#include <BaseLib/Identifiers/registeredIdentifier.hpp>
 
 smf::MidiMetadata::MidiMetadata(const babelwires::TypeSystem& typeSystem)
     : babelwires::RecordType(getThisIdentifier(), typeSystem,

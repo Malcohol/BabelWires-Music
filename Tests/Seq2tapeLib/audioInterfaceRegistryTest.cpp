@@ -3,7 +3,7 @@
 #include <Seq2tapeLib/Audio/audioDest.hpp>
 #include <Seq2tapeLib/Audio/audioInterface.hpp>
 #include <Seq2tapeLib/Audio/audioSource.hpp>
-#include <Common/Identifiers/identifierRegistry.hpp>
+#include <BaseLib/Identifiers/identifierRegistry.hpp>
 
 #include <Tests/TestUtils/equalSets.hpp>
 #include <Tests/TestUtils/testIdentifiers.hpp>

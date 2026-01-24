@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include <Common/Identifiers/identifierRegistry.hpp>
+#include <BaseLib/Identifiers/identifierRegistry.hpp>
 
 int main(int argc, char** argv) {
     // Since these tests load "real" types which use the BW_SHORT_ID macros, they have to work within the same registry singleton.

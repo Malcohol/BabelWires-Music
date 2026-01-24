@@ -5,4 +5,4 @@ SET( MUSICLIBUI_SRCS
 
 ADD_LIBRARY( musicLibUi ${MUSICLIBUI_SRCS} )
 TARGET_INCLUDE_DIRECTORIES( musicLibUi PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../.. ${CMAKE_CURRENT_SOURCE_DIR}/.. )
-TARGET_LINK_LIBRARIES( musicLibUi BabelWiresQtUi BabelWiresLib musicLib Common)
+TARGET_LINK_LIBRARIES( musicLibUi BabelWiresQtUi BabelWiresLib musicLib BaseLib)

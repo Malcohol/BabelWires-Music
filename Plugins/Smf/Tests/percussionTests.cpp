@@ -14,7 +14,7 @@
 
 #include <BabelWiresLib/Types/File/fileTypeT.hpp>
 
-#include <Common/IO/fileDataSource.hpp>
+#include <BaseLib/IO/fileDataSource.hpp>
 
 #include <Tests/TestUtils/seqTestUtils.hpp>
 

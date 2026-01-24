@@ -19,8 +19,8 @@
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/File/fileTypeT.hpp>
 
-#include <Common/Log/debugLogger.hpp>
-#include <Common/exceptions.hpp>
+#include <BaseLib/Log/debugLogger.hpp>
+#include <BaseLib/exceptions.hpp>
 
 #include <cassert>
 #include <cmath>

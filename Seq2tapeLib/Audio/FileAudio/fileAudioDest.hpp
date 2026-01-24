@@ -8,7 +8,7 @@
 #pragma once
 
 #include <Seq2tapeLib/Audio/audioDest.hpp>
-#include <Common/Registry/fileTypeRegistry.hpp>
+#include <BaseLib/Registry/fileTypeRegistry.hpp>
 
 #include <cctype>
 #include <memory>

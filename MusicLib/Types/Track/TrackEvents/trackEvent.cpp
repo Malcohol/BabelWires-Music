@@ -7,7 +7,7 @@
  **/
 #include <MusicLib/Types/Track/TrackEvents/trackEvent.hpp>
 
-#include <Common/Hash/hash.hpp>
+#include <BaseLib/Hash/hash.hpp>
 
 const char* bw_music::TrackEvent::EventGroup::s_genericCategory = "Generic";
 

@@ -7,7 +7,7 @@
  **/
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 
-#include <Common/Hash/hash.hpp>
+#include <BaseLib/Hash/hash.hpp>
 
 #include <algorithm>
 #include <sstream>

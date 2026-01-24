@@ -21,7 +21,7 @@
 #include <BabelWiresLib/Types/Record/recordValue.hpp>
 #include <BabelWiresLib/ValueTree/modelExceptions.hpp>
 
-#include <Common/Identifiers/identifierRegistry.hpp>
+#include <BaseLib/Identifiers/identifierRegistry.hpp>
 
 namespace {
     /// This determines which chords get transposed upwards and which chords get transposed down.

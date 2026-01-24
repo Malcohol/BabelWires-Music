@@ -10,8 +10,8 @@
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/Types/Track/track.hpp>
 
-#include <Common/BlockStream/streamEventHolder.hpp>
-#include <Common/types.hpp>
+#include <BaseLib/BlockStream/streamEventHolder.hpp>
+#include <BaseLib/common.hpp>
 
 namespace bw_music {
     /// Iterate over a track, skipping events that are not of interest.
