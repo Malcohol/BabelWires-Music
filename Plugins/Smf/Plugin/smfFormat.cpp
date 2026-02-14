@@ -45,7 +45,9 @@ std::unique_ptr<babelwires::ValueTreeRoot>
 smf::SmfSourceFormat::loadFromFile(const std::filesystem::path& path, const babelwires::ProjectContext& projectContext,
                                    babelwires::UserLogger& userLogger) const {
     babelwires::FileDataSource dataSource(path);
-    return parseSmfSequence(dataSource, projectContext, userLogger);
+    auto result = parseSmfSequence(dataSource, projectContext, userLogger);
+    THROW_ON_ERROR(result, babelwires::ParseException);
+    return std::move(*result);
 }
 
 smf::SmfTargetFormat::SmfTargetFormat()

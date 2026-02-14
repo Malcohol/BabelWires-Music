@@ -130,7 +130,7 @@ namespace smf {
         std::array<ChannelSetup, 16> m_channelSetup;
     };
 
-    std::unique_ptr<babelwires::ValueTreeRoot> parseSmfSequence(babelwires::DataSource& dataSource,
+    babelwires::ResultT<std::unique_ptr<babelwires::ValueTreeRoot>> parseSmfSequence(babelwires::DataSource& dataSource,
                                                               const babelwires::ProjectContext& projectContext,
                                                               babelwires::UserLogger& userLogger);
 

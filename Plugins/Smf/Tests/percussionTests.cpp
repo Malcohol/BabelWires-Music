@@ -71,8 +71,9 @@ TEST_P(SmfStandardPercussionTest, saveLoad) {
     {
         babelwires::FileDataSource midiFile(tempFile);
 
-        const auto feature = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
-        ASSERT_NE(feature, nullptr);
+        auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+        ASSERT_TRUE(result.has_value());
+        const auto& feature = *result;
 
         smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
         ASSERT_EQ(smfSequence.getInstanceType().getIndexOfTag(smfSequence.getSelectedTag()), 0);
@@ -201,8 +202,9 @@ TEST_P(SmfTrackAllocationPercussionTest, trackAllocation) {
     {
         babelwires::FileDataSource midiFile(tempFile);
 
-        const auto feature = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
-        ASSERT_NE(feature, nullptr);
+        auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+        ASSERT_TRUE(result.has_value());
+        const auto& feature = *result;
 
         smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
         ASSERT_EQ(smfSequence.getInstanceType().getIndexOfTag(smfSequence.getSelectedTag()), 0);

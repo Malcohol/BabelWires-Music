@@ -27,9 +27,8 @@ TEST(SmfTestSuiteTest, loadAllTestFilesWithoutCrashing) {
             ++numFilesTested;
             try {
                 babelwires::FileDataSource midiFile(p.path());
-                smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
-            } catch (const babelwires::ParseException&) {
-                // Allowed.
+                auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+                // Result may or may not have a value, but it should not crash.
             } catch (...) {
                 EXPECT_TRUE(false);
             }
@@ -50,8 +49,9 @@ TEST(SmfTestSuiteTest, cMajorScale) {
 
     babelwires::FileDataSource midiFile("test-c-major-scale.mid");
 
-    const auto feature = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
-    ASSERT_NE(feature, nullptr);
+    auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+    ASSERT_TRUE(result.has_value());
+    const auto& feature = *result;
 
     smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
     ASSERT_EQ(smfSequence.getInstanceType().getIndexOfTag(smfSequence.getSelectedTag()), 0);
@@ -84,8 +84,9 @@ TEST(SmfTestSuiteTest, multichannelChords0) {
 
     babelwires::FileDataSource midiFile("test-multichannel-chords-0.mid");
 
-    const auto feature = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
-    ASSERT_NE(feature, nullptr);
+    auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+    ASSERT_TRUE(result.has_value());
+    const auto& feature = *result;
 
     smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
     ASSERT_EQ(smfSequence.getInstanceType().getIndexOfTag(smfSequence.getSelectedTag()), 0);
@@ -109,8 +110,9 @@ TEST(SmfTestSuiteTest, multichannelChords1) {
 
     babelwires::FileDataSource midiFile("test-multichannel-chords-1.mid");
 
-    const auto feature = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
-    ASSERT_NE(feature, nullptr);
+    auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+    ASSERT_TRUE(result.has_value());
+    const auto& feature = *result;
 
     smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
     ASSERT_EQ(smfSequence.getInstanceType().getIndexOfTag(smfSequence.getSelectedTag()), 1);
@@ -141,8 +143,9 @@ TEST(SmfTestSuiteTest, multichannelChords2) {
 
     babelwires::FileDataSource midiFile("test-multichannel-chords-2.mid");
 
-    const auto feature = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
-    ASSERT_NE(feature, nullptr);
+    auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+    ASSERT_TRUE(result.has_value());
+    const auto& feature = *result;
 
     smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
     ASSERT_EQ(smfSequence.getInstanceType().getIndexOfTag(smfSequence.getSelectedTag()), 1);
@@ -175,8 +178,9 @@ TEST(SmfTestSuiteTest, multichannelChords3) {
 
     babelwires::FileDataSource midiFile("test-multichannel-chords-3.mid");
 
-    const auto feature = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
-    ASSERT_NE(feature, nullptr);
+    auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+    ASSERT_TRUE(result.has_value());
+    const auto& feature = *result;
 
     smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
     ASSERT_EQ(smfSequence.getInstanceType().getIndexOfTag(smfSequence.getSelectedTag()), 1);
@@ -211,8 +215,9 @@ TEST(SmfTestSuiteTest, trackLength) {
 
     babelwires::FileDataSource midiFile("test-track-length.mid");
 
-    const auto feature = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
-    ASSERT_NE(feature, nullptr);
+    auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+    ASSERT_TRUE(result.has_value());
+    const auto& feature = *result;
     smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
     ASSERT_EQ(smfSequence.getInstanceType().getIndexOfTag(smfSequence.getSelectedTag()), 0);
 
@@ -233,8 +238,9 @@ TEST(SmfTestSuiteTest, tempoTest) {
 
     babelwires::FileDataSource midiFile("test-karaoke-kar.mid");
 
-    const auto feature = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
-    ASSERT_NE(feature, nullptr);
+    auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+    ASSERT_TRUE(result.has_value());
+    const auto& feature = *result;
 
     smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
 
@@ -253,12 +259,13 @@ TEST(SmfTestSuiteTest, corruptFiles) {
     {
         babelwires::FileDataSource midiFile("test-corrupt-file-extra-byte.mid");
         // This is OK.
-        smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+        auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+        EXPECT_TRUE(result.has_value());
     }
     {
         babelwires::FileDataSource midiFile("test-corrupt-file-missing-byte.mid");
-        EXPECT_THROW(smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log),
-                     babelwires::ParseException);
+        auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+        EXPECT_FALSE(result.has_value());
     }
 }
 
@@ -269,8 +276,9 @@ TEST(SmfTestSuiteTest, testAllGMPercussion) {
 
     babelwires::FileDataSource midiFile("test-all-gm-percussion.mid");
 
-    const auto feature = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
-    ASSERT_NE(feature, nullptr);
+    auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+    ASSERT_TRUE(result.has_value());
+    const auto& feature = *result;
 
     smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
     ASSERT_EQ(smfSequence.getInstanceType().getIndexOfTag(smfSequence.getSelectedTag()), 0);
@@ -310,8 +318,9 @@ TEST(SmfTestSuiteTest, testGSDrumPartChange) {
 
     babelwires::FileDataSource midiFile("test-sysex-gs-40-1x-15-drum-part-change.mid");
 
-    const auto feature = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
-    ASSERT_NE(feature, nullptr);
+    auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+    ASSERT_TRUE(result.has_value());
+    const auto& feature = *result;
 
     smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
     ASSERT_EQ(smfSequence.getInstanceType().getIndexOfTag(smfSequence.getSelectedTag()), 0);
