@@ -8,7 +8,6 @@
 #include <MusicLib/pitch.hpp>
 
 #include <BaseLib/Identifiers/identifierRegistry.hpp>
-#include <BaseLib/exceptions.hpp>
 
 #include <cassert>
 #include <cctype>
@@ -45,7 +44,7 @@ std::string bw_music::pitchToString(Pitch p) {
     return stringOut.str();
 }
 
-bw_music::Pitch bw_music::stringToPitch(std::string_view s) {
+babelwires::ResultT<bw_music::Pitch> bw_music::stringToPitch(std::string_view s) {
     const char* it = s.data();
     const char* const end = s.data() + s.length();
     while ((it != end) && std::isspace(*it)) {
@@ -53,7 +52,7 @@ bw_music::Pitch bw_music::stringToPitch(std::string_view s) {
     }
 
     if (it == end) {
-        throw babelwires::ParseException() << "No contents when parsing pitch value";
+        return babelwires::Error() << "No contents when parsing pitch value";
     }
 
     int p = 0;
@@ -88,7 +87,7 @@ bw_music::Pitch bw_music::stringToPitch(std::string_view s) {
             p = 7;
             break;
         default:
-            throw babelwires::ParseException() << "Unexpected character when parsing pitch value";
+            return babelwires::Error() << "Unexpected character when parsing pitch value";
     }
     ++it;
     if ((it != end) && (*it == '#')) {
@@ -96,20 +95,20 @@ bw_music::Pitch bw_music::stringToPitch(std::string_view s) {
         ++it;
     }
     if ((it == end) || std::isspace(*it)) {
-        throw babelwires::ParseException() << "No octave value when parsing pitch value";
+        return babelwires::Error() << "No octave value when parsing pitch value";
     }
     int octave = 0;
     const auto result = std::from_chars(it, end, octave);
     if (result.ec != std::errc()) {
-        throw babelwires::ParseException() << "Could not parse octave when parsing pitch value";
+        return babelwires::Error() << "Could not parse octave when parsing pitch value";
     }
     if ((octave < 0) || (octave > 10)) {
-        throw babelwires::ParseException() << "Octave out of range when parsing pitch value";
+        return babelwires::Error() << "Octave out of range when parsing pitch value";
     }
     it = result.ptr;
     while (it != end) {
         if (!std::isspace(*it)) {
-            throw babelwires::ParseException() << "Trailing characters when parsing pitch value";
+            return babelwires::Error() << "Trailing characters when parsing pitch value";
         }
         ++it;
     }
@@ -117,7 +116,7 @@ bw_music::Pitch bw_music::stringToPitch(std::string_view s) {
     assert(p >= 0);
     if (p > 127) {
         // G#10, A10, A#10 and B10 are unrepresentable
-        throw babelwires::ParseException() << "Note out of range when parsing pitch value";
+        return babelwires::Error() << "Note out of range when parsing pitch value";
     }
     return static_cast<Pitch>(p);
 }

@@ -2,7 +2,7 @@
 
 #include <MusicLib/musicTypes.hpp>
 
-#include <BaseLib/exceptions.hpp>
+#include <BaseLib/Utilities/result.hpp>
 
 TEST(MusicLib, enumNames) {
     EXPECT_EQ(bw_music::PitchClass::valueToString(bw_music::PitchClass::Value::C), "C");
@@ -24,38 +24,38 @@ TEST(MusicLib, enumNames) {
     EXPECT_EQ(bw_music::pitchToString(72), "C6");
     EXPECT_EQ(bw_music::pitchToString(127), "G10");
 
-    EXPECT_EQ(bw_music::stringToPitch("C0"), 0);
-    EXPECT_EQ(bw_music::stringToPitch("C#0"), 1);
-    EXPECT_EQ(bw_music::stringToPitch("C5"), 60);
-    EXPECT_EQ(bw_music::stringToPitch("C#5"), 61);
-    EXPECT_EQ(bw_music::stringToPitch("D5"), 62);
-    EXPECT_EQ(bw_music::stringToPitch("D#5"), 63);
-    EXPECT_EQ(bw_music::stringToPitch("E5"), 64);
-    EXPECT_EQ(bw_music::stringToPitch("F5"), 65);
-    EXPECT_EQ(bw_music::stringToPitch("F#5"), 66);
-    EXPECT_EQ(bw_music::stringToPitch("G5"), 67);
-    EXPECT_EQ(bw_music::stringToPitch("G#5"), 68);
-    EXPECT_EQ(bw_music::stringToPitch("A5"), 69);
-    EXPECT_EQ(bw_music::stringToPitch("A#5"), 70);
-    EXPECT_EQ(bw_music::stringToPitch("B5"), 71);
-    EXPECT_EQ(bw_music::stringToPitch("C6"), 72);
-    EXPECT_EQ(bw_music::stringToPitch("G10"), 127);
+    EXPECT_EQ(bw_music::stringToPitch("C0").value(), 0);
+    EXPECT_EQ(bw_music::stringToPitch("C#0").value(), 1);
+    EXPECT_EQ(bw_music::stringToPitch("C5").value(), 60);
+    EXPECT_EQ(bw_music::stringToPitch("C#5").value(), 61);
+    EXPECT_EQ(bw_music::stringToPitch("D5").value(), 62);
+    EXPECT_EQ(bw_music::stringToPitch("D#5").value(), 63);
+    EXPECT_EQ(bw_music::stringToPitch("E5").value(), 64);
+    EXPECT_EQ(bw_music::stringToPitch("F5").value(), 65);
+    EXPECT_EQ(bw_music::stringToPitch("F#5").value(), 66);
+    EXPECT_EQ(bw_music::stringToPitch("G5").value(), 67);
+    EXPECT_EQ(bw_music::stringToPitch("G#5").value(), 68);
+    EXPECT_EQ(bw_music::stringToPitch("A5").value(), 69);
+    EXPECT_EQ(bw_music::stringToPitch("A#5").value(), 70);
+    EXPECT_EQ(bw_music::stringToPitch("B5").value(), 71);
+    EXPECT_EQ(bw_music::stringToPitch("C6").value(), 72);
+    EXPECT_EQ(bw_music::stringToPitch("G10").value(), 127);
 
-    EXPECT_EQ(bw_music::stringToPitch("  C0  "), 0);
+    EXPECT_EQ(bw_music::stringToPitch("  C0  ").value(), 0);
 
-    EXPECT_THROW(bw_music::stringToPitch("G#10"), babelwires::ParseException);
-    EXPECT_THROW(bw_music::stringToPitch("A10"), babelwires::ParseException);
-    EXPECT_THROW(bw_music::stringToPitch("A#10"), babelwires::ParseException);
-    EXPECT_THROW(bw_music::stringToPitch("B10"), babelwires::ParseException);
-    EXPECT_THROW(bw_music::stringToPitch(""), babelwires::ParseException);
-    EXPECT_THROW(bw_music::stringToPitch("  "), babelwires::ParseException);
-    EXPECT_THROW(bw_music::stringToPitch("C 4"), babelwires::ParseException);
-    EXPECT_THROW(bw_music::stringToPitch("C #4"), babelwires::ParseException);
-    EXPECT_THROW(bw_music::stringToPitch("C# 4"), babelwires::ParseException);
-    EXPECT_THROW(bw_music::stringToPitch("Z2"), babelwires::ParseException);
-    EXPECT_THROW(bw_music::stringToPitch("DA"), babelwires::ParseException);
-    EXPECT_THROW(bw_music::stringToPitch("C##2"), babelwires::ParseException);
-    EXPECT_THROW(bw_music::stringToPitch("G-2"), babelwires::ParseException);
-    EXPECT_THROW(bw_music::stringToPitch("C11"), babelwires::ParseException);
-    EXPECT_THROW(bw_music::stringToPitch("C-1"), babelwires::ParseException);
+    EXPECT_FALSE(bw_music::stringToPitch("G#10").has_value());
+    EXPECT_FALSE(bw_music::stringToPitch("A10").has_value());
+    EXPECT_FALSE(bw_music::stringToPitch("A#10").has_value());
+    EXPECT_FALSE(bw_music::stringToPitch("B10").has_value());
+    EXPECT_FALSE(bw_music::stringToPitch("").has_value());
+    EXPECT_FALSE(bw_music::stringToPitch("  ").has_value());
+    EXPECT_FALSE(bw_music::stringToPitch("C 4").has_value());
+    EXPECT_FALSE(bw_music::stringToPitch("C #4").has_value());
+    EXPECT_FALSE(bw_music::stringToPitch("C# 4").has_value());
+    EXPECT_FALSE(bw_music::stringToPitch("Z2").has_value());
+    EXPECT_FALSE(bw_music::stringToPitch("DA").has_value());
+    EXPECT_FALSE(bw_music::stringToPitch("C##2").has_value());
+    EXPECT_FALSE(bw_music::stringToPitch("G-2").has_value());
+    EXPECT_FALSE(bw_music::stringToPitch("C11").has_value());
+    EXPECT_FALSE(bw_music::stringToPitch("C-1").has_value());
 }

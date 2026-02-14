@@ -105,7 +105,9 @@ namespace {
 
     babelwires::LongId readIdentifier(babelwires::DataSource& dataSource) {
         const std::string s = readString(dataSource);
-        return babelwires::LongId::deserializeFromString(s);
+        auto result = babelwires::LongId::deserializeFromString(s);
+        THROW_ON_ERROR(result, babelwires::ParseException);
+        return *result;
     }
 
 } // namespace

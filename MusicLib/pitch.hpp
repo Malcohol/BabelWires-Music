@@ -11,6 +11,7 @@
 #include <BabelWiresLib/TypeSystem/registeredType.hpp>
 
 #include <BaseLib/Math/rational.hpp>
+#include <BaseLib/Utilities/result.hpp>
 #include <BaseLib/common.hpp>
 
 #include <cstdint>
@@ -55,7 +56,7 @@ namespace bw_music {
     std::string pitchToString(Pitch p);
 
     /// Parse a Pitch from a string.
-    Pitch stringToPitch(std::string_view s);
+    babelwires::ResultT<Pitch> stringToPitch(std::string_view s);
 
     /// An enum for the 127 supported pitch values.
     /// Octaves start at 0, so middle C is C5 in this representation.
