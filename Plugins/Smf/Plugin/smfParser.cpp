@@ -20,6 +20,7 @@
 #include <BabelWiresLib/Types/File/fileTypeT.hpp>
 
 #include <BaseLib/Log/debugLogger.hpp>
+#include <BaseLib/Utilities/result.hpp>
 #include <BaseLib/exceptions.hpp>
 
 #include <cassert>
@@ -60,127 +61,137 @@ smf::SmfSequence::Instance smf::SmfParser::getSmfSequence() {
 smf::SmfSequence::Instance getSmfSequence();
 
 
-babelwires::Byte smf::SmfParser::getNext() {
+babelwires::ResultT<babelwires::Byte> smf::SmfParser::getNext() {
     try {
         return m_dataSource.getNextByte();
     } catch (std::exception&) {
-        throw babelwires::ParseException() << "Stream is truncated";
+        return babelwires::Error() << "Stream is truncated";
     }
 }
 
-babelwires::Byte smf::SmfParser::peekNext() {
+babelwires::ResultT<babelwires::Byte> smf::SmfParser::peekNext() {
     try {
         return m_dataSource.peekNextByte();
     } catch (std::exception&) {
-        throw babelwires::ParseException() << "Stream is truncated";
+        return babelwires::Error() << "Stream is truncated";
     }
 }
 
-void smf::SmfParser::readByteSequence(const char* seq) {
+babelwires::Result smf::SmfParser::readByteSequence(const char* seq) {
     assert(seq);
     while (*seq) {
-        const babelwires::Byte c = getNext();
+        ASSIGN_OR_ERROR(const babelwires::Byte c, getNext());
         if (c != *seq) {
-            throw babelwires::ParseException()
+            return babelwires::Error()
                 << "Expected " << *seq << " at index " << m_dataSource.getAbsolutePosition() << " but found " << c
                 << " instead";
         }
         ++seq;
     }
+    return {};
 }
 
-void smf::SmfParser::skipBytes(int numBytes) {
+babelwires::Result smf::SmfParser::skipBytes(int numBytes) {
     for (int i = 0; i < numBytes; ++i) {
-        getNext();
+        DO_OR_ERROR(getNext());
     }
+    return {};
 }
 
-std::uint16_t smf::SmfParser::readU16() {
-    const std::uint32_t b0 = getNext();
-    const std::uint32_t b1 = getNext();
+babelwires::ResultT<std::uint16_t> smf::SmfParser::readU16() {
+    ASSIGN_OR_ERROR(const std::uint32_t b0, getNext());
+    ASSIGN_OR_ERROR(const std::uint32_t b1, getNext());
     return (b0 << 8) | b1;
 }
 
-std::uint32_t smf::SmfParser::readU24() {
-    const std::uint32_t b0 = getNext();
-    const std::uint32_t b1 = getNext();
-    const std::uint32_t b2 = getNext();
+babelwires::ResultT<std::uint32_t> smf::SmfParser::readU24() {
+    ASSIGN_OR_ERROR(const std::uint32_t b0, getNext());
+    ASSIGN_OR_ERROR(const std::uint32_t b1, getNext());
+    ASSIGN_OR_ERROR(const std::uint32_t b2, getNext());
     return (b0 << 16) | (b1 << 8) | b2;
 }
 
-std::uint32_t smf::SmfParser::readU32() {
-    const std::uint32_t b0 = getNext();
-    const std::uint32_t b1 = getNext();
-    const std::uint32_t b2 = getNext();
-    const std::uint32_t b3 = getNext();
+babelwires::ResultT<std::uint32_t> smf::SmfParser::readU32() {
+    ASSIGN_OR_ERROR(const std::uint32_t b0, getNext());
+    ASSIGN_OR_ERROR(const std::uint32_t b1, getNext());
+    ASSIGN_OR_ERROR(const std::uint32_t b2, getNext());
+    ASSIGN_OR_ERROR(const std::uint32_t b3, getNext());
     return (b0 << 24) | (b1 << 16) | (b2 << 8) | b3;
 }
 
-std::uint32_t smf::SmfParser::readVariableLengthQuantity() {
+babelwires::ResultT<std::uint32_t> smf::SmfParser::readVariableLengthQuantity() {
     std::uint32_t result = 0;
     babelwires::Byte b;
     int numBytes = 0;
     do {
         if (numBytes == 4) {
-            throw babelwires::ParseException() << "Variable Length Quantity too big";
+            return babelwires::Error() << "Variable Length Quantity too big";
         }
         ++numBytes;
 
-        b = getNext();
+        ASSIGN_OR_ERROR(b, getNext());
         result = (result << 7) + (b & 0x7f);
     } while (b & 0x80);
     return result;
 }
 
-bw_music::ModelDuration smf::SmfParser::readModelDuration() {
-    const int numDivisions = readVariableLengthQuantity();
+babelwires::ResultT<bw_music::ModelDuration> smf::SmfParser::readModelDuration() {
+    ASSIGN_OR_ERROR(const int numDivisions, readVariableLengthQuantity());
     return bw_music::ModelDuration(numDivisions) * bw_music::ModelDuration(1, m_division * 4);
 }
 
-std::string smf::SmfParser::readTextMetaEvent(int length) {
+babelwires::ResultT<std::string> smf::SmfParser::readTextMetaEvent(int length) {
     std::vector<char> text;
     for (int i = 0; i < length; ++i) {
-        text.push_back(getNext());
+        ASSIGN_OR_ERROR(const babelwires::Byte c, getNext());
+        text.push_back(c);
     }
     return std::string(text.data(), length);
 }
 
-void smf::SmfParser::readHeaderChunk() {
-    readByteSequence("MThd");
-    if (readU32() != 6) {
-        throw babelwires::ParseException() << "Header chunk not expected length";
+babelwires::Result smf::SmfParser::readHeaderChunk() {
+    DO_OR_ERROR(readByteSequence("MThd"));
+    {
+        ASSIGN_OR_ERROR(const auto headerLength, readU32());
+        if (headerLength != 6) {
+            return babelwires::Error() << "Header chunk not expected length";
+        }
     }
-    switch (readU16()) {
-        case 0:
-            m_sequenceType = Format::SMF_FORMAT_0;
-            break;
-        case 1:
-            m_sequenceType = Format::SMF_FORMAT_1;
-            break;
-        case 2:
-            throw babelwires::ParseException() << "Standard MIDI File Format 2 files are not currently supported";
-        default:
-            throw babelwires::ParseException() << "Not a known type of Standard MIDI File";
+    {
+        ASSIGN_OR_ERROR(const auto formatType, readU16());
+        switch (formatType) {
+            case 0:
+                m_sequenceType = Format::SMF_FORMAT_0;
+                break;
+            case 1:
+                m_sequenceType = Format::SMF_FORMAT_1;
+                break;
+            case 2:
+                return babelwires::Error() << "Standard MIDI File Format 2 files are not currently supported";
+            default:
+                return babelwires::Error() << "Not a known type of Standard MIDI File";
+        }
     }
-    m_numTracks = readU16();
-    m_division = readU16();
+    ASSIGN_OR_ERROR(m_numTracks, readU16());
+    ASSIGN_OR_ERROR(m_division, readU16());
     if (m_division & (1 << 15)) {
-        throw babelwires::ParseException() << "SMPTE format durations not supported";
+        return babelwires::Error() << "SMPTE format durations not supported";
     }
+    return {};
 }
 
-void smf::SmfParser::parse() {
+babelwires::Result smf::SmfParser::parse() {
     auto smfSequence = getSmfSequence();
 
-    readHeaderChunk();
+    DO_OR_ERROR(readHeaderChunk());
     switch (m_sequenceType) {
         case Format::SMF_FORMAT_0: {
-            readFormat0Sequence();
+            DO_OR_ERROR(readFormat0Sequence());
             break;
         }
         case Format::SMF_FORMAT_1: {
             smfSequence.selectTag("SMF1");
-            readFormat1Sequence();
+            DO_OR_ERROR(readFormat1Sequence());
             break;
         }
         case Format::SMF_FORMAT_2: {
@@ -188,9 +199,10 @@ void smf::SmfParser::parse() {
         }
         case Format::SMF_UNKNOWN_FORMAT:
         default: {
-            throw babelwires::ParseException() << "The data is not in one of the understood sequence types";
+            return babelwires::Error() << "The data is not in one of the understood sequence types";
         }
     }
+    return {};
 }
 
 void smf::SmfParser::readTempoEvent(std::uint32_t tempoValue) {
@@ -283,18 +295,24 @@ class smf::SmfParser::TrackSplitter {
     const std::array<ChannelSetup, 16>& m_channelSetup;
 };
 
-template <typename STREAMLIKE> void smf::SmfParser::logByteSequence(STREAMLIKE log, int length) {
-    log << std::hex << std::setfill('0') << std::setw(2) << static_cast<int>(getNext());
-    for (auto i = 0; i < length - 1; ++i) {
-        log << ", " << std::setfill('0') << std::setw(2) << static_cast<int>(getNext());
+template <typename STREAMLIKE> babelwires::Result smf::SmfParser::logByteSequence(STREAMLIKE log, int length) {
+    {
+        ASSIGN_OR_ERROR(const auto b, getNext());
+        log << std::hex << std::setfill('0') << std::setw(2) << static_cast<int>(b);
     }
+    for (auto i = 0; i < length - 1; ++i) {
+        ASSIGN_OR_ERROR(const auto b, getNext());
+        log << ", " << std::setfill('0') << std::setw(2) << static_cast<int>(b);
+    }
+    return {};
 }
 
-void smf::SmfParser::readFullMessageIntoBuffer(std::uint32_t length) {
+babelwires::Result smf::SmfParser::readFullMessageIntoBuffer(std::uint32_t length) {
     m_messageBuffer.resize(length);
     for (int i = 0; i < length; ++i) {
-        m_messageBuffer[i] = getNext();
+        ASSIGN_OR_ERROR(m_messageBuffer[i], getNext());
     }
+    return {};
 }
 
 template <std::size_t N> bool smf::SmfParser::isMessageBufferMessage(const std::array<std::int16_t, N>& message) const {
@@ -318,20 +336,20 @@ template <typename STREAMLIKE> void smf::SmfParser::logMessageBuffer(STREAMLIKE 
     }
 }
 
-void smf::SmfParser::readSysExEvent() {
-    auto length = readVariableLengthQuantity();
+babelwires::Result smf::SmfParser::readSysExEvent() {
+    ASSIGN_OR_ERROR(auto length, readVariableLengthQuantity());
     if (length < 1) {
-        logByteSequence(m_userLogger.logWarning() << "Skipping SysEx message with invalid length: ", length);
-        return;
+        DO_OR_ERROR(logByteSequence(m_userLogger.logWarning() << "Skipping SysEx message with invalid length: ", length));
+        return {};
     }
-    readFullMessageIntoBuffer(length);
+    DO_OR_ERROR(readFullMessageIntoBuffer(length));
     const babelwires::Byte headerId = m_messageBuffer[0];
     if (headerId == 0x7E) {
         // Universal SysEx
         if (length < 4) {
-            logByteSequence(m_userLogger.logWarning() << "Skipping Universal SysEx message with invalid length: ",
-                            length);
-            return;
+            DO_OR_ERROR(logByteSequence(m_userLogger.logWarning() << "Skipping Universal SysEx message with invalid length: ",
+                            length));
+            return {};
         }
         // Universal Non-Real Time SysEx
         /*const babelwires::Byte deviceId = m_messageBuffer[1]*/
@@ -356,7 +374,7 @@ void smf::SmfParser::readSysExEvent() {
             if (m_messageBuffer[4] != 0xF7) {
                 m_userLogger.logWarning() << "Improperly terminated General MIDI SysEx message";
             }
-            return;
+            return {};
         }
     } else if (headerId == 0x41) {
         // Roland SysEx
@@ -372,13 +390,13 @@ void smf::SmfParser::readSysExEvent() {
         }
         if (m_messageBuffer[messageSize - 2] != ((0x80 - (checkSum % 0x80)) % 0x80)) {
             m_userLogger.logWarning() << "Ignoring Roland SysEx message with invalid checksum";
-            return;
+            return {};
         }
         if (isMessageBufferMessage(
                 std::array<std::int16_t, 10>{0x41, -1, 0x42, 0x12, 0x40, 0x00, 0x7F, 0x00, 0x41, 0xF7})) {
             setGMSpec(GMSpecType::Value::GS);
             babelwires::logDebug() << "Roland GS Reset";
-            return;
+            return {};
         }
         if (isMessageBufferMessage(std::array<std::int16_t, 10>{0x41, -1, 0x42, 0x12, 0x40, -1, 0x15, -1, -1, 0xF7}) &&
             ((m_messageBuffer[5] & 0xf0) == 0x10)) {
@@ -391,33 +409,35 @@ void smf::SmfParser::readSysExEvent() {
             } else {
                 setGsPartMode(blockNumber, value);
             }
-            return;
+            return {};
         }
     } else if (headerId == 0x43) {
         // Yamaha SysEx
         if (isMessageBufferMessage(std::array<std::int16_t, 8>{0x43, -1, 0x4C, 0x00, 0x00, 0x7E, 0x00, 0xF7})) {
             setGMSpec(GMSpecType::Value::XG);
             babelwires::logDebug() << "Yamaha XG Reset";
-            return;
+            return {};
         }
     }
     logMessageBuffer(babelwires::logDebug() << "Ignoring unrecognized SysEx event! ");
+    return {};
 }
 
-void smf::SmfParser::readSysExEventContinuation() {
-    auto length = readVariableLengthQuantity();
-    logByteSequence(babelwires::logDebug() << "Ignoring continued SysEx message", length);
+babelwires::Result smf::SmfParser::readSysExEventContinuation() {
+    ASSIGN_OR_ERROR(auto length, readVariableLengthQuantity());
+    DO_OR_ERROR(logByteSequence(babelwires::logDebug() << "Ignoring continued SysEx message", length));
+    return {};
 }
 
-void smf::SmfParser::readSequencerSpecificEvent(int length) {
+babelwires::Result smf::SmfParser::readSequencerSpecificEvent(int length) {
     if (length <= 1) {
-        logByteSequence(m_userLogger.logWarning() << "Skipping sequencer specific event with invalid length: ", length);
-        return;
+        DO_OR_ERROR(logByteSequence(m_userLogger.logWarning() << "Skipping sequencer specific event with invalid length: ", length));
+        return {};
     }
     assert(length <= 255 && "Length was expected to be held in one byte");
     std::array<babelwires::Byte, 255> eventBytes;
     for (int i = 0; i < length; ++i) {
-        eventBytes[i] = getNext();
+        ASSIGN_OR_ERROR(eventBytes[i], getNext());
     }
     auto log = babelwires::logDebug();
     int byteIndex = 0;
@@ -504,11 +524,12 @@ void smf::SmfParser::readSequencerSpecificEvent(int length) {
     for (auto i = byteIndex + 1; i < length; ++i) {
         log << ", " << std::setfill('0') << std::setw(2) << static_cast<int>(eventBytes[i]);
     }
+    return {};
 }
 
-void smf::SmfParser::readControlChange(unsigned int channelNumber) {
-    const babelwires::Byte controllerNumber = getNext();
-    const babelwires::Byte value = getNext();
+babelwires::Result smf::SmfParser::readControlChange(unsigned int channelNumber) {
+    ASSIGN_OR_ERROR(const babelwires::Byte controllerNumber, getNext());
+    ASSIGN_OR_ERROR(const babelwires::Byte value, getNext());
     switch (controllerNumber) {
         case 0x00:
             // bank select MSB
@@ -521,28 +542,33 @@ void smf::SmfParser::readControlChange(unsigned int channelNumber) {
         default:
             break;
     }
+    return {};
 }
 
-void smf::SmfParser::readProgramChange(unsigned int channelNumber) {
-    const babelwires::Byte newProgram = getNext();
+babelwires::Result smf::SmfParser::readProgramChange(unsigned int channelNumber) {
+    ASSIGN_OR_ERROR(const babelwires::Byte newProgram, getNext());
     setProgram(channelNumber, newProgram);
+    return {};
 }
 
-void smf::SmfParser::readTrack(int trackIndex, TrackSplitter& tracks, bool hasMainMetadata) {
-    readByteSequence("MTrk");
-    const std::uint32_t trackLength = readU32();
+babelwires::Result smf::SmfParser::readTrack(int trackIndex, TrackSplitter& tracks, bool hasMainMetadata) {
+    DO_OR_ERROR(readByteSequence("MTrk"));
+    ASSIGN_OR_ERROR(const std::uint32_t trackLength, readU32());
     const int currentIndex = m_dataSource.getAbsolutePosition();
 
     bw_music::ModelDuration timeSinceLastNoteEvent = 0;
     babelwires::Byte lastStatusByte = 0;
     while ((m_dataSource.getAbsolutePosition() - currentIndex) < trackLength) {
-        timeSinceLastNoteEvent += readModelDuration();
+        {
+            ASSIGN_OR_ERROR(const auto duration, readModelDuration());
+            timeSinceLastNoteEvent += duration;
+        }
 
         // Peek in case running status should be used.
-        babelwires::Byte statusByte = peekNext();
+        ASSIGN_OR_ERROR(babelwires::Byte statusByte, peekNext());
         if ((statusByte & 0x80) || (lastStatusByte == 0)) {
             // A new status byte, so consume the status byte.
-            getNext();
+            DO_OR_ERROR(getNext());
 
             // Buffer stores the status when a Voice Category Status (ie, 0x80 to 0xEF) is received.
             // Buffer is cleared when a System Common Category Status (ie, 0xF0 to 0xF7) is received.
@@ -570,33 +596,35 @@ void smf::SmfParser::readTrack(int trackIndex, TrackSplitter& tracks, bool hasMa
         switch (statusHi) {
             case 0b1111: {
                 if (statusLo == 0x00) {
-                    readSysExEvent();
+                    DO_OR_ERROR(readSysExEvent());
                 } else if (statusLo == 0x07) {
-                    readSysExEventContinuation();
+                    DO_OR_ERROR(readSysExEventContinuation());
                 } else if (statusLo == 0x0f) {
                     // Meta-event.
-                    const babelwires::Byte type = getNext();
-                    const std::uint32_t length = readVariableLengthQuantity();
+                    ASSIGN_OR_ERROR(const babelwires::Byte type, getNext());
+                    ASSIGN_OR_ERROR(const std::uint32_t length, readVariableLengthQuantity());
                     switch (type) {
                         case 0x00: // Sequence number
                         {
                             if (length != 2) {
-                                logByteSequence(m_userLogger.logWarning()
+                                DO_OR_ERROR(logByteSequence(m_userLogger.logWarning()
                                                     << "Skipping sequence number meta-event with incorrect length: ",
-                                                length);
+                                                length));
                             } else {
-                                babelwires::logDebug() << "Ignored meta-event! Sequence number: " << readU16();
+                                ASSIGN_OR_ERROR(const auto seqNum, readU16());
+                                babelwires::logDebug() << "Ignored meta-event! Sequence number: " << seqNum;
                             }
                             break;
                         }
                         case 0x01: // Text event
                         {
-                            babelwires::logDebug() << "Ignored meta-event! Text event: " << readTextMetaEvent(length);
+                            ASSIGN_OR_ERROR(const auto text, readTextMetaEvent(length));
+                            babelwires::logDebug() << "Ignored meta-event! Text event: " << text;
                             break;
                         }
                         case 0x02: // Copyright
                         {
-                            std::string text = readTextMetaEvent(length);
+                            ASSIGN_OR_ERROR(std::string text, readTextMetaEvent(length));
                             if (hasMainMetadata) {
                                 getMidiMetadata().activateAndGetCopyR().set(text);
                             }
@@ -604,7 +632,7 @@ void smf::SmfParser::readTrack(int trackIndex, TrackSplitter& tracks, bool hasMa
                         }
                         case 0x03: // Sequence or track name.
                         {
-                            std::string text = readTextMetaEvent(length);
+                            ASSIGN_OR_ERROR(std::string text, readTextMetaEvent(length));
                             if (hasMainMetadata) {
                                 getMidiMetadata().activateAndGetName().set(text);
                             }
@@ -612,34 +640,38 @@ void smf::SmfParser::readTrack(int trackIndex, TrackSplitter& tracks, bool hasMa
                         }
                         case 0x04: // Instrument name
                         {
+                            ASSIGN_OR_ERROR(const auto text, readTextMetaEvent(length));
                             babelwires::logDebug()
-                                << "Ignored MIDI Event! Instrument name: " << readTextMetaEvent(length);
+                                << "Ignored MIDI Event! Instrument name: " << text;
                             break;
                         }
                         case 0x05: // Lyric
                         {
-                            babelwires::logDebug() << "Ignored meta-event! Lyric: " << readTextMetaEvent(length);
+                            ASSIGN_OR_ERROR(const auto text, readTextMetaEvent(length));
+                            babelwires::logDebug() << "Ignored meta-event! Lyric: " << text;
                             break;
                         }
                         case 0x06: // Marker
                         {
-                            babelwires::logDebug() << "Ignored meta-event! Marker: " << readTextMetaEvent(length);
+                            ASSIGN_OR_ERROR(const auto text, readTextMetaEvent(length));
+                            babelwires::logDebug() << "Ignored meta-event! Marker: " << text;
                             break;
                         }
                         case 0x07: // Cue point
                         {
-                            babelwires::logDebug() << "Ignored meta-event! Cue point: " << readTextMetaEvent(length);
+                            ASSIGN_OR_ERROR(const auto text, readTextMetaEvent(length));
+                            babelwires::logDebug() << "Ignored meta-event! Cue point: " << text;
                             break;
                         }
                         case 0x20: // Channel prefix
                         {
                             if (length != 1) {
-                                logByteSequence(m_userLogger.logWarning()
+                                DO_OR_ERROR(logByteSequence(m_userLogger.logWarning()
                                                     << "Skipping channel prefix meta-event with incorrect length",
-                                                length);
+                                                length));
                             } else {
-                                logByteSequence(babelwires::logDebug() << "Ignored meta-event! Channel prefix: ",
-                                                length);
+                                DO_OR_ERROR(logByteSequence(babelwires::logDebug() << "Ignored meta-event! Channel prefix: ",
+                                                length));
                             }
                             break;
                         }
@@ -647,27 +679,27 @@ void smf::SmfParser::readTrack(int trackIndex, TrackSplitter& tracks, bool hasMa
                         {
                             // Finished.
                             if ((m_dataSource.getAbsolutePosition() - currentIndex) != trackLength) {
-                                throw babelwires::ParseException()
+                                return babelwires::Error()
                                     << "MIDI track " << trackIndex << " had an unexpected end-of-track event";
                             }
                             if (length != 0) {
                                 // Not a good idea to skip end of track events.
-                                logByteSequence(
+                                DO_OR_ERROR(logByteSequence(
                                     m_userLogger.logWarning()
                                         << "End of Track meta-event has incorrect length. Will try use it anyway.",
-                                    length);
+                                    length));
                             }
                             tracks.setDurationsForAllChannels(timeSinceLastNoteEvent);
-                            return;
+                            return {};
                         }
                         case 0x51: // Set tempo
                         {
                             if (length != 3) {
-                                logByteSequence(m_userLogger.logWarning()
+                                DO_OR_ERROR(logByteSequence(m_userLogger.logWarning()
                                                     << "Skipping Tempo meta-event with incorrect length",
-                                                length);
+                                                length));
                             } else {
-                                const std::uint32_t tempoValue = readU24();
+                                ASSIGN_OR_ERROR(const std::uint32_t tempoValue, readU24());
                                 if (hasMainMetadata) {
                                     readTempoEvent(tempoValue);
                                 }
@@ -677,62 +709,62 @@ void smf::SmfParser::readTrack(int trackIndex, TrackSplitter& tracks, bool hasMa
                         case 0x54: // SMPTE offset
                         {
                             if (length != 5) {
-                                logByteSequence(m_userLogger.logWarning()
+                                DO_OR_ERROR(logByteSequence(m_userLogger.logWarning()
                                                     << "Skipping SMPTE Offset meta-event with incorrect length",
-                                                length);
+                                                length));
                             } else {
-                                logByteSequence(babelwires::logDebug() << "Ignored meta-event! SMPTE Offset: ", length);
+                                DO_OR_ERROR(logByteSequence(babelwires::logDebug() << "Ignored meta-event! SMPTE Offset: ", length));
                             }
                             break;
                         }
                         case 0x58: // Time signature
                         {
                             if (length != 4) {
-                                logByteSequence(m_userLogger.logWarning()
+                                DO_OR_ERROR(logByteSequence(m_userLogger.logWarning()
                                                     << "Skipping Time Signature meta-event with incorrect length",
-                                                length);
+                                                length));
                             } else {
-                                logByteSequence(babelwires::logDebug() << "Ignored meta-event! Time signature: ",
-                                                length);
+                                DO_OR_ERROR(logByteSequence(babelwires::logDebug() << "Ignored meta-event! Time signature: ",
+                                                length));
                             }
                             break;
                         }
                         case 0x59: // Key signature
                         {
                             if (length != 2) {
-                                logByteSequence(m_userLogger.logWarning()
+                                DO_OR_ERROR(logByteSequence(m_userLogger.logWarning()
                                                     << "Skipping Key Signature event with incorrect length",
-                                                length);
+                                                length));
                             } else {
-                                logByteSequence(babelwires::logDebug() << "Ignored meta-event! Key signature: ",
-                                                length);
+                                DO_OR_ERROR(logByteSequence(babelwires::logDebug() << "Ignored meta-event! Key signature: ",
+                                                length));
                             }
                             break;
                         }
                         case 0x7F: // Sequence specific event
                         {
-                            readSequencerSpecificEvent(length);
+                            DO_OR_ERROR(readSequencerSpecificEvent(length));
                             break;
                         }
                         default: // Unknown meta-event type
                         {
                             // This isn't in the spec, so warn: Perhaps BabelWires-Music is out-of-date.
-                            logByteSequence(m_userLogger.logWarning() << "Skipping unknown meta-event of type "
+                            DO_OR_ERROR(logByteSequence(m_userLogger.logWarning() << "Skipping unknown meta-event of type "
                                                                       << std::hex << (int)type << ": ",
-                                            length);
+                                            length));
                             break;
                         }
                     }
                 } else {
-                    throw babelwires::ParseException()
+                    return babelwires::Error()
                         << "Unrecognized MIDI message with status byte " << static_cast<int>(statusByte);
                 }
                 break;
             }
             case 0b1000: // Note off.
             {
-                const bw_music::Pitch pitch = getNext();
-                const bw_music::Velocity velocity = getNext();
+                ASSIGN_OR_ERROR(const bw_music::Pitch pitch, getNext());
+                ASSIGN_OR_ERROR(const bw_music::Velocity velocity, getNext());
                 // TODO If a NoteOn was skipped, we would need to skip the corresponding note off.
                 if (tracks.addNoteOff(statusLo, timeSinceLastNoteEvent, pitch, velocity)) {
                     timeSinceLastNoteEvent = 0;
@@ -741,8 +773,8 @@ void smf::SmfParser::readTrack(int trackIndex, TrackSplitter& tracks, bool hasMa
             }
             case 0b1001: // Note on.
             {
-                const bw_music::Pitch pitch = getNext();
-                const bw_music::Velocity velocity = getNext();
+                ASSIGN_OR_ERROR(const bw_music::Pitch pitch, getNext());
+                ASSIGN_OR_ERROR(const bw_music::Velocity velocity, getNext());
                 if (velocity != 0) {
                     if (tracks.addNoteOn(statusLo, timeSinceLastNoteEvent, pitch, velocity)) {
                         timeSinceLastNoteEvent = 0;
@@ -756,48 +788,48 @@ void smf::SmfParser::readTrack(int trackIndex, TrackSplitter& tracks, bool hasMa
             }
             case 0b1010: // Polyphonic key pressure Aftertouch.
             {
-                skipBytes(2);
+                DO_OR_ERROR(skipBytes(2));
                 break;
             }
             case 0b1011: // Control change.
             {
-                readControlChange(statusLo);
+                DO_OR_ERROR(readControlChange(statusLo));
                 break;
             }
             case 0b1110: // Pitch wheel
             {
-                skipBytes(2);
+                DO_OR_ERROR(skipBytes(2));
                 break;
             }
             case 0b1100: // Program change
             {
-                readProgramChange(statusLo);
+                DO_OR_ERROR(readProgramChange(statusLo));
                 break;
             }
             case 0b1101: // Channel pressure
             {
-                skipBytes(1);
+                DO_OR_ERROR(skipBytes(1));
                 break;
             }
             default: {
-                throw babelwires::ParseException()
+                return babelwires::Error()
                     << "Unrecognized MIDI message with status byte " << static_cast<int>(statusByte);
             }
         }
     }
 
     // We've read too far.
-    throw babelwires::ParseException() << "Read all of track " << trackIndex
-                                       << " without finding an end-of-track event";
+    return babelwires::Error() << "Read all of track " << trackIndex
+                               << " without finding an end-of-track event";
 }
 
-void smf::SmfParser::readFormat0Sequence() {
+babelwires::Result smf::SmfParser::readFormat0Sequence() {
     if (m_numTracks != 1) {
-        throw babelwires::ParseException()
+        return babelwires::Error()
             << "A format 0 Standard MIDI file claims to have " << m_numTracks << " tracks but it should only have 1";
     }
     TrackSplitter splitTracks(m_channelSetup);
-    readTrack(0, splitTracks, true);
+    DO_OR_ERROR(readTrack(0, splitTracks, true));
     auto tracks = getSmfSequence().getTrcks0();
     for (int channelNumber = 0; channelNumber < MAX_CHANNELS; ++channelNumber) {
         const auto& perChannelInfoPtr = splitTracks.m_channels[channelNumber];
@@ -805,12 +837,13 @@ void smf::SmfParser::readFormat0Sequence() {
             tracks.activateAndGetTrack(channelNumber).set(perChannelInfoPtr->m_track.finishAndGetTrack(perChannelInfoPtr->m_trackDuration));
         }
     }
+    return {};
 }
 
-void smf::SmfParser::readFormat1SequenceTrack(MidiTrackAndChannel::Instance& track,
+babelwires::Result smf::SmfParser::readFormat1SequenceTrack(MidiTrackAndChannel::Instance& track,
                                               bool hasMainMetadata) {
     TrackSplitter splitTrack(m_channelSetup);
-    readTrack(0, splitTrack, hasMainMetadata);
+    DO_OR_ERROR(readTrack(0, splitTrack, hasMainMetadata));
 
     // Convert the builders to actual tracks.
     std::array<bw_music::Track, 16> tracks;
@@ -837,15 +870,17 @@ void smf::SmfParser::readFormat1SequenceTrack(MidiTrackAndChannel::Instance& tra
             track.activateAndGetTrack(channelNumber).set(std::move(tracks[channelNumber]));
         }
     }
+    return {};
 }
 
-void smf::SmfParser::readFormat1Sequence() {
+babelwires::Result smf::SmfParser::readFormat1Sequence() {
     auto tracks = getSmfSequence().getTrcks1();
     tracks.setSize(m_numTracks);
     for (int i = 0; i < m_numTracks; ++i) {
         auto track = tracks.getEntry(i);
-        readFormat1SequenceTrack(track, (i == 0));
+        DO_OR_ERROR(readFormat1SequenceTrack(track, (i == 0)));
     }
+    return {};
 }
 
 smf::MidiMetadata::Instance smf::SmfParser::getMidiMetadata() {
@@ -894,6 +929,6 @@ std::unique_ptr<babelwires::ValueTreeRoot> smf::parseSmfSequence(babelwires::Dat
                                                        const babelwires::ProjectContext& projectContext,
                                                        babelwires::UserLogger& userLogger) {
     SmfParser parser(dataSource, projectContext, userLogger);
-    parser.parse();
+    THROW_ON_ERROR(parser.parse(), babelwires::ParseException);
     return parser.getResult();
 }
