@@ -62,19 +62,19 @@ smf::SmfSequence::Instance smf::SmfParser::getSmfSequence() {
 smf::SmfSequence::Instance getSmfSequence();
 
 babelwires::ResultT<babelwires::Byte> smf::SmfParser::getNext() {
-    try {
-        return m_dataSource.getNextByte();
-    } catch (std::exception&) {
-        return babelwires::Error() << "Stream is truncated";
+    const auto result = m_dataSource.getNextByte();
+    if (!result) {
+        return babelwires::Error() << "Stream is truncated (" << result.error().toString() << ")";
     }
+    return result;
 }
 
 babelwires::ResultT<babelwires::Byte> smf::SmfParser::peekNext() {
-    try {
-        return m_dataSource.peekNextByte();
-    } catch (std::exception&) {
-        return babelwires::Error() << "Stream is truncated";
+    const auto result = m_dataSource.peekNextByte();
+    if (!result) {
+        return babelwires::Error() << "Stream is truncated (" << result.error().toString() << ")";
     }
+    return result;
 }
 
 babelwires::Result smf::SmfParser::readByteSequence(const char* seq) {
