@@ -34,8 +34,10 @@ struct Context : seq2tape::Seq2TapeContext {
 
 void convertMode(const Context& context, const ProgramOptions::ConvertOptions& convertOptions) {
     if (auto inFormat = context.m_tapeFileRegistry.getEntryByFileName(convertOptions.m_inputFileName)) {
-        babelwires::FileDataSource infile(convertOptions.m_inputFileName);
-        std::unique_ptr<seq2tape::TapeFile> tapeFile = std::make_unique<seq2tape::TapeFile>(infile);
+        auto infile = babelwires::FileDataSource::open(convertOptions.m_inputFileName);
+        THROW_ON_ERROR(infile, babelwires::IoException);
+        auto tapeFile = seq2tape::TapeFile::load(*infile);
+        THROW_ON_ERROR(tapeFile, babelwires::IoException);
         if (tapeFile->getFormatIdentifier() != inFormat->getIdentifier()) {
             throw babelwires::IoException() << "File extension does not match file contents";
         }
@@ -107,8 +109,10 @@ void playbackMode(const Context& context, const ProgramOptions::PlaybackOptions&
     if (!inFormat) {
         throw babelwires::OptionError() << "The input file is not a recognized seq2tape format";
     }
-    babelwires::FileDataSource infile(playbackOptions.m_inputFileName);
-    std::unique_ptr<seq2tape::TapeFile> tapeFile = std::make_unique<seq2tape::TapeFile>(infile);
+    auto infile = babelwires::FileDataSource::open(playbackOptions.m_inputFileName);
+    THROW_ON_ERROR(infile, babelwires::IoException);
+    const auto tapeFile = seq2tape::TapeFile::load(*infile);
+    THROW_ON_ERROR(tapeFile, babelwires::IoException);
     if (tapeFile->getFormatIdentifier() != inFormat->getIdentifier()) {
         throw babelwires::IoException() << "File extension does not match file contents";
     }

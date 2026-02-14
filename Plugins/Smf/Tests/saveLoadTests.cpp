@@ -48,9 +48,12 @@ TEST(SmfSaveLoadTest, cMajorScale) {
     }
 
     {
-        babelwires::FileDataSource midiFile(tempFile);
+        auto midiFileResult = babelwires::FileDataSource::open(tempFile);
+        ASSERT_TRUE(midiFileResult.has_value());
+        auto midiFile = std::move(*midiFileResult);
 
         auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+        ASSERT_TRUE(midiFile.close().has_value());
         ASSERT_TRUE(result.has_value());
         const auto& feature = *result;
         smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
@@ -131,9 +134,12 @@ TEST(SmfSaveLoadTest, cMajorScaleWithMetadata) {
             smf::writeToSmf(testEnvironment.m_projectContext, testEnvironment.m_log, smfFeature, os);
         }
 
-        babelwires::FileDataSource midiFile(tempFile);
+        auto midiFileResult = babelwires::FileDataSource::open(tempFile);
+        ASSERT_TRUE(midiFileResult.has_value());
+        auto midiFile = std::move(*midiFileResult);
 
         auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+        ASSERT_TRUE(midiFile.close().has_value());
         ASSERT_TRUE(result.has_value());
         const auto& feature = *result;
 
@@ -184,9 +190,12 @@ TEST(SmfSaveLoadTest, format0Chords) {
     }
 
     {
-        babelwires::FileDataSource midiFile(tempFile);
+        auto midiFileResult = babelwires::FileDataSource::open(tempFile);
+        ASSERT_TRUE(midiFileResult.has_value());
+        auto midiFile = std::move(*midiFileResult);
 
         auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+        ASSERT_TRUE(midiFile.close().has_value());
         ASSERT_TRUE(result.has_value());
         const auto& feature = *result;
 
@@ -235,9 +244,12 @@ TEST(SmfSaveLoadTest, format1Chords) {
     }
 
     {
-        babelwires::FileDataSource midiFile(tempFile);
+        auto midiFileResult = babelwires::FileDataSource::open(tempFile);
+        ASSERT_TRUE(midiFileResult.has_value());
+        auto midiFile = std::move(*midiFileResult);
 
         auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+        ASSERT_TRUE(midiFile.close().has_value());
         ASSERT_TRUE(result.has_value());
         const auto& feature = *result;
 

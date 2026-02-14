@@ -26,9 +26,11 @@ TEST(SmfTestSuiteTest, loadAllTestFilesWithoutCrashing) {
         if (p.path().extension() == ".mid") {
             ++numFilesTested;
             try {
-                babelwires::FileDataSource midiFile(p.path());
+                auto midiFileResult = babelwires::FileDataSource::open(p.path());
+                ASSERT_TRUE(midiFileResult.has_value());
+                auto midiFile = std::move(*midiFileResult);
                 auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
-                // Result may or may not have a value, but it should not crash.
+                midiFile.close();
             } catch (...) {
                 EXPECT_TRUE(false);
             }
@@ -47,9 +49,12 @@ TEST(SmfTestSuiteTest, cMajorScale) {
     bw_music::registerLib(testEnvironment.m_projectContext);
     smf::registerLib(testEnvironment.m_projectContext);
 
-    babelwires::FileDataSource midiFile("test-c-major-scale.mid");
+    auto midiFileResult = babelwires::FileDataSource::open("test-c-major-scale.mid");
+    ASSERT_TRUE(midiFileResult.has_value());
+    auto midiFile = std::move(*midiFileResult);
 
     auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+    ASSERT_TRUE(midiFile.close().has_value());
     ASSERT_TRUE(result.has_value());
     const auto& feature = *result;
 
@@ -82,9 +87,12 @@ TEST(SmfTestSuiteTest, multichannelChords0) {
     bw_music::registerLib(testEnvironment.m_projectContext);
     smf::registerLib(testEnvironment.m_projectContext);
 
-    babelwires::FileDataSource midiFile("test-multichannel-chords-0.mid");
+    auto midiFileResult = babelwires::FileDataSource::open("test-multichannel-chords-0.mid");
+    ASSERT_TRUE(midiFileResult.has_value());
+    auto midiFile = std::move(*midiFileResult);
 
     auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+    ASSERT_TRUE(midiFile.close().has_value());
     ASSERT_TRUE(result.has_value());
     const auto& feature = *result;
 
@@ -108,9 +116,12 @@ TEST(SmfTestSuiteTest, multichannelChords1) {
     bw_music::registerLib(testEnvironment.m_projectContext);
     smf::registerLib(testEnvironment.m_projectContext);
 
-    babelwires::FileDataSource midiFile("test-multichannel-chords-1.mid");
+    auto midiFileResult = babelwires::FileDataSource::open("test-multichannel-chords-1.mid");
+    ASSERT_TRUE(midiFileResult.has_value());
+    auto midiFile = std::move(*midiFileResult);
 
     auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+    ASSERT_TRUE(midiFile.close().has_value());
     ASSERT_TRUE(result.has_value());
     const auto& feature = *result;
 
@@ -141,9 +152,12 @@ TEST(SmfTestSuiteTest, multichannelChords2) {
     bw_music::registerLib(testEnvironment.m_projectContext);
     smf::registerLib(testEnvironment.m_projectContext);
 
-    babelwires::FileDataSource midiFile("test-multichannel-chords-2.mid");
+    auto midiFileResult = babelwires::FileDataSource::open("test-multichannel-chords-2.mid");
+    ASSERT_TRUE(midiFileResult.has_value());
+    auto midiFile = std::move(*midiFileResult);
 
     auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+    ASSERT_TRUE(midiFile.close().has_value());
     ASSERT_TRUE(result.has_value());
     const auto& feature = *result;
 
@@ -176,9 +190,12 @@ TEST(SmfTestSuiteTest, multichannelChords3) {
     bw_music::registerLib(testEnvironment.m_projectContext);
     smf::registerLib(testEnvironment.m_projectContext);
 
-    babelwires::FileDataSource midiFile("test-multichannel-chords-3.mid");
+    auto midiFileResult = babelwires::FileDataSource::open("test-multichannel-chords-3.mid");
+    ASSERT_TRUE(midiFileResult.has_value());
+    auto midiFile = std::move(*midiFileResult);
 
     auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+    ASSERT_TRUE(midiFile.close().has_value());
     ASSERT_TRUE(result.has_value());
     const auto& feature = *result;
 
@@ -213,9 +230,12 @@ TEST(SmfTestSuiteTest, trackLength) {
     bw_music::registerLib(testEnvironment.m_projectContext);
     smf::registerLib(testEnvironment.m_projectContext);
 
-    babelwires::FileDataSource midiFile("test-track-length.mid");
+    auto midiFileResult = babelwires::FileDataSource::open("test-track-length.mid");
+    ASSERT_TRUE(midiFileResult.has_value());
+    auto midiFile = std::move(*midiFileResult);
 
     auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+    ASSERT_TRUE(midiFile.close().has_value());
     ASSERT_TRUE(result.has_value());
     const auto& feature = *result;
     smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
@@ -236,9 +256,12 @@ TEST(SmfTestSuiteTest, tempoTest) {
     bw_music::registerLib(testEnvironment.m_projectContext);
     smf::registerLib(testEnvironment.m_projectContext);
 
-    babelwires::FileDataSource midiFile("test-karaoke-kar.mid");
+    auto midiFileResult = babelwires::FileDataSource::open("test-karaoke-kar.mid");
+    ASSERT_TRUE(midiFileResult.has_value());
+    auto midiFile = std::move(*midiFileResult);
 
     auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+    ASSERT_TRUE(midiFile.close().has_value());
     ASSERT_TRUE(result.has_value());
     const auto& feature = *result;
 
@@ -257,14 +280,20 @@ TEST(SmfTestSuiteTest, corruptFiles) {
     smf::registerLib(testEnvironment.m_projectContext);
 
     {
-        babelwires::FileDataSource midiFile("test-corrupt-file-extra-byte.mid");
+        auto midiFileResult = babelwires::FileDataSource::open("test-corrupt-file-extra-byte.mid");
+        ASSERT_TRUE(midiFileResult.has_value());
+        auto midiFile = std::move(*midiFileResult);
         // This is OK.
         auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+        EXPECT_TRUE(midiFile.close().has_value());
         EXPECT_TRUE(result.has_value());
     }
     {
-        babelwires::FileDataSource midiFile("test-corrupt-file-missing-byte.mid");
+        auto midiFileResult = babelwires::FileDataSource::open("test-corrupt-file-missing-byte.mid");
+        ASSERT_TRUE(midiFileResult.has_value());
+        auto midiFile = std::move(*midiFileResult);
         auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+        EXPECT_TRUE(midiFile.close(babelwires::ErrorState::Error).has_value());
         EXPECT_FALSE(result.has_value());
     }
 }
@@ -274,9 +303,12 @@ TEST(SmfTestSuiteTest, testAllGMPercussion) {
     bw_music::registerLib(testEnvironment.m_projectContext);
     smf::registerLib(testEnvironment.m_projectContext);
 
-    babelwires::FileDataSource midiFile("test-all-gm-percussion.mid");
+    auto midiFileResult = babelwires::FileDataSource::open("test-all-gm-percussion.mid");
+    ASSERT_TRUE(midiFileResult.has_value());
+    auto midiFile = std::move(*midiFileResult);
 
     auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+    ASSERT_TRUE(midiFile.close().has_value());
     ASSERT_TRUE(result.has_value());
     const auto& feature = *result;
 
@@ -316,9 +348,12 @@ TEST(SmfTestSuiteTest, testGSDrumPartChange) {
     bw_music::registerLib(testEnvironment.m_projectContext);
     smf::registerLib(testEnvironment.m_projectContext);
 
-    babelwires::FileDataSource midiFile("test-sysex-gs-40-1x-15-drum-part-change.mid");
+    auto midiFileResult = babelwires::FileDataSource::open("test-sysex-gs-40-1x-15-drum-part-change.mid");
+    ASSERT_TRUE(midiFileResult.has_value());
+    auto midiFile = std::move(*midiFileResult);
 
     auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+    ASSERT_TRUE(midiFile.close().has_value());
     ASSERT_TRUE(result.has_value());
     const auto& feature = *result;
 

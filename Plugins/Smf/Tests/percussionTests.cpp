@@ -69,9 +69,12 @@ TEST_P(SmfStandardPercussionTest, saveLoad) {
     }
 
     {
-        babelwires::FileDataSource midiFile(tempFile);
+        auto midiFileResult = babelwires::FileDataSource::open(tempFile);
+        ASSERT_TRUE(midiFileResult.has_value());
+        auto midiFile = std::move(*midiFileResult);
 
         auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+        ASSERT_TRUE(midiFile.close().has_value());
         ASSERT_TRUE(result.has_value());
         const auto& feature = *result;
 
@@ -200,9 +203,12 @@ TEST_P(SmfTrackAllocationPercussionTest, trackAllocation) {
     }
 
     {
-        babelwires::FileDataSource midiFile(tempFile);
+        auto midiFileResult = babelwires::FileDataSource::open(tempFile);
+        ASSERT_TRUE(midiFileResult.has_value());
+        auto midiFile = std::move(*midiFileResult);
 
         auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+        ASSERT_TRUE(midiFile.close().has_value());
         ASSERT_TRUE(result.has_value());
         const auto& feature = *result;
 

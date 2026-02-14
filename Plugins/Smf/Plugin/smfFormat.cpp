@@ -44,9 +44,12 @@ std::string smf::SmfSourceFormat::getProductName() const {
 std::unique_ptr<babelwires::ValueTreeRoot>
 smf::SmfSourceFormat::loadFromFile(const std::filesystem::path& path, const babelwires::ProjectContext& projectContext,
                                    babelwires::UserLogger& userLogger) const {
-    babelwires::FileDataSource dataSource(path);
-    auto result = parseSmfSequence(dataSource, projectContext, userLogger);
+    auto dataSource = babelwires::FileDataSource::open(path);
+    THROW_ON_ERROR(dataSource, babelwires::ParseException);
+    auto result = parseSmfSequence(*dataSource, projectContext, userLogger);
     THROW_ON_ERROR(result, babelwires::ParseException);
+    auto closeResult = dataSource->close();
+    THROW_ON_ERROR(closeResult, babelwires::ParseException);
     return std::move(*result);
 }
 

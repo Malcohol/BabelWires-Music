@@ -9,6 +9,7 @@
 
 #include <BaseLib/common.hpp>
 #include <BaseLib/Identifiers/identifier.hpp>
+#include <BaseLib/Utilities/result.hpp>
 
 #include <memory>
 #include <string>
@@ -29,8 +30,7 @@ namespace seq2tape {
         /// Construct an empty TapeFile for the given format.
         TapeFile(babelwires::LongId formatIdentifier);
 
-        /// Load the TapeFile from the data stream.
-        TapeFile(babelwires::DataSource& dataSource);
+        static babelwires::ResultT<TapeFile> load(babelwires::DataSource& dataSource);
 
         /// Write the PmcTapFile as bytes to the stream.
         void write(std::ostream& stream) const;
@@ -49,6 +49,10 @@ namespace seq2tape {
         int getNumDataFiles() const;
         const DataFile& getDataFile(int i) const;
         void addDataFile(std::unique_ptr<DataFile> dataFile);
+
+      private:
+        /// Load the TapeFile from the data stream.
+        TapeFile() = default;
 
       protected:
         babelwires::LongId m_formatIdentifier;

@@ -61,9 +61,9 @@ namespace {
         stream.put(x & 255);
     }
 
-    std::uint16_t readU16(babelwires::DataSource& dataSource) {
-        std::uint16_t hi = dataSource.getNextByte();
-        std::uint16_t lo = dataSource.getNextByte();
+    babelwires::ResultT<std::uint16_t> readU16(babelwires::DataSource& dataSource) {
+        ASSIGN_OR_ERROR(const std::uint16_t hi, dataSource.getNextByte());
+        ASSIGN_OR_ERROR(const std::uint16_t lo, dataSource.getNextByte());
         return (hi << 8) | lo;
     }
 
@@ -74,11 +74,11 @@ namespace {
         stream.put(x & 255);
     }
 
-    std::uint32_t readU32(babelwires::DataSource& dataSource) {
-        std::uint32_t a = dataSource.getNextByte();
-        std::uint32_t b = dataSource.getNextByte();
-        std::uint32_t c = dataSource.getNextByte();
-        std::uint32_t d = dataSource.getNextByte();
+    babelwires::ResultT<std::uint32_t> readU32(babelwires::DataSource& dataSource) {
+        ASSIGN_OR_ERROR(const std::uint32_t a, dataSource.getNextByte());
+        ASSIGN_OR_ERROR(const std::uint32_t b, dataSource.getNextByte());
+        ASSIGN_OR_ERROR(const std::uint32_t c, dataSource.getNextByte());
+        ASSIGN_OR_ERROR(const std::uint32_t d, dataSource.getNextByte());
         return (a << 24) | (b << 16) | (c << 8) | d;
     }
 
@@ -94,20 +94,19 @@ namespace {
         writeString(stream, os.str());
     }
 
-    std::string readString(babelwires::DataSource& dataSource) {
-        std::uint16_t size = readU16(dataSource);
+    babelwires::ResultT<std::string> readString(babelwires::DataSource& dataSource) {
+        ASSIGN_OR_ERROR(const std::uint16_t size, readU16(dataSource));
         std::string result(size, '\0');
         for (int i = 0; i < size; ++i) {
-            result[i] = dataSource.getNextByte();
+            ASSIGN_OR_ERROR(result[i], dataSource.getNextByte());
         }
         return result;
     }
 
-    babelwires::LongId readIdentifier(babelwires::DataSource& dataSource) {
-        const std::string s = readString(dataSource);
-        auto result = babelwires::LongId::deserializeFromString(s);
-        THROW_ON_ERROR(result, babelwires::ParseException);
-        return *result;
+    babelwires::ResultT<babelwires::LongId> readIdentifier(babelwires::DataSource& dataSource) {
+        ASSIGN_OR_ERROR(const std::string s, readString(dataSource));
+        ASSIGN_OR_ERROR(auto result, babelwires::LongId::deserializeFromString(s));
+        return result;
     }
 
 } // namespace
@@ -131,28 +130,32 @@ void seq2tape::TapeFile::write(std::ostream& stream) const {
     }
 }
 
-seq2tape::TapeFile::TapeFile(babelwires::DataSource& dataSource)
-    : m_formatIdentifier("_bad_")
+babelwires::ResultT<seq2tape::TapeFile> seq2tape::TapeFile::load(babelwires::DataSource& dataSource)
 {
+    TapeFile out;
     for (int i = 0; i < strlen(s_seq2tapePrefix); ++i) {
-        if (dataSource.getNextByte() != s_seq2tapePrefix[i]) {
-            throw babelwires::IoException() << "Not a valid seq2tape file";
+        ASSIGN_OR_ERROR(const int byte, dataSource.getNextByte());
+        if (byte != s_seq2tapePrefix[i]) {
+            return babelwires::Error() << "Not a valid seq2tape file";
         }
     }
-    const int v = dataSource.getNextByte();
-    if ((dataSource.getNextByte() != ' ') || (v <= '0') || (v > s_seq2tapeVersion)) {
-        throw babelwires::IoException()
+    ASSIGN_OR_ERROR(const int v, dataSource.getNextByte());
+    ASSIGN_OR_ERROR(const int space, dataSource.getNextByte());
+    if ((space != ' ') || (v <= '0') || (v > s_seq2tapeVersion)) {
+        return babelwires::Error()
             << "Unrecognized version. This program only handles seq2tape files up to version " << s_seq2tapeVersion;
     }
-    m_formatIdentifier = readIdentifier(dataSource);
-    m_name = readString(dataSource);
-    m_copyright = readString(dataSource);
-    std::uint16_t numDataFiles = readU16(dataSource);
+    ASSIGN_OR_ERROR(out.m_formatIdentifier, readIdentifier(dataSource));
+    ASSIGN_OR_ERROR(out.m_name, readString(dataSource));
+    ASSIGN_OR_ERROR(out.m_copyright, readString(dataSource));
+    ASSIGN_OR_ERROR(const std::uint16_t numDataFiles, readU16(dataSource));
     for (int i = 0; i < numDataFiles; ++i) {
-        const std::uint32_t size = readU32(dataSource);
-        m_dataFiles.emplace_back(std::make_unique<DataFile>());
+        ASSIGN_OR_ERROR(const std::uint32_t size, readU32(dataSource));
+        out.m_dataFiles.emplace_back(std::make_unique<DataFile>());
         for (int j = 0; j < size; ++j) {
-            m_dataFiles.back()->emplace_back(dataSource.getNextByte());
+            ASSIGN_OR_ERROR(const std::uint8_t byte, dataSource.getNextByte());
+            out.m_dataFiles.back()->emplace_back(byte);
         }
     }
+    return out;
 }
