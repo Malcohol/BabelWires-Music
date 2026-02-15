@@ -19,7 +19,7 @@ namespace smf {
 
         virtual std::string getManufacturerName() const override;
         virtual std::string getProductName() const override;
-        virtual std::unique_ptr<babelwires::ValueTreeRoot>
+        virtual babelwires::ResultT<std::unique_ptr<babelwires::ValueTreeRoot>>
         loadFromFile(const std::filesystem::path& path, const babelwires::ProjectContext& projectContext,
                      babelwires::UserLogger& userLogger) const override;
     };

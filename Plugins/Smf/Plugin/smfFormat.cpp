@@ -41,16 +41,13 @@ std::string smf::SmfSourceFormat::getProductName() const {
     return s_productName;
 }
 
-std::unique_ptr<babelwires::ValueTreeRoot>
+babelwires::ResultT<std::unique_ptr<babelwires::ValueTreeRoot>>
 smf::SmfSourceFormat::loadFromFile(const std::filesystem::path& path, const babelwires::ProjectContext& projectContext,
                                    babelwires::UserLogger& userLogger) const {
-    auto dataSource = babelwires::FileDataSource::open(path);
-    THROW_ON_ERROR(dataSource, babelwires::ParseException);
-    auto result = parseSmfSequence(*dataSource, projectContext, userLogger);
-    THROW_ON_ERROR(result, babelwires::ParseException);
-    auto closeResult = dataSource->close();
-    THROW_ON_ERROR(closeResult, babelwires::ParseException);
-    return std::move(*result);
+    ASSIGN_OR_ERROR(auto dataSource, babelwires::FileDataSource::open(path));
+    ASSIGN_OR_ERROR(auto result, parseSmfSequence(dataSource, projectContext, userLogger));
+    DO_OR_ERROR(dataSource.close());
+    return std::move(result);
 }
 
 smf::SmfTargetFormat::SmfTargetFormat()
