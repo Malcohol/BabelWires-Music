@@ -7,12 +7,14 @@
  **/
 #pragma once
 
+#include <BaseLib/Utilities/result.hpp>
+
 #include <memory>
 #include <stdexcept>
 #include <string>
 
 struct ProgramOptions {
-    ProgramOptions(int argc, char* argv[]);
+    static babelwires::ResultT<ProgramOptions> parse(int argc, char* argv[]);
 
     enum Mode { MODE_PRINT_HELP, MODE_CAPTURE, MODE_PLAYBACK, MODE_CONVERT, MODE_LIST_FORMATS, MODE_LIST_AUDIO };
 

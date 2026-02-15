@@ -32,22 +32,25 @@ struct Context : seq2tape::Seq2TapeContext {
     babelwires::FileAudioDestRegistry& m_fileAudioDestRegistry;
 };
 
-void convertMode(const Context& context, const ProgramOptions::ConvertOptions& convertOptions) {
+babelwires::Result convertMode(const Context& context, const ProgramOptions::ConvertOptions& convertOptions) {
     if (auto inFormat = context.m_tapeFileRegistry.getEntryByFileName(convertOptions.m_inputFileName)) {
         auto infile = babelwires::FileDataSource::open(convertOptions.m_inputFileName);
-        THROW_ON_ERROR(infile, babelwires::IoException);
+        if (!infile) {
+            return babelwires::Error() << "Cannot open input file " << infile.error().toString();
+        }
         auto tapeFile = seq2tape::TapeFile::load(*infile);
-        THROW_ON_ERROR(tapeFile, babelwires::IoException);
+        if (!tapeFile) {
+            return babelwires::Error() << "Cannot parse input file: " << tapeFile.error().toString();
+        }
         if (tapeFile->getFormatIdentifier() != inFormat->getIdentifier()) {
-            throw babelwires::IoException() << "File extension does not match file contents";
+            return babelwires::Error() << "File extension does not match file contents";
         }
 
         if (auto outFormat = context.m_tapeFileRegistry.getEntryByFileName(convertOptions.m_outputFileName)) {
             // Converting between TapeFiles of the same format allows name and copyright to be overwritten.
             // No other cases make sense.
             if (outFormat != inFormat) {
-                throw babelwires::OptionError()
-                    << "You cannot convert between formats using seq2tape. Use BabelWires instead";
+                return babelwires::Error() << "You cannot convert between formats using seq2tape. Use BabelWires instead";
             }
 
             if (!convertOptions.m_sequenceName.empty()) {
@@ -62,20 +65,20 @@ void convertMode(const Context& context, const ProgramOptions::ConvertOptions& c
                 tapeFile->write(outfile);
                 outfile.close();
             } catch (const std::exception& e) {
-                std::cerr << "Cannot write file. " << e.what() << '\n';
+                return babelwires::Error() << "Cannot write file. " << e.what();
             }
         } else {
             std::unique_ptr<babelwires::AudioDest> outfile =
                 context.m_fileAudioDestRegistry.createFileAudioDest(convertOptions.m_outputFileName.c_str(), 1);
             const int numDataFiles = tapeFile->getNumDataFiles();
             if (numDataFiles == 0) {
-                throw babelwires::OptionError() << "Provided file has no contents";
+                return babelwires::Error() << "Provided file has no contents";
             }
             if (!convertOptions.m_sequenceName.empty()) {
-                throw babelwires::OptionError() << "You cannot set name when writing an audio file";
+                return babelwires::Error() << "You cannot set name when writing an audio file";
             }
             if (!convertOptions.m_copyright.empty()) {
-                throw babelwires::OptionError() << "You cannot set copyright when writing an audio file";
+                return babelwires::Error() << "You cannot set copyright when writing an audio file";
             }
 
             inFormat->writeToAudio(tapeFile->getDataFile(0), *outfile);
@@ -100,27 +103,28 @@ void convertMode(const Context& context, const ProgramOptions::ConvertOptions& c
         tapeFile->write(outfile);
         outfile.close();
     } else {
-        throw babelwires::OptionError() << "Neither input nor output format are recognized seq2tape formats";
+        return babelwires::Error() << "Neither input nor output format are recognized seq2tape formats";
     }
+    return {};
 }
 
-void playbackMode(const Context& context, const ProgramOptions::PlaybackOptions& playbackOptions) {
+babelwires::Result playbackMode(const Context& context, const ProgramOptions::PlaybackOptions& playbackOptions) {
     auto inFormat = context.m_tapeFileRegistry.getEntryByFileName(playbackOptions.m_inputFileName);
     if (!inFormat) {
-        throw babelwires::OptionError() << "The input file is not a recognized seq2tape format";
+        return babelwires::Error() << "The input file is not a recognized seq2tape format";
     }
     auto infile = babelwires::FileDataSource::open(playbackOptions.m_inputFileName);
     THROW_ON_ERROR(infile, babelwires::IoException);
     const auto tapeFile = seq2tape::TapeFile::load(*infile);
     THROW_ON_ERROR(tapeFile, babelwires::IoException);
     if (tapeFile->getFormatIdentifier() != inFormat->getIdentifier()) {
-        throw babelwires::IoException() << "File extension does not match file contents";
+        return babelwires::Error() << "File extension does not match file contents";
     }
     std::unique_ptr<babelwires::AudioDest> audioDest =
         context.m_audioInterfaceRegistry.getDestination(playbackOptions.m_outputPlaybackDest);
     const int numDataFiles = tapeFile->getNumDataFiles();
     if (numDataFiles == 0) {
-        throw babelwires::OptionError() << "Provided file has no contents";
+        return babelwires::Error() << "Provided file has no contents";
     }
     if (!tapeFile->getName().empty()) {
         std::cout << "Name: " << tapeFile->getName() << ".\n";
@@ -136,12 +140,13 @@ void playbackMode(const Context& context, const ProgramOptions::PlaybackOptions&
         inFormat->writeToAudio(tapeFile->getDataFile(i), *audioDest);
         std::cout << "Playing file " << i + 1 << "/" << numDataFiles << ".\n";
     }
+    return {};
 }
 
-void captureMode(const Context& context, const ProgramOptions::CaptureOptions& captureOptions) {
+babelwires::Result captureMode(const Context& context, const ProgramOptions::CaptureOptions& captureOptions) {
     auto outFormat = context.m_tapeFileRegistry.getEntryByFileName(captureOptions.m_outputFileName);
     if (!outFormat) {
-        throw babelwires::OptionError() << "The output file is not a recognized seq2tape format";
+        return babelwires::Error() << "The output file is not a recognized seq2tape format";
     }
     babelwires::OutFileStream outFile(captureOptions.m_outputFileName.c_str(), std::ios_base::binary);
     std::unique_ptr<babelwires::AudioSource> audioSource =
@@ -159,6 +164,7 @@ void captureMode(const Context& context, const ProgramOptions::CaptureOptions& c
     }
     tapeFile->write(outFile);
     outFile.close();
+    return {};
 }
 
 int main(int argc, char* argv[]) {
@@ -178,73 +184,84 @@ int main(int argc, char* argv[]) {
     const bool playbackAvailable = !context.m_audioInterfaceRegistry.getDestinationNames().empty();
     const bool captureAvailable = !context.m_audioInterfaceRegistry.getSourceNames().empty();
 
-    try {
-        ProgramOptions options(argc, argv);
-
-        // TODO Register seq2tape plugins formats here.
-
-        switch (options.m_mode) {
-            case ProgramOptions::MODE_PRINT_HELP: {
-                writeHelp(argv[0], playbackAvailable, captureAvailable, std::cout);
-                break;
-            }
-            case ProgramOptions::MODE_CAPTURE: {
-                if (!captureAvailable) {
-                    throw babelwires::OptionError()
-                        << "No source audio interfaces were registered, so audio capture is unavailable.";
-                }
-                captureMode(context, *options.m_captureOptions);
-                break;
-            }
-            case ProgramOptions::MODE_PLAYBACK: {
-                if (!playbackAvailable) {
-                    throw babelwires::OptionError()
-                        << "No destination audio interface were registered, so audio playback is unavailable.";
-                }
-                playbackMode(context, *options.m_playbackOptions);
-                break;
-            }
-            case ProgramOptions::MODE_CONVERT: {
-                convertMode(context, *options.m_convertOptions);
-                break;
-            }
-            case ProgramOptions::MODE_LIST_FORMATS: {
-                std::cout << "Supported tape file formats:" << std::endl;
-                for (const auto& e : context.m_tapeFileRegistry) {
-                    std::cout << "  " << e.getFileExtensions()[0] << " (" << e.getManufacturerName() << " "
-                              << e.getProductName() << ")" << std::endl;
-                }
-                std::cout << "Supported audio file formats for writing:" << std::endl;
-                for (const auto& e : context.m_fileAudioDestRegistry) {
-                    std::cout << "  " << e.getFileExtensions()[0] << " (" << e.getName() << ")" << std::endl;
-                }
-                std::cout << "Many additional audio file formats can be read." << std::endl;
-                break;
-            }
-            case ProgramOptions::MODE_LIST_AUDIO: {
-                std::cout << "Available audio destinations:" << std::endl;
-                auto destinations = context.m_audioInterfaceRegistry.getDestinationNames();
-                for (const auto& d : destinations) {
-                    std::cout << "  " << d << std::endl;
-                }
-                std::cout << "Available audio sources:" << std::endl;
-                auto sources = context.m_audioInterfaceRegistry.getSourceNames();
-                for (const auto& s : sources) {
-                    std::cout << "  " << s << std::endl;
-                }
-                break;
-            }
-            default:
-                assert(false);
-        }
-        babelwires::shutdown_audio(context.m_audioInterfaceRegistry);
-    } catch (const babelwires::OptionError& e) {
-        std::cerr << e.what() << std::endl;
+    ProgramOptions options;
+    auto result = options.parse(argc, argv);
+    if (!result) {
+        std::cerr << result.error().toString() << std::endl;
         writeUsage(argv[0], playbackAvailable, captureAvailable, std::cerr);
-        return EXIT_FAILURE;
-    } catch (const babelwires::BaseException& e) {
-        std::cerr << e.what() << std::endl;
-        return EXIT_FAILURE;
+        return 1;
     }
+
+    // TODO Register seq2tape plugins formats here.
+
+    switch (options.m_mode) {
+        case ProgramOptions::MODE_PRINT_HELP: {
+            writeHelp(argv[0], playbackAvailable, captureAvailable, std::cout);
+            break;
+        }
+        case ProgramOptions::MODE_CAPTURE: {
+            if (!captureAvailable) {
+                std::cerr
+                    << "No source audio interfaces were registered, so audio capture is unavailable.";
+                return EXIT_FAILURE;
+            }
+            const auto result = captureMode(context, *options.m_captureOptions);
+            if (!result) {
+                std::cerr << result.error().toString() << std::endl;
+                return EXIT_FAILURE;
+            }
+            break;
+        }
+        case ProgramOptions::MODE_PLAYBACK: {
+            if (!playbackAvailable) {
+                std::cerr
+                    << "No destination audio interfaces were registered, so audio playback is unavailable.";
+                return EXIT_FAILURE;
+            }
+            const auto result = playbackMode(context, *options.m_playbackOptions);
+            if (!result) {
+                std::cerr << result.error().toString() << std::endl;
+                return EXIT_FAILURE;
+            }
+            break;
+        }
+        case ProgramOptions::MODE_CONVERT: {
+            const auto result = convertMode(context, *options.m_convertOptions);
+            if (!result) {
+                std::cerr << result.error().toString() << std::endl;
+                return EXIT_FAILURE;
+            }
+            break;
+        }
+        case ProgramOptions::MODE_LIST_FORMATS: {
+            std::cout << "Supported tape file formats:" << std::endl;
+            for (const auto& e : context.m_tapeFileRegistry) {
+                std::cout << "  " << e.getFileExtensions()[0] << " (" << e.getManufacturerName() << " "
+                            << e.getProductName() << ")" << std::endl;
+            }
+            std::cout << "Supported audio file formats for writing:" << std::endl;
+            for (const auto& e : context.m_fileAudioDestRegistry) {
+                std::cout << "  " << e.getFileExtensions()[0] << " (" << e.getName() << ")" << std::endl;
+            }
+            std::cout << "Many additional audio file formats can be read." << std::endl;
+            break;
+        }
+        case ProgramOptions::MODE_LIST_AUDIO: {
+            std::cout << "Available audio destinations:" << std::endl;
+            auto destinations = context.m_audioInterfaceRegistry.getDestinationNames();
+            for (const auto& d : destinations) {
+                std::cout << "  " << d << std::endl;
+            }
+            std::cout << "Available audio sources:" << std::endl;
+            auto sources = context.m_audioInterfaceRegistry.getSourceNames();
+            for (const auto& s : sources) {
+                std::cout << "  " << s << std::endl;
+            }
+            break;
+        }
+        default:
+            assert(false);
+    }
+    babelwires::shutdown_audio(context.m_audioInterfaceRegistry);
     return EXIT_SUCCESS;
 }
