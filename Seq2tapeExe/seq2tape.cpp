@@ -17,7 +17,7 @@
 #include <Seq2tapeLib/tapeFileFormat.hpp>
 
 #include <BaseLib/IO/fileDataSource.hpp>
-#include <BaseLib/IO/outFileStream.hpp>
+#include <BaseLib/IO/fileDataSink.hpp>
 #include <BaseLib/Identifiers/identifierRegistry.hpp>
 #include <BaseLib/Log/unifiedLog.hpp>
 
@@ -61,13 +61,10 @@ babelwires::Result convertMode(const Context& context, const ProgramOptions::Con
                 tapeFile->setCopyright(convertOptions.m_copyright);
             }
 
-            try {
-                babelwires::OutFileStream outfile(convertOptions.m_outputFileName.c_str(), std::ios_base::binary);
-                tapeFile->write(outfile);
-                outfile.close();
-            } catch (const std::exception& e) {
-                return babelwires::Error() << "Cannot write file. " << e.what();
-            }
+            ASSIGN_OR_ERROR(auto outfile, babelwires::FileDataSink::open(convertOptions.m_outputFileName.c_str()));
+            ON_ERROR(outfile.close(babelwires::ErrorState::Error));
+            tapeFile->write(outfile);
+            DO_OR_ERROR(outfile.close());
         } else {
             std::unique_ptr<babelwires::AudioDest> outfile =
                 context.m_fileAudioDestRegistry.createFileAudioDest(convertOptions.m_outputFileName.c_str(), 1);
@@ -100,9 +97,10 @@ babelwires::Result convertMode(const Context& context, const ProgramOptions::Con
         tapeFile->setCopyright(convertOptions.m_copyright);
         std::unique_ptr<seq2tape::TapeFile::DataFile> dataFile = outFormat->loadFromAudio(fileCallback);
         tapeFile->addDataFile(std::move(dataFile));
-        babelwires::OutFileStream outfile(convertOptions.m_outputFileName.c_str(), std::ios_base::binary);
+        ASSIGN_OR_ERROR(auto outfile, babelwires::FileDataSink::open(convertOptions.m_outputFileName.c_str()));
+        ON_ERROR(outfile.close(babelwires::ErrorState::Error));
         tapeFile->write(outfile);
-        outfile.close();
+        DO_OR_ERROR(outfile.close());
     } else {
         return babelwires::Error() << "Neither input nor output format are recognized seq2tape formats";
     }
@@ -150,7 +148,8 @@ babelwires::Result captureMode(const Context& context, const ProgramOptions::Cap
     if (!outFormat) {
         return babelwires::Error() << "The output file is not a recognized seq2tape format";
     }
-    babelwires::OutFileStream outFile(captureOptions.m_outputFileName.c_str(), std::ios_base::binary);
+    ASSIGN_OR_ERROR(auto outFile, babelwires::FileDataSink::open(captureOptions.m_outputFileName.c_str()));
+    ON_ERROR(outFile.close(babelwires::ErrorState::Error));
     std::unique_ptr<babelwires::AudioSource> audioSource =
         context.m_audioInterfaceRegistry.getSource(captureOptions.m_inputCaptureSource);
     std::unique_ptr<seq2tape::TapeFile> tapeFile = std::make_unique<seq2tape::TapeFile>(outFormat->getIdentifier());
@@ -165,7 +164,7 @@ babelwires::Result captureMode(const Context& context, const ProgramOptions::Cap
         tapeFile->addDataFile(std::move(dataFile));
     }
     tapeFile->write(outFile);
-    outFile.close();
+    DO_OR_ERROR(outFile.close());
     return {};
 }
 

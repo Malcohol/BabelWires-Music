@@ -18,6 +18,7 @@ namespace babelwires {
     struct AudioSource;
     struct AudioDest;
     class DataSource;
+    class DataSink;
 } // namespace babelwires
 
 namespace seq2tape {
@@ -32,8 +33,8 @@ namespace seq2tape {
 
         static babelwires::ResultT<TapeFile> load(babelwires::DataSource& dataSource);
 
-        /// Write the PmcTapFile as bytes to the stream.
-        void write(std::ostream& stream) const;
+        /// Write the PmcTapFile as bytes to the sink.
+        void write(babelwires::DataSink& dataSink) const;
 
         babelwires::LongId getFormatIdentifier() const;
 

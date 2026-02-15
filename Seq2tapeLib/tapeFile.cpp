@@ -7,6 +7,7 @@
  **/
 #include <Seq2tapeLib/tapeFile.hpp>
 
+#include <BaseLib/IO/dataSink.hpp>
 #include <BaseLib/IO/dataSource.hpp>
 #include <BaseLib/exceptions.hpp>
 #include <BaseLib/common.hpp>
@@ -111,7 +112,8 @@ namespace {
 
 } // namespace
 
-void seq2tape::TapeFile::write(std::ostream& stream) const {
+void seq2tape::TapeFile::write(babelwires::DataSink& dataSink) const {
+    std::ostream& stream = dataSink.stream();
     assert(m_dataFiles.size() > 0);
     for (int i = 0; i < strlen(s_seq2tapePrefix); ++i) {
         stream.put(s_seq2tapePrefix[i]);

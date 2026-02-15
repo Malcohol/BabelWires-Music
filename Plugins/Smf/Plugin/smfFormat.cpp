@@ -14,7 +14,7 @@
 #include <Plugins/Smf/Plugin/smfWriter.hpp>
 
 #include <BaseLib/IO/fileDataSource.hpp>
-#include <BaseLib/IO/outFileStream.hpp>
+#include <BaseLib/IO/fileDataSink.hpp>
 
 namespace {
 
@@ -69,10 +69,13 @@ smf::SmfTargetFormat::createNewValue(const babelwires::ProjectContext& projectCo
                                                        babelwires::FileTypeT<SmfSequence>::getThisIdentifier());
 }
 
-void smf::SmfTargetFormat::writeToFile(const babelwires::ProjectContext& projectContext,
-                                       babelwires::UserLogger& userLogger, const babelwires::ValueTreeRoot& contents,
-                                       const std::filesystem::path& path) const {
-    babelwires::OutFileStream outStream(path);
-    writeToSmf(projectContext, userLogger, contents, outStream);
-    outStream.close();
+babelwires::Result smf::SmfTargetFormat::writeToFile(const babelwires::ProjectContext& projectContext,
+                                                      babelwires::UserLogger& userLogger,
+                                                      const babelwires::ValueTreeRoot& contents,
+                                                      const std::filesystem::path& path) const {
+    ASSIGN_OR_ERROR(auto sink, babelwires::FileDataSink::open(path));
+    ON_ERROR(sink.close(babelwires::ErrorState::Error));
+    writeToSmf(projectContext, userLogger, contents, sink.stream());
+    DO_OR_ERROR(sink.close());
+    return {};
 }
