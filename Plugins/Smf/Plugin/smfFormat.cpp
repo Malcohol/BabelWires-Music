@@ -45,6 +45,7 @@ babelwires::ResultT<std::unique_ptr<babelwires::ValueTreeRoot>>
 smf::SmfSourceFormat::loadFromFile(const std::filesystem::path& path, const babelwires::ProjectContext& projectContext,
                                    babelwires::UserLogger& userLogger) const {
     ASSIGN_OR_ERROR(auto dataSource, babelwires::FileDataSource::open(path));
+    ON_ERROR(dataSource.close(babelwires::ErrorState::Error));
     ASSIGN_OR_ERROR(auto result, parseSmfSequence(dataSource, projectContext, userLogger));
     DO_OR_ERROR(dataSource.close());
     return std::move(result);

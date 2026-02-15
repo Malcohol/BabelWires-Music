@@ -38,6 +38,7 @@ babelwires::Result convertMode(const Context& context, const ProgramOptions::Con
         if (!infile) {
             return babelwires::Error() << "Cannot open input file " << infile.error().toString();
         }
+        FINALLY_WITH_ERRORSTATE(infile->close(errorState));
         auto tapeFile = seq2tape::TapeFile::load(*infile);
         if (!tapeFile) {
             return babelwires::Error() << "Cannot parse input file: " << tapeFile.error().toString();
@@ -115,6 +116,7 @@ babelwires::Result playbackMode(const Context& context, const ProgramOptions::Pl
     }
     auto infile = babelwires::FileDataSource::open(playbackOptions.m_inputFileName);
     THROW_ON_ERROR(infile, babelwires::IoException);
+    FINALLY_WITH_ERRORSTATE(infile->close(errorState));
     const auto tapeFile = seq2tape::TapeFile::load(*infile);
     THROW_ON_ERROR(tapeFile, babelwires::IoException);
     if (tapeFile->getFormatIdentifier() != inFormat->getIdentifier()) {
