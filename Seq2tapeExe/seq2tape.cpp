@@ -112,32 +112,30 @@ babelwires::Result playbackMode(const Context& context, const ProgramOptions::Pl
     if (!inFormat) {
         return babelwires::Error() << "The input file is not a recognized seq2tape format";
     }
-    auto infile = babelwires::FileDataSource::open(playbackOptions.m_inputFileName);
-    THROW_ON_ERROR(infile, babelwires::IoException);
-    FINALLY_WITH_ERRORSTATE(infile->close(errorState));
-    const auto tapeFile = seq2tape::TapeFile::load(*infile);
-    THROW_ON_ERROR(tapeFile, babelwires::IoException);
-    if (tapeFile->getFormatIdentifier() != inFormat->getIdentifier()) {
+    ASSIGN_OR_ERROR(auto infile, babelwires::FileDataSource::open(playbackOptions.m_inputFileName));
+    FINALLY_WITH_ERRORSTATE(infile.close(errorState));
+    ASSIGN_OR_ERROR(auto tapeFile, seq2tape::TapeFile::load(infile));
+    if (tapeFile.getFormatIdentifier() != inFormat->getIdentifier()) {
         return babelwires::Error() << "File extension does not match file contents";
     }
     std::unique_ptr<babelwires::AudioDest> audioDest =
         context.m_audioInterfaceRegistry.getDestination(playbackOptions.m_outputPlaybackDest);
-    const int numDataFiles = tapeFile->getNumDataFiles();
+    const int numDataFiles = tapeFile.getNumDataFiles();
     if (numDataFiles == 0) {
         return babelwires::Error() << "Provided file has no contents";
     }
-    if (!tapeFile->getName().empty()) {
-        std::cout << "Name: " << tapeFile->getName() << ".\n";
+    if (!tapeFile.getName().empty()) {
+        std::cout << "Name: " << tapeFile.getName() << ".\n";
     }
-    if (!tapeFile->getCopyright().empty()) {
-        std::cout << "Copyright: " << tapeFile->getCopyright() << ".\n";
+    if (!tapeFile.getCopyright().empty()) {
+        std::cout << "Copyright: " << tapeFile.getCopyright() << ".\n";
     }
     std::cout << "Format: " << inFormat->getName() << ".\n";
     std::cout << "Playing file " << 1 << "/" << numDataFiles << ".\n";
-    inFormat->writeToAudio(tapeFile->getDataFile(0), *audioDest);
+    inFormat->writeToAudio(tapeFile.getDataFile(0), *audioDest);
     for (int i = 1; i < numDataFiles; ++i) {
         // TODO interfile gap.
-        inFormat->writeToAudio(tapeFile->getDataFile(i), *audioDest);
+        inFormat->writeToAudio(tapeFile.getDataFile(i), *audioDest);
         std::cout << "Playing file " << i + 1 << "/" << numDataFiles << ".\n";
     }
     return {};
