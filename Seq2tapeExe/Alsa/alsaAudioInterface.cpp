@@ -30,7 +30,7 @@ namespace {
             const int ret = snd_device_name_hint(-1, "pcm", &m_hints);
             const auto result = babelwires_alsa::checkForError(ret, "Trying to query device names");
             if (!result) {
-                logDebug() << result.error().toString();
+                babelwires::logDebug() << result.error().toString();
                 m_hints = nullptr;
             }
         }
