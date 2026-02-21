@@ -11,7 +11,7 @@
 #include <BabelWiresLib/TypeSystem/registeredType.hpp>
 
 #include <BaseLib/Math/rational.hpp>
-#include <BaseLib/Utilities/result.hpp>
+#include <BaseLib/Result/result.hpp>
 #include <BaseLib/common.hpp>
 
 #include <cstdint>

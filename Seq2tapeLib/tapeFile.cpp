@@ -9,6 +9,7 @@
 
 #include <BaseLib/IO/dataSink.hpp>
 #include <BaseLib/IO/dataSource.hpp>
+#include <BaseLib/Result/resultDSL.hpp>
 #include <BaseLib/common.hpp>
 
 #include <cassert>
@@ -131,8 +132,7 @@ void seq2tape::TapeFile::write(babelwires::DataSink& dataSink) const {
     }
 }
 
-babelwires::ResultT<seq2tape::TapeFile> seq2tape::TapeFile::load(babelwires::DataSource& dataSource)
-{
+babelwires::ResultT<seq2tape::TapeFile> seq2tape::TapeFile::load(babelwires::DataSource& dataSource) {
     TapeFile out;
     for (int i = 0; i < strlen(s_seq2tapePrefix); ++i) {
         ASSIGN_OR_ERROR(const int byte, dataSource.getNextByte());
@@ -143,8 +143,8 @@ babelwires::ResultT<seq2tape::TapeFile> seq2tape::TapeFile::load(babelwires::Dat
     ASSIGN_OR_ERROR(const int v, dataSource.getNextByte());
     ASSIGN_OR_ERROR(const int space, dataSource.getNextByte());
     if ((space != ' ') || (v <= '0') || (v > s_seq2tapeVersion)) {
-        return babelwires::Error()
-            << "Unrecognized version. This program only handles seq2tape files up to version " << s_seq2tapeVersion;
+        return babelwires::Error() << "Unrecognized version. This program only handles seq2tape files up to version "
+                                   << s_seq2tapeVersion;
     }
     ASSIGN_OR_ERROR(out.m_formatIdentifier, readIdentifier(dataSource));
     ASSIGN_OR_ERROR(out.m_name, readString(dataSource));

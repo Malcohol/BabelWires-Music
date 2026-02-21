@@ -10,7 +10,7 @@
 #include <Seq2tapeLib/Audio/audioDest.hpp>
 
 #include <BaseLib/Registry/fileTypeRegistry.hpp>
-#include <BaseLib/Utilities/result.hpp>
+#include <BaseLib/Result/result.hpp>
 
 #include <cctype>
 #include <memory>

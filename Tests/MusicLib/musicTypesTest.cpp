@@ -2,7 +2,7 @@
 
 #include <MusicLib/musicTypes.hpp>
 
-#include <BaseLib/Utilities/result.hpp>
+#include <BaseLib/Result/result.hpp>
 
 TEST(MusicLib, enumNames) {
     EXPECT_EQ(bw_music::PitchClass::valueToString(bw_music::PitchClass::Value::C), "C");

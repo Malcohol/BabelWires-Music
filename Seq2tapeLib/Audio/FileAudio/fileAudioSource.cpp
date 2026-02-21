@@ -7,6 +7,8 @@
  **/
 #include <Seq2tapeLib/Audio/FileAudio/fileAudioSource.hpp>
 
+#include <BaseLib/Result/error.hpp>
+
 #include <sndfile.h>
 
 #include <assert.h>

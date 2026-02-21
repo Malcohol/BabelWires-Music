@@ -9,7 +9,7 @@
 
 #include <Seq2tapeLib/Audio/audioSource.hpp>
 
-#include <BaseLib/Utilities/result.hpp>
+#include <BaseLib/Result/result.hpp>
 
 #include <memory>
 #include <string>
