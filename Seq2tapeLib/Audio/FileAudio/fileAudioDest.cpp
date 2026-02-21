@@ -8,7 +8,6 @@
 #include <Seq2tapeLib/Audio/FileAudio/fileAudioDest.hpp>
 
 #include <BaseLib/Identifiers/registeredIdentifier.hpp>
-#include <BaseLib/exceptions.hpp>
 
 #include <sndfile.h>
 

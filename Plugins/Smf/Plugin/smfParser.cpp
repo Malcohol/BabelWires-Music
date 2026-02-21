@@ -21,7 +21,6 @@
 
 #include <BaseLib/Log/debugLogger.hpp>
 #include <BaseLib/Utilities/result.hpp>
-#include <BaseLib/exceptions.hpp>
 
 #include <cassert>
 #include <cmath>

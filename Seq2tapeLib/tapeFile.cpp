@@ -9,7 +9,6 @@
 
 #include <BaseLib/IO/dataSink.hpp>
 #include <BaseLib/IO/dataSource.hpp>
-#include <BaseLib/exceptions.hpp>
 #include <BaseLib/common.hpp>
 
 #include <cassert>
