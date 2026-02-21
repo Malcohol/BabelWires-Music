@@ -8,6 +8,9 @@
 #pragma once
 
 #include <Seq2tapeLib/Audio/audioSource.hpp>
+
+#include <BaseLib/Utilities/result.hpp>
+
 #include <memory>
 #include <string>
 
@@ -15,7 +18,11 @@ namespace babelwires {
 
     class FileAudioSource : public AudioSource {
       public:
-        FileAudioSource(const char* fileName);
+        FileAudioSource(FileAudioSource&&) = default;
+        FileAudioSource& operator=(FileAudioSource&&) = default;
+
+        static ResultT<FileAudioSource> open(const char* fileName);
+
         virtual ~FileAudioSource();
 
         virtual int getNumChannels() const override;
@@ -26,6 +33,9 @@ namespace babelwires {
 
       private:
         struct Impl;
+        FileAudioSource(std::unique_ptr<Impl> impl);
+
+      private:
         std::unique_ptr<Impl> m_impl;
     };
 

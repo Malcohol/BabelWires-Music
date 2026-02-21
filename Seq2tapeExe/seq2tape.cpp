@@ -66,8 +66,11 @@ babelwires::Result convertMode(const Context& context, const ProgramOptions::Con
             tapeFile->write(outfile);
             DO_OR_ERROR(outfile.close());
         } else {
-            std::unique_ptr<babelwires::AudioDest> outfile =
+            const auto outfile =
                 context.m_fileAudioDestRegistry.createFileAudioDest(convertOptions.m_outputFileName.c_str(), 1);
+            if (!outfile) {
+                return babelwires::Error() << outfile.error().toString();
+            }
             const int numDataFiles = tapeFile->getNumDataFiles();
             if (numDataFiles == 0) {
                 return babelwires::Error() << "Provided file has no contents";
@@ -79,15 +82,18 @@ babelwires::Result convertMode(const Context& context, const ProgramOptions::Con
                 return babelwires::Error() << "You cannot set copyright when writing an audio file";
             }
 
-            inFormat->writeToAudio(tapeFile->getDataFile(0), *outfile);
+            inFormat->writeToAudio(tapeFile->getDataFile(0), **outfile);
             for (int i = 1; i < numDataFiles; ++i) {
                 // TODO interfile gap.
-                inFormat->writeToAudio(tapeFile->getDataFile(i), *outfile);
+                inFormat->writeToAudio(tapeFile->getDataFile(i), **outfile);
             }
         }
     } else if (auto outFormat = context.m_tapeFileRegistry.getEntryByFileName(convertOptions.m_outputFileName)) {
         // TODO Error handling.
-        babelwires::FileAudioSource fileCallback(convertOptions.m_inputFileName.c_str());
+        auto fileCallback = babelwires::FileAudioSource::open(convertOptions.m_inputFileName.c_str());
+        if (!fileCallback) {
+            return babelwires::Error() << "Cannot open input file " << fileCallback.error().toString();
+        }
         std::unique_ptr<seq2tape::TapeFile> tapeFile = std::make_unique<seq2tape::TapeFile>(outFormat->getIdentifier());
         if (convertOptions.m_sequenceName.empty()) {
             tapeFile->setName(convertOptions.m_outputFileName);
@@ -95,7 +101,7 @@ babelwires::Result convertMode(const Context& context, const ProgramOptions::Con
             tapeFile->setName(convertOptions.m_sequenceName);
         }
         tapeFile->setCopyright(convertOptions.m_copyright);
-        std::unique_ptr<seq2tape::TapeFile::DataFile> dataFile = outFormat->loadFromAudio(fileCallback);
+        std::unique_ptr<seq2tape::TapeFile::DataFile> dataFile = outFormat->loadFromAudio(*fileCallback);
         tapeFile->addDataFile(std::move(dataFile));
         ASSIGN_OR_ERROR(auto outfile, babelwires::FileDataSink::open(convertOptions.m_outputFileName.c_str()));
         ON_ERROR(outfile.close(babelwires::ErrorState::Error));

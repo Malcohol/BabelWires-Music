@@ -19,7 +19,7 @@ namespace seq2tape {
         /// This determines which is expected first.
         enum class Polarity { positiveThenNegative, negativeThenPositive };
 
-        /// Constuct a WaveReader which reads waves from an audioSource.
+        /// Construct a WaveReader which reads waves from an audioSource.
         /// The waveLengths are the expected durations of the wave.
         /// The reader will attempt to adapt the absolute durations while
         /// respecting the relative durations.

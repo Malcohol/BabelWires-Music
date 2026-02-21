@@ -2,13 +2,15 @@
  * Factories for creating AudioDests corresponding to sound formats.
  *
  * (C) 2021 Malcolm Tyrrell
- * 
+ *
  * Licensed under the GPLv3.0. See LICENSE file.
  **/
 #pragma once
 
 #include <Seq2tapeLib/Audio/audioDest.hpp>
+
 #include <BaseLib/Registry/fileTypeRegistry.hpp>
+#include <BaseLib/Utilities/result.hpp>
 
 #include <cctype>
 #include <memory>
@@ -22,7 +24,7 @@ namespace babelwires {
       public:
         FileAudioDestFactory(LongId identifier, VersionNumber version, Extensions extensions);
 
-        virtual std::unique_ptr<AudioDest> createFileAudioDest(const char* fileName,
+        virtual ResultT<std::unique_ptr<AudioDest>> createFileAudioDest(const char* fileName,
                                                                unsigned int numChannels) const = 0;
     };
 
@@ -33,7 +35,7 @@ namespace babelwires {
         FileAudioDestRegistry();
 
         // Convenience method which finds the factory based on the file name, and uses it to create the file.
-        std::unique_ptr<AudioDest> createFileAudioDest(const char* fileName, unsigned int numChannels) const;
+        ResultT<std::unique_ptr<AudioDest>> createFileAudioDest(const char* fileName, unsigned int numChannels) const;
     };
 
 } // namespace babelwires
