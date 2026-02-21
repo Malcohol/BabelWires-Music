@@ -32,7 +32,7 @@ namespace babelwires_alsa {
         snd_pcm_hw_params_t* m_params = nullptr;
     };
 
-    ResultT<HardwareParameters> createHardwareParameters();
+    babelwires::ResultT<HardwareParameters> createHardwareParameters();
 
     Result checkForError(int retCode, const char* description);
 } // namespace babelwires_alsa
