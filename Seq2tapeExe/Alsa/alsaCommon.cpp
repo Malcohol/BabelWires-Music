@@ -5,8 +5,9 @@
  *
  * Licensed under the GPLv3.0. See LICENSE file.
  **/
-
 #include <Seq2tapeExe/Alsa/alsaCommon.hpp>
+
+#include <BaseLib/Result/resultDSL.hpp>
 
 babelwires_alsa::HardwareParameters::HardwareParameters(snd_pcm_hw_params_t* params)
     : m_params(params) {}
