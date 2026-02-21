@@ -52,11 +52,13 @@ std::vector<std::string> babelwires::AudioInterfaceRegistry::getDestinationNames
     return names;
 }
 
-std::unique_ptr<babelwires::AudioDest>
+babelwires::ResultT<std::unique_ptr<babelwires::AudioDest>>
 babelwires::AudioInterfaceRegistry::getDestination(std::string_view destinationName) const {
     const auto [interfaceId, destName] = splitAtColons(destinationName);
     if (interfaceId.empty()) {
         logDebug() << "AudioInterfaceRegistry::getDestination called without prefix";
+        return babelwires::Error() << "Invalid audio destination name '" << destinationName
+                                   << "'. Expected '<interface>::<destination>'";
     }
     for (auto it = begin(); it != end(); ++it) {
         if (it->getIdentifier() != interfaceId) {
@@ -67,8 +69,10 @@ babelwires::AudioInterfaceRegistry::getDestination(std::string_view destinationN
             interfaceDestinations.end()) {
             return it->getDestination(destName);
         }
+        return babelwires::Error() << "Unknown audio destination '" << destinationName << "'";
     }
-    return nullptr;
+    return babelwires::Error() << "Unknown audio interface '" << interfaceId << "' for destination '"
+                               << destinationName << "'";
 }
 
 std::vector<std::string> babelwires::AudioInterfaceRegistry::getSourceNames() const {
@@ -82,11 +86,13 @@ std::vector<std::string> babelwires::AudioInterfaceRegistry::getSourceNames() co
     return names;
 }
 
-std::unique_ptr<babelwires::AudioSource>
+babelwires::ResultT<std::unique_ptr<babelwires::AudioSource>>
 babelwires::AudioInterfaceRegistry::getSource(std::string_view sourceName) const {
     const auto [interfaceId, srcName] = splitAtColons(sourceName);
     if (interfaceId.empty()) {
         logDebug() << "AudioInterfaceRegistry::getSource called without prefix";
+        return babelwires::Error() << "Invalid audio source name '" << sourceName
+                                   << "'. Expected '<interface>::<source>'";
     }
     for (auto it = begin(); it != end(); ++it) {
         if (it->getIdentifier() != interfaceId) {
@@ -97,6 +103,8 @@ babelwires::AudioInterfaceRegistry::getSource(std::string_view sourceName) const
             interfaceSourceNames.end()) {
             return it->getSource(srcName);
         }
+        return babelwires::Error() << "Unknown audio source '" << sourceName << "'";
     }
-    return nullptr;
+    return babelwires::Error() << "Unknown audio interface '" << interfaceId << "' for source '" << sourceName
+                               << "'";
 }

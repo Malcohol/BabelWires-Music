@@ -8,6 +8,7 @@
 #pragma once
 
 #include <BaseLib/Registry/registry.hpp>
+#include <BaseLib/Utilities/result.hpp>
 
 namespace babelwires {
 
@@ -20,10 +21,11 @@ namespace babelwires {
         AudioInterface(LongId identifier, VersionNumber version);
 
         virtual std::vector<std::string> getDestinationNames() const = 0;
-        virtual std::unique_ptr<babelwires::AudioDest> getDestination(std::string_view destinationName) const = 0;
+        virtual ResultT<std::unique_ptr<babelwires::AudioDest>> getDestination(
+            std::string_view destinationName) const = 0;
 
         virtual std::vector<std::string> getSourceNames() const = 0;
-        virtual std::unique_ptr<babelwires::AudioSource> getSource(std::string_view sourceName) const = 0;
+        virtual ResultT<std::unique_ptr<babelwires::AudioSource>> getSource(std::string_view sourceName) const = 0;
     };
 
     /// Find available audio sources and destinations.
@@ -35,13 +37,13 @@ namespace babelwires {
         std::vector<std::string> getDestinationNames() const;
 
         /// Get an audio destination by name.
-        std::unique_ptr<babelwires::AudioDest> getDestination(std::string_view destinationName) const;
+        ResultT<std::unique_ptr<babelwires::AudioDest>> getDestination(std::string_view destinationName) const;
 
         /// Returns the names of all the available audio sources.
         std::vector<std::string> getSourceNames() const;
 
         /// Get an audio source by name.
-        std::unique_ptr<babelwires::AudioSource> getSource(std::string_view sourceName) const;
+        ResultT<std::unique_ptr<babelwires::AudioSource>> getSource(std::string_view sourceName) const;
     };
 
 } // namespace babelwires

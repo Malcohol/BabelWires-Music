@@ -2,31 +2,51 @@
  * Some common functionality used for ALSA (Advanced Linux Sound System).
  *
  * (C) 2021 Malcolm Tyrrell
- * 
+ *
  * Licensed under the GPLv3.0. See LICENSE file.
  **/
 
 #include <Seq2tapeExe/Alsa/alsaCommon.hpp>
 
-#include <BaseLib/exceptions.hpp>
+babelwires_alsa::HardwareParameters::HardwareParameters(snd_pcm_hw_params_t* params)
+    : m_params(params) {}
 
-babelwires_alsa::HardwareParameters::HardwareParameters() {
-    const int ret = snd_pcm_hw_params_malloc(&m_params);
-    if (ret < 0) {
-        throw babelwires::IoException() << "Cannot allocate hardware parameters";
+babelwires_alsa::HardwareParameters::HardwareParameters(HardwareParameters&& other) noexcept
+    : m_params(other.m_params) {
+    other.m_params = nullptr;
+}
+
+babelwires_alsa::HardwareParameters&
+babelwires_alsa::HardwareParameters::operator=(HardwareParameters&& other) noexcept {
+    if (this != &other) {
+        if (m_params != nullptr) {
+            snd_pcm_hw_params_free(m_params);
+        }
+        m_params = other.m_params;
+        other.m_params = nullptr;
     }
+    return *this;
 }
 
 babelwires_alsa::HardwareParameters::~HardwareParameters() {
-    snd_pcm_hw_params_free(m_params);
+    if (m_params != nullptr) {
+        snd_pcm_hw_params_free(m_params);
+    }
 }
 
 babelwires_alsa::HardwareParameters::operator snd_pcm_hw_params_t*() {
     return m_params;
 }
 
-void babelwires_alsa::checkForError(const char* description, int retCode) {
+babelwires::ResultT<babelwires_alsa::HardwareParameters> babelwires_alsa::createHardwareParameters() {
+    snd_pcm_hw_params_t* params = nullptr;
+    DO_OR_ERROR(checkForError(snd_pcm_hw_params_malloc(&params), "allocating hardware parameters"));
+    return HardwareParameters(params);
+}
+
+babelwires::Result babelwires_alsa::checkForError(int retCode, const char* description) {
     if (retCode < 0) {
-        throw babelwires::IoException() << "Alsa error " << description << " (" << snd_strerror(retCode) << ")";
+        return babelwires::Error() << "Alsa error " << description << " (" << snd_strerror(retCode) << ")";
     }
+    return {};
 }

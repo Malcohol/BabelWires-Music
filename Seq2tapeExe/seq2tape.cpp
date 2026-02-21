@@ -124,8 +124,8 @@ babelwires::Result playbackMode(const Context& context, const ProgramOptions::Pl
     if (tapeFile.getFormatIdentifier() != inFormat->getIdentifier()) {
         return babelwires::Error() << "File extension does not match file contents";
     }
-    std::unique_ptr<babelwires::AudioDest> audioDest =
-        context.m_audioInterfaceRegistry.getDestination(playbackOptions.m_outputPlaybackDest);
+    ASSIGN_OR_ERROR(std::unique_ptr<babelwires::AudioDest> audioDest,
+                    context.m_audioInterfaceRegistry.getDestination(playbackOptions.m_outputPlaybackDest));
     const int numDataFiles = tapeFile.getNumDataFiles();
     if (numDataFiles == 0) {
         return babelwires::Error() << "Provided file has no contents";
@@ -154,8 +154,8 @@ babelwires::Result captureMode(const Context& context, const ProgramOptions::Cap
     }
     ASSIGN_OR_ERROR(auto outFile, babelwires::FileDataSink::open(captureOptions.m_outputFileName.c_str()));
     ON_ERROR(outFile.close(babelwires::ErrorState::Error));
-    std::unique_ptr<babelwires::AudioSource> audioSource =
-        context.m_audioInterfaceRegistry.getSource(captureOptions.m_inputCaptureSource);
+    ASSIGN_OR_ERROR(std::unique_ptr<babelwires::AudioSource> audioSource,
+                    context.m_audioInterfaceRegistry.getSource(captureOptions.m_inputCaptureSource));
     std::unique_ptr<seq2tape::TapeFile> tapeFile = std::make_unique<seq2tape::TapeFile>(outFormat->getIdentifier());
     if (captureOptions.m_sequenceName.empty()) {
         tapeFile->setName(captureOptions.m_outputFileName);

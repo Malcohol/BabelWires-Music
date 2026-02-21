@@ -13,6 +13,7 @@
 #include <Seq2tapeExe/Alsa/alsaCommon.hpp>
 
 #include <BaseLib/Identifiers/registeredIdentifier.hpp>
+#include <BaseLib/Log/debugLogger.hpp>
 
 #include <alsa/asoundlib.h>
 
@@ -27,13 +28,20 @@ namespace {
     struct AlsaNameQuery {
         AlsaNameQuery() {
             const int ret = snd_device_name_hint(-1, "pcm", &m_hints);
-            babelwires_alsa::checkForError("Trying to query device names", ret);
+            const auto result = babelwires_alsa::checkForError(ret, "Trying to query device names");
+            if (!result) {
+                logDebug() << result.error().toString();
+                m_hints = nullptr;
+            }
         }
 
         enum class Direction { Destination, Source };
 
         std::vector<std::string> getNames(Direction d) const {
             std::vector<std::string> names;
+            if (m_hints == nullptr) {
+                return names;
+            }
             void** hintptr = m_hints;
             while (*hintptr != nullptr) {
                 const char* name = snd_device_name_get_hint(*hintptr, "NAME");
@@ -48,7 +56,11 @@ namespace {
             return names;
         }
 
-        ~AlsaNameQuery() { snd_device_name_free_hint(m_hints); }
+        ~AlsaNameQuery() {
+            if (m_hints != nullptr) {
+                snd_device_name_free_hint(m_hints);
+            }
+        }
 
         void** m_hints = nullptr;
     };
@@ -59,10 +71,11 @@ std::vector<std::string> babelwires_alsa::AlsaAudioInterface::getDestinationName
     return nameQueryObject.getNames(AlsaNameQuery::Direction::Destination);
 }
 
-std::unique_ptr<babelwires::AudioDest>
+babelwires::ResultT<std::unique_ptr<babelwires::AudioDest>>
 babelwires_alsa::AlsaAudioInterface::getDestination(std::string_view destinationName) const {
     std::string destName(destinationName);
-    return std::make_unique<AlsaAudioDest>(destName.c_str());
+    ASSIGN_OR_ERROR(auto alsaAudioDest, AlsaAudioDest::open(destName.c_str()));
+    return std::make_unique<AlsaAudioDest>(std::move(alsaAudioDest));
 }
 
 std::vector<std::string> babelwires_alsa::AlsaAudioInterface::getSourceNames() const {
@@ -70,8 +83,9 @@ std::vector<std::string> babelwires_alsa::AlsaAudioInterface::getSourceNames() c
     return nameQueryObject.getNames(AlsaNameQuery::Direction::Source);
 }
 
-std::unique_ptr<babelwires::AudioSource>
+babelwires::ResultT<std::unique_ptr<babelwires::AudioSource>>
 babelwires_alsa::AlsaAudioInterface::getSource(std::string_view sourceName) const {
     std::string srcName(sourceName);
-    return std::make_unique<AlsaAudioSource>(srcName.c_str());
+    ASSIGN_OR_ERROR(auto alsaAudioSource, AlsaAudioSource::open(srcName.c_str()));
+    return std::make_unique<AlsaAudioSource>(std::move(alsaAudioSource));
 }

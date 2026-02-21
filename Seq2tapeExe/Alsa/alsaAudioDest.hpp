@@ -9,6 +9,7 @@
 #pragma once
 
 #include <Seq2tapeLib/Audio/audioDest.hpp>
+#include <BaseLib/Utilities/result.hpp>
 
 #include <memory>
 #include <string>
@@ -18,7 +19,12 @@ namespace babelwires_alsa {
      /// AlsaAudioDest is an AudioDest for ALSA (Advanced Linux Sound System).
      class AlsaAudioDest : public babelwires::AudioDest {
      public:
-       AlsaAudioDest(const char* pcmHandleName);
+       static babelwires::ResultT<AlsaAudioDest> open(const char* pcmHandleName);
+
+       AlsaAudioDest(AlsaAudioDest&&) = default;
+       AlsaAudioDest& operator=(AlsaAudioDest&&) = default;
+       AlsaAudioDest(const AlsaAudioDest&) = delete;
+       AlsaAudioDest& operator=(const AlsaAudioDest&) = delete;
 
        ~AlsaAudioDest();
 
@@ -30,6 +36,8 @@ namespace babelwires_alsa {
 
      protected:
        struct Impl;
+
+       explicit AlsaAudioDest(std::unique_ptr<Impl> impl);
 
      private:
        std::unique_ptr<Impl> m_impl;
