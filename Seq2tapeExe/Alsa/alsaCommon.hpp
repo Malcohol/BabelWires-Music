@@ -34,5 +34,5 @@ namespace babelwires_alsa {
 
     babelwires::ResultT<HardwareParameters> createHardwareParameters();
 
-    Result checkForError(int retCode, const char* description);
+    babelwires::Result checkForError(int retCode, const char* description);
 } // namespace babelwires_alsa
