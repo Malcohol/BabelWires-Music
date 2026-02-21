@@ -11,6 +11,7 @@
 #include <Seq2tapeExe/Alsa/alsaCommon.hpp>
 
 #include <BaseLib/common.hpp>
+#include <BaseLib/Result/resultDSL.hpp>
 
 #include <alsa/asoundlib.h>
 
