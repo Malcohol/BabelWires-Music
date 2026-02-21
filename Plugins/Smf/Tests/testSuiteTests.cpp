@@ -293,7 +293,7 @@ TEST(SmfTestSuiteTest, corruptFiles) {
         ASSERT_TRUE(midiFileResult.has_value());
         auto midiFile = std::move(*midiFileResult);
         auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
-        EXPECT_TRUE(midiFile.close(babelwires::ErrorState::Error).has_value());
+        midiFile.closeOnError();
         EXPECT_FALSE(result.has_value());
     }
 }
