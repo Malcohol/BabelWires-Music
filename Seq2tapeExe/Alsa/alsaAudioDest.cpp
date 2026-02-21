@@ -37,6 +37,10 @@ struct babelwires_alsa::AlsaAudioDest::Impl {
 babelwires_alsa::AlsaAudioDest::AlsaAudioDest(std::unique_ptr<Impl> impl)
     : m_impl(std::move(impl)) {}
 
+babelwires_alsa::AlsaAudioDest::AlsaAudioDest(AlsaAudioDest&&) = default;
+
+babelwires_alsa::AlsaAudioDest& babelwires_alsa::AlsaAudioDest::operator=(AlsaAudioDest&&) = default;
+
 babelwires::ResultT<babelwires_alsa::AlsaAudioDest> babelwires_alsa::AlsaAudioDest::open(const char* pcmHandleName) {
     snd_pcm_t* outStream = nullptr;
     ON_ERROR(if (outStream != nullptr) { snd_pcm_close(outStream); });

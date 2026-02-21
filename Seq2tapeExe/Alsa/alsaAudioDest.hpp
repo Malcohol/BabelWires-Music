@@ -21,8 +21,8 @@ namespace babelwires_alsa {
      public:
        static babelwires::ResultT<AlsaAudioDest> open(const char* pcmHandleName);
 
-       AlsaAudioDest(AlsaAudioDest&&) = default;
-       AlsaAudioDest& operator=(AlsaAudioDest&&) = default;
+       AlsaAudioDest(AlsaAudioDest&&);
+       AlsaAudioDest& operator=(AlsaAudioDest&&);
        AlsaAudioDest(const AlsaAudioDest&) = delete;
        AlsaAudioDest& operator=(const AlsaAudioDest&) = delete;
 

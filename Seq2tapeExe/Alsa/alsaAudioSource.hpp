@@ -21,8 +21,8 @@ namespace babelwires_alsa {
       public:
         static babelwires::ResultT<AlsaAudioSource> open(const char* pcmHandleName);
 
-        AlsaAudioSource(AlsaAudioSource&&) = default;
-        AlsaAudioSource& operator=(AlsaAudioSource&&) = default;
+        AlsaAudioSource(AlsaAudioSource&&);
+        AlsaAudioSource& operator=(AlsaAudioSource&&);
         AlsaAudioSource(const AlsaAudioSource&) = delete;
         AlsaAudioSource& operator=(const AlsaAudioSource&) = delete;
 
