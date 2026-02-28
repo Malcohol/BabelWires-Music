@@ -7,6 +7,8 @@
  **/
 #include <MusicLib/Processors/monophonicSubtracksProcessor.hpp>
 
+#include <BabelWiresLib/Project/projectContext.hpp>
+#include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/Array/arrayTypeConstructor.hpp>
 #include <BabelWiresLib/Types/Int/intTypeConstructor.hpp>
 
@@ -25,8 +27,8 @@ bw_music::MonophonicSubtracksProcessorOutput::MonophonicSubtracksProcessorOutput
            {BW_SHORT_ID("Other", "Other", "bc3a5261-630c-43d7-bda5-f85dd6a1fe2b"), DefaultTrackType::getThisIdentifier()}}) {}
 
 bw_music::MonophonicSubtracksProcessor::MonophonicSubtracksProcessor(const babelwires::ProjectContext& projectContext)
-    : Processor(projectContext, MonophonicSubtracksProcessorInput::getThisIdentifier(),
-                MonophonicSubtracksProcessorOutput::getThisIdentifier()) {}
+    : Processor(projectContext, projectContext.m_typeSystem.getRegisteredType<MonophonicSubtracksProcessorInput>(),
+                projectContext.m_typeSystem.getRegisteredType<MonophonicSubtracksProcessorOutput>()) {}
 
 void bw_music::MonophonicSubtracksProcessor::processValue(babelwires::UserLogger& userLogger,
                                                           const babelwires::ValueTreeNode& input,

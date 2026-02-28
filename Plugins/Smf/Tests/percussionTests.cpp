@@ -45,7 +45,9 @@ TEST_P(SmfStandardPercussionTest, saveLoad) {
                                      smf::GMSpecType::getIdentifierFromValue(testData.m_specificationId).toString());
 
     {
-        babelwires::ValueTreeRoot smfFeature(testEnvironment.m_projectContext.m_typeSystem, babelwires::FileTypeT<smf::SmfSequence>::getThisIdentifier());
+        babelwires::ValueTreeRoot smfFeature(testEnvironment.m_projectContext.m_typeSystem,
+                                             babelwires::FileTypeT<smf::SmfSequence>::getThisIdentifier().assertResolve(
+                                                 testEnvironment.m_projectContext.m_typeSystem));
         smfFeature.setToDefault();
 
         smf::SmfSequence::Instance smfType{smfFeature.getChild(0)->as<babelwires::ValueTreeNode>()};
@@ -175,7 +177,9 @@ TEST_P(SmfTrackAllocationPercussionTest, trackAllocation) {
                                      smf::GMSpecType::getIdentifierFromValue(testData.m_specificationId).toString());
 
     {
-        babelwires::ValueTreeRoot smfFeature(testEnvironment.m_projectContext.m_typeSystem, babelwires::FileTypeT<smf::SmfSequence>::getThisIdentifier());
+        babelwires::ValueTreeRoot smfFeature(testEnvironment.m_projectContext.m_typeSystem,
+                                             babelwires::FileTypeT<smf::SmfSequence>::getThisIdentifier().assertResolve(
+                                                 testEnvironment.m_projectContext.m_typeSystem));
         smfFeature.setToDefault();
 
         smf::SmfSequence::Instance smfType{smfFeature.getChild(0)->as<babelwires::ValueTreeNode>()};
@@ -247,8 +251,8 @@ TEST_P(SmfTrackAllocationPercussionTest, trackAllocation) {
     }
 }
 
-// Test how tracks get assigned in the various standards (the GS implementation in BabelWires-Music is not as flexible as the
-// full standard)
+// Test how tracks get assigned in the various standards (the GS implementation in BabelWires-Music is not as flexible
+// as the full standard)
 INSTANTIATE_TEST_SUITE_P(
     PercussionTest, SmfTrackAllocationPercussionTest,
     testing::Values(TrackAllocationTestData{smf::GMSpecType::Value::GM,

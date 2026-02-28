@@ -9,6 +9,8 @@
 
 #include <MusicLib/Functions/splitAtPitchFunction.hpp>
 
+#include <BabelWiresLib/Project/projectContext.hpp>
+#include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/ValueTree/modelExceptions.hpp>
 
 #include <BaseLib/Identifiers/registeredIdentifier.hpp>
@@ -30,8 +32,8 @@ bw_music::SplitAtPitchProcessorOutput::SplitAtPitchProcessorOutput(const babelwi
       }) {}
 
 bw_music::SplitAtPitchProcessor::SplitAtPitchProcessor(const babelwires::ProjectContext& projectContext)
-    : Processor(projectContext, SplitAtPitchProcessorInput::getThisIdentifier(),
-                     SplitAtPitchProcessorOutput::getThisIdentifier()) {}
+    : Processor(projectContext, projectContext.m_typeSystem.getRegisteredType<SplitAtPitchProcessorInput>(),
+                     projectContext.m_typeSystem.getRegisteredType<SplitAtPitchProcessorOutput>()) {}
 
 void bw_music::SplitAtPitchProcessor::processValue(babelwires::UserLogger& userLogger, const babelwires::ValueTreeNode& input, babelwires::ValueTreeNode& output) const {
     SplitAtPitchProcessorInput::ConstInstance in{input};

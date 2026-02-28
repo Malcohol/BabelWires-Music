@@ -7,6 +7,9 @@
  **/
 #include <MusicLib/Processors/fingeredChordsProcessor.hpp>
 
+#include <BabelWiresLib/Project/projectContext.hpp>
+#include <BabelWiresLib/TypeSystem/typeSystem.hpp>
+
 bw_music::FingeredChordsProcessorInput::FingeredChordsProcessorInput(const babelwires::TypeSystem& typeSystem)
     : babelwires::RecordType(getThisIdentifier(), typeSystem, {{BW_SHORT_ID("Policy", "Policy", "a1dd2ae0-e91e-40fe-af4a-c74f2c7d978a"),
                                bw_music::FingeredChordsSustainPolicyEnum::getThisIdentifier()},
@@ -19,8 +22,8 @@ bw_music::FingeredChordsProcessorOutput::FingeredChordsProcessorOutput(const bab
 
 
 bw_music::FingeredChordsProcessor::FingeredChordsProcessor(const babelwires::ProjectContext& projectContext)
-    : Processor(projectContext, FingeredChordsProcessorInput::getThisIdentifier(),
-                     FingeredChordsProcessorOutput::getThisIdentifier()) {}
+    : Processor(projectContext, projectContext.m_typeSystem.getRegisteredType<FingeredChordsProcessorInput>(),
+                     projectContext.m_typeSystem.getRegisteredType<FingeredChordsProcessorOutput>()) {}
 
 void bw_music::FingeredChordsProcessor::processValue(babelwires::UserLogger& userLogger,
                                                       const babelwires::ValueTreeNode& input,

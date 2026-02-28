@@ -10,6 +10,7 @@
 #include <MusicLib/Functions/accompanimentSequencerFunction.hpp>
 #include <MusicLib/Types/genericAccompaniment.hpp>
 
+#include <BabelWiresLib/Project/projectContext.hpp>
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/Failure/failureType.hpp>
 #include <BabelWiresLib/Types/Generic/typeVariableTypeConstructor.hpp>
@@ -34,8 +35,8 @@ bw_music::AccompanimentSequencerProcessorOutput::AccompanimentSequencerProcessor
 
 bw_music::AccompanimentSequencerProcessor::AccompanimentSequencerProcessor(
     const babelwires::ProjectContext& projectContext)
-    : Processor(projectContext, AccompanimentSequencerProcessorInput::getThisIdentifier(),
-                AccompanimentSequencerProcessorOutput::getThisIdentifier()) {}
+    : Processor(projectContext, projectContext.m_typeSystem.getRegisteredType<AccompanimentSequencerProcessorInput>(),
+                projectContext.m_typeSystem.getRegisteredType<AccompanimentSequencerProcessorOutput>()) {}
 
 void bw_music::AccompanimentSequencerProcessor::processValue(babelwires::UserLogger& userLogger,
                                                              const babelwires::ValueTreeNode& input,

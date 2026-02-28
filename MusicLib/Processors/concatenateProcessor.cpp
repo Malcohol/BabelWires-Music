@@ -9,6 +9,8 @@
 
 #include <MusicLib/Functions/appendTrackFunction.hpp>
 
+#include <BabelWiresLib/Project/projectContext.hpp>
+#include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/Array/arrayTypeConstructor.hpp>
 #include <BabelWiresLib/Types/Int/intTypeConstructor.hpp>
 
@@ -22,8 +24,8 @@ bw_music::ConcatenateProcessorOutput::ConcatenateProcessorOutput(const babelwire
                                DefaultTrackType::getThisIdentifier()}}) {}
 
 bw_music::ConcatenateProcessor::ConcatenateProcessor(const babelwires::ProjectContext& projectContext)
-    : babelwires::Processor(projectContext, ConcatenateProcessorInput::getThisIdentifier(),
-                            ConcatenateProcessorOutput::getThisIdentifier()) {}
+    : babelwires::Processor(projectContext, projectContext.m_typeSystem.getRegisteredType<ConcatenateProcessorInput>(),
+                            projectContext.m_typeSystem.getRegisteredType<ConcatenateProcessorOutput>()) {}
 
 void bw_music::ConcatenateProcessor::processValue(babelwires::UserLogger& userLogger,
                                                   const babelwires::ValueTreeNode& input,

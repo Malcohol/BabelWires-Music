@@ -111,7 +111,7 @@ TEST_F(BuildAccompanimentTest, testTrackContainerTest) {
     instantiateInputTypeVariable(bw_music_testplugin::TestTrackContainer::getThisIdentifier());
 
     const auto& testTrackContainerType = typeSystem.getRegisteredType<bw_music_testplugin::TestTrackContainer>();
-    babelwires::ValueTreeRoot inputTracks(typeSystem, bw_music_testplugin::TestTrackContainer::getThisIdentifier());
+    babelwires::ValueTreeRoot inputTracks(typeSystem, typeSystem.getRegisteredType<bw_music_testplugin::TestTrackContainer>());
     bw_music_testplugin::TestTrackContainer::Instance inputTracksInstance(inputTracks);
     inputTracksInstance.gettrack1().set(testUtils::getTrackOfSimpleNotes({60, 62, 64, 67, 71}));
     inputTracksInstance.gettrack2().set(testUtils::getTrackOfSimpleNotes({71, 67, 64, 62, 60}));

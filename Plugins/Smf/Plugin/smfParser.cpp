@@ -44,7 +44,7 @@ smf::SmfParser::SmfParser(babelwires::DataSource& dataSource, const babelwires::
     , m_standardPercussionSets(projectContext) {
 
     m_result = std::make_unique<babelwires::ValueTreeRoot>(projectContext.m_typeSystem,
-                                                           babelwires::FileTypeT<SmfSequence>::getThisIdentifier());
+                                                           babelwires::FileTypeT<SmfSequence>::getThisIdentifier().assertResolve(projectContext.m_typeSystem));
     m_result->setToDefault();
 }
 

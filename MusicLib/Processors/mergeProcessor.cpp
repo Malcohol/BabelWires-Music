@@ -9,6 +9,8 @@
 
 #include <MusicLib/Functions/mergeFunction.hpp>
 
+#include <BabelWiresLib/Project/projectContext.hpp>
+#include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/Array/arrayTypeConstructor.hpp>
 
 #include <BaseLib/Identifiers/registeredIdentifier.hpp>
@@ -25,7 +27,7 @@ bw_music::MergeProcessorOutput::MergeProcessorOutput(const babelwires::TypeSyste
                                DefaultTrackType::getThisIdentifier()}}) {}
 
 bw_music::MergeProcessor::MergeProcessor(const babelwires::ProjectContext& projectContext)
-    : Processor(projectContext, MergeProcessorInput::getThisIdentifier(), MergeProcessorOutput::getThisIdentifier()) {}
+    : Processor(projectContext, projectContext.m_typeSystem.getRegisteredType<MergeProcessorInput>(), projectContext.m_typeSystem.getRegisteredType<MergeProcessorOutput>()) {}
 
 void bw_music::MergeProcessor::processValue(babelwires::UserLogger& userLogger, const babelwires::ValueTreeNode& input,
                                             babelwires::ValueTreeNode& output) const {

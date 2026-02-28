@@ -12,6 +12,7 @@
 #include <MusicLib/Types/chordTypeSet.hpp>
 #include <MusicLib/Types/genericAccompaniment.hpp>
 
+#include <BabelWiresLib/Project/projectContext.hpp>
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/Array/arrayTypeConstructor.hpp>
 #include <BabelWiresLib/Types/Generic/typeVariableTypeConstructor.hpp>
@@ -45,8 +46,8 @@ bw_music::BuildAccompanimentProcessorOutput::BuildAccompanimentProcessorOutput(c
                   1) {}
 
 bw_music::BuildAccompanimentProcessor::BuildAccompanimentProcessor(const babelwires::ProjectContext& projectContext)
-    : Processor(projectContext, BuildAccompanimentProcessorInput::getThisIdentifier(),
-                BuildAccompanimentProcessorOutput::getThisIdentifier()) {}
+    : Processor(projectContext, projectContext.m_typeSystem.getRegisteredType<BuildAccompanimentProcessorInput>(),
+                projectContext.m_typeSystem.getRegisteredType<BuildAccompanimentProcessorOutput>()) {}
 
 namespace {
 

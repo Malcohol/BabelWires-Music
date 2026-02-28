@@ -9,6 +9,7 @@
 
 #include <BabelWiresLib/Project/projectContext.hpp>
 #include <BabelWiresLib/Types/File/fileTypeT.hpp>
+#include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 
 #include <Plugins/Smf/Plugin/smfParser.hpp>
 #include <Plugins/Smf/Plugin/smfWriter.hpp>
@@ -66,7 +67,7 @@ std::string smf::SmfTargetFormat::getProductName() const {
 std::unique_ptr<babelwires::ValueTreeRoot>
 smf::SmfTargetFormat::createNewValue(const babelwires::ProjectContext& projectContext) const {
     return std::make_unique<babelwires::ValueTreeRoot>(projectContext.m_typeSystem,
-                                                       babelwires::FileTypeT<SmfSequence>::getThisIdentifier());
+                                                       babelwires::FileTypeT<SmfSequence>::getThisIdentifier().assertResolve(projectContext.m_typeSystem));
 }
 
 babelwires::Result smf::SmfTargetFormat::writeToFile(const babelwires::ProjectContext& projectContext,
