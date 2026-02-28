@@ -22,7 +22,7 @@
 #include <BabelWiresLib/Types/Map/standardMapIdentifiers.hpp>
 #include <BabelWiresLib/ValueTree/modelExceptions.hpp>
 
-babelwires::TypePtr
+babelwires::ResultT<babelwires::TypePtr>
 bw_music::PercussionMapType::constructType(const babelwires::TypeSystem& typeSystem, babelwires::TypeExp newTypeExp,
                                            const babelwires::TypeConstructorArguments& arguments,
                                            const std::vector<babelwires::TypePtr>& resolvedTypeArguments) const {

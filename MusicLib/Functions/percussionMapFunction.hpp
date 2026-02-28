@@ -24,7 +24,7 @@ namespace bw_music {
       public:
         TYPE_CONSTRUCTOR("PercMaps", "Percussion Map Types", "c6d3d105-5823-4764-a4bb-5a9b12abab03", 1);
 
-        babelwires::TypePtr
+        babelwires::ResultT<babelwires::TypePtr>
         constructType(const babelwires::TypeSystem& typeSystem, babelwires::TypeExp newTypeExp,
                       const babelwires::TypeConstructorArguments& arguments,
                       const std::vector<babelwires::TypePtr>& resolvedTypeArguments) const override;
