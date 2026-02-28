@@ -31,9 +31,9 @@ TEST(SmfSaveLoadTest, cMajorScale) {
 
     const std::vector<bw_music::Pitch> pitches{60, 62, 64, 65, 67, 69, 71, 72};
     {
-        babelwires::ValueTreeRoot smfFeature(testEnvironment.m_projectContext.m_typeSystem,
-                                             babelwires::FileTypeT<smf::SmfSequence>::getThisIdentifier().assertResolve(
-                                                 testEnvironment.m_projectContext.m_typeSystem));
+        babelwires::ValueTreeRoot smfFeature(
+            testEnvironment.m_projectContext.m_typeSystem,
+            babelwires::FileTypeT<smf::SmfSequence>::getType(testEnvironment.m_projectContext.m_typeSystem));
         smfFeature.setToDefault();
 
         babelwires::FileTypeT<smf::SmfSequence>::Instance smfSequence{smfFeature};
@@ -119,7 +119,7 @@ TEST(SmfSaveLoadTest, cMajorScaleWithMetadata) {
         {
             babelwires::ValueTreeRoot smfFeature(
                 testEnvironment.m_projectContext.m_typeSystem,
-                babelwires::FileTypeT<smf::SmfSequence>::getThisIdentifier().assertResolve(
+                babelwires::FileTypeT<smf::SmfSequence>::getType(
                     testEnvironment.m_projectContext.m_typeSystem));
             smfFeature.setToDefault();
 
@@ -177,7 +177,7 @@ TEST(SmfSaveLoadTest, format0Chords) {
 
     {
         babelwires::ValueTreeRoot smfFeature(testEnvironment.m_projectContext.m_typeSystem,
-                                             babelwires::FileTypeT<smf::SmfSequence>::getThisIdentifier().assertResolve(
+                                             babelwires::FileTypeT<smf::SmfSequence>::getType(
                                                  testEnvironment.m_projectContext.m_typeSystem));
         smfFeature.setToDefault();
 
@@ -229,7 +229,7 @@ TEST(SmfSaveLoadTest, format1Chords) {
 
     {
         babelwires::ValueTreeRoot smfFeature(testEnvironment.m_projectContext.m_typeSystem,
-                                             babelwires::FileTypeT<smf::SmfSequence>::getThisIdentifier().assertResolve(
+                                             babelwires::FileTypeT<smf::SmfSequence>::getType(
                                                  testEnvironment.m_projectContext.m_typeSystem));
         smfFeature.setToDefault();
 

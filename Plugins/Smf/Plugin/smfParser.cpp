@@ -43,8 +43,8 @@ smf::SmfParser::SmfParser(babelwires::DataSource& dataSource, const babelwires::
     , m_division(-1)
     , m_standardPercussionSets(projectContext) {
 
-    m_result = std::make_unique<babelwires::ValueTreeRoot>(projectContext.m_typeSystem,
-                                                           babelwires::FileTypeT<SmfSequence>::getThisIdentifier().assertResolve(projectContext.m_typeSystem));
+    m_result = std::make_unique<babelwires::ValueTreeRoot>(
+        projectContext.m_typeSystem, babelwires::FileTypeT<SmfSequence>::getType(projectContext.m_typeSystem));
     m_result->setToDefault();
 }
 

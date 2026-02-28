@@ -67,7 +67,7 @@ std::string smf::SmfTargetFormat::getProductName() const {
 std::unique_ptr<babelwires::ValueTreeRoot>
 smf::SmfTargetFormat::createNewValue(const babelwires::ProjectContext& projectContext) const {
     return std::make_unique<babelwires::ValueTreeRoot>(projectContext.m_typeSystem,
-                                                       babelwires::FileTypeT<SmfSequence>::getThisIdentifier().assertResolve(projectContext.m_typeSystem));
+                                                       babelwires::FileTypeT<SmfSequence>::getType(projectContext.m_typeSystem));
 }
 
 babelwires::Result smf::SmfTargetFormat::writeToFile(const babelwires::ProjectContext& projectContext,
