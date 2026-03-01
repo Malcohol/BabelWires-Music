@@ -345,11 +345,9 @@ TEST(ChordMapProcessorTest, processor) {
     const babelwires::ValueTreeNode& output = processor.getOutput();
 
     babelwires::ValueTreeNode& inputArray =
-        input.getChildFromStep(bw_music::ChordMapProcessor::getCommonArrayId())
-            .as<babelwires::ValueTreeNode>();
+        input.assertGetChildFromStep(bw_music::ChordMapProcessor::getCommonArrayId());
     const babelwires::ValueTreeNode& outputArray =
-        output.getChildFromStep(bw_music::ChordMapProcessor::getCommonArrayId())
-            .as<babelwires::ValueTreeNode>();
+        output.assertGetChildFromStep(bw_music::ChordMapProcessor::getCommonArrayId());
 
     babelwires::ArrayInstanceImpl<babelwires::ValueTreeNode, bw_music::TrackType> inArray(inputArray);
     const babelwires::ArrayInstanceImpl<const babelwires::ValueTreeNode, bw_music::TrackType> outArray(outputArray);

@@ -63,7 +63,7 @@ class BuildAccompanimentTest : public MusicLibTestFixture {
     const babelwires::ValueTreeNode& getAccompanimentOutput() {
         const auto& typeSystem = m_testEnv.m_projectContext.m_typeSystem;
         const babelwires::ValueTreeRoot& output = m_processor.getOutput();
-        return followPath(
+        return babelwires::assertFollowPath(
             babelwires::Path({babelwires::PathStep(babelwires::GenericType::getStepToValue()),
                               babelwires::PathStep(bw_music::BuildAccompanimentProcessorOutput::getIdOfResult())}),
             output);
