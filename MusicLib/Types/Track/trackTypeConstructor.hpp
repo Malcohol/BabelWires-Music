@@ -25,7 +25,7 @@ namespace bw_music {
                       const std::vector<babelwires::TypePtr>& resolvedTypeArguments) const override;
 
       private:
-        /// Throws a TypeSystem exception if the arguments are not of the expect type.
+        /// Returns an error if the arguments are not of the expect type.
         static babelwires::ResultT<ModelDuration> extractValueArguments(const std::vector<babelwires::ValueHolder>& valueArguments);
     };
 } // namespace bw_music
