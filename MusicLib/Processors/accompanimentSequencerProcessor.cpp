@@ -15,7 +15,6 @@
 #include <BabelWiresLib/Types/Failure/failureType.hpp>
 #include <BabelWiresLib/Types/Generic/typeVariableTypeConstructor.hpp>
 #include <BabelWiresLib/Types/Record/recordTypeConstructor.hpp>
-#include <BabelWiresLib/ValueTree/modelExceptions.hpp>
 #include <BabelWiresLib/ValueTree/valueTreeNode.hpp>
 
 bw_music::AccompanimentSequencerProcessorInput::AccompanimentSequencerProcessorInput(

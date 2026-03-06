@@ -8,8 +8,6 @@
 #include <MusicLib/Functions/appendTrackFunction.hpp>
 #include <MusicLib/Types/Track/trackBuilder.hpp>
 
-#include <BabelWiresLib/ValueTree/modelExceptions.hpp>
-
 void bw_music::appendTrack(Track& targetTrack, const Track& sourceTrack) {
     const ModelDuration initialDuration = targetTrack.getDuration();
     const ModelDuration gapAtEnd = targetTrack.getDuration() - targetTrack.getTotalEventDuration();

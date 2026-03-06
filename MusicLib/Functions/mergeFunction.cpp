@@ -10,8 +10,6 @@
 #include <MusicLib/Utilities/trackTraverser.hpp>
 #include <MusicLib/Types/Track/trackBuilder.hpp>
 
-#include <BabelWiresLib/ValueTree/modelExceptions.hpp>
-
 bw_music::Track bw_music::mergeTracks(const std::vector<const Track*>& sourceTracks) {
     TrackBuilder trackOut;
 
