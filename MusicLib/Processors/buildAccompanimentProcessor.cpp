@@ -105,8 +105,9 @@ void bw_music::BuildAccompanimentProcessor::processValue(babelwires::UserLogger&
         }
     }
 
-    resultRecordType->selectOptionals(typeSystem, *resultChild, selectedChords);
-
+    // The resultRecordType is a GenericAccompanimentType, so it has an one optional field for every chord type.
+    resultRecordType->assertSelectOptionals(typeSystem, *resultChild, selectedChords);
+    
     for (const auto& maplet : selectedChords) {
         auto [fieldValueHolder, fieldType] = resultRecordType->getChildByIdNonConst(*resultChild, maplet.first);
         // Accompaniment always generated with a C root.
