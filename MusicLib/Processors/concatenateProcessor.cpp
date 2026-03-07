@@ -27,7 +27,7 @@ bw_music::ConcatenateProcessor::ConcatenateProcessor(const babelwires::ProjectCo
     : babelwires::Processor(projectContext, projectContext.m_typeSystem.getRegisteredType<ConcatenateProcessorInput>(),
                             projectContext.m_typeSystem.getRegisteredType<ConcatenateProcessorOutput>()) {}
 
-void bw_music::ConcatenateProcessor::processValue(babelwires::UserLogger& userLogger,
+babelwires::Result bw_music::ConcatenateProcessor::processValue(babelwires::UserLogger& userLogger,
                                                   const babelwires::ValueTreeNode& input,
                                                   babelwires::ValueTreeNode& output) const {
     ConcatenateProcessorInput::ConstInstance in{input};
@@ -42,4 +42,5 @@ void bw_music::ConcatenateProcessor::processValue(babelwires::UserLogger& userLo
 
         out.getOutput().set(std::move(trackOut));
     }
+    return {};
 }

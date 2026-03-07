@@ -50,7 +50,7 @@ namespace bw_music {
         MonophonicSubtracksProcessor(const babelwires::ProjectContext& projectContext);
 
       protected:
-        void processValue(babelwires::UserLogger& userLogger, const babelwires::ValueTreeNode& input,
+        babelwires::Result processValue(babelwires::UserLogger& userLogger, const babelwires::ValueTreeNode& input,
                           babelwires::ValueTreeNode& output) const override;
     };
 

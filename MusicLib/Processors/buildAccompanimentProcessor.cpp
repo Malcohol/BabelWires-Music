@@ -69,7 +69,7 @@ namespace {
 
 } // namespace
 
-void bw_music::BuildAccompanimentProcessor::processValue(babelwires::UserLogger& userLogger,
+babelwires::Result bw_music::BuildAccompanimentProcessor::processValue(babelwires::UserLogger& userLogger,
                                                          const babelwires::ValueTreeNode& input,
                                                          babelwires::ValueTreeNode& output) const {
 
@@ -117,4 +117,5 @@ void bw_music::BuildAccompanimentProcessor::processValue(babelwires::UserLogger&
     }
 
     output.assertSetValue(newOutputValue);
+    return {};
 }

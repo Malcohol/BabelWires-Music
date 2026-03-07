@@ -30,7 +30,7 @@ bw_music::MonophonicSubtracksProcessor::MonophonicSubtracksProcessor(const babel
     : Processor(projectContext, projectContext.m_typeSystem.getRegisteredType<MonophonicSubtracksProcessorInput>(),
                 projectContext.m_typeSystem.getRegisteredType<MonophonicSubtracksProcessorOutput>()) {}
 
-void bw_music::MonophonicSubtracksProcessor::processValue(babelwires::UserLogger& userLogger,
+babelwires::Result bw_music::MonophonicSubtracksProcessor::processValue(babelwires::UserLogger& userLogger,
                                                           const babelwires::ValueTreeNode& input,
                                                           babelwires::ValueTreeNode& output) const {
     MonophonicSubtracksProcessorInput::ConstInstance in{input};
@@ -48,4 +48,5 @@ void bw_music::MonophonicSubtracksProcessor::processValue(babelwires::UserLogger
         }
         out.getOther().set(std::move(result.m_other));
     }
+    return {};
 }

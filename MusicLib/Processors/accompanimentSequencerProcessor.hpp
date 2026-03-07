@@ -55,7 +55,7 @@ namespace bw_music {
         AccompanimentSequencerProcessor(const babelwires::ProjectContext& projectContext);
 
       protected:
-        void processValue(babelwires::UserLogger& userLogger, const babelwires::ValueTreeNode& input,
+        babelwires::Result processValue(babelwires::UserLogger& userLogger, const babelwires::ValueTreeNode& input,
                           babelwires::ValueTreeNode& output) const override;
 
         /// This is overridden because we don't want type instantiations to be lost on failure.

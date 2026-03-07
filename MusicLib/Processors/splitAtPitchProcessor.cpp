@@ -11,9 +11,9 @@
 
 #include <BabelWiresLib/Project/projectContext.hpp>
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
-#include <BabelWiresLib/ValueTree/modelExceptions.hpp>
 
 #include <BaseLib/Identifiers/registeredIdentifier.hpp>
+#include <BaseLib/Result/error.hpp>
 
 bw_music::SplitAtPitchProcessorInput::SplitAtPitchProcessorInput(const babelwires::TypeSystem& typeSystem)
     : babelwires::RecordType(getThisIdentifier(), typeSystem, {{BW_SHORT_ID("Pitch", "Pitch", "6b721baa-084f-450b-bf35-2e08a9592958"),
@@ -35,7 +35,7 @@ bw_music::SplitAtPitchProcessor::SplitAtPitchProcessor(const babelwires::Project
     : Processor(projectContext, projectContext.m_typeSystem.getRegisteredType<SplitAtPitchProcessorInput>(),
                      projectContext.m_typeSystem.getRegisteredType<SplitAtPitchProcessorOutput>()) {}
 
-void bw_music::SplitAtPitchProcessor::processValue(babelwires::UserLogger& userLogger, const babelwires::ValueTreeNode& input, babelwires::ValueTreeNode& output) const {
+babelwires::Result bw_music::SplitAtPitchProcessor::processValue(babelwires::UserLogger& userLogger, const babelwires::ValueTreeNode& input, babelwires::ValueTreeNode& output) const {
     SplitAtPitchProcessorInput::ConstInstance in{input};
     auto pitch = in.getPitch();
     auto trackIn = in.getInput();
@@ -49,7 +49,8 @@ void bw_music::SplitAtPitchProcessor::processValue(babelwires::UserLogger& userL
             out.getBelow().set(std::move(newTracksOut.m_below));
             out.getOther().set(std::move(newTracksOut.m_other));
         } else {
-            throw babelwires::ModelException() << "A valid pitch value was not specified in the SplitAtPitchProcessor";
+            return babelwires::Error() << "A valid pitch value was not specified in the SplitAtPitchProcessor";
         }
     }
+    return {};
 }

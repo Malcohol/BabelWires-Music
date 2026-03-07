@@ -37,7 +37,7 @@ bw_music::AccompanimentSequencerProcessor::AccompanimentSequencerProcessor(
     : Processor(projectContext, projectContext.m_typeSystem.getRegisteredType<AccompanimentSequencerProcessorInput>(),
                 projectContext.m_typeSystem.getRegisteredType<AccompanimentSequencerProcessorOutput>()) {}
 
-void bw_music::AccompanimentSequencerProcessor::processValue(babelwires::UserLogger& userLogger,
+babelwires::Result bw_music::AccompanimentSequencerProcessor::processValue(babelwires::UserLogger& userLogger,
                                                              const babelwires::ValueTreeNode& input,
                                                              babelwires::ValueTreeNode& output) const {
     const babelwires::TypeSystem& typeSystem = input.getTypeSystem();
@@ -69,6 +69,7 @@ void bw_music::AccompanimentSequencerProcessor::processValue(babelwires::UserLog
             outputResult.assertSetValue(std::move(resultValue));
         }
     }
+    return {};
 }
 
 void bw_music::AccompanimentSequencerProcessor::onFailure() const {}

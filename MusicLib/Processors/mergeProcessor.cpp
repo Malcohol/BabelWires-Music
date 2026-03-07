@@ -29,7 +29,7 @@ bw_music::MergeProcessorOutput::MergeProcessorOutput(const babelwires::TypeSyste
 bw_music::MergeProcessor::MergeProcessor(const babelwires::ProjectContext& projectContext)
     : Processor(projectContext, projectContext.m_typeSystem.getRegisteredType<MergeProcessorInput>(), projectContext.m_typeSystem.getRegisteredType<MergeProcessorOutput>()) {}
 
-void bw_music::MergeProcessor::processValue(babelwires::UserLogger& userLogger, const babelwires::ValueTreeNode& input,
+babelwires::Result bw_music::MergeProcessor::processValue(babelwires::UserLogger& userLogger, const babelwires::ValueTreeNode& input,
                                             babelwires::ValueTreeNode& output) const {
     MergeProcessorInput::ConstInstance in{input};
     if (in->isChanged(babelwires::ValueTreeNode::Changes::SomethingChanged)) {
@@ -40,4 +40,5 @@ void bw_music::MergeProcessor::processValue(babelwires::UserLogger& userLogger, 
         MergeProcessorOutput::Instance out{output};
         out.getOutput().set(mergeTracks(tracksIn));
     }
+    return {};
 }

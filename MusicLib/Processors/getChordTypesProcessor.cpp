@@ -26,7 +26,7 @@ bw_music::GetChordTypesProcessor::GetChordTypesProcessor(const babelwires::Proje
     : Processor(projectContext, projectContext.m_typeSystem.getRegisteredType<GetChordTypesProcessorInput>(),
                      projectContext.m_typeSystem.getRegisteredType<GetChordTypesProcessorOutput>()) {}
 
-void bw_music::GetChordTypesProcessor::processValue(babelwires::UserLogger& userLogger,
+babelwires::Result bw_music::GetChordTypesProcessor::processValue(babelwires::UserLogger& userLogger,
                                               const babelwires::ValueTreeNode& input,
                                               babelwires::ValueTreeNode& output) const {
     GetChordTypesProcessorInput::ConstInstance in{input};
@@ -36,4 +36,5 @@ void bw_music::GetChordTypesProcessor::processValue(babelwires::UserLogger& user
         auto setOfChordTypes = bw_music::getChordTypesFunction(in.getTrack().get());
         out.getChords()->assertSetValue(chordTypeSetType.createValueFromChordTypes(in->getTypeSystem(), setOfChordTypes));
     }
+    return {};
 }

@@ -25,7 +25,7 @@ bw_music::FingeredChordsProcessor::FingeredChordsProcessor(const babelwires::Pro
     : Processor(projectContext, projectContext.m_typeSystem.getRegisteredType<FingeredChordsProcessorInput>(),
                      projectContext.m_typeSystem.getRegisteredType<FingeredChordsProcessorOutput>()) {}
 
-void bw_music::FingeredChordsProcessor::processValue(babelwires::UserLogger& userLogger,
+babelwires::Result bw_music::FingeredChordsProcessor::processValue(babelwires::UserLogger& userLogger,
                                                       const babelwires::ValueTreeNode& input,
                                                       babelwires::ValueTreeNode& output) const {
     FingeredChordsProcessorInput::ConstInstance in{input};
@@ -33,4 +33,5 @@ void bw_music::FingeredChordsProcessor::processValue(babelwires::UserLogger& use
         FingeredChordsProcessorOutput::Instance out{output};
         out.getChords().set(fingeredChordsFunction(in.getNotes().get(), in.getPolicy().get()));
     }
+    return {};
 }
