@@ -360,7 +360,7 @@ TEST(ChordMapProcessorTest, processor) {
     EXPECT_EQ(inArray.getEntry(0).get().getDuration(), 0);
     EXPECT_EQ(outArray.getEntry(0).get().getDuration(), 0);
 
-    in.getChrdMp()->setValue(getTestChordMap(testEnvironment.m_typeSystem, SourceMode::ChordToChord, TargetMode::ChordToChord, WildcardMode::NoWildcards));
+    ASSERT_TRUE(in.getChrdMp()->setValue(getTestChordMap(testEnvironment.m_typeSystem, SourceMode::ChordToChord, TargetMode::ChordToChord, WildcardMode::NoWildcards)));
     inArray.getEntry(0).set(getTestInputTrack());
 
     processor.process(testEnvironment.m_log);

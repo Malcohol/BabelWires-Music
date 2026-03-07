@@ -59,14 +59,14 @@ void bw_music::AccompanimentSequencerProcessor::processValue(babelwires::UserLog
 
         const babelwires::TypeExp& assignedInputTypeExp = inputType.getTypeAssignment(inputValue, 0);
         outputType.setTypeVariableAssignmentAndInstantiate(typeSystem, newOutputValue, {assignedInputTypeExp});
-        output.setValue(newOutputValue);
+        output.assertSetValue(newOutputValue);
 
         const auto& chordTrack = inputChordTrack.getValue()->as<bw_music::Track>();
 
         if (assignedInputTypeExp) {
             const auto resultValue = accompanimentSequencerFunction(typeSystem, *inputAccompanimentTracks.getType(),
                                                                     inputAccompanimentTracks.getValue(), chordTrack);
-            outputResult.setValue(std::move(resultValue));
+            outputResult.assertSetValue(std::move(resultValue));
         }
     }
 }

@@ -116,5 +116,5 @@ void bw_music::BuildAccompanimentProcessor::processValue(babelwires::UserLogger&
         fieldValueHolder = applyFitToChordFunction(typeSystem, *fieldType, *inputStructure, chord);
     }
 
-    output.setValue(newOutputValue);
+    output.assertSetValue(newOutputValue);
 }

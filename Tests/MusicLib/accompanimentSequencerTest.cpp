@@ -43,7 +43,7 @@ class AccompanimentSequencerTest : public MusicLibTestFixture {
                                                            {bw_music_testplugin::TestTrackContainer::getThisIdentifier()});
         babelwires::ValueHolder simpleAccompanimentValue =
             typeSystem.getRegisteredType<bw_music_testplugin::SimpleAccompaniment>()->createValue(typeSystem);
-        input.setValue(inputValue);
+        input.assertSetValue(inputValue);
         input.setDescendentValue(
             babelwires::Path(
                 {babelwires::PathStep(babelwires::GenericType::getStepToValue()),

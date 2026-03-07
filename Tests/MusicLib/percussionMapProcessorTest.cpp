@@ -145,7 +145,7 @@ TEST(PercussionMapProcessorTest, processor) {
     EXPECT_EQ(outArray.getEntry(0).get().getDuration(), 0);
     processor.getOutput().setToDefault();
 
-    in.getMap()->setValue(getTestPercussionMap(testEnvironment.m_typeSystem));
+    ASSERT_TRUE(in.getMap()->setValue(getTestPercussionMap(testEnvironment.m_typeSystem)));
     inArray.getEntry(0).set(getTestInputTrack());
 
     processor.process(testEnvironment.m_log);

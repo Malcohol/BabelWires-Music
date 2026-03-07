@@ -41,7 +41,7 @@ class BuildAccompanimentTest : public MusicLibTestFixture {
         babelwires::ValueHolder inputValue = input.getValue();
         const auto& inputType = typeSystem.getRegisteredType<bw_music::BuildAccompanimentProcessorInput>();
         inputType->setTypeVariableAssignmentAndInstantiate(typeSystem, inputValue, {type});
-        input.setValue(inputValue);
+        input.assertSetValue(inputValue);
     }
 
     void setInputValues(const std::set<bw_music::ChordType::Value>& chordTypes, babelwires::ValueHolder inputTracks) {
