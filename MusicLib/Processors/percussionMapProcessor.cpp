@@ -32,7 +32,7 @@ babelwires::ShortId bw_music::PercussionMapProcessor::getCommonArrayId() {
     return BW_SHORT_ID("Tracks", "Tracks", "fe71b1c6-6604-430b-a731-f40b2692d2cf");
 }
 
-void bw_music::PercussionMapProcessor::processEntry(babelwires::UserLogger& userLogger,
+babelwires::Result bw_music::PercussionMapProcessor::processEntry(babelwires::UserLogger& userLogger,
                                                     const babelwires::ValueTreeNode& input,
                                                     const babelwires::ValueTreeNode& inputEntry,
                                                     babelwires::ValueTreeNode& outputEntry) const {
@@ -43,4 +43,5 @@ void bw_music::PercussionMapProcessor::processEntry(babelwires::UserLogger& user
     const auto& percMap = in.getMap()->getValue()->as<babelwires::MapValue>();
 
     entryOut.set(mapPercussionFunction(in->getTypeSystem(), entryIn.get(), percMap));
+    return {};
 }

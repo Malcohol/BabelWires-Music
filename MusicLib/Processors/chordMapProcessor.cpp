@@ -37,7 +37,7 @@ babelwires::ShortId bw_music::ChordMapProcessor::getCommonArrayId() {
     return BW_SHORT_ID("Tracks", "Tracks", "24e56b0d-eb1e-4c93-97fd-ba4d639e112a");
 }
 
-void bw_music::ChordMapProcessor::processEntry(babelwires::UserLogger& userLogger,
+babelwires::Result bw_music::ChordMapProcessor::processEntry(babelwires::UserLogger& userLogger,
                                                const babelwires::ValueTreeNode& input,
                                                const babelwires::ValueTreeNode& inputEntry,
                                                babelwires::ValueTreeNode& outputEntry) const {
@@ -48,4 +48,5 @@ void bw_music::ChordMapProcessor::processEntry(babelwires::UserLogger& userLogge
     const auto& chordMap = in.getChrdMp()->getValue()->as<babelwires::MapValue>();
 
     entryOut.set(mapChordsFunction(in->getTypeSystem(), entryIn.get(), chordMap));
+    return {};
 }

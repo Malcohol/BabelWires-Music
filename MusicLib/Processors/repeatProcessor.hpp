@@ -40,7 +40,7 @@ namespace bw_music {
 
         static babelwires::ShortId getCommonArrayId();
 
-        void processEntry(babelwires::UserLogger& userLogger, const babelwires::ValueTreeNode& input,
+        babelwires::Result processEntry(babelwires::UserLogger& userLogger, const babelwires::ValueTreeNode& input,
                           const babelwires::ValueTreeNode& inputEntry, babelwires::ValueTreeNode& outputEntry) const override;
     };
 

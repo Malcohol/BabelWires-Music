@@ -36,7 +36,7 @@ babelwires::ShortId bw_music::TransposeProcessor::getCommonArrayId() {
     return BW_SHORT_ID("Tracks", "Tracks", "83f05b66-7890-4542-8344-1409e50539b5");
 }
 
-void bw_music::TransposeProcessor::processEntry(babelwires::UserLogger& userLogger,
+babelwires::Result bw_music::TransposeProcessor::processEntry(babelwires::UserLogger& userLogger,
                                                 const babelwires::ValueTreeNode& input,
                                                 const babelwires::ValueTreeNode& inputEntry,
                                                 babelwires::ValueTreeNode& outputEntry) const {
@@ -45,4 +45,5 @@ void bw_music::TransposeProcessor::processEntry(babelwires::UserLogger& userLogg
     babelwires::Instance<TrackType> entryOut{outputEntry};
 
     entryOut.set(transposeTrack(entryIn.get(), in.getOffset().get()));
+    return {};
 }

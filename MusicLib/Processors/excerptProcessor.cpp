@@ -33,7 +33,7 @@ bw_music::ExcerptProcessor::ExcerptProcessor(const babelwires::ProjectContext& p
     : babelwires::ParallelProcessor(projectContext, ExcerptProcessorInput::getThisIdentifier(),
                                     ExcerptProcessorOutput::getThisIdentifier()) {}
 
-void bw_music::ExcerptProcessor::processEntry(babelwires::UserLogger& userLogger,
+babelwires::Result bw_music::ExcerptProcessor::processEntry(babelwires::UserLogger& userLogger,
                                               const babelwires::ValueTreeNode& input,
                                               const babelwires::ValueTreeNode& inputEntry,
                                               babelwires::ValueTreeNode& outputEntry) const {
@@ -42,4 +42,5 @@ void bw_music::ExcerptProcessor::processEntry(babelwires::UserLogger& userLogger
     babelwires::Instance<TrackType> entryOut{outputEntry};
 
     entryOut.set(getTrackExcerpt(entryIn.get(), in.getStart().get(), in.getDuratn().get()));
+    return {};
 }

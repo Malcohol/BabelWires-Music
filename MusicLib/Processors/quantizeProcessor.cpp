@@ -36,7 +36,7 @@ babelwires::ShortId bw_music::QuantizeProcessor::getCommonArrayId() {
     return BW_SHORT_ID("Tracks", "Tracks", "e00623bf-c0f0-4fee-b6c4-4f65df896bf3");
 }
 
-void bw_music::QuantizeProcessor::processEntry(babelwires::UserLogger& userLogger,
+babelwires::Result bw_music::QuantizeProcessor::processEntry(babelwires::UserLogger& userLogger,
                                                const babelwires::ValueTreeNode& input,
                                                const babelwires::ValueTreeNode& inputEntry,
                                                babelwires::ValueTreeNode& outputEntry) const {
@@ -45,4 +45,5 @@ void bw_music::QuantizeProcessor::processEntry(babelwires::UserLogger& userLogge
     babelwires::Instance<TrackType> entryOut{outputEntry};
 
     entryOut.set(quantize(entryIn.get(), in.getBeat().get()));
+    return {};
 }

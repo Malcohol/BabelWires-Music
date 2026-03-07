@@ -35,7 +35,7 @@ babelwires::ShortId bw_music::RepeatProcessor::getCommonArrayId() {
     return BW_SHORT_ID("Tracks", "Tracks", "f727937f-0215-4527-bab4-0eca269d6c5c");
 }
 
-void bw_music::RepeatProcessor::processEntry(babelwires::UserLogger& userLogger, const babelwires::ValueTreeNode& input,
+babelwires::Result bw_music::RepeatProcessor::processEntry(babelwires::UserLogger& userLogger, const babelwires::ValueTreeNode& input,
                                              const babelwires::ValueTreeNode& inputEntry,
                                              babelwires::ValueTreeNode& outputEntry) const {
     RepeatProcessorInput::ConstInstance in{input};
@@ -48,4 +48,5 @@ void bw_music::RepeatProcessor::processEntry(babelwires::UserLogger& userLogger,
         appendTrack(trackOut, trackIn);
     }
     entryOut.set(std::move(trackOut));
+    return {};
 }
