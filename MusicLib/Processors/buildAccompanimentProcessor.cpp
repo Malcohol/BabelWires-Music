@@ -52,16 +52,25 @@ bw_music::BuildAccompanimentProcessor::BuildAccompanimentProcessor(const babelwi
 namespace {
 
     // apply the fitToChordFunction to all tracks in the value.
-    babelwires::ValueHolder applyFitToChordFunction(const babelwires::TypeSystem& typeSystem,
+    babelwires::ResultT<babelwires::ValueHolder> applyFitToChordFunction(const babelwires::TypeSystem& typeSystem,
                                                     const babelwires::Type& type,
                                                     const babelwires::ValueHolder& sourceValue,
                                                     const bw_music::Chord& chord) {
-        babelwires::ValueHolder result = sourceValue;
+        babelwires::ResultT<babelwires::ValueHolder> result = sourceValue;
 
         babelwires::applyToSubvaluesOfType<bw_music::TrackType>(
-            typeSystem, type, result, [&chord](const babelwires::Type& t, babelwires::Value& v) {
-                auto& track = v.as<bw_music::Track>();
-                track = bw_music::fitToChordFunction(track, chord);
+            typeSystem, type, *result, [&chord, &result](const babelwires::Type& t, babelwires::Value& v) {
+                // Skip if an error already occurred.
+                if (result.has_value()) {
+                    auto& track = v.as<bw_music::Track>();
+                    auto fitResult = bw_music::fitToChordFunction(track, chord);
+                    if (!fitResult) {
+                        // TODO Add details about chord
+                        result = fitResult.error();
+                        return;
+                    }
+                    track = *fitResult;
+                }
             });
 
         return result;
@@ -113,7 +122,7 @@ babelwires::Result bw_music::BuildAccompanimentProcessor::processValue(babelwire
         // Accompaniment always generated with a C root.
         const bw_music::Chord chord = {bw_music::PitchClass::Value::C, chordType->getValueFromIdentifier(maplet.first)};
 
-        fieldValueHolder = applyFitToChordFunction(typeSystem, *fieldType, *inputStructure, chord);
+        ASSIGN_OR_ERROR(fieldValueHolder, applyFitToChordFunction(typeSystem, *fieldType, *inputStructure, chord));
     }
 
     output.assertSetValue(newOutputValue);

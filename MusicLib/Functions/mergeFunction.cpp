@@ -10,7 +10,7 @@
 #include <MusicLib/Utilities/trackTraverser.hpp>
 #include <MusicLib/Types/Track/trackBuilder.hpp>
 
-bw_music::Track bw_music::mergeTracks(const std::vector<const Track*>& sourceTracks) {
+babelwires::ResultT<bw_music::Track> bw_music::mergeTracks(const std::vector<const Track*>& sourceTracks) {
     TrackBuilder trackOut;
 
     bw_music::ModelDuration trackDuration = 0;

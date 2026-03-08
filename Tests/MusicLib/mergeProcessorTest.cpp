@@ -9,7 +9,9 @@
 #include <MusicLib/Types/Track/trackBuilder.hpp>
 
 #include <Tests/BabelWiresLib/TestUtils/testEnvironment.hpp>
+
 #include <Tests/TestUtils/seqTestUtils.hpp>
+#include <Tests/TestUtils/resultTestUtils.hpp>
 
 TEST(MergeProcessorTest, simpleFunction) {
     bw_music::TrackBuilder trackBuilderA;
@@ -20,7 +22,7 @@ TEST(MergeProcessorTest, simpleFunction) {
     testUtils::addSimpleNotes({48, 50, 52, 53, 55, 57}, trackBuilderB);
     bw_music::Track trackB = trackBuilderB.finishAndGetTrack();
 
-    bw_music::Track track = bw_music::mergeTracks({&trackA, &trackB});
+    bw_music::Track track = *bw_music::mergeTracks({&trackA, &trackB});
     ASSERT_EQ(track.getDuration(), babelwires::Rational(3, 2));
 
     std::vector<bw_music::TrackEventHolder> expectedEvents = {bw_music::NoteOnEvent{0, 72},
@@ -69,7 +71,7 @@ TEST(MergeProcessorTest, functionOverlaps) {
     testUtils::addSimpleNotes({71, 72, 77, 76}, trackBuilderB);
     bw_music::Track trackB = trackBuilderB.finishAndGetTrack();
 
-    bw_music::Track track = bw_music::mergeTracks({&trackA, &trackB});
+    BW_ASSERT_RESULT_ASSIGN(bw_music::Track track, bw_music::mergeTracks({&trackA, &trackB}));
     ASSERT_EQ(track.getDuration(), babelwires::Rational(1, 1));
     ASSERT_EQ(track.getNumEvents(), 16);
 

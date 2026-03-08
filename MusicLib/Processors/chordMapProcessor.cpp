@@ -16,6 +16,7 @@
 #include <BabelWiresLib/Types/Map/mapValue.hpp>
 
 #include <BaseLib/Identifiers/registeredIdentifier.hpp>
+#include <BaseLib/Result/resultDSL.hpp>
 
 bw_music::ChordMapProcessorInput::ChordMapProcessorInput(const babelwires::TypeSystem& typeSystem)
     : babelwires::ParallelProcessorInputBase(getThisIdentifier(), typeSystem,
@@ -47,6 +48,7 @@ babelwires::Result bw_music::ChordMapProcessor::processEntry(babelwires::UserLog
 
     const auto& chordMap = in.getChrdMp()->getValue()->as<babelwires::MapValue>();
 
-    entryOut.set(mapChordsFunction(in->getTypeSystem(), entryIn.get(), chordMap));
+    ASSIGN_OR_ERROR(auto result, mapChordsFunction(in->getTypeSystem(), entryIn.get(), chordMap));
+    entryOut.set(std::move(result));
     return {};
 }

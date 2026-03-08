@@ -14,6 +14,7 @@
 #include <BabelWiresLib/Types/Map/mapValue.hpp>
 
 #include <BaseLib/Identifiers/registeredIdentifier.hpp>
+#include <BaseLib/Result/resultDSL.hpp>
 
 bw_music::PercussionMapProcessorInput::PercussionMapProcessorInput(const babelwires::TypeSystem& typeSystem)
     : babelwires::ParallelProcessorInputBase(getThisIdentifier(), typeSystem, 
@@ -42,6 +43,7 @@ babelwires::Result bw_music::PercussionMapProcessor::processEntry(babelwires::Us
 
     const auto& percMap = in.getMap()->getValue()->as<babelwires::MapValue>();
 
-    entryOut.set(mapPercussionFunction(in->getTypeSystem(), entryIn.get(), percMap));
+    ASSIGN_OR_ERROR(auto result, mapPercussionFunction(in->getTypeSystem(), entryIn.get(), percMap));
+    entryOut.set(std::move(result));
     return {};
 }

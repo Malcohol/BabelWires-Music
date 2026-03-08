@@ -14,6 +14,7 @@
 #include <BabelWiresLib/Types/Rational/rationalValue.hpp>
 
 #include <BaseLib/Identifiers/registeredIdentifier.hpp>
+#include <BaseLib/Result/resultDSL.hpp>
 
 bw_music::ExcerptProcessorInput::ExcerptProcessorInput(const babelwires::TypeSystem& typeSystem)
     : babelwires::ParallelProcessorInputBase(getThisIdentifier(), typeSystem,
@@ -41,6 +42,7 @@ babelwires::Result bw_music::ExcerptProcessor::processEntry(babelwires::UserLogg
     babelwires::ConstInstance<TrackType> entryIn{inputEntry};
     babelwires::Instance<TrackType> entryOut{outputEntry};
 
-    entryOut.set(getTrackExcerpt(entryIn.get(), in.getStart().get(), in.getDuratn().get()));
+    ASSIGN_OR_ERROR(auto track, getTrackExcerpt(entryIn.get(), in.getStart().get(), in.getDuratn().get()));
+    entryOut.set(std::move(track));
     return {};
 }

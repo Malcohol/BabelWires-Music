@@ -12,10 +12,12 @@
 #include <MusicLib/Types/Track/track.hpp>
 #include <MusicLib/chord.hpp>
 
+#include <BaseLib/Result/result.hpp>
+
 #include <set>
 
 namespace bw_music {
     /// Get the set of chord types used in the given chord track.
-    std::set<ChordType::Value> getChordTypesFunction(const Track& chordTrack);
+    babelwires::ResultT<std::set<ChordType::Value>> getChordTypesFunction(const Track& chordTrack);
 
 } // namespace bw_music

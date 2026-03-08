@@ -19,8 +19,10 @@
 #include <BabelWiresLib/ValueTree/valueTreeRoot.hpp>
 
 #include <Tests/BabelWiresLib/TestUtils/testEnvironment.hpp>
+
 #include <Tests/TestUtils/seqTestUtils.hpp>
 #include <Tests/TestUtils/testLog.hpp>
+#include <Tests/TestUtils/resultTestUtils.hpp>
 
 namespace {
     babelwires::MapValue getTestPercussionMap(const babelwires::TypeSystem& typeSystem) {
@@ -110,7 +112,7 @@ TEST(PercussionMapProcessorTest, funcSimple) {
 
     const babelwires::MapValue mapValue = getTestPercussionMap(typeSystem);
     const bw_music::Track inputTrack = getTestInputTrack();
-    const bw_music::Track outputTrack = bw_music::mapPercussionFunction(typeSystem, inputTrack, mapValue);
+    BW_ASSERT_RESULT_ASSIGN(const bw_music::Track outputTrack, bw_music::mapPercussionFunction(typeSystem, inputTrack, mapValue));
     const bw_music::Track expectedOutputTrack = getTestOutputTrack();
 
     EXPECT_EQ(outputTrack, expectedOutputTrack);

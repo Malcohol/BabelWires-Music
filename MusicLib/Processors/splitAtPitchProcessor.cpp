@@ -14,6 +14,7 @@
 
 #include <BaseLib/Identifiers/registeredIdentifier.hpp>
 #include <BaseLib/Result/error.hpp>
+#include <BaseLib/Result/resultDSL.hpp>
 
 bw_music::SplitAtPitchProcessorInput::SplitAtPitchProcessorInput(const babelwires::TypeSystem& typeSystem)
     : babelwires::RecordType(getThisIdentifier(), typeSystem, {{BW_SHORT_ID("Pitch", "Pitch", "6b721baa-084f-450b-bf35-2e08a9592958"),
@@ -43,7 +44,7 @@ babelwires::Result bw_music::SplitAtPitchProcessor::processValue(babelwires::Use
         trackIn->isChanged(babelwires::ValueTreeNode::Changes::SomethingChanged)) {
         const int pitchIndex = pitch.getInstanceType().tryGetIndexFromIdentifier(pitch.get().get());
         if (pitchIndex >= 0) {
-            auto newTracksOut = splitAtPitch(Pitch(pitchIndex), trackIn.get());
+            ASSIGN_OR_ERROR(auto newTracksOut, splitAtPitch(Pitch(pitchIndex), trackIn.get()));
             SplitAtPitchProcessorOutput::Instance out{output};
             out.getAbove().set(std::move(newTracksOut.m_equalOrAbove));
             out.getBelow().set(std::move(newTracksOut.m_below));

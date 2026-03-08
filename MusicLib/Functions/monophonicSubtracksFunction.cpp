@@ -165,7 +165,7 @@ namespace {
     }
 } // namespace
 
-bw_music::MonophonicSubtracksResult bw_music::getMonophonicSubtracks(const Track& trackIn, int numTracks,
+babelwires::ResultT<bw_music::MonophonicSubtracksResult> bw_music::getMonophonicSubtracks(const Track& trackIn, int numTracks,
                                                                      MonophonicSubtracksPolicyEnum::Value policy) {
     assert(numTracks > 0);
     TrackBuilders builders;

@@ -1,14 +1,14 @@
 #include <gtest/gtest.h>
 
 #include <MusicLib/Functions/mapChordsFunction.hpp>
+#include <MusicLib/Functions/mergeFunction.hpp>
 #include <MusicLib/Processors/chordMapProcessor.hpp>
 #include <MusicLib/Types/Track/TrackEvents/chordEvents.hpp>
 #include <MusicLib/Types/Track/track.hpp>
+#include <MusicLib/Types/Track/trackBuilder.hpp>
 #include <MusicLib/Types/Track/trackType.hpp>
 #include <MusicLib/chord.hpp>
 #include <MusicLib/libRegistration.hpp>
-#include <MusicLib/Functions/mergeFunction.hpp>
-#include <MusicLib/Types/Track/trackBuilder.hpp>
 
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/Enum/enumValue.hpp>
@@ -22,6 +22,7 @@
 #include <Tests/BabelWiresLib/TestUtils/testEnvironment.hpp>
 #include <Tests/TestUtils/seqTestUtils.hpp>
 #include <Tests/TestUtils/testLog.hpp>
+#include <Tests/TestUtils/resultTestUtils.hpp>
 
 namespace {
     enum class SourceMode { ChordToChord, SilenceToChord };
@@ -156,29 +157,31 @@ namespace {
 
         if (wildcardMode == WildcardMode::NoWildcards) {
             if ((sourceMode == SourceMode::ChordToChord) && (targetMode == TargetMode::ChordToChord)) {
-                testUtils::testChords({{bw_music::PitchClass::Value::C, bw_music::ChordType::ChordType::Value::M,
-                                        babelwires::Rational(1, 2), babelwires::Rational(1, 2)},
-                                       {bw_music::PitchClass::Value::A, bw_music::ChordType::ChordType::Value::m7},
-                                       {bw_music::PitchClass::Value::Gsh, bw_music::ChordType::ChordType::Value::M6},
-                                       {bw_music::PitchClass::Value::Dsh, bw_music::ChordType::ChordType::Value::M},
-                                       {bw_music::PitchClass::Value::C, bw_music::ChordType::ChordType::Value::m},
-                                       {bw_music::PitchClass::Value::E, bw_music::ChordType::ChordType::Value::m,
-                                        babelwires::Rational(1, 2), babelwires::Rational(1, 2)},
-                                       {bw_music::PitchClass::Value::A, bw_music::ChordType::ChordType::Value::m7},
-                                       {bw_music::PitchClass::Value::Csh, bw_music::ChordType::ChordType::Value::M7s11}},
-                                      outputTrack);
+                testUtils::testChords(
+                    {{bw_music::PitchClass::Value::C, bw_music::ChordType::ChordType::Value::M,
+                      babelwires::Rational(1, 2), babelwires::Rational(1, 2)},
+                     {bw_music::PitchClass::Value::A, bw_music::ChordType::ChordType::Value::m7},
+                     {bw_music::PitchClass::Value::Gsh, bw_music::ChordType::ChordType::Value::M6},
+                     {bw_music::PitchClass::Value::Dsh, bw_music::ChordType::ChordType::Value::M},
+                     {bw_music::PitchClass::Value::C, bw_music::ChordType::ChordType::Value::m},
+                     {bw_music::PitchClass::Value::E, bw_music::ChordType::ChordType::Value::m,
+                      babelwires::Rational(1, 2), babelwires::Rational(1, 2)},
+                     {bw_music::PitchClass::Value::A, bw_music::ChordType::ChordType::Value::m7},
+                     {bw_music::PitchClass::Value::Csh, bw_music::ChordType::ChordType::Value::M7s11}},
+                    outputTrack);
             } else if ((sourceMode == SourceMode::ChordToChord) && (targetMode == TargetMode::ChordToSilence)) {
-                testUtils::testChords({{bw_music::PitchClass::Value::C, bw_music::ChordType::ChordType::Value::M,
-                                        babelwires::Rational(1, 2), babelwires::Rational(1, 2)},
-                                       {bw_music::PitchClass::Value::A, bw_music::ChordType::ChordType::Value::m7},
-                                       {bw_music::PitchClass::Value::Dsh, bw_music::ChordType::ChordType::Value::M,
-                                        babelwires::Rational(1, 2), babelwires::Rational(1, 2)},
-                                       {bw_music::PitchClass::Value::C, bw_music::ChordType::ChordType::Value::m},
-                                       {bw_music::PitchClass::Value::E, bw_music::ChordType::ChordType::Value::m,
-                                        babelwires::Rational(1, 2), babelwires::Rational(1, 2)},
-                                       {bw_music::PitchClass::Value::A, bw_music::ChordType::ChordType::Value::m7},
-                                       {bw_music::PitchClass::Value::Csh, bw_music::ChordType::ChordType::Value::M7s11}},
-                                      outputTrack);
+                testUtils::testChords(
+                    {{bw_music::PitchClass::Value::C, bw_music::ChordType::ChordType::Value::M,
+                      babelwires::Rational(1, 2), babelwires::Rational(1, 2)},
+                     {bw_music::PitchClass::Value::A, bw_music::ChordType::ChordType::Value::m7},
+                     {bw_music::PitchClass::Value::Dsh, bw_music::ChordType::ChordType::Value::M,
+                      babelwires::Rational(1, 2), babelwires::Rational(1, 2)},
+                     {bw_music::PitchClass::Value::C, bw_music::ChordType::ChordType::Value::m},
+                     {bw_music::PitchClass::Value::E, bw_music::ChordType::ChordType::Value::m,
+                      babelwires::Rational(1, 2), babelwires::Rational(1, 2)},
+                     {bw_music::PitchClass::Value::A, bw_music::ChordType::ChordType::Value::m7},
+                     {bw_music::PitchClass::Value::Csh, bw_music::ChordType::ChordType::Value::M7s11}},
+                    outputTrack);
             } else if ((sourceMode == SourceMode::SilenceToChord) && (targetMode == TargetMode::ChordToChord)) {
                 testUtils::testChords(
                     {{bw_music::PitchClass::Value::Fsh, bw_music::ChordType::ChordType::Value::m7_11},
@@ -248,17 +251,18 @@ namespace {
                     outputTrack);
             } else if ((sourceMode == SourceMode::SilenceToChord) && (targetMode == TargetMode::ChordToSilence)) {
                 testUtils::testChords(
-                    {{bw_music::PitchClass::Value::Fsh, bw_music::ChordType::ChordType::Value::m7_11},
-                     {bw_music::PitchClass::Value::C, bw_music::ChordType::ChordType::Value::M},
-                     {bw_music::PitchClass::Value::A, bw_music::ChordType::ChordType::Value::m7},
-                     {bw_music::PitchClass::Value::C, bw_music::ChordType::ChordType::Value::m,
-                      babelwires::Rational(1, 2), babelwires::Rational(1)},
-                     {bw_music::PitchClass::Value::Fsh, bw_music::ChordType::ChordType::Value::m7_11},
-                     {bw_music::PitchClass::Value::E, bw_music::ChordType::ChordType::Value::m},
-                     {bw_music::PitchClass::Value::A, bw_music::ChordType::ChordType::Value::m7},
-                     {bw_music::PitchClass::Value::Csh, bw_music::ChordType::ChordType::Value::m7},
-                     {bw_music::PitchClass::Value::Fsh, bw_music::ChordType::ChordType::Value::m7_11},
-                     },
+                    {
+                        {bw_music::PitchClass::Value::Fsh, bw_music::ChordType::ChordType::Value::m7_11},
+                        {bw_music::PitchClass::Value::C, bw_music::ChordType::ChordType::Value::M},
+                        {bw_music::PitchClass::Value::A, bw_music::ChordType::ChordType::Value::m7},
+                        {bw_music::PitchClass::Value::C, bw_music::ChordType::ChordType::Value::m,
+                         babelwires::Rational(1, 2), babelwires::Rational(1)},
+                        {bw_music::PitchClass::Value::Fsh, bw_music::ChordType::ChordType::Value::m7_11},
+                        {bw_music::PitchClass::Value::E, bw_music::ChordType::ChordType::Value::m},
+                        {bw_music::PitchClass::Value::A, bw_music::ChordType::ChordType::Value::m7},
+                        {bw_music::PitchClass::Value::Csh, bw_music::ChordType::ChordType::Value::m7},
+                        {bw_music::PitchClass::Value::Fsh, bw_music::ChordType::ChordType::Value::m7_11},
+                    },
                     outputTrack);
             }
         }
@@ -277,7 +281,7 @@ TEST_P(ChordMapProcessorTest, simpleFunction) {
     babelwires::MapValue chordMap = getTestChordMap(testEnvironment.m_typeSystem, sourceMode, targetMode, wildcardMode);
 
     bw_music::Track inputTrack = getTestInputTrack();
-    bw_music::Track outputTrack = bw_music::mapChordsFunction(testEnvironment.m_typeSystem, inputTrack, chordMap);
+    BW_ASSERT_RESULT_ASSIGN(bw_music::Track outputTrack, bw_music::mapChordsFunction(testEnvironment.m_typeSystem, inputTrack, chordMap));
     testOutputTrack(outputTrack, sourceMode, targetMode, wildcardMode);
 }
 
@@ -292,35 +296,36 @@ INSTANTIATE_TEST_SUITE_P(
                     TestData{SourceMode::SilenceToChord, TargetMode::ChordToChord, WildcardMode::Wildcards},
                     TestData{SourceMode::SilenceToChord, TargetMode::ChordToSilence, WildcardMode::Wildcards}));
 
-
 TEST(ChordMapProcessorTest, chordsAndNotes) {
     testUtils::TestEnvironment testEnvironment;
     bw_music::registerLib(testEnvironment.m_projectContext);
 
-    babelwires::MapValue chordMap = getTestChordMap(testEnvironment.m_typeSystem, SourceMode::SilenceToChord, TargetMode::ChordToSilence, WildcardMode::Wildcards);
+    babelwires::MapValue chordMap = getTestChordMap(testEnvironment.m_typeSystem, SourceMode::SilenceToChord,
+                                                    TargetMode::ChordToSilence, WildcardMode::Wildcards);
 
     bw_music::Track chordTrack = getTestInputTrack();
 
     bw_music::TrackBuilder noteTrackBuilder;
 
     testUtils::addNotes(
-    {
-        {60, babelwires::Rational(1, 4), babelwires::Rational(1, 4)},
-        {62, babelwires::Rational(1, 4), babelwires::Rational(1, 4)},
-        {64, babelwires::Rational(3, 4), babelwires::Rational(0, 4)},
-        {65, babelwires::Rational(3, 4), babelwires::Rational(0, 4)},
-        {67, babelwires::Rational(1, 4), babelwires::Rational(1, 4)},
-        {69, babelwires::Rational(1, 4), babelwires::Rational(1, 4)},
-        {71, babelwires::Rational(3, 4), babelwires::Rational(0, 4)},
-        {72, babelwires::Rational(1, 4), babelwires::Rational(1, 4)},
-    }, noteTrackBuilder);
+        {
+            {60, babelwires::Rational(1, 4), babelwires::Rational(1, 4)},
+            {62, babelwires::Rational(1, 4), babelwires::Rational(1, 4)},
+            {64, babelwires::Rational(3, 4), babelwires::Rational(0, 4)},
+            {65, babelwires::Rational(3, 4), babelwires::Rational(0, 4)},
+            {67, babelwires::Rational(1, 4), babelwires::Rational(1, 4)},
+            {69, babelwires::Rational(1, 4), babelwires::Rational(1, 4)},
+            {71, babelwires::Rational(3, 4), babelwires::Rational(0, 4)},
+            {72, babelwires::Rational(1, 4), babelwires::Rational(1, 4)},
+        },
+        noteTrackBuilder);
     bw_music::Track noteTrack = noteTrackBuilder.finishAndGetTrack();
 
-    bw_music::Track preCombinedInput = bw_music::mergeTracks({&noteTrack, &chordTrack});
-    bw_music::Track preCombinedOutput = bw_music::mapChordsFunction(testEnvironment.m_typeSystem, preCombinedInput, chordMap);
+    BW_ASSERT_RESULT_ASSIGN(bw_music::Track preCombinedInput, bw_music::mergeTracks({&noteTrack, &chordTrack}));
+    BW_ASSERT_RESULT_ASSIGN(bw_music::Track preCombinedOutput, bw_music::mapChordsFunction(testEnvironment.m_typeSystem, preCombinedInput, chordMap));
 
-    bw_music::Track mappedChords = bw_music::mapChordsFunction(testEnvironment.m_typeSystem, chordTrack, chordMap);
-    bw_music::Track postCombinedOutput = bw_music::mergeTracks({&noteTrack, &mappedChords});
+    BW_ASSERT_RESULT_ASSIGN(bw_music::Track mappedChords, bw_music::mapChordsFunction(testEnvironment.m_typeSystem, chordTrack, chordMap));
+    BW_ASSERT_RESULT_ASSIGN(bw_music::Track postCombinedOutput, bw_music::mergeTracks({&noteTrack, &mappedChords}));
 
     // This test exploits the fact that the the resulting events end up in the same relative order.
     // That's not guaranteed, and the test may have to sanitize both sides if that changes.
@@ -360,11 +365,12 @@ TEST(ChordMapProcessorTest, processor) {
     EXPECT_EQ(inArray.getEntry(0).get().getDuration(), 0);
     EXPECT_EQ(outArray.getEntry(0).get().getDuration(), 0);
 
-    ASSERT_TRUE(in.getChrdMp()->setValue(getTestChordMap(testEnvironment.m_typeSystem, SourceMode::ChordToChord, TargetMode::ChordToChord, WildcardMode::NoWildcards)));
+    ASSERT_TRUE(in.getChrdMp()->setValue(getTestChordMap(testEnvironment.m_typeSystem, SourceMode::ChordToChord,
+                                                         TargetMode::ChordToChord, WildcardMode::NoWildcards)));
     inArray.getEntry(0).set(getTestInputTrack());
 
     processor.process(testEnvironment.m_log);
 
-    testOutputTrack(outArray.getEntry(0).get(), SourceMode::ChordToChord, TargetMode::ChordToChord, WildcardMode::NoWildcards);
+    testOutputTrack(outArray.getEntry(0).get(), SourceMode::ChordToChord, TargetMode::ChordToChord,
+                    WildcardMode::NoWildcards);
 }
-

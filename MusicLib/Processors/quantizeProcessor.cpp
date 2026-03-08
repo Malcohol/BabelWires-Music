@@ -13,6 +13,7 @@
 #include <BabelWiresLib/Types/Rational/rationalValue.hpp>
 
 #include <BaseLib/Identifiers/registeredIdentifier.hpp>
+#include <BaseLib/Result/resultDSL.hpp>
 
 #include <set>
 
@@ -44,6 +45,7 @@ babelwires::Result bw_music::QuantizeProcessor::processEntry(babelwires::UserLog
     babelwires::ConstInstance<TrackType> entryIn{inputEntry};
     babelwires::Instance<TrackType> entryOut{outputEntry};
 
-    entryOut.set(quantize(entryIn.get(), in.getBeat().get()));
+    ASSIGN_OR_ERROR(auto track, quantize(entryIn.get(), in.getBeat().get()));
+    entryOut.set(std::move(track));
     return {};
 }

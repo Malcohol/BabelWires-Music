@@ -12,12 +12,14 @@
 #include <Tests/BabelWiresLib/TestUtils/testEnvironment.hpp>
 #include <Tests/TestUtils/seqTestUtils.hpp>
 
+#include <Tests/TestUtils/resultTestUtils.hpp>
+
 TEST(ExcerptProcessorTest, funcSimple) {
     bw_music::TrackBuilder trackIn;
 
     testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65, 67, 69, 71, 72}, trackIn);
 
-    auto trackOut = bw_music::getTrackExcerpt(trackIn.finishAndGetTrack(), babelwires::Rational(1, 2), 1);
+    BW_ASSERT_RESULT_ASSIGN(auto trackOut, bw_music::getTrackExcerpt(trackIn.finishAndGetTrack(), babelwires::Rational(1, 2), 1));
 
     testUtils::testSimpleNotes(std::vector<bw_music::Pitch>{64, 65, 67, 69}, trackOut);
 }
@@ -27,7 +29,7 @@ TEST(ExcerptProcessorTest, funcEmptyBefore) {
     bw_music::NoteOnEvent note(10, 64, 100);
     trackIn.addEvent(note);
 
-    auto trackOut = bw_music::getTrackExcerpt(trackIn.finishAndGetTrack(), 3, 4);
+    BW_ASSERT_RESULT_ASSIGN(auto trackOut, bw_music::getTrackExcerpt(trackIn.finishAndGetTrack(), 3, 4));
 
     EXPECT_EQ(trackOut.getDuration(), 4);
     EXPECT_EQ(trackOut.getNumEvents(), 0);
@@ -36,7 +38,7 @@ TEST(ExcerptProcessorTest, funcEmptyBefore) {
 TEST(ExcerptProcessorTest, funcEmptyAfter) {
     bw_music::Track trackIn;
 
-    auto trackOut = bw_music::getTrackExcerpt(trackIn, 2, 2);
+    BW_ASSERT_RESULT_ASSIGN(auto trackOut, bw_music::getTrackExcerpt(trackIn, 2, 2));
 
     EXPECT_EQ(trackOut.getDuration(), 2);
     EXPECT_EQ(trackOut.getNumEvents(), 0);
@@ -49,7 +51,7 @@ TEST(ExcerptProcessorTest, funcEmptyBetween) {
     bw_music::NoteOffEvent noteOff(10, 64, 100);
     trackIn.addEvent(noteOff);
 
-    auto trackOut = bw_music::getTrackExcerpt(trackIn.finishAndGetTrack(), 2, 2);
+    BW_ASSERT_RESULT_ASSIGN(auto trackOut, bw_music::getTrackExcerpt(trackIn.finishAndGetTrack(), 2, 2));
 
     EXPECT_EQ(trackOut.getDuration(), 2);
     EXPECT_EQ(trackOut.getNumEvents(), 0);
@@ -63,7 +65,7 @@ TEST(ExcerptProcessorTest, funcDropSpanningGroup) {
     bw_music::NoteOffEvent noteOff(1, 40, 100);
     trackIn.addEvent(noteOff);
 
-    auto trackOut = bw_music::getTrackExcerpt(trackIn.finishAndGetTrack(), babelwires::Rational(3, 2), 1);
+    BW_ASSERT_RESULT_ASSIGN(auto trackOut, bw_music::getTrackExcerpt(trackIn.finishAndGetTrack(), babelwires::Rational(3, 2), 1));
 
     testUtils::testSimpleNotes(std::vector<bw_music::Pitch>{64, 65, 67, 69}, trackOut);
 }
@@ -81,7 +83,7 @@ TEST(ExcerptProcessorTest, funcDropInitialGroup) {
 
     testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{67, 69, 71, 72}, trackIn);
 
-    auto trackOut = bw_music::getTrackExcerpt(trackIn.finishAndGetTrack(), babelwires::Rational(3, 2), 1);
+    BW_ASSERT_RESULT_ASSIGN(auto trackOut, bw_music::getTrackExcerpt(trackIn.finishAndGetTrack(), babelwires::Rational(3, 2), 1));
 
     testUtils::testSimpleNotes(std::vector<bw_music::Pitch>{64, 65, 67, 69}, trackOut);
 }
@@ -91,7 +93,7 @@ TEST(ExcerptProcessorTest, funcGaps) {
 
     testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65, 67, 69, 71, 72}, trackIn);
 
-    auto trackOut = bw_music::getTrackExcerpt(trackIn.finishAndGetTrack(), babelwires::Rational(3, 8), 1);
+    BW_ASSERT_RESULT_ASSIGN(auto trackOut, bw_music::getTrackExcerpt(trackIn.finishAndGetTrack(), babelwires::Rational(3, 8), 1));
 
     const std::vector<testUtils::NoteInfo> expectedNoteInfos{
         {64, babelwires::Rational(1, 4), babelwires::Rational(1, 8)},

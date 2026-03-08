@@ -14,6 +14,7 @@
 #include <BabelWiresLib/Types/Array/arrayTypeConstructor.hpp>
 
 #include <BaseLib/Identifiers/registeredIdentifier.hpp>
+#include <BaseLib/Result/resultDSL.hpp>
 
 #include <set>
 
@@ -38,7 +39,8 @@ babelwires::Result bw_music::MergeProcessor::processValue(babelwires::UserLogger
             tracksIn.emplace_back(&in.getInput().getEntry(i).get());
         }
         MergeProcessorOutput::Instance out{output};
-        out.getOutput().set(mergeTracks(tracksIn));
+        ASSIGN_OR_ERROR(auto track, mergeTracks(tracksIn));
+        out.getOutput().set(std::move(track));
     }
     return {};
 }

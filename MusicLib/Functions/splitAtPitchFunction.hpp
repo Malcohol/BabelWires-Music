@@ -9,6 +9,8 @@
 
 #include <MusicLib/Types/Track/track.hpp>
 
+#include <BaseLib/Result/result.hpp>
+
 #include <tuple>
 
 namespace bw_music {
@@ -22,5 +24,5 @@ namespace bw_music {
     };
 
     /// Split the events in the track by pitch.
-    SplitAtPitchResult splitAtPitch(Pitch pitch, const Track& sourceTrack);
+    babelwires::ResultT<SplitAtPitchResult> splitAtPitch(Pitch pitch, const Track& sourceTrack);
 } // namespace bw_music

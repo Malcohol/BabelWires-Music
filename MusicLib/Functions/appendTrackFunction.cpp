@@ -8,7 +8,7 @@
 #include <MusicLib/Functions/appendTrackFunction.hpp>
 #include <MusicLib/Types/Track/trackBuilder.hpp>
 
-void bw_music::appendTrack(Track& targetTrack, const Track& sourceTrack) {
+babelwires::Result bw_music::appendTrack(Track& targetTrack, const Track& sourceTrack) {
     const ModelDuration initialDuration = targetTrack.getDuration();
     const ModelDuration gapAtEnd = targetTrack.getDuration() - targetTrack.getTotalEventDuration();
 
@@ -26,4 +26,5 @@ void bw_music::appendTrack(Track& targetTrack, const Track& sourceTrack) {
     }
     
     targetTrack = resultTrack.finishAndGetTrack(initialDuration + sourceTrack.getDuration());
+    return {};
 }

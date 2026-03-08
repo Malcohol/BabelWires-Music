@@ -14,6 +14,7 @@
 #include <BabelWiresLib/Types/Int/intValue.hpp>
 
 #include <BaseLib/Identifiers/registeredIdentifier.hpp>
+#include <BaseLib/Result/resultDSL.hpp>
 
 #include <set>
 
@@ -44,6 +45,7 @@ babelwires::Result bw_music::TransposeProcessor::processEntry(babelwires::UserLo
     babelwires::ConstInstance<TrackType> entryIn{inputEntry};
     babelwires::Instance<TrackType> entryOut{outputEntry};
 
-    entryOut.set(transposeTrack(entryIn.get(), in.getOffset().get()));
+    ASSIGN_OR_ERROR(auto track, transposeTrack(entryIn.get(), in.getOffset().get()));
+    entryOut.set(std::move(track));
     return {};
 }

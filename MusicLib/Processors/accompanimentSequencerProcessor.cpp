@@ -17,6 +17,8 @@
 #include <BabelWiresLib/Types/Record/recordTypeConstructor.hpp>
 #include <BabelWiresLib/ValueTree/valueTreeNode.hpp>
 
+#include <BaseLib/Result/resultDSL.hpp>
+
 bw_music::AccompanimentSequencerProcessorInput::AccompanimentSequencerProcessorInput(
     const babelwires::TypeSystem& typeSystem)
     : babelwires::GenericType(getThisIdentifier(), 
@@ -64,8 +66,8 @@ babelwires::Result bw_music::AccompanimentSequencerProcessor::processValue(babel
         const auto& chordTrack = inputChordTrack.getValue()->as<bw_music::Track>();
 
         if (assignedInputTypeExp) {
-            const auto resultValue = accompanimentSequencerFunction(typeSystem, *inputAccompanimentTracks.getType(),
-                                                                    inputAccompanimentTracks.getValue(), chordTrack);
+            ASSIGN_OR_ERROR(auto resultValue, accompanimentSequencerFunction(typeSystem, *inputAccompanimentTracks.getType(),
+                                                                    inputAccompanimentTracks.getValue(), chordTrack));
             outputResult.assertSetValue(std::move(resultValue));
         }
     }

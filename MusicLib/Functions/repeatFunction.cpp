@@ -9,11 +9,12 @@
 
 #include <MusicLib/Functions/appendTrackFunction.hpp>
 
-#include <BabelWiresLib/ValueTree/modelExceptions.hpp>
+#include <BaseLib/Result/error.hpp>
 
-bw_music::Track bw_music::repeatTrack(const Track& trackIn, int count) {
+babelwires::ResultT<bw_music::Track> bw_music::repeatTrack(const Track& trackIn, int count) {
+    // TODO Why not using an unsigned int?
     if (count < 0) {
-        throw babelwires::ModelException() << "You cannot have repeat a negative number of times";
+        return babelwires::Error() << "You cannot have repeat a negative number of times";
     }
 
     Track trackOut;

@@ -11,6 +11,8 @@
 
 #include <MusicLib/Types/Track/track.hpp>
 
+#include <BaseLib/Result/result.hpp>
+
 namespace bw_music {
 #define FINGERED_CHORDS_SUSTAIN_POLICY(X)                                                                             \
     X(Notes, "Same as notes", "bee38885-c5d2-4742-9a46-26ad2318bb55")                                                  \
@@ -29,5 +31,5 @@ namespace bw_music {
     };
 
     /// Create tracks of chord events from tracks of note events.
-    Track fingeredChordsFunction(const Track& sourceTrack, FingeredChordsSustainPolicyEnum::Value sustainPolicy);
+    babelwires::ResultT<Track> fingeredChordsFunction(const Track& sourceTrack, FingeredChordsSustainPolicyEnum::Value sustainPolicy);
 } // namespace bw_music

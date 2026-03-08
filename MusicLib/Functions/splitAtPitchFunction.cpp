@@ -47,7 +47,7 @@ namespace {
     };
 } // namespace
 
-bw_music::SplitAtPitchResult bw_music::splitAtPitch(Pitch pitch, const Track& sourceTrack) {
+babelwires::ResultT<bw_music::SplitAtPitchResult> bw_music::splitAtPitch(Pitch pitch, const Track& sourceTrack) {
     TrackBuilder equalOrAbove;
     TrackBuilder below;
     TrackBuilder other;
@@ -82,6 +82,6 @@ bw_music::SplitAtPitchResult bw_music::splitAtPitch(Pitch pitch, const Track& so
         }
     }
 
-    return {equalOrAbove.finishAndGetTrack(sourceTrack.getDuration()),
+    return SplitAtPitchResult{equalOrAbove.finishAndGetTrack(sourceTrack.getDuration()),
             below.finishAndGetTrack(sourceTrack.getDuration()), other.finishAndGetTrack(sourceTrack.getDuration())};
 }

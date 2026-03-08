@@ -12,6 +12,8 @@
 #include <BabelWiresLib/Types/Array/arrayTypeConstructor.hpp>
 #include <BabelWiresLib/Types/Int/intTypeConstructor.hpp>
 
+#include <BaseLib/Result/resultDSL.hpp>
+
 bw_music::MonophonicSubtracksProcessorInput::MonophonicSubtracksProcessorInput(const babelwires::TypeSystem& typeSystem)
     : babelwires::RecordType(getThisIdentifier(), typeSystem, {{BW_SHORT_ID("NumTrk", "Num subtracks", "30bc74d2-b678-4986-8296-929db40fc8c2"),
                                babelwires::IntTypeConstructor::makeTypeExp(1, 16, 1)},
@@ -38,7 +40,7 @@ babelwires::Result bw_music::MonophonicSubtracksProcessor::processValue(babelwir
         const unsigned int numTracks = in.getNumTrk().get();
         const MonophonicSubtracksPolicyEnum::Value policy = in.getPolicy().get();
         const bw_music::Track& trackIn = in.getInput().get();
-        auto result = getMonophonicSubtracks(trackIn, numTracks, policy);
+        ASSIGN_OR_ERROR(auto result, getMonophonicSubtracks(trackIn, numTracks, policy));
 
         MonophonicSubtracksProcessorOutput::Instance out{output};
         auto tracksOut = out.getSbtrks();

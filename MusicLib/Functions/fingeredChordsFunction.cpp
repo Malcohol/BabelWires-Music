@@ -199,7 +199,7 @@ namespace {
     };
 } // namespace
 
-bw_music::Track bw_music::fingeredChordsFunction(const Track& sourceTrack, FingeredChordsSustainPolicyEnum::Value sustainPolicy) {
+babelwires::ResultT<bw_music::Track> bw_music::fingeredChordsFunction(const Track& sourceTrack, FingeredChordsSustainPolicyEnum::Value sustainPolicy) {
     // Required for getMatchingChordType::ValueFromIntervals
     assert(std::is_sorted(recognizedIntervals.begin(), recognizedIntervals.end()));
 

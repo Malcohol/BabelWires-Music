@@ -20,7 +20,8 @@
 #include <BabelWiresLib/Types/Map/SumOfMaps/sumOfMapsType.hpp>
 #include <BabelWiresLib/Types/Map/mapTypeConstructor.hpp>
 #include <BabelWiresLib/Types/Map/standardMapIdentifiers.hpp>
-#include <BabelWiresLib/ValueTree/modelExceptions.hpp>
+
+#include <BaseLib/Result/error.hpp>
 
 babelwires::ResultT<babelwires::TypePtr>
 bw_music::PercussionMapType::constructType(const babelwires::TypeSystem& typeSystem, babelwires::TypeExp newTypeExp,
@@ -52,11 +53,11 @@ babelwires::TypeExp bw_music::getPercussionMapType() {
     return babelwires::TypeExp(PercussionMapType::getThisIdentifier(), babelwires::TypeConstructorArguments{});
 }
 
-bw_music::Track bw_music::mapPercussionFunction(const babelwires::TypeSystem& typeSystem, const Track& trackIn,
+babelwires::ResultT<bw_music::Track> bw_music::mapPercussionFunction(const babelwires::TypeSystem& typeSystem, const Track& trackIn,
                                                 const babelwires::MapValue& percussionMapValue) {
 
     if (!percussionMapValue.isValid(typeSystem)) {
-        throw babelwires::ModelException() << "The Percussion Map is not valid.";
+        return babelwires::Error() << "The Percussion Map is not valid.";
     }
 
     const babelwires::EnumToIdentifierValueAdapter enumToIdentifierAdapter;

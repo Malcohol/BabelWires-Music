@@ -23,7 +23,8 @@
 #include <BabelWiresLib/Types/Tuple/tupleType.hpp>
 #include <BabelWiresLib/Types/Tuple/tupleTypeConstructor.hpp>
 #include <BabelWiresLib/Types/Tuple/tupleValue.hpp>
-#include <BabelWiresLib/ValueTree/modelExceptions.hpp>
+
+#include <BaseLib/Result/error.hpp>
 
 #include <optional>
 
@@ -112,9 +113,7 @@ namespace {
                             m_targetPitchClassAdapter(target.getValue(0)->as<babelwires::EnumValue>());
                         const unsigned int chordTypeIndex =
                             m_targetChordTypeAdapter(target.getValue(1)->as<babelwires::EnumValue>());
-                        if ((pitchClassIndex == 0) || (chordTypeIndex == 0)) {
-                            throw babelwires::ModelException() << "NoChord cannot be mapped to wildcard value";
-                        }
+                        assert((pitchClassIndex != 0) && (chordTypeIndex != 0) && "NoChord cannot be mapped to wildcard value");
                         return bw_music::Chord{bw_music::PitchClass::Value(pitchClassIndex - 1),
                                                bw_music::ChordType::Value(chordTypeIndex - 1)};
                     }
@@ -210,10 +209,11 @@ namespace {
     };
 } // namespace
 
-bw_music::Track bw_music::mapChordsFunction(const babelwires::TypeSystem& typeSystem, const Track& sourceTrack,
+babelwires::ResultT<bw_music::Track> bw_music::mapChordsFunction(const babelwires::TypeSystem& typeSystem, const Track& sourceTrack,
                                             const babelwires::MapValue& chordMapValue) {
+    // TODO Could an invalid map ever reach here? Clarify this somewhere.
     if (!chordMapValue.isValid(typeSystem)) {
-        throw babelwires::ModelException() << "The Chord Type Map is not valid.";
+        return babelwires::Error() << "The Chord Type Map is not valid.";
     }
 
     ChordMapApplicator mapApplicator(typeSystem, chordMapValue);

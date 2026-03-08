@@ -9,7 +9,9 @@
 #include <MusicLib/libRegistration.hpp>
 
 #include <Tests/BabelWiresLib/TestUtils/testEnvironment.hpp>
+
 #include <Tests/TestUtils/seqTestUtils.hpp>
+#include <Tests/TestUtils/resultTestUtils.hpp>
 
 TEST(FingeredChordsTest, functionBasicNotesPolicy) {
     bw_music::TrackBuilder track;
@@ -38,8 +40,8 @@ TEST(FingeredChordsTest, functionBasicNotesPolicy) {
     track.addEvent(bw_music::NoteOffEvent(0, 62));
     track.addEvent(bw_music::NoteOffEvent(0, 63));
 
-    bw_music::Track chordTrack = bw_music::fingeredChordsFunction(
-        track.finishAndGetTrack(), bw_music::FingeredChordsSustainPolicyEnum::Value::Notes);
+    BW_ASSERT_RESULT_ASSIGN(bw_music::Track chordTrack, bw_music::fingeredChordsFunction(
+        track.finishAndGetTrack(), bw_music::FingeredChordsSustainPolicyEnum::Value::Notes));
     EXPECT_EQ(chordTrack.getDuration(), 5);
 
     std::vector<testUtils::ChordInfo> expectedChords = {
@@ -76,8 +78,8 @@ TEST(FingeredChordsTest, functionBasicHoldPolicy) {
     track.addEvent(bw_music::NoteOffEvent(0, 62));
     track.addEvent(bw_music::NoteOffEvent(0, 63));
 
-    bw_music::Track chordTrack = bw_music::fingeredChordsFunction(
-        track.finishAndGetTrack(), bw_music::FingeredChordsSustainPolicyEnum::Value::Hold);
+    BW_ASSERT_RESULT_ASSIGN(bw_music::Track chordTrack, bw_music::fingeredChordsFunction(
+        track.finishAndGetTrack(), bw_music::FingeredChordsSustainPolicyEnum::Value::Hold));
     EXPECT_EQ(chordTrack.getDuration(), 5);
 
     std::vector<testUtils::ChordInfo> expectedChords = {
@@ -99,8 +101,8 @@ TEST(FingeredChordsTest, rootPitchClass) {
         track.addEvent(bw_music::NoteOffEvent(0, i + 7));
     }
 
-    bw_music::Track chordTrack = bw_music::fingeredChordsFunction(
-        track.finishAndGetTrack(), bw_music::FingeredChordsSustainPolicyEnum::Value::Notes);
+    BW_ASSERT_RESULT_ASSIGN(bw_music::Track chordTrack, bw_music::fingeredChordsFunction(
+        track.finishAndGetTrack(), bw_music::FingeredChordsSustainPolicyEnum::Value::Notes));
 
     std::vector<testUtils::ChordInfo> expectedChords;
     for (int o = 0; o < 10; ++o) {
@@ -127,8 +129,8 @@ TEST(FingeredChordsTest, functionChordToChord) {
     track.addEvent(bw_music::NoteOffEvent(0, 63));
     track.addEvent(bw_music::NoteOffEvent(0, 67));
 
-    bw_music::Track chordTrack = bw_music::fingeredChordsFunction(
-        track.finishAndGetTrack(), bw_music::FingeredChordsSustainPolicyEnum::Value::Notes);
+    BW_ASSERT_RESULT_ASSIGN(bw_music::Track chordTrack, bw_music::fingeredChordsFunction(
+        track.finishAndGetTrack(), bw_music::FingeredChordsSustainPolicyEnum::Value::Notes));
     EXPECT_EQ(chordTrack.getDuration(), 2);
 
     std::vector<testUtils::ChordInfo> expectedChords = {
@@ -165,8 +167,8 @@ TEST(FingeredChordsTest, majorInversions) {
     track.addEvent(bw_music::NoteOffEvent(0, 72));
     track.addEvent(bw_music::NoteOffEvent(0, 76));
 
-    bw_music::Track chordTrack = bw_music::fingeredChordsFunction(
-        track.finishAndGetTrack(), bw_music::FingeredChordsSustainPolicyEnum::Value::Notes);
+    BW_ASSERT_RESULT_ASSIGN(bw_music::Track chordTrack, bw_music::fingeredChordsFunction(
+        track.finishAndGetTrack(), bw_music::FingeredChordsSustainPolicyEnum::Value::Notes));
     EXPECT_EQ(chordTrack.getDuration(), 5);
 
     std::vector<testUtils::ChordInfo> expectedChords = {
@@ -204,8 +206,8 @@ TEST(FingeredChordsTest, minorInversions) {
     track.addEvent(bw_music::NoteOffEvent(0, 72));
     track.addEvent(bw_music::NoteOffEvent(0, 75));
 
-    bw_music::Track chordTrack = bw_music::fingeredChordsFunction(
-        track.finishAndGetTrack(), bw_music::FingeredChordsSustainPolicyEnum::Value::Notes);
+    BW_ASSERT_RESULT_ASSIGN(bw_music::Track chordTrack, bw_music::fingeredChordsFunction(
+        track.finishAndGetTrack(), bw_music::FingeredChordsSustainPolicyEnum::Value::Notes));
     EXPECT_EQ(chordTrack.getDuration(), 5);
 
     std::vector<testUtils::ChordInfo> expectedChords = {
@@ -349,8 +351,8 @@ TEST(FingeredChordsTest, schemeY) {
         }
     }
 
-    bw_music::Track chordTrack =
-        bw_music::fingeredChordsFunction(track.finishAndGetTrack(), bw_music::FingeredChordsSustainPolicyEnum::Value::Notes);
+    BW_ASSERT_RESULT_ASSIGN(bw_music::Track chordTrack,
+        bw_music::fingeredChordsFunction(track.finishAndGetTrack(), bw_music::FingeredChordsSustainPolicyEnum::Value::Notes));
 
     std::vector<ChordType::Value> expectedChordType = {
         ChordType::Value::_1p8,  ChordType::Value::_1p5,  ChordType::Value::M,      ChordType::Value::M9,
@@ -512,8 +514,8 @@ TEST(FingeredChordsTest, schemeR) {
         }
     }
 
-    bw_music::Track chordTrack =
-        bw_music::fingeredChordsFunction(track.finishAndGetTrack(), bw_music::FingeredChordsSustainPolicyEnum::Value::Notes);
+    BW_ASSERT_RESULT_ASSIGN(bw_music::Track chordTrack,
+        bw_music::fingeredChordsFunction(track.finishAndGetTrack(), bw_music::FingeredChordsSustainPolicyEnum::Value::Notes));
 
     std::vector<ChordType::Value> expectedChordType = {
         ChordType::Value::M,
@@ -646,8 +648,8 @@ TEST(FingeredChordsTest, schemeC) {
         }
     }
 
-    bw_music::Track chordTrack =
-        bw_music::fingeredChordsFunction(track.finishAndGetTrack(), bw_music::FingeredChordsSustainPolicyEnum::Value::Notes);
+    BW_ASSERT_RESULT_ASSIGN(bw_music::Track chordTrack,
+        bw_music::fingeredChordsFunction(track.finishAndGetTrack(), bw_music::FingeredChordsSustainPolicyEnum::Value::Notes));
 
     std::vector<ChordType::Value> expectedChordType = {
         ChordType::Value::M,    ChordType::Value::m,      ChordType::Value::dim, ChordType::Value::aug,

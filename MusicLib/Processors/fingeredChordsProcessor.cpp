@@ -10,6 +10,8 @@
 #include <BabelWiresLib/Project/projectContext.hpp>
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 
+#include <BaseLib/Result/resultDSL.hpp>
+
 bw_music::FingeredChordsProcessorInput::FingeredChordsProcessorInput(const babelwires::TypeSystem& typeSystem)
     : babelwires::RecordType(getThisIdentifier(), typeSystem, {{BW_SHORT_ID("Policy", "Policy", "a1dd2ae0-e91e-40fe-af4a-c74f2c7d978a"),
                                bw_music::FingeredChordsSustainPolicyEnum::getThisIdentifier()},
@@ -31,7 +33,8 @@ babelwires::Result bw_music::FingeredChordsProcessor::processValue(babelwires::U
     FingeredChordsProcessorInput::ConstInstance in{input};
     if (in->isChanged(babelwires::ValueTreeNode::Changes::SomethingChanged)) {
         FingeredChordsProcessorOutput::Instance out{output};
-        out.getChords().set(fingeredChordsFunction(in.getNotes().get(), in.getPolicy().get()));
+        ASSIGN_OR_ERROR(auto track, fingeredChordsFunction(in.getNotes().get(), in.getPolicy().get()));
+        out.getChords().set(std::move(track));
     }
     return {};
 }

@@ -14,6 +14,8 @@
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/Rational/rationalValue.hpp>
 
+#include <BaseLib/Result/resultDSL.hpp>
+
 bw_music::GetChordTypesProcessorInput::GetChordTypesProcessorInput(const babelwires::TypeSystem& typeSystem)
     : babelwires::RecordType(getThisIdentifier(), typeSystem,
           {{BW_SHORT_ID("Track", "Track", "0acf2346-0e45-44ed-8a5d-4c6d0c2c1244"), DefaultTrackType::getThisIdentifier()}}) {}
@@ -33,7 +35,7 @@ babelwires::Result bw_music::GetChordTypesProcessor::processValue(babelwires::Us
     if (in->isChanged(babelwires::ValueTreeNode::Changes::SomethingChanged)) {
         GetChordTypesProcessorOutput::Instance out{output};
         const ChordTypeSet& chordTypeSetType = out.getChords()->getType()->as<ChordTypeSet>();
-        auto setOfChordTypes = bw_music::getChordTypesFunction(in.getTrack().get());
+        ASSIGN_OR_ERROR(auto setOfChordTypes, bw_music::getChordTypesFunction(in.getTrack().get()));
         out.getChords()->assertSetValue(chordTypeSetType.createValueFromChordTypes(in->getTypeSystem(), setOfChordTypes));
     }
     return {};
