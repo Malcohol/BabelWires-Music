@@ -16,6 +16,7 @@ namespace bw_music {
     /// The default tempo is 120.
     class Tempo : public babelwires::IntType {
       public:
+        DOWNCASTABLE(Tempo, babelwires::IntType);
         REGISTERED_TYPE("tempo", "Tempo", "6ee26c7f-ced6-400d-a927-9464a143b39c", 1);
         Tempo() : babelwires::IntType(getThisIdentifier(), {0, 255}, 120) {}
     };

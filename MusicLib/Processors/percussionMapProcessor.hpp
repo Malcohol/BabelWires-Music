@@ -18,6 +18,7 @@ namespace bw_music {
 
     class PercussionMapProcessorInput : public babelwires::ParallelProcessorInputBase {
       public:
+        DOWNCASTABLE(PercussionMapProcessorInput, babelwires::ParallelProcessorInputBase);
         REGISTERED_TYPE("PercMapIn", "PercussionMap In", "d422110c-3ea4-42a3-86b0-311332836504", 1);
 
         PercussionMapProcessorInput(const babelwires::TypeSystem& typeSystem);
@@ -29,6 +30,7 @@ namespace bw_music {
 
     class PercussionMapProcessorOutput : public babelwires::ParallelProcessorOutputBase {
       public:
+        DOWNCASTABLE(PercussionMapProcessorOutput, babelwires::ParallelProcessorOutputBase);
         REGISTERED_TYPE("PercMapOut", "PercussionMap Out", "e0940d22-c79a-4139-a0ef-00aee485ef2a", 1);
 
         PercussionMapProcessorOutput(const babelwires::TypeSystem& typeSystem);

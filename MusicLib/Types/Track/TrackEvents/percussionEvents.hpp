@@ -13,6 +13,7 @@ namespace bw_music {
 
     /// Base of type for percussion events.
     struct PercussionEvent : public TrackEvent {
+        DOWNCASTABLE(PercussionEvent, TrackEvent);
         STREAM_EVENT_ABSTRACT(PercussionEvent);
 
         static GroupingInfo::Category s_percussionEventCategory;
@@ -38,6 +39,7 @@ namespace bw_music {
 
     /// The start of a percussion event.
     struct PercussionOnEvent : public PercussionEvent {
+        DOWNCASTABLE(PercussionOnEvent, PercussionEvent);
         STREAM_EVENT(PercussionOnEvent);
         PercussionOnEvent(ModelDuration timeSinceLastEvent, babelwires::ShortId instrument, Velocity velocity = 127)
             : PercussionEvent(timeSinceLastEvent, instrument, velocity) {}
@@ -48,6 +50,7 @@ namespace bw_music {
 
     /// The end of a percussion event.
     struct PercussionOffEvent : public PercussionEvent {
+        DOWNCASTABLE(PercussionOffEvent, PercussionEvent);
         STREAM_EVENT(PercussionOffEvent);
         PercussionOffEvent(ModelDuration timeSinceLastEvent, babelwires::ShortId instrument, Velocity velocity = 64)
             : PercussionEvent(timeSinceLastEvent, instrument, velocity) {}

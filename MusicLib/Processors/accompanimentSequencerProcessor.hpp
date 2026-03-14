@@ -18,6 +18,7 @@ namespace bw_music {
     /// Input type: record with AccompTracks (record) and ChordTrack (track)
     class AccompanimentSequencerProcessorInput : public babelwires::GenericType {
       public:
+        DOWNCASTABLE(AccompanimentSequencerProcessorInput, babelwires::GenericType);
         REGISTERED_TYPE("AccompSeqIn", "Accompaniment Sequencer Input",
                         "c5f8e3b7-8d4a-4b2e-9c1f-7a6d5e2b8a0f", 1);
 
@@ -36,6 +37,7 @@ namespace bw_music {
 
     class AccompanimentSequencerProcessorOutput : public babelwires::GenericType {
       public:
+        DOWNCASTABLE(AccompanimentSequencerProcessorOutput, babelwires::GenericType);
         REGISTERED_TYPE("AccompSeqOut", "Accompaniment Sequencer Output",
                         "f7e3a9c2-1b5f-4c3d-8e2a-6f4d7a1c5b9e", 1);
 

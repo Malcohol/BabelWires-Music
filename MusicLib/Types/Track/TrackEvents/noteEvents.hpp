@@ -13,6 +13,7 @@ namespace bw_music {
 
     /// Base type for note events.
     struct NoteEvent : public TrackEvent {
+        DOWNCASTABLE(NoteEvent, TrackEvent);
         STREAM_EVENT_ABSTRACT(NoteEvent);
         NoteEvent(ModelDuration timeSinceLastEvent, Pitch pitch, Velocity velocity)
             : TrackEvent(timeSinceLastEvent)
@@ -37,6 +38,7 @@ namespace bw_music {
 
     /// The start of a musical note.
     struct NoteOnEvent : public NoteEvent {
+        DOWNCASTABLE(NoteOnEvent, NoteEvent);
         STREAM_EVENT(NoteOnEvent);
         static constexpr const Velocity c_defaultVelocity = 127;
         NoteOnEvent(ModelDuration timeSinceLastEvent, Pitch pitch, Velocity velocity = c_defaultVelocity)
@@ -49,6 +51,7 @@ namespace bw_music {
 
     /// The end of a musical note.
     struct NoteOffEvent : public NoteEvent {
+        DOWNCASTABLE(NoteOffEvent, NoteEvent);
         STREAM_EVENT(NoteOffEvent);
         static constexpr const Velocity c_defaultVelocity = 64;
         NoteOffEvent(ModelDuration timeSinceLastEvent, Pitch pitch, Velocity velocity = c_defaultVelocity)

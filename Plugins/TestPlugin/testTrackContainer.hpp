@@ -13,6 +13,7 @@ namespace bw_music_testplugin {
     /// A type that contains some tracks and other fields for testing.
     class TestTrackContainer : public babelwires::RecordType {
       public:
+        DOWNCASTABLE(TestTrackContainer, babelwires::RecordType);
         REGISTERED_TYPE("TrackContainer", "Test Track Container", "2bfd356b-7974-4769-8a64-ef934c44a5a0", 1);
         TestTrackContainer(const babelwires::TypeSystem& typeSystem);
 

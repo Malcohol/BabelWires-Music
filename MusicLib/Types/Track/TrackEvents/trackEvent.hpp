@@ -27,6 +27,7 @@ namespace bw_music {
     /// and a noteOff event, all sharing the same pitch.
     class TrackEvent : public babelwires::StreamEvent {
       public:
+        DOWNCASTABLE(TrackEvent, babelwires::StreamEvent);
         STREAM_EVENT_ABSTRACT(TrackEvent);
         TrackEvent() = default;
         TrackEvent(ModelDuration timeSinceLastEvent) : m_timeSinceLastEvent(timeSinceLastEvent) {}

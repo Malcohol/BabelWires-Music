@@ -229,6 +229,7 @@ namespace bw_music {
     /// mapping to pitch values.
     class BuiltInPercussionInstruments : public babelwires::EnumType {
       public:
+        DOWNCASTABLE(BuiltInPercussionInstruments, babelwires::EnumType);
         REGISTERED_TYPE("BuiltInPerc", "Built In Percussion", "c67f1a9e-653d-42b5-bf73-1fdc2f8a9b1a", 1);
 
         BuiltInPercussionInstruments();

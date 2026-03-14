@@ -36,6 +36,7 @@ namespace smf {
     /// the smaller became the larger.
     class MidiTrackAndChannel : public babelwires::RecordType {
       public:
+        DOWNCASTABLE(MidiTrackAndChannel, babelwires::RecordType);
         REGISTERED_TYPE("TrackChannel", "Track and Channel", "5e9b395c-ec13-4bdb-9b2b-b060ba7fb707", 1);
         MidiTrackAndChannel(const babelwires::TypeSystem& typeSystem);
 

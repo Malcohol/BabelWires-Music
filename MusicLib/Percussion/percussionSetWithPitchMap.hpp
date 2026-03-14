@@ -23,6 +23,7 @@ namespace bw_music {
     /// although instruments registered elsewhere are also supported.
     class PercussionSetWithPitchMap : public babelwires::EnumType {
       public:
+        DOWNCASTABLE(PercussionSetWithPitchMap, babelwires::EnumType);
         /// A block of instruments which have contiguous pitches.
         struct InstrumentBlock {
           /// For convenience, you can directly reference built-in percussion instruments.
