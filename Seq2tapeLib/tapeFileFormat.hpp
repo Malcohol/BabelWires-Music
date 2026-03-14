@@ -7,9 +7,11 @@
  **/
 #pragma once
 
+#include <Seq2tapeLib/tapeFile.hpp>
+
 #include <BaseLib/Registry/fileTypeRegistry.hpp>
 #include <BaseLib/productInfo.hpp>
-#include <Seq2tapeLib/tapeFile.hpp>
+#include <BaseLib/Result/result.hpp>
 
 #include <memory>
 #include <vector>
@@ -28,9 +30,9 @@ namespace seq2tape {
         TapeFileFormat(babelwires::LongId identifier, babelwires::VersionNumber version,
                        Extensions extensions);
 
-        virtual std::unique_ptr<TapeFile::DataFile> loadFromAudio(babelwires::AudioSource& source) const = 0;
+        virtual babelwires::ResultT<std::unique_ptr<TapeFile::DataFile>> loadFromAudio(babelwires::AudioSource& source) const = 0;
 
-        virtual void writeToAudio(const TapeFile::DataFile& tapefile, babelwires::AudioDest& dest) const = 0;
+        virtual babelwires::Result writeToAudio(const TapeFile::DataFile& tapefile, babelwires::AudioDest& dest) const = 0;
     };
 
     struct TapeFileFormatRegistry : babelwires::FileTypeRegistry<TapeFileFormat> {

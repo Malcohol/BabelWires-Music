@@ -81,10 +81,10 @@ babelwires::Result convertMode(const Context& context, const ProgramOptions::Con
                 return babelwires::Error() << "You cannot set copyright when writing an audio file";
             }
 
-            inFormat->writeToAudio(tapeFile->getDataFile(0), **outfile);
+            DO_OR_ERROR(inFormat->writeToAudio(tapeFile->getDataFile(0), **outfile));
             for (int i = 1; i < numDataFiles; ++i) {
                 // TODO interfile gap.
-                inFormat->writeToAudio(tapeFile->getDataFile(i), **outfile);
+                DO_OR_ERROR(inFormat->writeToAudio(tapeFile->getDataFile(i), **outfile));
             }
         }
     } else if (auto outFormat = context.m_tapeFileRegistry.getEntryByFileName(convertOptions.m_outputFileName)) {
@@ -100,7 +100,7 @@ babelwires::Result convertMode(const Context& context, const ProgramOptions::Con
             tapeFile->setName(convertOptions.m_sequenceName);
         }
         tapeFile->setCopyright(convertOptions.m_copyright);
-        std::unique_ptr<seq2tape::TapeFile::DataFile> dataFile = outFormat->loadFromAudio(*fileCallback);
+        ASSIGN_OR_ERROR(std::unique_ptr<seq2tape::TapeFile::DataFile> dataFile, outFormat->loadFromAudio(*fileCallback));
         tapeFile->addDataFile(std::move(dataFile));
         ASSIGN_OR_ERROR(auto outfile, babelwires::FileDataSink::open(convertOptions.m_outputFileName.c_str()));
         tapeFile->write(outfile);
@@ -139,10 +139,10 @@ babelwires::Result playbackMode(const Context& context, const ProgramOptions::Pl
     }
     std::cout << "Format: " << inFormat->getName() << ".\n";
     std::cout << "Playing file " << 1 << "/" << numDataFiles << ".\n";
-    inFormat->writeToAudio(tapeFile->getDataFile(0), *audioDest);
+    DO_OR_ERROR(inFormat->writeToAudio(tapeFile->getDataFile(0), *audioDest));
     for (int i = 1; i < numDataFiles; ++i) {
         // TODO interfile gap.
-        inFormat->writeToAudio(tapeFile->getDataFile(i), *audioDest);
+        DO_OR_ERROR(inFormat->writeToAudio(tapeFile->getDataFile(i), *audioDest));
         std::cout << "Playing file " << i + 1 << "/" << numDataFiles << ".\n";
     }
     return {};
@@ -165,7 +165,7 @@ babelwires::Result captureMode(const Context& context, const ProgramOptions::Cap
     }
     tapeFile->setCopyright(captureOptions.m_copyright);
     for (int i = 0; i < captureOptions.m_numDataFiles; ++i) {
-        std::unique_ptr<seq2tape::TapeFile::DataFile> dataFile = outFormat->loadFromAudio(*audioSource);
+        ASSIGN_OR_ERROR(std::unique_ptr<seq2tape::TapeFile::DataFile> dataFile, outFormat->loadFromAudio(*audioSource));
         tapeFile->addDataFile(std::move(dataFile));
     }
     tapeFile->write(outFile);
