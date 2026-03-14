@@ -11,6 +11,7 @@
 #include <Tests/BabelWiresLib/TestUtils/testEnvironment.hpp>
 
 TEST(TrackType, defaultTrackTypeCreateValue) {
+    testUtils::TestLog log;
     babelwires::TypeSystem typeSystem;
     bw_music::DefaultTrackType trackType;
 
@@ -23,6 +24,7 @@ TEST(TrackType, defaultTrackTypeCreateValue) {
 }
 
 TEST(TrackType, defaultTrackTypeIsValidValue) {
+    testUtils::TestLog log;
     babelwires::TypeSystem typeSystem;
     bw_music::DefaultTrackType trackType;
 
@@ -33,12 +35,14 @@ TEST(TrackType, defaultTrackTypeIsValidValue) {
 }
 
 TEST(TrackType, defaultTrackGetKindIsSet) {
+    testUtils::TestLog log;
     bw_music::DefaultTrackType trackType;
 
     EXPECT_FALSE(trackType.getFlavour().empty());
 }
 
 TEST(TrackType, constructedTrackTypeCreateValue) {
+    testUtils::TestLog log;
     testUtils::TestEnvironment testEnvironment;
     testEnvironment.m_typeSystem.addTypeConstructor<bw_music::TrackTypeConstructor>();
 

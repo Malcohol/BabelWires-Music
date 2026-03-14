@@ -3,6 +3,7 @@
 namespace testUtils {
 
     struct TestTrackEvent : bw_music::TrackEvent {
+        DOWNCASTABLE(TestTrackEvent, bw_music::TrackEvent);
         STREAM_EVENT(TestTrackEvent);
         TestTrackEvent(bw_music::ModelDuration d, int value = 1)
             : TrackEvent(d)
@@ -13,6 +14,7 @@ namespace testUtils {
     };
 
     struct TestTrackEvent2 : bw_music::TrackEvent {
+        DOWNCASTABLE(TestTrackEvent2, bw_music::TrackEvent);
         STREAM_EVENT(TestTrackEvent2);
         TestTrackEvent2(bw_music::ModelDuration d, float value)
             : TrackEvent(d)
@@ -23,6 +25,7 @@ namespace testUtils {
     };
 
     struct alignas(16) BigTestTrackEvent : bw_music::TrackEvent {
+        DOWNCASTABLE(BigTestTrackEvent, bw_music::TrackEvent);
         STREAM_EVENT(BigTestTrackEvent);
         BigTestTrackEvent(bw_music::ModelDuration d)
             : TrackEvent(d) {}
@@ -41,6 +44,7 @@ namespace testUtils {
     };
 
     struct TestTrackEventWithPayload : bw_music::TrackEvent {
+        DOWNCASTABLE(TestTrackEventWithPayload, bw_music::TrackEvent);
         STREAM_EVENT(TestTrackEventWithPayload);
 
         TestTrackEventWithPayload(bw_music::ModelDuration d, int& payloadDestructionCounter)
