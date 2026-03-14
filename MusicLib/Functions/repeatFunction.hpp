@@ -9,9 +9,11 @@
 
 #include <MusicLib/Types/Track/track.hpp>
 
+#include <BaseLib/Result/result.hpp>
+
 #include <memory>
 
 namespace bw_music {
     /// A function which repeats a section of sequence data a number of times.
-    Track repeatTrack(const Track& trackIn, int count);
+    babelwires::ResultT<Track> repeatTrack(const Track& trackIn, int count);
 } // namespace bw_music

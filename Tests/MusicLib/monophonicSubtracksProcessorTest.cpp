@@ -10,8 +10,10 @@
 #include <MusicLib/libRegistration.hpp>
 
 #include <Tests/BabelWiresLib/TestUtils/testEnvironment.hpp>
+
 #include <Tests/TestUtils/seqTestUtils.hpp>
 #include <Tests/TestUtils/testLog.hpp>
+#include <Tests/TestUtils/resultTestUtils.hpp>
 
 namespace {
     bw_music::Track getSamplePolyphonicTrack() {
@@ -103,8 +105,8 @@ namespace {
 TEST(MonophonicSubtracksProcessorTest, simpleFunction) {
     bw_music::Track track = getSamplePolyphonicTrack();
 
-    bw_music::MonophonicSubtracksResult result =
-        bw_music::getMonophonicSubtracks(track, 2, bw_music::MonophonicSubtracksPolicyEnum::Value::High);
+    BW_ASSERT_RESULT_ASSIGN(bw_music::MonophonicSubtracksResult result,
+        bw_music::getMonophonicSubtracks(track, 2, bw_music::MonophonicSubtracksPolicyEnum::Value::High));
 
     ASSERT_EQ(result.m_noteTracks.size(), 2);
     EXPECT_EQ(result.m_noteTracks[0].getDuration(), 1);
@@ -121,8 +123,8 @@ TEST(MonophonicSubtracksProcessorTest, simpleFunction) {
 TEST(MonophonicSubtracksProcessorTest, FunctionLower) {
     bw_music::Track track = getSamplePolyphonicTrack();
 
-    bw_music::MonophonicSubtracksResult result =
-        bw_music::getMonophonicSubtracks(track, 2, bw_music::MonophonicSubtracksPolicyEnum::Value::Low);
+    BW_ASSERT_RESULT_ASSIGN(bw_music::MonophonicSubtracksResult result,
+        bw_music::getMonophonicSubtracks(track, 2, bw_music::MonophonicSubtracksPolicyEnum::Value::Low));
 
     ASSERT_EQ(result.m_noteTracks.size(), 2);
     EXPECT_EQ(result.m_noteTracks[0].getDuration(), 1);
@@ -139,8 +141,8 @@ TEST(MonophonicSubtracksProcessorTest, FunctionLower) {
 TEST(MonophonicSubtracksProcessorTest, redundantTracks) {
     bw_music::Track track = getSamplePolyphonicTrack();
 
-    bw_music::MonophonicSubtracksResult result =
-        bw_music::getMonophonicSubtracks(track, 3, bw_music::MonophonicSubtracksPolicyEnum::Value::High);
+    BW_ASSERT_RESULT_ASSIGN(bw_music::MonophonicSubtracksResult result,
+        bw_music::getMonophonicSubtracks(track, 3, bw_music::MonophonicSubtracksPolicyEnum::Value::High));
 
     ASSERT_EQ(result.m_noteTracks.size(), 3);
     EXPECT_EQ(result.m_noteTracks[0].getDuration(), 1);
@@ -159,8 +161,8 @@ TEST(MonophonicSubtracksProcessorTest, redundantTracks) {
 TEST(MonophonicSubtracksProcessorTest, eventToOther) {
     bw_music::Track track = getSamplePolyphonicTrack();
 
-    bw_music::MonophonicSubtracksResult result =
-        bw_music::getMonophonicSubtracks(track, 1, bw_music::MonophonicSubtracksPolicyEnum::Value::High);
+    BW_ASSERT_RESULT_ASSIGN(bw_music::MonophonicSubtracksResult result,
+        bw_music::getMonophonicSubtracks(track, 1, bw_music::MonophonicSubtracksPolicyEnum::Value::High));
 
     ASSERT_EQ(result.m_noteTracks.size(), 1);
     EXPECT_EQ(result.m_noteTracks[0].getDuration(), 1);
@@ -188,8 +190,8 @@ TEST(MonophonicSubtracksProcessorTest, eventToOther) {
 TEST(MonophonicSubtracksProcessorTest, higherPitchesEvictOneTrack) {
     bw_music::Track track = getStaggeredPolyphonicTrack();
 
-    bw_music::MonophonicSubtracksResult result =
-        bw_music::getMonophonicSubtracks(track, 1, bw_music::MonophonicSubtracksPolicyEnum::Value::HighEv);
+    BW_ASSERT_RESULT_ASSIGN(bw_music::MonophonicSubtracksResult result,
+        bw_music::getMonophonicSubtracks(track, 1, bw_music::MonophonicSubtracksPolicyEnum::Value::HighEv));
 
     ASSERT_EQ(result.m_noteTracks.size(), 1);
     EXPECT_EQ(result.m_noteTracks[0].getDuration(), babelwires::Rational(11, 4));
@@ -226,8 +228,8 @@ TEST(MonophonicSubtracksProcessorTest, higherPitchesEvictOneTrack) {
 TEST(MonophonicSubtracksProcessorTest, higherPitchesEvictTwoTracks) {
     bw_music::Track track = getStaggeredPolyphonicTrack();
 
-    bw_music::MonophonicSubtracksResult result =
-        bw_music::getMonophonicSubtracks(track, 2, bw_music::MonophonicSubtracksPolicyEnum::Value::HighEv);
+    BW_ASSERT_RESULT_ASSIGN(bw_music::MonophonicSubtracksResult result,
+        bw_music::getMonophonicSubtracks(track, 2, bw_music::MonophonicSubtracksPolicyEnum::Value::HighEv));
 
     ASSERT_EQ(result.m_noteTracks.size(), 2);
     EXPECT_EQ(result.m_noteTracks[0].getDuration(), babelwires::Rational(11, 4));
@@ -270,8 +272,8 @@ TEST(MonophonicSubtracksProcessorTest, higherPitchesEvictTwoTracks) {
 TEST(MonophonicSubtracksProcessorTest, lowerPitchesEvictOneTrack) {
     bw_music::Track track = getStaggeredPolyphonicTrack2();
 
-    bw_music::MonophonicSubtracksResult result =
-        bw_music::getMonophonicSubtracks(track, 1, bw_music::MonophonicSubtracksPolicyEnum::Value::LowEv);
+    BW_ASSERT_RESULT_ASSIGN(bw_music::MonophonicSubtracksResult result,
+        bw_music::getMonophonicSubtracks(track, 1, bw_music::MonophonicSubtracksPolicyEnum::Value::LowEv));
 
     ASSERT_EQ(result.m_noteTracks.size(), 1);
     EXPECT_EQ(result.m_noteTracks[0].getDuration(), babelwires::Rational(11, 4));
@@ -308,8 +310,8 @@ TEST(MonophonicSubtracksProcessorTest, lowerPitchesEvictOneTrack) {
 TEST(MonophonicSubtracksProcessorTest, lowerPitchesEvictTwoTracks) {
     bw_music::Track track = getStaggeredPolyphonicTrack2();
 
-    bw_music::MonophonicSubtracksResult result =
-        bw_music::getMonophonicSubtracks(track, 2, bw_music::MonophonicSubtracksPolicyEnum::Value::LowEv);
+    BW_ASSERT_RESULT_ASSIGN(bw_music::MonophonicSubtracksResult result,
+        bw_music::getMonophonicSubtracks(track, 2, bw_music::MonophonicSubtracksPolicyEnum::Value::LowEv));
 
     ASSERT_EQ(result.m_noteTracks.size(), 2);
     EXPECT_EQ(result.m_noteTracks[0].getDuration(), babelwires::Rational(11, 4));

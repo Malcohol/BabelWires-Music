@@ -41,7 +41,7 @@ class BuildAccompanimentTest : public MusicLibTestFixture {
         babelwires::ValueHolder inputValue = input.getValue();
         const auto& inputType = typeSystem.getRegisteredType<bw_music::BuildAccompanimentProcessorInput>();
         inputType->setTypeVariableAssignmentAndInstantiate(typeSystem, inputValue, {type});
-        input.setValue(inputValue);
+        input.assertSetValue(inputValue);
     }
 
     void setInputValues(const std::set<bw_music::ChordType::Value>& chordTypes, babelwires::ValueHolder inputTracks) {
@@ -63,7 +63,7 @@ class BuildAccompanimentTest : public MusicLibTestFixture {
     const babelwires::ValueTreeNode& getAccompanimentOutput() {
         const auto& typeSystem = m_testEnv.m_projectContext.m_typeSystem;
         const babelwires::ValueTreeRoot& output = m_processor.getOutput();
-        return followPath(
+        return babelwires::assertFollowPath(
             babelwires::Path({babelwires::PathStep(babelwires::GenericType::getStepToValue()),
                               babelwires::PathStep(bw_music::BuildAccompanimentProcessorOutput::getIdOfResult())}),
             output);
@@ -111,7 +111,7 @@ TEST_F(BuildAccompanimentTest, testTrackContainerTest) {
     instantiateInputTypeVariable(bw_music_testplugin::TestTrackContainer::getThisIdentifier());
 
     const auto& testTrackContainerType = typeSystem.getRegisteredType<bw_music_testplugin::TestTrackContainer>();
-    babelwires::ValueTreeRoot inputTracks(typeSystem, bw_music_testplugin::TestTrackContainer::getThisIdentifier());
+    babelwires::ValueTreeRoot inputTracks(typeSystem, typeSystem.getRegisteredType<bw_music_testplugin::TestTrackContainer>());
     bw_music_testplugin::TestTrackContainer::Instance inputTracksInstance(inputTracks);
     inputTracksInstance.gettrack1().set(testUtils::getTrackOfSimpleNotes({60, 62, 64, 67, 71}));
     inputTracksInstance.gettrack2().set(testUtils::getTrackOfSimpleNotes({71, 67, 64, 62, 60}));

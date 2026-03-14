@@ -9,6 +9,7 @@
 
 #include <BaseLib/common.hpp>
 #include <BaseLib/Identifiers/identifier.hpp>
+#include <BaseLib/Result/result.hpp>
 
 #include <memory>
 #include <string>
@@ -17,6 +18,7 @@ namespace babelwires {
     struct AudioSource;
     struct AudioDest;
     class DataSource;
+    class DataSink;
 } // namespace babelwires
 
 namespace seq2tape {
@@ -29,11 +31,10 @@ namespace seq2tape {
         /// Construct an empty TapeFile for the given format.
         TapeFile(babelwires::LongId formatIdentifier);
 
-        /// Load the TapeFile from the data stream.
-        TapeFile(babelwires::DataSource& dataSource);
+        static babelwires::ResultT<TapeFile> load(babelwires::DataSource& dataSource);
 
-        /// Write the PmcTapFile as bytes to the stream.
-        void write(std::ostream& stream) const;
+        /// Write the PmcTapFile as bytes to the sink.
+        void write(babelwires::DataSink& dataSink) const;
 
         babelwires::LongId getFormatIdentifier() const;
 
@@ -49,6 +50,10 @@ namespace seq2tape {
         int getNumDataFiles() const;
         const DataFile& getDataFile(int i) const;
         void addDataFile(std::unique_ptr<DataFile> dataFile);
+
+      private:
+        /// Load the TapeFile from the data stream.
+        TapeFile() = default;
 
       protected:
         babelwires::LongId m_formatIdentifier;

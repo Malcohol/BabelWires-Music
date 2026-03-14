@@ -7,6 +7,11 @@
  **/
 #include <MusicLib/Processors/fingeredChordsProcessor.hpp>
 
+#include <BabelWiresLib/Project/projectContext.hpp>
+#include <BabelWiresLib/TypeSystem/typeSystem.hpp>
+
+#include <BaseLib/Result/resultDSL.hpp>
+
 bw_music::FingeredChordsProcessorInput::FingeredChordsProcessorInput(const babelwires::TypeSystem& typeSystem)
     : babelwires::RecordType(getThisIdentifier(), typeSystem, {{BW_SHORT_ID("Policy", "Policy", "a1dd2ae0-e91e-40fe-af4a-c74f2c7d978a"),
                                bw_music::FingeredChordsSustainPolicyEnum::getThisIdentifier()},
@@ -19,15 +24,17 @@ bw_music::FingeredChordsProcessorOutput::FingeredChordsProcessorOutput(const bab
 
 
 bw_music::FingeredChordsProcessor::FingeredChordsProcessor(const babelwires::ProjectContext& projectContext)
-    : Processor(projectContext, FingeredChordsProcessorInput::getThisIdentifier(),
-                     FingeredChordsProcessorOutput::getThisIdentifier()) {}
+    : Processor(projectContext, projectContext.m_typeSystem.getRegisteredType<FingeredChordsProcessorInput>(),
+                     projectContext.m_typeSystem.getRegisteredType<FingeredChordsProcessorOutput>()) {}
 
-void bw_music::FingeredChordsProcessor::processValue(babelwires::UserLogger& userLogger,
+babelwires::Result bw_music::FingeredChordsProcessor::processValue(babelwires::UserLogger& userLogger,
                                                       const babelwires::ValueTreeNode& input,
                                                       babelwires::ValueTreeNode& output) const {
     FingeredChordsProcessorInput::ConstInstance in{input};
     if (in->isChanged(babelwires::ValueTreeNode::Changes::SomethingChanged)) {
         FingeredChordsProcessorOutput::Instance out{output};
-        out.getChords().set(fingeredChordsFunction(in.getNotes().get(), in.getPolicy().get()));
+        ASSIGN_OR_ERROR(auto track, fingeredChordsFunction(in.getNotes().get(), in.getPolicy().get()));
+        out.getChords().set(std::move(track));
     }
+    return {};
 }

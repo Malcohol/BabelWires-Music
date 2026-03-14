@@ -7,12 +7,12 @@
 #include <Plugins/Smf/Plugin/smfWriter.hpp>
 
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
-#include <MusicLib/libRegistration.hpp>
 #include <MusicLib/Types/Track/trackBuilder.hpp>
+#include <MusicLib/libRegistration.hpp>
 
 #include <BabelWiresLib/Instance/arrayTypeInstance.hpp>
-#include <BabelWiresLib/libRegistration.hpp>
 #include <BabelWiresLib/Types/File/fileTypeT.hpp>
+#include <BabelWiresLib/libRegistration.hpp>
 
 #include <BaseLib/IO/fileDataSource.hpp>
 
@@ -31,7 +31,9 @@ TEST(SmfSaveLoadTest, cMajorScale) {
 
     const std::vector<bw_music::Pitch> pitches{60, 62, 64, 65, 67, 69, 71, 72};
     {
-        babelwires::ValueTreeRoot smfFeature(testEnvironment.m_projectContext.m_typeSystem, babelwires::FileTypeT<smf::SmfSequence>::getThisIdentifier());
+        babelwires::ValueTreeRoot smfFeature(
+            testEnvironment.m_projectContext.m_typeSystem,
+            babelwires::FileTypeT<smf::SmfSequence>::getType(testEnvironment.m_projectContext.m_typeSystem));
         smfFeature.setToDefault();
 
         babelwires::FileTypeT<smf::SmfSequence>::Instance smfSequence{smfFeature};
@@ -48,10 +50,14 @@ TEST(SmfSaveLoadTest, cMajorScale) {
     }
 
     {
-        babelwires::FileDataSource midiFile(tempFile);
+        auto midiFileResult = babelwires::FileDataSource::open(tempFile);
+        ASSERT_TRUE(midiFileResult.has_value());
+        auto midiFile = std::move(*midiFileResult);
 
-        const auto feature = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
-        ASSERT_NE(feature, nullptr);
+        auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+        ASSERT_TRUE(midiFile.close().has_value());
+        ASSERT_TRUE(result.has_value());
+        const auto& feature = *result;
         smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
         ASSERT_EQ(smfSequence.getInstanceType().getIndexOfTag(smfSequence.getSelectedTag()), 0);
 
@@ -111,8 +117,10 @@ TEST(SmfSaveLoadTest, cMajorScaleWithMetadata) {
     for (std::uint8_t metadata = 0; metadata < 8; ++metadata) {
         testUtils::TempFilePath tempFile("cMajorWithMetadata.mid", metadata);
         {
-            babelwires::ValueTreeRoot smfFeature(testEnvironment.m_projectContext.m_typeSystem,
-                                                      babelwires::FileTypeT<smf::SmfSequence>::getThisIdentifier());
+            babelwires::ValueTreeRoot smfFeature(
+                testEnvironment.m_projectContext.m_typeSystem,
+                babelwires::FileTypeT<smf::SmfSequence>::getType(
+                    testEnvironment.m_projectContext.m_typeSystem));
             smfFeature.setToDefault();
 
             smf::SmfSequence::Instance smfType{smfFeature.getChild(0)->as<babelwires::ValueTreeNode>()};
@@ -130,10 +138,14 @@ TEST(SmfSaveLoadTest, cMajorScaleWithMetadata) {
             smf::writeToSmf(testEnvironment.m_projectContext, testEnvironment.m_log, smfFeature, os);
         }
 
-        babelwires::FileDataSource midiFile(tempFile);
+        auto midiFileResult = babelwires::FileDataSource::open(tempFile);
+        ASSERT_TRUE(midiFileResult.has_value());
+        auto midiFile = std::move(*midiFileResult);
 
-        const auto feature = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
-        ASSERT_NE(feature, nullptr);
+        auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+        ASSERT_TRUE(midiFile.close().has_value());
+        ASSERT_TRUE(result.has_value());
+        const auto& feature = *result;
 
         smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
         ASSERT_EQ(smfSequence.getInstanceType().getIndexOfTag(smfSequence.getSelectedTag()), 0);
@@ -164,7 +176,9 @@ TEST(SmfSaveLoadTest, format0Chords) {
     const char* trackName[3] = {"ch0", "ch1", "ch2"};
 
     {
-        babelwires::ValueTreeRoot smfFeature(testEnvironment.m_projectContext.m_typeSystem, babelwires::FileTypeT<smf::SmfSequence>::getThisIdentifier());
+        babelwires::ValueTreeRoot smfFeature(testEnvironment.m_projectContext.m_typeSystem,
+                                             babelwires::FileTypeT<smf::SmfSequence>::getType(
+                                                 testEnvironment.m_projectContext.m_typeSystem));
         smfFeature.setToDefault();
 
         smf::SmfSequence::Instance smfType{smfFeature.getChild(0)->as<babelwires::ValueTreeNode>()};
@@ -182,10 +196,14 @@ TEST(SmfSaveLoadTest, format0Chords) {
     }
 
     {
-        babelwires::FileDataSource midiFile(tempFile);
+        auto midiFileResult = babelwires::FileDataSource::open(tempFile);
+        ASSERT_TRUE(midiFileResult.has_value());
+        auto midiFile = std::move(*midiFileResult);
 
-        const auto feature = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
-        ASSERT_NE(feature, nullptr);
+        auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+        ASSERT_TRUE(midiFile.close().has_value());
+        ASSERT_TRUE(result.has_value());
+        const auto& feature = *result;
 
         smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
         ASSERT_EQ(smfSequence.getInstanceType().getIndexOfTag(smfSequence.getSelectedTag()), 0);
@@ -210,7 +228,9 @@ TEST(SmfSaveLoadTest, format1Chords) {
     const char* trackName[3] = {"ch0", "ch1", "ch2"};
 
     {
-        babelwires::ValueTreeRoot smfFeature(testEnvironment.m_projectContext.m_typeSystem, babelwires::FileTypeT<smf::SmfSequence>::getThisIdentifier());
+        babelwires::ValueTreeRoot smfFeature(testEnvironment.m_projectContext.m_typeSystem,
+                                             babelwires::FileTypeT<smf::SmfSequence>::getType(
+                                                 testEnvironment.m_projectContext.m_typeSystem));
         smfFeature.setToDefault();
 
         smf::SmfSequence::Instance smfType{smfFeature.getChild(0)->as<babelwires::ValueTreeNode>()};
@@ -232,10 +252,14 @@ TEST(SmfSaveLoadTest, format1Chords) {
     }
 
     {
-        babelwires::FileDataSource midiFile(tempFile);
+        auto midiFileResult = babelwires::FileDataSource::open(tempFile);
+        ASSERT_TRUE(midiFileResult.has_value());
+        auto midiFile = std::move(*midiFileResult);
 
-        const auto feature = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
-        ASSERT_NE(feature, nullptr);
+        auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+        ASSERT_TRUE(midiFile.close().has_value());
+        ASSERT_TRUE(result.has_value());
+        const auto& feature = *result;
 
         smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
         ASSERT_EQ(smfSequence.getInstanceType().getIndexOfTag(smfSequence.getSelectedTag()), 1);

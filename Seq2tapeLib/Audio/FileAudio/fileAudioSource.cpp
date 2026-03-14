@@ -7,22 +7,19 @@
  **/
 #include <Seq2tapeLib/Audio/FileAudio/fileAudioSource.hpp>
 
+#include <BaseLib/Result/error.hpp>
+
 #include <sndfile.h>
 
 #include <assert.h>
 #include <stdexcept>
 
 struct babelwires::FileAudioSource::Impl {
-    Impl(const char* fileName) {
-        m_info.format = 0;
-        m_sndFile = sf_open(fileName, SFM_READ, &m_info);
+    Impl(SF_INFO info, SNDFILE* sndFile)
+        : m_info(info)
+        , m_sndFile(sndFile) {}
 
-        if (m_sndFile) {
 
-        } else {
-            throw FileIoException() << getErrorString();
-        }
-    }
 
     ~Impl() {
         if (m_sndFile) {
@@ -39,8 +36,20 @@ struct babelwires::FileAudioSource::Impl {
     SNDFILE* m_sndFile;
 };
 
-babelwires::FileAudioSource::FileAudioSource(const char* fileName)
-    : m_impl(new Impl(fileName)) {}
+babelwires::ResultT<babelwires::FileAudioSource> babelwires::FileAudioSource::open(const char* fileName) {
+    SF_INFO info;
+    info.format = 0;
+    SNDFILE* sndFile = sf_open(fileName, SFM_READ, &info);
+
+    if (!sndFile) {
+        return babelwires::Error() << "Failed to open file \"" << fileName << "\" for reading: " << sf_strerror(sndFile);
+    }
+
+    return FileAudioSource(std::make_unique<Impl>(info, sndFile));
+}
+
+babelwires::FileAudioSource::FileAudioSource(std::unique_ptr<Impl> impl)
+    : m_impl(std::move(impl)) {}
 
 babelwires::FileAudioSource::~FileAudioSource() {
     // Required out-of-line, because of the unique_ptr.

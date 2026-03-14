@@ -10,14 +10,16 @@
 #include <MusicLib/Types/Track/trackBuilder.hpp>
 
 #include <Tests/BabelWiresLib/TestUtils/testEnvironment.hpp>
+
 #include <Tests/TestUtils/seqTestUtils.hpp>
+#include <Tests/TestUtils/resultTestUtils.hpp>
 
 TEST(RepeatProcessorTest, funcSimpleZero) {
     bw_music::TrackBuilder trackIn;
 
     testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65}, trackIn);
 
-    auto trackOut = bw_music::repeatTrack(trackIn.finishAndGetTrack(), 0);
+    BW_ASSERT_RESULT_ASSIGN(auto trackOut, bw_music::repeatTrack(trackIn.finishAndGetTrack(), 0));
 
     EXPECT_EQ(trackOut.getNumEvents(), 0);
     EXPECT_EQ(trackOut.getDuration(), 0);
@@ -28,7 +30,7 @@ TEST(RepeatProcessorTest, funcSimpleOnce) {
 
     testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65}, trackIn);
 
-    auto trackOut = bw_music::repeatTrack(trackIn.finishAndGetTrack(), 1);
+    BW_ASSERT_RESULT_ASSIGN(auto trackOut, bw_music::repeatTrack(trackIn.finishAndGetTrack(), 1));
 
     testUtils::testSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65}, trackOut);
 }
@@ -38,7 +40,7 @@ TEST(RepeatProcessorTest, funcSimpleTwice) {
 
     testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65}, trackIn);
 
-    auto trackOut = bw_music::repeatTrack(trackIn.finishAndGetTrack(), 2);
+    BW_ASSERT_RESULT_ASSIGN(auto trackOut, bw_music::repeatTrack(trackIn.finishAndGetTrack(), 2));
 
     testUtils::testSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65, 60, 62, 64, 65}, trackOut);
 }
@@ -56,11 +58,9 @@ TEST(RepeatProcessorTest, processor) {
     const babelwires::ValueTreeNode& output = processor.getOutput();
 
     babelwires::ValueTreeNode& inputArray =
-        input.getChildFromStep(bw_music::RepeatProcessor::getCommonArrayId())
-            .as<babelwires::ValueTreeNode>();
+        input.assertGetChildFromStep(bw_music::RepeatProcessor::getCommonArrayId());
     const babelwires::ValueTreeNode& outputArray =
-        output.getChildFromStep(bw_music::RepeatProcessor::getCommonArrayId())
-            .as<babelwires::ValueTreeNode>();
+        output.assertGetChildFromStep(bw_music::RepeatProcessor::getCommonArrayId());
 
     babelwires::ArrayInstanceImpl<babelwires::ValueTreeNode, bw_music::TrackType> inArray(inputArray);
     const babelwires::ArrayInstanceImpl<const babelwires::ValueTreeNode, bw_music::TrackType> outArray(

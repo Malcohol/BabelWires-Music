@@ -44,7 +44,7 @@ namespace bw_music {
 
         GetChordTypesProcessor(const babelwires::ProjectContext& projectContext);
       protected:
-        void processValue(babelwires::UserLogger& userLogger, const babelwires::ValueTreeNode& input,
+        babelwires::Result processValue(babelwires::UserLogger& userLogger, const babelwires::ValueTreeNode& input,
                           babelwires::ValueTreeNode& output) const override;
     };
 

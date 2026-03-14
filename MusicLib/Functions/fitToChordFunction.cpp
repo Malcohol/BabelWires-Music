@@ -173,7 +173,7 @@ namespace {
 
 } // namespace
 
-bw_music::Track bw_music::fitToChordFunction(const Track& sourceTrack, const Chord& chord) {
+babelwires::ResultT<bw_music::Track> bw_music::fitToChordFunction(const Track& sourceTrack, const Chord& chord) {
     const PitchMap pitchMap(chord);
 
     return fitToChordFunctionInternal(pitchMap, sourceTrack, chord);

@@ -7,6 +7,8 @@
  **/
 #include <MusicLib/Types/Track/track.hpp>
 
+#include <BaseLib/Result/result.hpp>
+
 namespace babelwires {
     class MapValue;
     class TypeSystem;
@@ -19,5 +21,5 @@ namespace bw_music {
     /// Apply maps to chord events in the track.
     /// You can specify a chord that should be active when no chord in the sourceTrack is active
     /// by having blanks in the source map.
-    Track mapChordsFunction(const babelwires::TypeSystem& typeSystem, const Track& sourceTrack, const babelwires::MapValue& chordMapValue);
+    babelwires::ResultT<Track> mapChordsFunction(const babelwires::TypeSystem& typeSystem, const Track& sourceTrack, const babelwires::MapValue& chordMapValue);
 }

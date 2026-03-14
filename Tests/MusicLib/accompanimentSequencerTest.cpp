@@ -43,7 +43,7 @@ class AccompanimentSequencerTest : public MusicLibTestFixture {
                                                            {bw_music_testplugin::TestTrackContainer::getThisIdentifier()});
         babelwires::ValueHolder simpleAccompanimentValue =
             typeSystem.getRegisteredType<bw_music_testplugin::SimpleAccompaniment>()->createValue(typeSystem);
-        input.setValue(inputValue);
+        input.assertSetValue(inputValue);
         input.setDescendentValue(
             babelwires::Path(
                 {babelwires::PathStep(babelwires::GenericType::getStepToValue()),
@@ -65,7 +65,7 @@ class AccompanimentSequencerTest : public MusicLibTestFixture {
                                       bw_music::AccompanimentSequencerProcessorOutput::getResultId()});
         pathToTrack.pushStep((i == 0) ? bw_music_testplugin::TestTrackContainer::getTrack1Id()
                                       : bw_music_testplugin::TestTrackContainer::getTrack2Id());
-        return babelwires::followPath(pathToTrack, output).getValue()->as<bw_music::Track>();
+        return babelwires::assertFollowPath(pathToTrack, output).getValue()->as<bw_music::Track>();
     }
 
     bw_music::AccompanimentSequencerProcessor m_processor;

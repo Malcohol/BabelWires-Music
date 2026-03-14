@@ -255,11 +255,11 @@ namespace {
         std::filesystem::path outputFileName;
         outputFileName = std::filesystem::temp_directory_path() / (testName + ".wav");
         std::cerr << "Test wavefile written to " << outputFileName << std::endl;
-        std::unique_ptr<babelwires::AudioDest> audioDest = reg.createFileAudioDest(babelwires::pathToString(outputFileName).c_str(), 1);
-        assert(audioDest);
-        const babelwires::Duration targetFrequency = audioDest->getFrequency();
+        const auto audioDest = reg.createFileAudioDest(babelwires::pathToString(outputFileName).c_str(), 1);
+        ASSERT_TRUE(audioDest);
+        const babelwires::Duration targetFrequency = (*audioDest)->getFrequency();
         // If the frequencies did not agree, we'd have to resample, which would mean the output files did not accurately reflect the data being tested.
-        assert((targetFrequency == c_defaultFreq) && "Can only write test files with available frequency");
+        ASSERT_EQ(targetFrequency, c_defaultFreq) << "Can only write test files with available frequency";
         constexpr std::size_t bufferSize = 2048;
         babelwires::AudioSample buffer[bufferSize];
         TestAudioSource audioSource(scenario);
@@ -267,8 +267,8 @@ namespace {
         unsigned long samplesWritten = 0;
         do {
             samplesRead = audioSource.getMoreAudioData(buffer, bufferSize);
-            samplesWritten = audioDest->writeMoreAudioData(buffer, samplesRead);
-            assert(samplesWritten == samplesRead);
+            samplesWritten = (*audioDest)->writeMoreAudioData(buffer, samplesRead);
+            ASSERT_EQ(samplesWritten, samplesRead);
         } while (samplesRead == bufferSize);
     }
 

@@ -19,7 +19,7 @@ namespace {
     }
 } // namespace
 
-bw_music::Track bw_music::quantize(const Track& trackIn, ModelDuration beat) {
+babelwires::ResultT<bw_music::Track> bw_music::quantize(const Track& trackIn, ModelDuration beat) {
 
     using Group = std::tuple<TrackEvent::GroupingInfo::Category, TrackEvent::GroupingInfo::GroupValue>;
 

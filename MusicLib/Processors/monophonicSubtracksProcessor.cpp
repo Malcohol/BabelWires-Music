@@ -7,8 +7,12 @@
  **/
 #include <MusicLib/Processors/monophonicSubtracksProcessor.hpp>
 
+#include <BabelWiresLib/Project/projectContext.hpp>
+#include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/Array/arrayTypeConstructor.hpp>
 #include <BabelWiresLib/Types/Int/intTypeConstructor.hpp>
+
+#include <BaseLib/Result/resultDSL.hpp>
 
 bw_music::MonophonicSubtracksProcessorInput::MonophonicSubtracksProcessorInput(const babelwires::TypeSystem& typeSystem)
     : babelwires::RecordType(getThisIdentifier(), typeSystem, {{BW_SHORT_ID("NumTrk", "Num subtracks", "30bc74d2-b678-4986-8296-929db40fc8c2"),
@@ -25,10 +29,10 @@ bw_music::MonophonicSubtracksProcessorOutput::MonophonicSubtracksProcessorOutput
            {BW_SHORT_ID("Other", "Other", "bc3a5261-630c-43d7-bda5-f85dd6a1fe2b"), DefaultTrackType::getThisIdentifier()}}) {}
 
 bw_music::MonophonicSubtracksProcessor::MonophonicSubtracksProcessor(const babelwires::ProjectContext& projectContext)
-    : Processor(projectContext, MonophonicSubtracksProcessorInput::getThisIdentifier(),
-                MonophonicSubtracksProcessorOutput::getThisIdentifier()) {}
+    : Processor(projectContext, projectContext.m_typeSystem.getRegisteredType<MonophonicSubtracksProcessorInput>(),
+                projectContext.m_typeSystem.getRegisteredType<MonophonicSubtracksProcessorOutput>()) {}
 
-void bw_music::MonophonicSubtracksProcessor::processValue(babelwires::UserLogger& userLogger,
+babelwires::Result bw_music::MonophonicSubtracksProcessor::processValue(babelwires::UserLogger& userLogger,
                                                           const babelwires::ValueTreeNode& input,
                                                           babelwires::ValueTreeNode& output) const {
     MonophonicSubtracksProcessorInput::ConstInstance in{input};
@@ -36,7 +40,7 @@ void bw_music::MonophonicSubtracksProcessor::processValue(babelwires::UserLogger
         const unsigned int numTracks = in.getNumTrk().get();
         const MonophonicSubtracksPolicyEnum::Value policy = in.getPolicy().get();
         const bw_music::Track& trackIn = in.getInput().get();
-        auto result = getMonophonicSubtracks(trackIn, numTracks, policy);
+        ASSIGN_OR_ERROR(auto result, getMonophonicSubtracks(trackIn, numTracks, policy));
 
         MonophonicSubtracksProcessorOutput::Instance out{output};
         auto tracksOut = out.getSbtrks();
@@ -46,4 +50,5 @@ void bw_music::MonophonicSubtracksProcessor::processValue(babelwires::UserLogger
         }
         out.getOther().set(std::move(result.m_other));
     }
+    return {};
 }

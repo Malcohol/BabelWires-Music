@@ -8,20 +8,31 @@
 
 #pragma once
 
+#include <BaseLib/Result/result.hpp>
+
 #include <alsa/asoundlib.h>
 
 namespace babelwires_alsa {
 
     // Safe version of a snd_pcm_hw_params_t*.
     struct HardwareParameters {
-        HardwareParameters();
+        HardwareParameters() = default;
+        explicit HardwareParameters(snd_pcm_hw_params_t* params);
+
+        HardwareParameters(HardwareParameters&& other) noexcept;
+        HardwareParameters& operator=(HardwareParameters&& other) noexcept;
+
+        HardwareParameters(const HardwareParameters&) = delete;
+        HardwareParameters& operator=(const HardwareParameters&) = delete;
 
         ~HardwareParameters();
 
         operator snd_pcm_hw_params_t*();
 
-        snd_pcm_hw_params_t* m_params;
+        snd_pcm_hw_params_t* m_params = nullptr;
     };
 
-    void checkForError(const char* description, int retCode);
+    babelwires::ResultT<HardwareParameters> createHardwareParameters();
+
+    babelwires::Result checkForError(int retCode, const char* description);
 } // namespace babelwires_alsa

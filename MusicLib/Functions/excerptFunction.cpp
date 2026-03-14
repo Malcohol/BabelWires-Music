@@ -11,7 +11,7 @@
 
 #include <set>
 
-bw_music::Track bw_music::getTrackExcerpt(const Track& trackIn, ModelDuration start,
+babelwires::ResultT<bw_music::Track> bw_music::getTrackExcerpt(const Track& trackIn, ModelDuration start,
                                                            ModelDuration duration) {
     TrackBuilder trackOut;
 

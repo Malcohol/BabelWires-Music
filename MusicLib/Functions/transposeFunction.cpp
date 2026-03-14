@@ -9,9 +9,7 @@
 
 #include <MusicLib/Types/Track/trackBuilder.hpp>
 
-#include <BabelWiresLib/ValueTree/modelExceptions.hpp>
-
-bw_music::Track bw_music::transposeTrack(const Track& trackIn, int pitchOffset, TransposeOutOfRangePolicy outOfRangePolicy) {
+babelwires::ResultT<bw_music::Track> bw_music::transposeTrack(const Track& trackIn, int pitchOffset, TransposeOutOfRangePolicy outOfRangePolicy) {
     assert(pitchOffset >= -127 && "pitchOffset too low");
     assert(pitchOffset <= 127 && "pitchOffset too high");
 

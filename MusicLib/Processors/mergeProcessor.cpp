@@ -9,9 +9,12 @@
 
 #include <MusicLib/Functions/mergeFunction.hpp>
 
+#include <BabelWiresLib/Project/projectContext.hpp>
+#include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/Array/arrayTypeConstructor.hpp>
 
 #include <BaseLib/Identifiers/registeredIdentifier.hpp>
+#include <BaseLib/Result/resultDSL.hpp>
 
 #include <set>
 
@@ -25,9 +28,9 @@ bw_music::MergeProcessorOutput::MergeProcessorOutput(const babelwires::TypeSyste
                                DefaultTrackType::getThisIdentifier()}}) {}
 
 bw_music::MergeProcessor::MergeProcessor(const babelwires::ProjectContext& projectContext)
-    : Processor(projectContext, MergeProcessorInput::getThisIdentifier(), MergeProcessorOutput::getThisIdentifier()) {}
+    : Processor(projectContext, projectContext.m_typeSystem.getRegisteredType<MergeProcessorInput>(), projectContext.m_typeSystem.getRegisteredType<MergeProcessorOutput>()) {}
 
-void bw_music::MergeProcessor::processValue(babelwires::UserLogger& userLogger, const babelwires::ValueTreeNode& input,
+babelwires::Result bw_music::MergeProcessor::processValue(babelwires::UserLogger& userLogger, const babelwires::ValueTreeNode& input,
                                             babelwires::ValueTreeNode& output) const {
     MergeProcessorInput::ConstInstance in{input};
     if (in->isChanged(babelwires::ValueTreeNode::Changes::SomethingChanged)) {
@@ -36,6 +39,8 @@ void bw_music::MergeProcessor::processValue(babelwires::UserLogger& userLogger, 
             tracksIn.emplace_back(&in.getInput().getEntry(i).get());
         }
         MergeProcessorOutput::Instance out{output};
-        out.getOutput().set(mergeTracks(tracksIn));
+        ASSIGN_OR_ERROR(auto track, mergeTracks(tracksIn));
+        out.getOutput().set(std::move(track));
     }
+    return {};
 }

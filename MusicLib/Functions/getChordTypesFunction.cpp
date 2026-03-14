@@ -10,7 +10,7 @@
 #include <MusicLib/Types/Track/track.hpp>
 #include <MusicLib/Types/Track/TrackEvents/chordEvents.hpp>
 
-std::set<bw_music::ChordType::Value> bw_music::getChordTypesFunction(const Track& chordTrack) {
+babelwires::ResultT<std::set<bw_music::ChordType::Value>> bw_music::getChordTypesFunction(const Track& chordTrack) {
     std::set<ChordType::Value> chordTypes;
 
     // Iterate through the chord track and collect unique chord types.

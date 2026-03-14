@@ -17,7 +17,7 @@ TEST(ChordTypeSetTest, getChordTypesFromValue) {
     babelwires::ValueHolder chordSetValue = chordTypeSet->createValue(typeSystem);
     ASSERT_TRUE(chordSetValue);
 
-    chordTypeSet->setSize(typeSystem, chordSetValue, 2);
+    chordTypeSet->assertSetSize(typeSystem, chordSetValue, 2);
 
     // Add C Major and A Minor to the set.
     const auto& chordType = typeSystem.getRegisteredType<bw_music::ChordType>();

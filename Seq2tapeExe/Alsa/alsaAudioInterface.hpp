@@ -19,9 +19,11 @@ namespace babelwires_alsa {
         static babelwires::LongId getThisIdentifier();
 
         virtual std::vector<std::string> getDestinationNames() const override;
-        virtual std::unique_ptr<babelwires::AudioDest> getDestination(std::string_view destinationName) const override;
+        virtual babelwires::ResultT<std::unique_ptr<babelwires::AudioDest>> getDestination(
+            std::string_view destinationName) const override;
         virtual std::vector<std::string> getSourceNames() const override;
-        virtual std::unique_ptr<babelwires::AudioSource> getSource(std::string_view sourceName) const override;
+        virtual babelwires::ResultT<std::unique_ptr<babelwires::AudioSource>> getSource(
+            std::string_view sourceName) const override;
     };
 
 } // namespace babelwires_alsa

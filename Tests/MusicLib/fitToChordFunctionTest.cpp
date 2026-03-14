@@ -10,7 +10,9 @@
 #include <Tests/TestUtils/testTrackEvents.hpp>
 
 #include <Tests/BabelWiresLib/TestUtils/testEnvironment.hpp>
+
 #include <Tests/TestUtils/seqTestUtils.hpp>
+#include <Tests/TestUtils/resultTestUtils.hpp>
 
 class FitToChordFunctionTest : public ::testing::Test {
   protected:
@@ -80,26 +82,26 @@ class FitToChordFunctionTest : public ::testing::Test {
 };
 
 TEST_F(FitToChordFunctionTest, CMajorNoChange) {
-    auto result = bw_music::fitToChordFunction(m_cMajorChordTrack, bw_music::Chord{bw_music::PitchClass::Value::C, bw_music::ChordType::Value::M});
+    BW_ASSERT_RESULT_ASSIGN(auto result, bw_music::fitToChordFunction(m_cMajorChordTrack, bw_music::Chord{bw_music::PitchClass::Value::C, bw_music::ChordType::Value::M}));
     testSimpleTrack(result, 60, 64, 67);
 }
 
 TEST_F(FitToChordFunctionTest, AMinor) {
-    auto result = bw_music::fitToChordFunction(m_cMajorChordTrack, bw_music::Chord{bw_music::PitchClass::Value::A, bw_music::ChordType::Value::m});
+    BW_ASSERT_RESULT_ASSIGN(auto result, bw_music::fitToChordFunction(m_cMajorChordTrack, bw_music::Chord{bw_music::PitchClass::Value::A, bw_music::ChordType::Value::m}));
     testSimpleTrack(result, 57, 60, 64); // A, C, E
 }
 
 TEST_F(FitToChordFunctionTest, GDim) {
-    auto result = bw_music::fitToChordFunction(m_cMajorChordTrack, bw_music::Chord{bw_music::PitchClass::Value::G, bw_music::ChordType::Value::dim});
+    BW_ASSERT_RESULT_ASSIGN(auto result, bw_music::fitToChordFunction(m_cMajorChordTrack, bw_music::Chord{bw_music::PitchClass::Value::G, bw_music::ChordType::Value::dim}));
     testSimpleTrack(result, 55, 58, 61); // G, A#, C#
 }
 
 TEST_F(FitToChordFunctionTest, GMajLowerLimit) {
-    auto result = bw_music::fitToChordFunction(m_lowerLimitTrack, bw_music::Chord{bw_music::PitchClass::Value::G, bw_music::ChordType::Value::M});
+    BW_ASSERT_RESULT_ASSIGN(auto result, bw_music::fitToChordFunction(m_lowerLimitTrack, bw_music::Chord{bw_music::PitchClass::Value::G, bw_music::ChordType::Value::M}));
     testSimpleTrack(result, 7, 11, 2); // G, E, B
 }
 
 TEST_F(FitToChordFunctionTest, FMajUpperLimit) {
-    auto result = bw_music::fitToChordFunction(m_upperLimitTrack, bw_music::Chord{bw_music::PitchClass::Value::F, bw_music::ChordType::Value::M});
+    BW_ASSERT_RESULT_ASSIGN(auto result, bw_music::fitToChordFunction(m_upperLimitTrack, bw_music::Chord{bw_music::PitchClass::Value::F, bw_music::ChordType::Value::M}));
     testSimpleTrack(result, 125, 117, 120); // F, A, C
 }

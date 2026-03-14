@@ -9,7 +9,9 @@
 #include <MusicLib/Types/Track/trackBuilder.hpp>
 
 #include <Tests/BabelWiresLib/TestUtils/testEnvironment.hpp>
+
 #include <Tests/TestUtils/seqTestUtils.hpp>
+#include <Tests/TestUtils/resultTestUtils.hpp>
 
 TEST(QuantizeProcessorTest, funcSimple) {
     bw_music::TrackBuilder trackBuilderIn;
@@ -25,7 +27,7 @@ TEST(QuantizeProcessorTest, funcSimple) {
 
     bw_music::Track trackIn = trackBuilderIn.finishAndGetTrack();
     {
-        auto trackOut = bw_music::quantize(trackIn, babelwires::Rational(1, 2));
+        BW_ASSERT_RESULT_ASSIGN(auto trackOut, bw_music::quantize(trackIn, babelwires::Rational(1, 2)));
         testUtils::testNotes({{60, babelwires::Rational(1, 1)},
                               {62, babelwires::Rational(1, 2)},
                               {64, babelwires::Rational(1, 1)},
@@ -34,7 +36,7 @@ TEST(QuantizeProcessorTest, funcSimple) {
         EXPECT_EQ(trackOut.getDuration(), 4);
     }
     {
-        auto trackOut = bw_music::quantize(trackIn, babelwires::Rational(1, 4));
+        BW_ASSERT_RESULT_ASSIGN(auto trackOut, bw_music::quantize(trackIn, babelwires::Rational(1, 4)));
         testUtils::testNotes({{60, babelwires::Rational(1, 1)},
                               {62, babelwires::Rational(1, 2)},
                               {64, babelwires::Rational(1, 1), babelwires::Rational(1, 4)},
@@ -43,7 +45,7 @@ TEST(QuantizeProcessorTest, funcSimple) {
         EXPECT_EQ(trackOut.getDuration(), 4);
     }
     {
-        auto trackOut = bw_music::quantize(trackIn, babelwires::Rational(1, 8));
+        BW_ASSERT_RESULT_ASSIGN(auto trackOut, bw_music::quantize(trackIn, babelwires::Rational(1, 8)));
         testUtils::testNotes({{60, babelwires::Rational(1, 1)},
                               {62, babelwires::Rational(5, 8)},
                               {64, babelwires::Rational(9, 8)},
@@ -66,7 +68,7 @@ TEST(QuantizeProcessorTest, funcCollapsedGroup) {
         },
         trackIn);
 
-    auto trackOut = bw_music::quantize(trackIn.finishAndGetTrack(), babelwires::Rational(1, 8));
+    BW_ASSERT_RESULT_ASSIGN(auto trackOut, bw_music::quantize(trackIn.finishAndGetTrack(), babelwires::Rational(1, 8)));
     testUtils::testNotes({{60, 1}, {64, 1}, {65, 1}}, trackOut);
 }
 
@@ -83,11 +85,9 @@ TEST(QuantizeProcessorTest, processor) {
     const babelwires::ValueTreeNode& output = processor.getOutput();
 
     babelwires::ValueTreeNode& inputArray =
-        input.getChildFromStep(bw_music::QuantizeProcessor::getCommonArrayId())
-            .as<babelwires::ValueTreeNode>();
+        input.assertGetChildFromStep(bw_music::QuantizeProcessor::getCommonArrayId());
     const babelwires::ValueTreeNode& outputArray =
-        output.getChildFromStep(bw_music::QuantizeProcessor::getCommonArrayId())
-            .as<babelwires::ValueTreeNode>();
+        output.assertGetChildFromStep(bw_music::QuantizeProcessor::getCommonArrayId());
 
     babelwires::ArrayInstanceImpl<babelwires::ValueTreeNode, bw_music::TrackType> inArray(inputArray);
     const babelwires::ArrayInstanceImpl<const babelwires::ValueTreeNode, bw_music::TrackType> outArray(

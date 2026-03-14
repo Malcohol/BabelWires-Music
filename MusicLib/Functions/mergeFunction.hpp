@@ -9,7 +9,9 @@
 
 #include <MusicLib/Types/Track/track.hpp>
 
+#include <BaseLib/Result/result.hpp>
+
 namespace bw_music {
     /// Merge the events of the sourceTracks into targetTrack.
-    Track mergeTracks(const std::vector<const Track*>& sourceTracks);
+    babelwires::ResultT<Track> mergeTracks(const std::vector<const Track*>& sourceTracks);
 } // namespace bw_music

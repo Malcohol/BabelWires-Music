@@ -9,6 +9,8 @@
 
 #include <MusicLib/Types/duration.hpp>
 
+#include <BabelWiresLib/Project/projectContext.hpp>
+#include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/Rational/rationalValue.hpp>
 
 bw_music::SilenceProcessorInput::SilenceProcessorInput(const babelwires::TypeSystem& typeSystem)
@@ -20,10 +22,10 @@ bw_music::SilenceProcessorOutput::SilenceProcessorOutput(const babelwires::TypeS
                                DefaultTrackType::getThisIdentifier()}}) {}
 
 bw_music::SilenceProcessor::SilenceProcessor(const babelwires::ProjectContext& projectContext)
-    : Processor(projectContext, SilenceProcessorInput::getThisIdentifier(),
-                     SilenceProcessorOutput::getThisIdentifier()) {}
+    : Processor(projectContext, projectContext.m_typeSystem.getRegisteredType<SilenceProcessorInput>(),
+                     projectContext.m_typeSystem.getRegisteredType<SilenceProcessorOutput>()) {}
 
-void bw_music::SilenceProcessor::processValue(babelwires::UserLogger& userLogger,
+babelwires::Result bw_music::SilenceProcessor::processValue(babelwires::UserLogger& userLogger,
                                               const babelwires::ValueTreeNode& input,
                                               babelwires::ValueTreeNode& output) const {
     SilenceProcessorInput::ConstInstance in{input};
@@ -31,4 +33,5 @@ void bw_music::SilenceProcessor::processValue(babelwires::UserLogger& userLogger
         SilenceProcessorOutput::Instance out{output};
         out.getTrack().set(Track(in.getDurn().get()));
     }
+    return {};
 }

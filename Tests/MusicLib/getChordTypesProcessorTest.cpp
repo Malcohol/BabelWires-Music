@@ -10,8 +10,10 @@
 #include <BabelWiresLib/ValueTree/valueTreeRoot.hpp>
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 
-#include <Tests/TestUtils/seqTestUtils.hpp>
 #include <Tests/BabelWiresLib/TestUtils/testEnvironment.hpp>
+
+#include <Tests/TestUtils/seqTestUtils.hpp>
+#include <Tests/TestUtils/resultTestUtils.hpp>
 
 class GetChordTypesProcessorTest : public ::testing::Test {
   protected:
@@ -35,12 +37,12 @@ class GetChordTypesProcessorTest : public ::testing::Test {
 };
 
 TEST_F(GetChordTypesProcessorTest, functionBasic) {
-    auto chordTypes = bw_music::getChordTypesFunction(getTrackOfChords());
+    BW_ASSERT_RESULT_ASSIGN(auto chordTypes, bw_music::getChordTypesFunction(getTrackOfChords()));
     testSetOfChords(chordTypes);
 }
 
 TEST_F(GetChordTypesProcessorTest, functionEmpty) {
-    auto chordTypes = bw_music::getChordTypesFunction(bw_music::Track());
+    BW_ASSERT_RESULT_ASSIGN(auto chordTypes, bw_music::getChordTypesFunction(bw_music::Track()));
 
     EXPECT_EQ(chordTypes.size(), 0);
 }
@@ -48,7 +50,7 @@ TEST_F(GetChordTypesProcessorTest, functionEmpty) {
 TEST_F(GetChordTypesProcessorTest, functionNoChords) {
     auto noChords = testUtils::getTrackOfSimpleNotes({60, 62, 64, 67, 71});
 
-    auto chordTypes = bw_music::getChordTypesFunction(noChords);
+    BW_ASSERT_RESULT_ASSIGN(auto chordTypes, bw_music::getChordTypesFunction(noChords));
 
     EXPECT_EQ(chordTypes.size(), 0);
 }

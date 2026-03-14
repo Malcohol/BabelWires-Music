@@ -52,14 +52,14 @@ namespace {
             return std::vector<std::string>{m_name + "1", m_name + "2"};
         }
 
-        std::unique_ptr<babelwires::AudioDest> getDestination(std::string_view destinationName) const {
+        babelwires::ResultT<std::unique_ptr<babelwires::AudioDest>> getDestination(
+            std::string_view destinationName) const {
             if ((m_name + "1") == destinationName) {
                 return std::make_unique<TestAudioDest>(m_baseNumChannels + 1);
             } else if ((m_name + "2") == destinationName) {
                 return std::make_unique<TestAudioDest>(m_baseNumChannels + 2);
             } else {
-                assert(false);
-                return nullptr;
+                return babelwires::Error() << "Unknown destination " << destinationName;
             }
         }
 
@@ -67,7 +67,7 @@ namespace {
             return std::vector<std::string>{m_name + "1", m_name + "2", m_name + "3"};
         }
 
-        std::unique_ptr<babelwires::AudioSource> getSource(std::string_view sourceName) const {
+        babelwires::ResultT<std::unique_ptr<babelwires::AudioSource>> getSource(std::string_view sourceName) const {
             if ((m_name + "1") == sourceName) {
                 return std::make_unique<TestAudioSource>(m_baseNumChannels + 1);
             } else if ((m_name + "2") == sourceName) {
@@ -75,8 +75,7 @@ namespace {
             } else if ((m_name + "3") == sourceName) {
                 return std::make_unique<TestAudioSource>(m_baseNumChannels + 3);
             } else {
-                assert(false);
-                return nullptr;
+                return babelwires::Error() << "Unknown source " << sourceName;
             }
         }
 
@@ -99,56 +98,68 @@ TEST(AudioInterfaceRegistryTest, destinationsAndSources) {
     EXPECT_TRUE(testUtils::areEqualSets(reg.getDestinationNames(), setOfStrings{"foo::foo1", "foo::foo2"}));
     {
         auto destFoo1 = reg.getDestination("foo::foo1");
-        EXPECT_EQ(destFoo1->getNumChannels(), 11);
+        ASSERT_TRUE(destFoo1);
+        EXPECT_EQ((*destFoo1)->getNumChannels(), 11);
     }
     {
         auto destFoo2 = reg.getDestination("foo::foo2");
-        EXPECT_EQ(destFoo2->getNumChannels(), 12);
+        ASSERT_TRUE(destFoo2);
+        EXPECT_EQ((*destFoo2)->getNumChannels(), 12);
     }
     EXPECT_TRUE(testUtils::areEqualSets(reg.getSourceNames(), setOfStrings{"foo::foo1", "foo::foo2", "foo::foo3"}));
     {
         auto sourceFoo1 = reg.getSource("foo::foo1");
-        EXPECT_EQ(sourceFoo1->getNumChannels(), 11);
+        ASSERT_TRUE(sourceFoo1);
+        EXPECT_EQ((*sourceFoo1)->getNumChannels(), 11);
     }
     {
         auto sourceFoo2 = reg.getSource("foo::foo2");
-        EXPECT_EQ(sourceFoo2->getNumChannels(), 12);
+        ASSERT_TRUE(sourceFoo2);
+        EXPECT_EQ((*sourceFoo2)->getNumChannels(), 12);
     }
     {
         auto sourceFoo3 = reg.getSource("foo::foo3");
-        EXPECT_EQ(sourceFoo3->getNumChannels(), 13);
+        ASSERT_TRUE(sourceFoo3);
+        EXPECT_EQ((*sourceFoo3)->getNumChannels(), 13);
     }
     reg.addEntry<TestAudioInterface>("erm", 20);
     EXPECT_TRUE(testUtils::areEqualSets(reg.getDestinationNames(),
                                         setOfStrings{"foo::foo1", "foo::foo2", "erm::erm1", "erm::erm2"}));
     {
         auto destErm1 = reg.getDestination("erm::erm1");
-        EXPECT_EQ(destErm1->getNumChannels(), 21);
+        ASSERT_TRUE(destErm1);
+        EXPECT_EQ((*destErm1)->getNumChannels(), 21);
     }
     {
         auto destFoo2 = reg.getDestination("foo::foo2");
-        EXPECT_EQ(destFoo2->getNumChannels(), 12);
+        ASSERT_TRUE(destFoo2);
+        EXPECT_EQ((*destFoo2)->getNumChannels(), 12);
     }
     {
         auto destErm2 = reg.getDestination("erm::erm2");
-        EXPECT_EQ(destErm2->getNumChannels(), 22);
+        ASSERT_TRUE(destErm2);
+        EXPECT_EQ((*destErm2)->getNumChannels(), 22);
     }
     EXPECT_TRUE(testUtils::areEqualSets(reg.getSourceNames(), setOfStrings{"foo::foo1", "foo::foo2", "foo::foo3",
                                                                            "erm::erm1", "erm::erm2", "erm::erm3"}));
     {
         auto sourceErm1 = reg.getSource("erm::erm1");
-        EXPECT_EQ(sourceErm1->getNumChannels(), 21);
+        ASSERT_TRUE(sourceErm1);
+        EXPECT_EQ((*sourceErm1)->getNumChannels(), 21);
     }
     {
         auto sourceFoo3 = reg.getSource("foo::foo3");
-        EXPECT_EQ(sourceFoo3->getNumChannels(), 13);
+        ASSERT_TRUE(sourceFoo3);
+        EXPECT_EQ((*sourceFoo3)->getNumChannels(), 13);
     }
     {
         auto sourceErm2 = reg.getSource("erm::erm2");
-        EXPECT_EQ(sourceErm2->getNumChannels(), 22);
+        ASSERT_TRUE(sourceErm2);
+        EXPECT_EQ((*sourceErm2)->getNumChannels(), 22);
     }
     {
         auto sourceErm3 = reg.getSource("erm::erm3");
-        EXPECT_EQ(sourceErm3->getNumChannels(), 23);
+        ASSERT_TRUE(sourceErm3);
+        EXPECT_EQ((*sourceErm3)->getNumChannels(), 23);
     }
 }

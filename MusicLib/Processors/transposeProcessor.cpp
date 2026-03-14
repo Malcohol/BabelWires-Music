@@ -14,6 +14,7 @@
 #include <BabelWiresLib/Types/Int/intValue.hpp>
 
 #include <BaseLib/Identifiers/registeredIdentifier.hpp>
+#include <BaseLib/Result/resultDSL.hpp>
 
 #include <set>
 
@@ -36,7 +37,7 @@ babelwires::ShortId bw_music::TransposeProcessor::getCommonArrayId() {
     return BW_SHORT_ID("Tracks", "Tracks", "83f05b66-7890-4542-8344-1409e50539b5");
 }
 
-void bw_music::TransposeProcessor::processEntry(babelwires::UserLogger& userLogger,
+babelwires::Result bw_music::TransposeProcessor::processEntry(babelwires::UserLogger& userLogger,
                                                 const babelwires::ValueTreeNode& input,
                                                 const babelwires::ValueTreeNode& inputEntry,
                                                 babelwires::ValueTreeNode& outputEntry) const {
@@ -44,5 +45,7 @@ void bw_music::TransposeProcessor::processEntry(babelwires::UserLogger& userLogg
     babelwires::ConstInstance<TrackType> entryIn{inputEntry};
     babelwires::Instance<TrackType> entryOut{outputEntry};
 
-    entryOut.set(transposeTrack(entryIn.get(), in.getOffset().get()));
+    ASSIGN_OR_ERROR(auto track, transposeTrack(entryIn.get(), in.getOffset().get()));
+    entryOut.set(std::move(track));
+    return {};
 }

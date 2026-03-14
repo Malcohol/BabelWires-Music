@@ -12,9 +12,11 @@
 #include <MusicLib/Types/Track/track.hpp>
 #include <MusicLib/chord.hpp>
 
+#include <BaseLib/Result/result.hpp>
+
 namespace bw_music {
     /// Adjust a track of notes to fit a chord, but adjusts any notes in any tracks to the given chord type.
     /// The input is assumed notes are assumed to be in C major.
-    Track fitToChordFunction(const Track& sourceTrack, const Chord& chord);
+    babelwires::ResultT<Track> fitToChordFunction(const Track& sourceTrack, const Chord& chord);
 
 } // namespace bw_music

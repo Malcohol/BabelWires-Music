@@ -10,6 +10,8 @@
 #include <BabelWiresLib/TypeSystem/typeConstructor.hpp>
 #include <BabelWiresLib/Types/Sum/sumType.hpp>
 
+#include <BaseLib/Result/result.hpp>
+
 namespace babelwires {
     class MapValue;
     class TypeSystem;
@@ -24,7 +26,7 @@ namespace bw_music {
       public:
         TYPE_CONSTRUCTOR("PercMaps", "Percussion Map Types", "c6d3d105-5823-4764-a4bb-5a9b12abab03", 1);
 
-        babelwires::TypePtr
+        babelwires::ResultT<babelwires::TypePtr>
         constructType(const babelwires::TypeSystem& typeSystem, babelwires::TypeExp newTypeExp,
                       const babelwires::TypeConstructorArguments& arguments,
                       const std::vector<babelwires::TypePtr>& resolvedTypeArguments) const override;
@@ -33,6 +35,6 @@ namespace bw_music {
     babelwires::TypeExp getPercussionMapType();
 
     ///
-    Track mapPercussionFunction(const babelwires::TypeSystem& typeSystem, const Track& sourceTrack,
+    babelwires::ResultT<Track> mapPercussionFunction(const babelwires::TypeSystem& typeSystem, const Track& sourceTrack,
                                 const babelwires::MapValue& percussionMapValue);
 } // namespace bw_music

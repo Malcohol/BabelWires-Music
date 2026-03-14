@@ -11,13 +11,15 @@
 #include <MusicLib/Types/Track/trackBuilder.hpp>
 
 #include <Tests/BabelWiresLib/TestUtils/testEnvironment.hpp>
+
 #include <Tests/TestUtils/seqTestUtils.hpp>
+#include <Tests/TestUtils/resultTestUtils.hpp>
 
 TEST(SplitAtPitchProcessorTest, monophonicSplit) {
     bw_music::TrackBuilder track;
     testUtils::addSimpleNotes({60, 62, 64, 65, 67, 69, 71, 72}, track);
 
-    bw_music::SplitAtPitchResult result = bw_music::splitAtPitch(67, track.finishAndGetTrack());
+    BW_ASSERT_RESULT_ASSIGN(bw_music::SplitAtPitchResult result, bw_music::splitAtPitch(67, track.finishAndGetTrack()));
 
     const std::vector<testUtils::NoteInfo> expectedNotesAbove{
         {67, babelwires::Rational(1, 4), 1},
@@ -68,7 +70,7 @@ TEST(SplitAtPitchProcessorTest, aboveAndBelowSplit) {
     bw_music::Track track = trackBuilder.finishAndGetTrack();
     ASSERT_EQ(track.getDuration(), 1);
 
-    bw_music::SplitAtPitchResult result = bw_music::splitAtPitch(60, track);
+    BW_ASSERT_RESULT_ASSIGN(bw_music::SplitAtPitchResult result, bw_music::splitAtPitch(60, track));
 
     testUtils::testSimpleNotes({72, 74, 76, 77}, result.m_equalOrAbove);
     EXPECT_EQ(result.m_equalOrAbove.getDuration(), 1);

@@ -10,12 +10,14 @@
 #include <MusicLib/Functions/accompanimentSequencerFunction.hpp>
 #include <MusicLib/Types/genericAccompaniment.hpp>
 
+#include <BabelWiresLib/Project/projectContext.hpp>
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/Failure/failureType.hpp>
 #include <BabelWiresLib/Types/Generic/typeVariableTypeConstructor.hpp>
 #include <BabelWiresLib/Types/Record/recordTypeConstructor.hpp>
-#include <BabelWiresLib/ValueTree/modelExceptions.hpp>
 #include <BabelWiresLib/ValueTree/valueTreeNode.hpp>
+
+#include <BaseLib/Result/resultDSL.hpp>
 
 bw_music::AccompanimentSequencerProcessorInput::AccompanimentSequencerProcessorInput(
     const babelwires::TypeSystem& typeSystem)
@@ -34,10 +36,10 @@ bw_music::AccompanimentSequencerProcessorOutput::AccompanimentSequencerProcessor
 
 bw_music::AccompanimentSequencerProcessor::AccompanimentSequencerProcessor(
     const babelwires::ProjectContext& projectContext)
-    : Processor(projectContext, AccompanimentSequencerProcessorInput::getThisIdentifier(),
-                AccompanimentSequencerProcessorOutput::getThisIdentifier()) {}
+    : Processor(projectContext, projectContext.m_typeSystem.getRegisteredType<AccompanimentSequencerProcessorInput>(),
+                projectContext.m_typeSystem.getRegisteredType<AccompanimentSequencerProcessorOutput>()) {}
 
-void bw_music::AccompanimentSequencerProcessor::processValue(babelwires::UserLogger& userLogger,
+babelwires::Result bw_music::AccompanimentSequencerProcessor::processValue(babelwires::UserLogger& userLogger,
                                                              const babelwires::ValueTreeNode& input,
                                                              babelwires::ValueTreeNode& output) const {
     const babelwires::TypeSystem& typeSystem = input.getTypeSystem();
@@ -59,16 +61,17 @@ void bw_music::AccompanimentSequencerProcessor::processValue(babelwires::UserLog
 
         const babelwires::TypeExp& assignedInputTypeExp = inputType.getTypeAssignment(inputValue, 0);
         outputType.setTypeVariableAssignmentAndInstantiate(typeSystem, newOutputValue, {assignedInputTypeExp});
-        output.setValue(newOutputValue);
+        output.assertSetValue(newOutputValue);
 
         const auto& chordTrack = inputChordTrack.getValue()->as<bw_music::Track>();
 
         if (assignedInputTypeExp) {
-            const auto resultValue = accompanimentSequencerFunction(typeSystem, *inputAccompanimentTracks.getType(),
-                                                                    inputAccompanimentTracks.getValue(), chordTrack);
-            outputResult.setValue(std::move(resultValue));
+            ASSIGN_OR_ERROR(auto resultValue, accompanimentSequencerFunction(typeSystem, *inputAccompanimentTracks.getType(),
+                                                                    inputAccompanimentTracks.getValue(), chordTrack));
+            outputResult.assertSetValue(std::move(resultValue));
         }
     }
+    return {};
 }
 
 void bw_music::AccompanimentSequencerProcessor::onFailure() const {}

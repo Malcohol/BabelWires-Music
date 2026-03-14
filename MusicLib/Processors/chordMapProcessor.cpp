@@ -16,6 +16,7 @@
 #include <BabelWiresLib/Types/Map/mapValue.hpp>
 
 #include <BaseLib/Identifiers/registeredIdentifier.hpp>
+#include <BaseLib/Result/resultDSL.hpp>
 
 bw_music::ChordMapProcessorInput::ChordMapProcessorInput(const babelwires::TypeSystem& typeSystem)
     : babelwires::ParallelProcessorInputBase(getThisIdentifier(), typeSystem,
@@ -37,7 +38,7 @@ babelwires::ShortId bw_music::ChordMapProcessor::getCommonArrayId() {
     return BW_SHORT_ID("Tracks", "Tracks", "24e56b0d-eb1e-4c93-97fd-ba4d639e112a");
 }
 
-void bw_music::ChordMapProcessor::processEntry(babelwires::UserLogger& userLogger,
+babelwires::Result bw_music::ChordMapProcessor::processEntry(babelwires::UserLogger& userLogger,
                                                const babelwires::ValueTreeNode& input,
                                                const babelwires::ValueTreeNode& inputEntry,
                                                babelwires::ValueTreeNode& outputEntry) const {
@@ -47,5 +48,7 @@ void bw_music::ChordMapProcessor::processEntry(babelwires::UserLogger& userLogge
 
     const auto& chordMap = in.getChrdMp()->getValue()->as<babelwires::MapValue>();
 
-    entryOut.set(mapChordsFunction(in->getTypeSystem(), entryIn.get(), chordMap));
+    ASSIGN_OR_ERROR(auto result, mapChordsFunction(in->getTypeSystem(), entryIn.get(), chordMap));
+    entryOut.set(std::move(result));
+    return {};
 }
