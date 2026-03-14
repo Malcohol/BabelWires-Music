@@ -13,10 +13,12 @@ BabelWires-Music:
 * Consider changing the unit of duration.
 
 Seq2tape:
-* Add support for setting name and copyright from commandline.
 * Add another text field: info.
 * Test Multichannel input and output
 * Consider implementing basic WAV support myself, so project works without libsnd.
+* FileAudioSource and FileAudioDest assert on libsnd errors.
+  - If these can be data or use-case derived errors, the methods should instead return a result.
+  - Consequently, the sample and wave reader APIs should also use result.
 
 SMF
 * Time signature
@@ -30,5 +32,4 @@ Processors:
 * Split by event category - Build a record of tracks by category
   - Would need category to be an identifier (see above)
   - Record type constructors (See BabelWires PR) OR registry of categories.
-* GetSetOfChords
-* ChordSequencer
+
