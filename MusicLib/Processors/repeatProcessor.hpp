@@ -14,6 +14,7 @@
 namespace bw_music {
     class RepeatProcessorInput : public babelwires::ParallelProcessorInputBase {
       public:
+        DOWNCASTABLE(RepeatProcessorInput, babelwires::ParallelProcessorInputBase);
         REGISTERED_TYPE("RepeatTrcksIn", "Repeat In", "23dc427d-8171-4de4-a9b6-15c16d9ed373", 1);
 
         RepeatProcessorInput(const babelwires::TypeSystem& typeSystem);
@@ -26,6 +27,7 @@ namespace bw_music {
 
     class RepeatProcessorOutput : public babelwires::ParallelProcessorOutputBase {
       public:
+        DOWNCASTABLE(RepeatProcessorOutput, babelwires::ParallelProcessorOutputBase);
         REGISTERED_TYPE("RepeatTrcksOut", "Repeat Out", "c0d3c991-8e57-4bb9-86bd-68fdbf854434", 1);
 
         RepeatProcessorOutput(const babelwires::TypeSystem& typeSystem);

@@ -22,6 +22,7 @@ namespace bw_music {
     /// change it later when a better representation is available.
     class ChordTypeSet : public babelwires::ArrayType {
       public:
+        DOWNCASTABLE(ChordTypeSet, babelwires::ArrayType);
         REGISTERED_TYPE("chordSet", "Chord Type Set", "e3593036-1a41-4a0d-9227-5d091106e16d", 1);
 
         ChordTypeSet(const babelwires::TypeSystem& typeSystem);

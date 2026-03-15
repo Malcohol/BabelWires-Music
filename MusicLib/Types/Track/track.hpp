@@ -29,6 +29,7 @@ namespace bw_music {
     /// The events in a track can belong to groups and those groups are subject to rules, see TrackBuilder.
     class Track : public babelwires::Value {
       public:
+        DOWNCASTABLE(Track, babelwires::Value);
         CLONEABLE(Track);
 
         Track();

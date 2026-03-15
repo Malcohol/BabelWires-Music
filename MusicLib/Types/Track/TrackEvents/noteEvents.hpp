@@ -13,6 +13,7 @@ namespace bw_music {
 
     /// Base type for note events.
     struct NoteEvent : public TrackEvent {
+        DOWNCASTABLE(NoteEvent, TrackEvent);
         STREAM_EVENT_ABSTRACT(NoteEvent);
         NoteEvent(ModelDuration timeSinceLastEvent, Pitch pitch, Velocity velocity)
             : TrackEvent(timeSinceLastEvent)
@@ -33,28 +34,31 @@ namespace bw_music {
         
         Pitch m_pitch;
         Velocity m_velocity;
+
+      protected:
+        bool doIsEqualTo(const TrackEvent& other) const override;
     };
 
     /// The start of a musical note.
     struct NoteOnEvent : public NoteEvent {
+        DOWNCASTABLE(NoteOnEvent, NoteEvent);
         STREAM_EVENT(NoteOnEvent);
         static constexpr const Velocity c_defaultVelocity = 127;
         NoteOnEvent(ModelDuration timeSinceLastEvent, Pitch pitch, Velocity velocity = c_defaultVelocity)
             : NoteEvent(timeSinceLastEvent, pitch, velocity) {}
 
-        virtual bool operator==(const TrackEvent& other) const override;
         virtual std::size_t getHash() const override;
         virtual GroupingInfo getGroupingInfo() const override;
     };
 
     /// The end of a musical note.
     struct NoteOffEvent : public NoteEvent {
+        DOWNCASTABLE(NoteOffEvent, NoteEvent);
         STREAM_EVENT(NoteOffEvent);
         static constexpr const Velocity c_defaultVelocity = 64;
         NoteOffEvent(ModelDuration timeSinceLastEvent, Pitch pitch, Velocity velocity = c_defaultVelocity)
             : NoteEvent(timeSinceLastEvent, pitch, velocity) {}
 
-        virtual bool operator==(const TrackEvent& other) const override;
         virtual std::size_t getHash() const override;
         virtual GroupingInfo getGroupingInfo() const override;
     };

@@ -20,6 +20,7 @@
 namespace bw_music {
     class MonophonicSubtracksProcessorInput : public babelwires::RecordType {
       public:
+        DOWNCASTABLE(MonophonicSubtracksProcessorInput, babelwires::RecordType);
         REGISTERED_TYPE("MonoTracksIn", "Monophonic Tracks Input", "e8041fe6-29de-470e-9235-e1f05c5f791e", 1);
 
         MonophonicSubtracksProcessorInput(const babelwires::TypeSystem& typeSystem);
@@ -33,6 +34,7 @@ namespace bw_music {
 
     class MonophonicSubtracksProcessorOutput : public babelwires::RecordType {
       public:
+        DOWNCASTABLE(MonophonicSubtracksProcessorOutput, babelwires::RecordType);
         REGISTERED_TYPE("MonoTracksOut", "Monophonic Tracks Output", "c2228921-da8a-45c0-bebf-24951d651090", 1);
 
         MonophonicSubtracksProcessorOutput(const babelwires::TypeSystem& typeSystem);

@@ -19,6 +19,7 @@
 namespace bw_music {
     class MergeProcessorInput : public babelwires::RecordType {
       public:
+        DOWNCASTABLE(MergeProcessorInput, babelwires::RecordType);
         REGISTERED_TYPE("MergeTracksIn", "Merge Tracks Input", "15dd4564-e67f-4087-8609-ef5985b23dd7", 1);
 
         MergeProcessorInput(const babelwires::TypeSystem& typeSystem);
@@ -30,6 +31,7 @@ namespace bw_music {
 
     class MergeProcessorOutput : public babelwires::RecordType {
       public:
+        DOWNCASTABLE(MergeProcessorOutput, babelwires::RecordType);
         REGISTERED_TYPE("MergeTracksOut", "Merge Tracks Output", "9b797596-f6c2-4900-98a4-001ec7c18be4", 1);
 
         MergeProcessorOutput(const babelwires::TypeSystem& typeSystem);

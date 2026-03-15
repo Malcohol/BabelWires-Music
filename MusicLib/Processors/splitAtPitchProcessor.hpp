@@ -20,6 +20,7 @@
 namespace bw_music {
     class SplitAtPitchProcessorInput : public babelwires::RecordType {
       public:
+        DOWNCASTABLE(SplitAtPitchProcessorInput, babelwires::RecordType);
         REGISTERED_TYPE("PitchSplitIn", "Split At Pitch Input", "f901af3a-c27b-449c-961a-8f43dee7d9a6", 1);
 
         SplitAtPitchProcessorInput(const babelwires::TypeSystem& typeSystem);
@@ -32,6 +33,7 @@ namespace bw_music {
 
     class SplitAtPitchProcessorOutput : public babelwires::RecordType {
       public:
+        DOWNCASTABLE(SplitAtPitchProcessorOutput, babelwires::RecordType);
         REGISTERED_TYPE("PitchSplitOut", "Split At Pitch Output", "50f790e1-0ef3-4f34-ad14-5a6762772e19", 1);
 
         SplitAtPitchProcessorOutput(const babelwires::TypeSystem& typeSystem);

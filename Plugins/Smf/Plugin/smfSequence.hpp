@@ -25,6 +25,7 @@ namespace smf {
     /// A type corresponding to the contents of a Standard MIDI file.
     class SmfSequence : public babelwires::RecordWithVariantsType {
       public:
+        DOWNCASTABLE(SmfSequence, babelwires::RecordWithVariantsType);
         REGISTERED_TYPE("SmfSeqType", "Standard MIDI File", "d4c70fb2-fb67-4e69-82ca-328ec242b0a8", 1);
         SmfSequence(const babelwires::TypeSystem& typeSystem);
 

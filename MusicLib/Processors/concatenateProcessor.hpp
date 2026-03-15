@@ -21,6 +21,7 @@ namespace bw_music {
 
     class ConcatenateProcessorInput : public babelwires::RecordType {
       public:
+        DOWNCASTABLE(ConcatenateProcessorInput, babelwires::RecordType);
         REGISTERED_TYPE("ConcatTrcksIn", "Concatenate In", "f4f21fe1-25e6-4721-a298-36fe27b532cc", 1);
 
         ConcatenateProcessorInput(const babelwires::TypeSystem& typeSystem);
@@ -32,6 +33,7 @@ namespace bw_music {
 
     class ConcatenateProcessorOutput : public babelwires::RecordType {
       public:
+        DOWNCASTABLE(ConcatenateProcessorOutput, babelwires::RecordType);
         REGISTERED_TYPE("ConcatTrcksOut", "Concatenate Out", "2c9e13aa-eb88-494f-b3a6-7fb82504196c", 1);
 
         ConcatenateProcessorOutput(const babelwires::TypeSystem& typeSystem);

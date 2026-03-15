@@ -20,6 +20,7 @@
 namespace bw_music {
     class GetChordTypesProcessorInput : public babelwires::RecordType {
       public:
+        DOWNCASTABLE(GetChordTypesProcessorInput, babelwires::RecordType);
         REGISTERED_TYPE("ChordTypesIn", "Get Chord Types In", "d74143a4-92c1-46a0-be85-350720a2045f", 1);
 
         GetChordTypesProcessorInput(const babelwires::TypeSystem& typeSystem);
@@ -30,6 +31,7 @@ namespace bw_music {
 
     class GetChordTypesProcessorOutput : public babelwires::RecordType {
       public:
+        DOWNCASTABLE(GetChordTypesProcessorOutput, babelwires::RecordType);
         REGISTERED_TYPE("ChordTypesOut", "Get Chord Types Out", "6336361f-1861-4cda-8363-cdfc9f0950ed", 1);
 
         GetChordTypesProcessorOutput(const babelwires::TypeSystem& typeSystem);

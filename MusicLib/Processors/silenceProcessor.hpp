@@ -19,6 +19,7 @@
 namespace bw_music {
     class SilenceProcessorInput : public babelwires::RecordType {
       public:
+        DOWNCASTABLE(SilenceProcessorInput, babelwires::RecordType);
         REGISTERED_TYPE("SilentTrackIn", "Silence In", "b3d5c37c-aa07-47ac-9ebb-3cf81731b97b", 1);
 
         SilenceProcessorInput(const babelwires::TypeSystem& typeSystem);
@@ -30,6 +31,7 @@ namespace bw_music {
 
     class SilenceProcessorOutput : public babelwires::RecordType {
       public:
+        DOWNCASTABLE(SilenceProcessorOutput, babelwires::RecordType);
         REGISTERED_TYPE("SilentTrackOut", "Silence Out", "fd8b4645-1435-448c-bf9d-0cebf8999a81", 1);
 
         SilenceProcessorOutput(const babelwires::TypeSystem& typeSystem);

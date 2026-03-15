@@ -18,6 +18,7 @@
 namespace bw_music {
     class FingeredChordsProcessorInput : public babelwires::RecordType {
       public:
+        DOWNCASTABLE(FingeredChordsProcessorInput, babelwires::RecordType);
         REGISTERED_TYPE("FingrChordsIn", "Fingered Chords Input", "c9f26551-f557-4b27-ba0c-385298a2e51e", 1);
 
         FingeredChordsProcessorInput(const babelwires::TypeSystem& typeSystem);
@@ -30,6 +31,7 @@ namespace bw_music {
 
     class FingeredChordsProcessorOutput : public babelwires::RecordType {
       public:
+        DOWNCASTABLE(FingeredChordsProcessorOutput, babelwires::RecordType);
         REGISTERED_TYPE("FingrChordsOut", "Fingered Chords Output", "f53cb215-1f8e-491b-8baf-868a5a5d0173", 1);
 
         FingeredChordsProcessorOutput(const babelwires::TypeSystem& typeSystem);

@@ -27,6 +27,7 @@ namespace bw_music {
     /// and a noteOff event, all sharing the same pitch.
     class TrackEvent : public babelwires::StreamEvent {
       public:
+        DOWNCASTABLE(TrackEvent, babelwires::StreamEvent);
         STREAM_EVENT_ABSTRACT(TrackEvent);
         TrackEvent() = default;
         TrackEvent(ModelDuration timeSinceLastEvent) : m_timeSinceLastEvent(timeSinceLastEvent) {}
@@ -37,16 +38,10 @@ namespace bw_music {
         void setTimeSinceLastEvent(ModelDuration timeSinceLastEvent) { m_timeSinceLastEvent = timeSinceLastEvent; }
 
         /// Subclasses should ensure their hashes are distinct from other events
-        /// which carry the same data. XORing with typeid(MyEvent).hash_code() should work.
-        virtual std::size_t getHash() const {
-            // Since this is common to every event, there's no need to distinguish it from hashes of other events.
-            return m_timeSinceLastEvent.getHash();
-        }
+        /// which carry the same data. Mixing in a type-specific string or value should work.
+        virtual std::size_t getHash() const;
 
-        virtual bool operator==(const TrackEvent& other) const {
-            return (typeid(*this) != typeid(other)) ? false : doIsEqualTo(other);
-        }
-
+        bool operator==(const TrackEvent& other) const;
         bool operator!=(const TrackEvent& other) const;
 
         /// To correctly terminate truncated groups, a start event can be asked to construct a matching end event

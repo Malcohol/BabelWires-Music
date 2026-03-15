@@ -14,6 +14,7 @@ namespace bw_music {
 
     /// A ChordEvent describes a musical chord.
     struct ChordEvent : public TrackEvent {
+        DOWNCASTABLE(ChordEvent, TrackEvent);
         STREAM_EVENT_ABSTRACT(ChordEvent);
         ChordEvent() = default;
         ChordEvent(ModelDuration timeSinceLastEvent)
@@ -26,27 +27,30 @@ namespace bw_music {
 
     /// Describes the start of a chord.
     struct ChordOnEvent : public ChordEvent {
+        DOWNCASTABLE(ChordOnEvent, ChordEvent);
         STREAM_EVENT(ChordOnEvent);
         ChordOnEvent() = default;
         ChordOnEvent(ModelDuration timeSinceLastEvent, Chord chord)
             : ChordEvent(timeSinceLastEvent)
             , m_chord(chord) {}
 
-        virtual bool operator==(const TrackEvent& other) const override;
         virtual std::size_t getHash() const override;
         virtual GroupingInfo getGroupingInfo() const override;
         virtual bool transpose(int pitchOffset, TransposeOutOfRangePolicy outOfRangePolicy) override;
         Chord m_chord;
+
+      protected:
+        bool doIsEqualTo(const TrackEvent& other) const override;
     };
 
     /// The end of a chord.
     struct ChordOffEvent : public ChordEvent {
+        DOWNCASTABLE(ChordOffEvent, ChordEvent);
         STREAM_EVENT(ChordOffEvent);
         ChordOffEvent() = default;
         ChordOffEvent(ModelDuration timeSinceLastEvent)
             : ChordEvent(timeSinceLastEvent) {}
 
-        virtual bool operator==(const TrackEvent& other) const override;
         virtual std::size_t getHash() const override;
         virtual GroupingInfo getGroupingInfo() const override;
     };

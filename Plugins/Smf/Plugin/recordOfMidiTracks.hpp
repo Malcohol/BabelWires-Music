@@ -20,6 +20,7 @@ namespace smf {
 
     class RecordOfMidiTracks : public babelwires::RecordType {
       public:
+        DOWNCASTABLE(RecordOfMidiTracks, babelwires::RecordType);
         REGISTERED_TYPE("recordOfTracks", "Tracks", "44244cf8-8a05-4071-91a3-af77514ee03b", 1);
 
         RecordOfMidiTracks(const babelwires::TypeSystem& typeSystem);

@@ -12,6 +12,7 @@ namespace bw_music_testplugin {
     /// A type that contains some tracks and other fields for testing.
     class SimpleAccompaniment : public babelwires::RecordType {
       public:
+        DOWNCASTABLE(SimpleAccompaniment, babelwires::RecordType);
         REGISTERED_TYPE("SimpleAccomp", "Simple Accompaniment", "9a92a3e0-9613-46be-ad77-898896875ad4", 1);
         SimpleAccompaniment(const babelwires::TypeSystem& typeSystem);
 
