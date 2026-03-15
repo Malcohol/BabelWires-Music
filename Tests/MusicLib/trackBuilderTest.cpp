@@ -12,6 +12,7 @@
 
 namespace {
     struct TestEnclosedEvent : bw_music::TrackEvent {
+        DOWNCASTABLE(TestEnclosedEvent, bw_music::TrackEvent);
         STREAM_EVENT(TestEnclosedEvent);
 
         TestEnclosedEvent(bw_music::ModelDuration timeSinceLastEvent, bw_music::Pitch pitch)
@@ -25,6 +26,12 @@ namespace {
         void createEndEvent(bw_music::TrackEventHolder& dest,
                             bw_music::ModelDuration timeSinceLastEvent) const override {}
         bw_music::Pitch m_pitch;
+
+      protected:
+        bool doIsEqualTo(const bw_music::TrackEvent& other) const override {
+            auto& otherEvent = static_cast<const TestEnclosedEvent&>(other);
+            return bw_music::TrackEvent::doIsEqualTo(other) && (m_pitch == otherEvent.m_pitch);
+        }
     };
 } // namespace
 

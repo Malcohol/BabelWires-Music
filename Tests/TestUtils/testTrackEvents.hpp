@@ -11,6 +11,12 @@ namespace testUtils {
         void createEndEvent(bw_music::TrackEventHolder& dest, bw_music::ModelDuration timeSinceLastEvent) const override {}
 
         int m_value;
+
+      protected:
+        bool doIsEqualTo(const bw_music::TrackEvent& other) const override {
+            auto& otherEvent = static_cast<const TestTrackEvent&>(other);
+            return bw_music::TrackEvent::doIsEqualTo(other) && (m_value == otherEvent.m_value);
+        }
     };
 
     struct TestTrackEvent2 : bw_music::TrackEvent {
@@ -22,6 +28,12 @@ namespace testUtils {
         void createEndEvent(bw_music::TrackEventHolder& dest, bw_music::ModelDuration timeSinceLastEvent) const override {}
 
         float m_value;
+
+      protected:
+        bool doIsEqualTo(const bw_music::TrackEvent& other) const override {
+            auto& otherEvent = static_cast<const TestTrackEvent2&>(other);
+            return bw_music::TrackEvent::doIsEqualTo(other) && (m_value == otherEvent.m_value);
+        }
     };
 
     struct alignas(16) BigTestTrackEvent : bw_music::TrackEvent {

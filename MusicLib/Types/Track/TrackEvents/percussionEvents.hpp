@@ -32,6 +32,8 @@ namespace bw_music {
             , m_instrument(instrument)
             , m_velocity(velocity) {}
 
+        bool doIsEqualTo(const TrackEvent& other) const override;
+
       protected:
         babelwires::ShortId m_instrument;
         Velocity m_velocity;
@@ -43,7 +45,6 @@ namespace bw_music {
         STREAM_EVENT(PercussionOnEvent);
         PercussionOnEvent(ModelDuration timeSinceLastEvent, babelwires::ShortId instrument, Velocity velocity = 127)
             : PercussionEvent(timeSinceLastEvent, instrument, velocity) {}
-        virtual bool operator==(const TrackEvent& other) const override;
         virtual std::size_t getHash() const override;
         virtual GroupingInfo getGroupingInfo() const override;
     };
@@ -55,7 +56,6 @@ namespace bw_music {
         PercussionOffEvent(ModelDuration timeSinceLastEvent, babelwires::ShortId instrument, Velocity velocity = 64)
             : PercussionEvent(timeSinceLastEvent, instrument, velocity) {}
 
-        virtual bool operator==(const TrackEvent& other) const override;
         virtual std::size_t getHash() const override;
         virtual GroupingInfo getGroupingInfo() const override;
     };

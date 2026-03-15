@@ -34,6 +34,9 @@ namespace bw_music {
         
         Pitch m_pitch;
         Velocity m_velocity;
+
+      protected:
+        bool doIsEqualTo(const TrackEvent& other) const override;
     };
 
     /// The start of a musical note.
@@ -44,7 +47,6 @@ namespace bw_music {
         NoteOnEvent(ModelDuration timeSinceLastEvent, Pitch pitch, Velocity velocity = c_defaultVelocity)
             : NoteEvent(timeSinceLastEvent, pitch, velocity) {}
 
-        virtual bool operator==(const TrackEvent& other) const override;
         virtual std::size_t getHash() const override;
         virtual GroupingInfo getGroupingInfo() const override;
     };
@@ -57,7 +59,6 @@ namespace bw_music {
         NoteOffEvent(ModelDuration timeSinceLastEvent, Pitch pitch, Velocity velocity = c_defaultVelocity)
             : NoteEvent(timeSinceLastEvent, pitch, velocity) {}
 
-        virtual bool operator==(const TrackEvent& other) const override;
         virtual std::size_t getHash() const override;
         virtual GroupingInfo getGroupingInfo() const override;
     };

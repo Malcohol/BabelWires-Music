@@ -34,11 +34,13 @@ namespace bw_music {
             : ChordEvent(timeSinceLastEvent)
             , m_chord(chord) {}
 
-        virtual bool operator==(const TrackEvent& other) const override;
         virtual std::size_t getHash() const override;
         virtual GroupingInfo getGroupingInfo() const override;
         virtual bool transpose(int pitchOffset, TransposeOutOfRangePolicy outOfRangePolicy) override;
         Chord m_chord;
+
+      protected:
+        bool doIsEqualTo(const TrackEvent& other) const override;
     };
 
     /// The end of a chord.
@@ -49,7 +51,6 @@ namespace bw_music {
         ChordOffEvent(ModelDuration timeSinceLastEvent)
             : ChordEvent(timeSinceLastEvent) {}
 
-        virtual bool operator==(const TrackEvent& other) const override;
         virtual std::size_t getHash() const override;
         virtual GroupingInfo getGroupingInfo() const override;
     };
