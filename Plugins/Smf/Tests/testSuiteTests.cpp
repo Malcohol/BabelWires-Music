@@ -13,6 +13,7 @@
 
 #include <Tests/BabelWiresLib/TestUtils/testEnvironment.hpp>
 
+#include <Tests/TestUtils/resultTestUtils.hpp>
 #include <Tests/TestUtils/seqTestUtils.hpp>
 
 TEST(SmfTestSuiteTest, loadAllTestFilesWithoutCrashing) {
@@ -25,15 +26,12 @@ TEST(SmfTestSuiteTest, loadAllTestFilesWithoutCrashing) {
     for (auto& p : std::filesystem::directory_iterator(std::filesystem::current_path())) {
         if (p.path().extension() == ".mid") {
             ++numFilesTested;
-            try {
-                auto midiFileResult = babelwires::FileDataSource::open(p.path());
-                ASSERT_TRUE(midiFileResult.has_value());
-                auto midiFile = std::move(*midiFileResult);
-                auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
-                midiFile.close();
-            } catch (...) {
-                EXPECT_TRUE(false);
-            }
+            BW_ASSERT_RESULT_ASSIGN(auto midiFile, babelwires::FileDataSource::open(p.path()));
+            ON_ERROR(midiFile.closeOnError());
+            // This test is not testing that the files are correctly parsed, just that they don't cause crashes or
+            // exceptions.
+            (void)smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+            midiFile.close();
         }
     }
 
@@ -325,7 +323,8 @@ TEST(SmfTestSuiteTest, testAllGMPercussion) {
     EXPECT_EQ(categoryMap.find(bw_music::NoteEvent::s_noteEventCategory), categoryMap.end());
     EXPECT_NE(categoryMap.find(bw_music::PercussionEvent::s_percussionEventCategory), categoryMap.end());
 
-    const auto& gm2StandardPercussionSet = testEnvironment.m_typeSystem.getRegisteredType<smf::GM2StandardPercussionSet>();
+    const auto& gm2StandardPercussionSet =
+        testEnvironment.m_typeSystem.getRegisteredType<smf::GM2StandardPercussionSet>();
 
     // The file has each percussion instrument playing three times.
     const auto& percussionInstruments = gm2StandardPercussionSet->getValueSet();
