@@ -30,3 +30,7 @@ SET( SEQUENCELIB_TESTS_SRCS
 ADD_EXECUTABLE( musicLibTests ${SEQUENCELIB_TESTS_SRCS} )
 TARGET_INCLUDE_DIRECTORIES( musicLibTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../.. ${CMAKE_CURRENT_SOURCE_DIR}/../.. )
 TARGET_LINK_LIBRARIES(musicLibTests BaseLib musicLib testUtils libTestUtils TestPluginLib seqTestUtils gtest)
+
+if(BUILD_TESTING)
+   gtest_discover_tests(musicLibTests)
+endif()

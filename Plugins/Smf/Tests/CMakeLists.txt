@@ -16,3 +16,7 @@ ENDFOREACH()
 ADD_EXECUTABLE( SmfTests ${SMF_TESTS_SRCS} )
 TARGET_INCLUDE_DIRECTORIES( SmfTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../../.. ${CMAKE_CURRENT_SOURCE_DIR}/../../.. )
 TARGET_LINK_LIBRARIES(SmfTests BaseLib seqTestUtils SmfLib testUtils libTestUtils gtest)
+
+if(BUILD_TESTING)
+   gtest_discover_tests(SmfTests)
+endif()
