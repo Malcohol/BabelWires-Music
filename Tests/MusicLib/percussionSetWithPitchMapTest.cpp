@@ -53,6 +53,7 @@ TEST(PercussionSetWithPitchMapTest, oneInstrumentBlockAllBuiltIn) {
 }
 
 TEST(PercussionSetWithPitchMapTest, oneInstrumentBlockAllNew) {
+    testUtils::TestEnvironment testEnvironment;
     // No need to supply a point to BuiltInPercussionInstruments in this case.
     bw_music::PercussionSetWithPitchMap::InstrumentBlock block = {
         {testUtils::getTestRegisteredIdentifier("Bar"), testUtils::getTestRegisteredIdentifier("Boo")}, 50};
