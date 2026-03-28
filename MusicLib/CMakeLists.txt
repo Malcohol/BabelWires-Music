@@ -39,7 +39,6 @@ SET( MUSICLIB_SRCS
 	Types/Track/trackType.cpp
 	Types/Track/trackTypeConstructor.cpp
 	chord.cpp
-	musicTypes.cpp
 	Percussion/percussionTypeTag.cpp
 	Percussion/builtInPercussionInstruments.cpp
 	Percussion/percussionSetWithPitchMap.cpp
