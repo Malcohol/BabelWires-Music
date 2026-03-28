@@ -1,3 +1,10 @@
+/**
+ * SimpleAccompaniment
+ *
+ * (C) 2021 Malcolm Tyrrell
+ *
+ * Licensed under the GPLv3.0. See LICENSE file.
+ **/
 #include <Domains/Music/Plugins/TestPlugin/simpleAccompaniment.hpp>
 
 #include <MusicLib/Functions/fitToChordFunction.hpp>

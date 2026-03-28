@@ -7,13 +7,15 @@
  **/
 #pragma once
 
+#include <Domains/Music/MusicLib/musicLibExport.hpp>
+
 #include <optional>
 
 namespace bw_music {
     class Track;
 
     /// Get the minimum denominator sufficient to represent the durations of all events in the track.
-    int getMinimumDenominator(const Track& track);
+    MUSICLIB_API int getMinimumDenominator(const Track& track);
 
     /// How to treat pitches that go out of range when transposing.
     enum class TransposeOutOfRangePolicy {
@@ -24,6 +26,6 @@ namespace bw_music {
     };
 
     /// Transpose a pitch by the given offset, according to the outOfRangePolicy.
-    std::optional<int> transposePitch(int pitch, int offset, TransposeOutOfRangePolicy outOfRangePolicy = TransposeOutOfRangePolicy::Discard, int lowerLimit = 0, int upperLimit = 127);
+    MUSICLIB_API std::optional<int> transposePitch(int pitch, int offset, TransposeOutOfRangePolicy outOfRangePolicy = TransposeOutOfRangePolicy::Discard, int lowerLimit = 0, int upperLimit = 127);
 
 } // namespace bw_music

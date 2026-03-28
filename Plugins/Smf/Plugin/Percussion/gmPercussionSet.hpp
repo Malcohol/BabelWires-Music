@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <Domains/Music/Plugins/Smf/Plugin/smfLibExport.hpp>
+
 #include <MusicLib/Percussion/percussionSetWithPitchMap.hpp>
 
 #include <BabelWiresLib/TypeSystem/registeredType.hpp>
@@ -15,7 +17,7 @@ namespace smf {
     // TODO GS, XG percussion, with appropriate subtyping.
 
     /// A PercussionSet corresponding to the original General MIDI percussion set.
-    class GMPercussionSet : public bw_music::PercussionSetWithPitchMap {
+    class SMFLIB_API GMPercussionSet : public bw_music::PercussionSetWithPitchMap {
       public:
         REGISTERED_TYPE("GMPerc", "General MIDI Percussion", "7571c9ca-1c7f-4547-9218-391a339bae7d", 1);
 

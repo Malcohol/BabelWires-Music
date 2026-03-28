@@ -7,11 +7,13 @@
  **/
 #pragma once
 
+#include <Domains/Music/MusicLib/musicLibExport.hpp>
+
 #include <MusicLib/Types/Track/track.hpp>
 
 #include <BaseLib/Result/result.hpp>
 
 namespace bw_music {
     /// Add the events of sourceTrack to the end of targetTrack.
-    babelwires::Result appendTrack(Track& targetTrack, const Track& sourceTrack);
+    MUSICLIB_API babelwires::Result appendTrack(Track& targetTrack, const Track& sourceTrack);
 } // namespace bw_music

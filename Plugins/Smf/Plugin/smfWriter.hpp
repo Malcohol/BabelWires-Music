@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <Domains/Music/Plugins/Smf/Plugin/smfLibExport.hpp>
+
 #include <Plugins/Smf/Plugin/Percussion/standardPercussionSets.hpp>
 #include <Plugins/Smf/Plugin/smfSequence.hpp>
 
@@ -26,7 +28,7 @@ namespace bw_music {
 
 namespace smf {
 
-    class SmfWriter {
+    class SMFLIB_API SmfWriter {
       public:
         SmfWriter(const babelwires::ProjectContext& projectContext, babelwires::UserLogger& userLogger,
                   const babelwires::ValueTreeRoot& sequence, std::ostream& output);
@@ -86,7 +88,7 @@ namespace smf {
         StandardPercussionSets m_standardPercussionSets;
 
         /// Currently just used to determine which tracks are percussion tracks.
-        struct ChannelSetup {
+        struct SMFLIB_API ChannelSetup {
             // This is non-null when the pitches in the data should be interpreted as percussion events from the given
             // kit.
             const bw_music::PercussionSetWithPitchMap* m_kitIfPercussion = nullptr;
@@ -99,7 +101,7 @@ namespace smf {
         std::array<ChannelSetup, 16> m_channelSetup;
     };
 
-    void writeToSmf(const babelwires::ProjectContext& projectContext, babelwires::UserLogger& userLogger,
+    SMFLIB_API void writeToSmf(const babelwires::ProjectContext& projectContext, babelwires::UserLogger& userLogger,
                     const babelwires::ValueTreeRoot& sequence, std::ostream& output);
 
 } // namespace smf

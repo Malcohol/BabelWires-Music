@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <Domains/Music/MusicLib/musicLibExport.hpp>
+
 #include <MusicLib/Types/Track/trackType.hpp>
 
 #include <BabelWiresLib/Processors/processorFactory.hpp>
@@ -16,7 +18,7 @@
 
 namespace bw_music {
     /// Input type: record with AccompTracks (record) and ChordTrack (track)
-    class AccompanimentSequencerProcessorInput : public babelwires::GenericType {
+    class MUSICLIB_API AccompanimentSequencerProcessorInput : public babelwires::GenericType {
       public:
         DOWNCASTABLE(AccompanimentSequencerProcessorInput, babelwires::GenericType);
         REGISTERED_TYPE("AccompSeqIn", "Accompaniment Sequencer Input",
@@ -35,7 +37,7 @@ namespace bw_music {
         }
     };
 
-    class AccompanimentSequencerProcessorOutput : public babelwires::GenericType {
+    class MUSICLIB_API AccompanimentSequencerProcessorOutput : public babelwires::GenericType {
       public:
         DOWNCASTABLE(AccompanimentSequencerProcessorOutput, babelwires::GenericType);
         REGISTERED_TYPE("AccompSeqOut", "Accompaniment Sequencer Output",
@@ -49,7 +51,7 @@ namespace bw_music {
         }
     };
 
-    class AccompanimentSequencerProcessor : public babelwires::Processor {
+    class MUSICLIB_API AccompanimentSequencerProcessor : public babelwires::Processor {
       public:
         BW_PROCESSOR_WITH_DEFAULT_FACTORY("AccompSeq", "Accompaniment Sequencer",
                                           "a8d2f6e1-4c9b-4f2e-7d3a-5e1b8c6f4a2d");

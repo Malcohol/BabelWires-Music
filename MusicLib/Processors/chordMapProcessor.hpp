@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <Domains/Music/MusicLib/musicLibExport.hpp>
+
 #include <MusicLib/instance.hpp>
 
 #include <BabelWiresLib/Processors/parallelProcessor.hpp>
@@ -16,7 +18,7 @@
 
 namespace bw_music {
 
-    class ChordMapProcessorInput : public babelwires::ParallelProcessorInputBase {
+    class MUSICLIB_API ChordMapProcessorInput : public babelwires::ParallelProcessorInputBase {
       public:
         DOWNCASTABLE(ChordMapProcessorInput, babelwires::ParallelProcessorInputBase);
         REGISTERED_TYPE("ChordMapIn", "ChordMap In", "9a6aac86-fc46-40e2-91ba-c0fb053ad172", 1);
@@ -28,7 +30,7 @@ namespace bw_music {
         DECLARE_INSTANCE_END()
     };
 
-    class ChordMapProcessorOutput : public babelwires::ParallelProcessorOutputBase {
+    class MUSICLIB_API ChordMapProcessorOutput : public babelwires::ParallelProcessorOutputBase {
       public:
         DOWNCASTABLE(ChordMapProcessorOutput, babelwires::ParallelProcessorOutputBase);
         REGISTERED_TYPE("ChordMapOut", "ChordMap Out", "e7ed549d-d6ef-4cca-b66e-5b271d00e0b2", 1);
@@ -37,7 +39,7 @@ namespace bw_music {
     };
 
     /// A processor which chordmaps the events in a track a specified number of times.
-    class ChordMapProcessor : public babelwires::ParallelProcessor {
+    class MUSICLIB_API ChordMapProcessor : public babelwires::ParallelProcessor {
       public:
         BW_PROCESSOR_WITH_DEFAULT_FACTORY("ChordMapProcessor", "Chord Map", "b7227130-8274-4451-bd60-8fe34a74c4b6");
 

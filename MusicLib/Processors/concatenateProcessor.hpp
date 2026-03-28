@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <Domains/Music/MusicLib/musicLibExport.hpp>
+
 #include <MusicLib/Types/Track/trackInstance.hpp>
 #include <MusicLib/Types/Track/trackType.hpp>
 
@@ -19,7 +21,7 @@
 
 namespace bw_music {
 
-    class ConcatenateProcessorInput : public babelwires::RecordType {
+    class MUSICLIB_API ConcatenateProcessorInput : public babelwires::RecordType {
       public:
         DOWNCASTABLE(ConcatenateProcessorInput, babelwires::RecordType);
         REGISTERED_TYPE("ConcatTrcksIn", "Concatenate In", "f4f21fe1-25e6-4721-a298-36fe27b532cc", 1);
@@ -31,7 +33,7 @@ namespace bw_music {
         DECLARE_INSTANCE_END()
     };
 
-    class ConcatenateProcessorOutput : public babelwires::RecordType {
+    class MUSICLIB_API ConcatenateProcessorOutput : public babelwires::RecordType {
       public:
         DOWNCASTABLE(ConcatenateProcessorOutput, babelwires::RecordType);
         REGISTERED_TYPE("ConcatTrcksOut", "Concatenate Out", "2c9e13aa-eb88-494f-b3a6-7fb82504196c", 1);
@@ -43,7 +45,7 @@ namespace bw_music {
         DECLARE_INSTANCE_END()
     };
 
-    class ConcatenateProcessor : public babelwires::Processor {
+    class MUSICLIB_API ConcatenateProcessor : public babelwires::Processor {
       public:
         BW_PROCESSOR_WITH_DEFAULT_FACTORY("ConcatenateTracks", "Concatenate", "42b00d10-9d16-42d2-8ba6-971aad016da0");
 

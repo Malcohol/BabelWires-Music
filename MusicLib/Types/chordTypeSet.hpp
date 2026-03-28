@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <Domains/Music/MusicLib/musicLibExport.hpp>
+
 #include <MusicLib/chord.hpp>
 
 #include <BabelWiresLib/Types/Array/arrayType.hpp>
@@ -20,7 +22,7 @@ namespace bw_music {
     /// Using an array for a set doesn't provide a great UI, but it will do for now.
     /// Having this registered type with the methods that work with a std::set means we can 
     /// change it later when a better representation is available.
-    class ChordTypeSet : public babelwires::ArrayType {
+    class MUSICLIB_API ChordTypeSet : public babelwires::ArrayType {
       public:
         DOWNCASTABLE(ChordTypeSet, babelwires::ArrayType);
         REGISTERED_TYPE("chordSet", "Chord Type Set", "e3593036-1a41-4a0d-9227-5d091106e16d", 1);

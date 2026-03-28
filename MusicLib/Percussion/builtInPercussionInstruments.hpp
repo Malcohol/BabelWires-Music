@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <Domains/Music/MusicLib/musicLibExport.hpp>
+
 #include <MusicLib/musicTypes.hpp>
 
 #include <BabelWiresLib/Types/Enum/enumWithCppEnum.hpp>
@@ -227,7 +229,7 @@ namespace bw_music {
     /// All percussion instruments built into BabelWires-Music.
     /// This is just a holder of instruments. It cannot be used as a PercussionSet because the values do not have a 1-1
     /// mapping to pitch values.
-    class BuiltInPercussionInstruments : public babelwires::EnumType {
+    class MUSICLIB_API BuiltInPercussionInstruments : public babelwires::EnumType {
       public:
         DOWNCASTABLE(BuiltInPercussionInstruments, babelwires::EnumType);
         REGISTERED_TYPE("BuiltInPerc", "Built In Percussion", "c67f1a9e-653d-42b5-bf73-1fdc2f8a9b1a", 1);

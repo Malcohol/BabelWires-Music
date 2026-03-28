@@ -7,13 +7,15 @@
  **/
 #pragma once
 
+#include <Domains/Music/Plugins/Smf/Plugin/smfLibExport.hpp>
+
 #include <MusicLib/Percussion/percussionSetWithPitchMap.hpp>
 
 #include <BabelWiresLib/TypeSystem/registeredType.hpp>
 
 namespace smf {
     /// A PercussionSet corresponding to the instruments of XG Rock percussion set.
-    class XgRockPercussionSet : public bw_music::PercussionSetWithPitchMap {
+    class SMFLIB_API XgRockPercussionSet : public bw_music::PercussionSetWithPitchMap {
       public:
         REGISTERED_TYPE("XGRockPerc", "Yamaha XG Rock Percussion", "f398844b-8624-4896-bbb9-23ad250fb83b", 1);
 

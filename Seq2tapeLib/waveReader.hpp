@@ -7,13 +7,15 @@
  **/
 #pragma once
 
+#include <Domains/Music/Seq2tapeLib/seq2tapeLibExport.hpp>
+
 #include <Seq2tapeLib/sampleReader.hpp>
 
 namespace seq2tape {
     /// Try to read waves of specific lengths from an audio file.
     /// A wave is a negative then positive pulse.
     /// Tries to adapt to variable speed.
-    class WaveReader {
+    class SEQ2TAPELIB_API WaveReader {
       public:
         /// We assume that a "wave" is pair of a positive and a negative pulse.
         /// This determines which is expected first.
@@ -74,7 +76,7 @@ namespace seq2tape {
         /// Proportions of the reference durations are not actually durations, but it's convenient to use the same type.
         using Proportion = babelwires::Duration;
 
-        struct PerWaveInfo {
+        struct SEQ2TAPELIB_API PerWaveInfo {
             Proportion m_proportionOfReferenceDuration;
 
             Proportion m_lowerBoundProportion;

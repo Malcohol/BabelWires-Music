@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <Domains/Music/MusicLib/musicLibExport.hpp>
+
 #include <MusicLib/musicTypes.hpp>
 #include <MusicLib/Percussion/builtInPercussionInstruments.hpp>
 
@@ -21,11 +23,11 @@ namespace bw_music {
     /// used when converting to pitches.
     /// PercussionSets should use as many instruments from the BuiltInPercussionInstruments Enum as possible,
     /// although instruments registered elsewhere are also supported.
-    class PercussionSetWithPitchMap : public babelwires::EnumType {
+    class MUSICLIB_API PercussionSetWithPitchMap : public babelwires::EnumType {
       public:
         DOWNCASTABLE(PercussionSetWithPitchMap, babelwires::EnumType);
         /// A block of instruments which have contiguous pitches.
-        struct InstrumentBlock {
+        struct MUSICLIB_API InstrumentBlock {
           /// For convenience, you can directly reference built-in percussion instruments.
           std::vector<std::variant<babelwires::ShortId, bw_music::BuiltInPercussionInstruments::Value>> m_instruments;
           bw_music::Pitch m_pitchOfLowestInstrument;

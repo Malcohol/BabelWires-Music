@@ -1,3 +1,5 @@
+#include <Domains/Music/MusicLib/musicLibExport.hpp>
+
 /**
  * Function which applies maps to chord events.
  *
@@ -15,11 +17,11 @@ namespace babelwires {
 }
 
 namespace bw_music {
-    babelwires::TypeExp getMapChordFunctionSourceTypeExp();
-    babelwires::TypeExp getMapChordFunctionTargetTypeExp();
+    MUSICLIB_API babelwires::TypeExp getMapChordFunctionSourceTypeExp();
+    MUSICLIB_API babelwires::TypeExp getMapChordFunctionTargetTypeExp();
 
     /// Apply maps to chord events in the track.
     /// You can specify a chord that should be active when no chord in the sourceTrack is active
     /// by having blanks in the source map.
-    babelwires::ResultT<Track> mapChordsFunction(const babelwires::TypeSystem& typeSystem, const Track& sourceTrack, const babelwires::MapValue& chordMapValue);
+    MUSICLIB_API babelwires::ResultT<Track> mapChordsFunction(const babelwires::TypeSystem& typeSystem, const Track& sourceTrack, const babelwires::MapValue& chordMapValue);
 }

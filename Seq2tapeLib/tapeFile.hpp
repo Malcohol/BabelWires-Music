@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <Domains/Music/Seq2tapeLib/seq2tapeLibExport.hpp>
+
 #include <BaseLib/common.hpp>
 #include <BaseLib/Identifiers/identifier.hpp>
 #include <BaseLib/Result/result.hpp>
@@ -26,7 +28,7 @@ namespace seq2tape {
     /// Holds a decoded version of the audio storage for a sequence.
     /// This usually contains one data file, but sometimes more.
     /// This allows a sequence to correspond to more than one loading event.
-    class TapeFile {
+    class SEQ2TAPELIB_API TapeFile {
       public:
         /// Construct an empty TapeFile for the given format.
         TapeFile(babelwires::LongId formatIdentifier);

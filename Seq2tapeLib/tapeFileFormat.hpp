@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <Domains/Music/Seq2tapeLib/seq2tapeLibExport.hpp>
+
 #include <Seq2tapeLib/tapeFile.hpp>
 
 #include <BaseLib/Registry/fileTypeRegistry.hpp>
@@ -26,7 +28,7 @@ namespace seq2tape {
     class TapeFile;
 
     /// A registered format which knows how to convert between a TapeFile::DataFile and audio.
-    struct TapeFileFormat : public babelwires::FileTypeEntry, babelwires::ProductInfo {
+    struct SEQ2TAPELIB_API TapeFileFormat : public babelwires::FileTypeEntry, babelwires::ProductInfo {
         TapeFileFormat(babelwires::LongId identifier, babelwires::VersionNumber version,
                        Extensions extensions);
 
@@ -35,7 +37,7 @@ namespace seq2tape {
         virtual babelwires::Result writeToAudio(const TapeFile::DataFile& tapefile, babelwires::AudioDest& dest) const = 0;
     };
 
-    struct TapeFileFormatRegistry : babelwires::FileTypeRegistry<TapeFileFormat> {
+    struct SEQ2TAPELIB_API TapeFileFormatRegistry : babelwires::FileTypeRegistry<TapeFileFormat> {
         TapeFileFormatRegistry();
     };
 

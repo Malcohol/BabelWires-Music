@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <Domains/Music/MusicLib/musicLibExport.hpp>
+
 #include <BabelWiresLib/TypeSystem/registeredType.hpp>
 
 #include <MusicLib/Types/Track/track.hpp>
@@ -18,6 +20,6 @@
 
 namespace bw_music {
     /// Get the set of chord types used in the given chord track.
-    babelwires::ResultT<std::set<ChordType::Value>> getChordTypesFunction(const Track& chordTrack);
+    MUSICLIB_API babelwires::ResultT<std::set<ChordType::Value>> getChordTypesFunction(const Track& chordTrack);
 
 } // namespace bw_music

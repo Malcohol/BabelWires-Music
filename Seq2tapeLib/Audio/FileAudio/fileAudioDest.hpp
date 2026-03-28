@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <Domains/Music/Seq2tapeLib/seq2tapeLibExport.hpp>
+
 #include <Seq2tapeLib/Audio/audioDest.hpp>
 
 #include <BaseLib/Registry/fileTypeRegistry.hpp>
@@ -20,7 +22,7 @@ namespace babelwires {
 
     /// A file extension does not give sufficient information for a generic sound writing library to choose
     /// its format, so we associate some reasonable settings with each file extension using factories.
-    class FileAudioDestFactory : public FileTypeEntry {
+    class SEQ2TAPELIB_API FileAudioDestFactory : public FileTypeEntry {
       public:
         FileAudioDestFactory(LongId identifier, VersionNumber version, Extensions extensions);
 
@@ -29,7 +31,7 @@ namespace babelwires {
     };
 
     /// A registry of factories for creating fileAudioDests, which is initialized with a few useful formats.
-    class FileAudioDestRegistry : public FileTypeRegistry<FileAudioDestFactory> {
+    class SEQ2TAPELIB_API FileAudioDestRegistry : public FileTypeRegistry<FileAudioDestFactory> {
       public:
         /// Pre-populates the registry with a set of useful supported formats (wav, aiff, flac, ogg).
         FileAudioDestRegistry();

@@ -7,13 +7,15 @@
  **/
 #pragma once
 
+#include <Domains/Music/MusicLib/musicLibExport.hpp>
+
 #include <MusicLib/Types/Track/track.hpp>
 
 namespace bw_music {
     class Track;
 
     namespace Detail {
-        bool isTrackValidInternal(const Track& track, bool assertIfInvalid);
+        MUSICLIB_API bool isTrackValidInternal(const Track& track, bool assertIfInvalid);
     }
 
     /// Check that the following requirements are met:

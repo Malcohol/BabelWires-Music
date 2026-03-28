@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <Domains/Music/MusicLib/musicLibExport.hpp>
+
 #include <MusicLib/Types/Track/track.hpp>
 #include <MusicLib/Utilities/musicUtilities.hpp>
 
@@ -17,5 +19,5 @@
 namespace bw_music {
 
     /// Return a track with the same events as trackIn, except the pitches have been adjusted.
-    babelwires::ResultT<Track> transposeTrack(const Track& trackIn, int pitchOffset, TransposeOutOfRangePolicy outOfRangePolicy = TransposeOutOfRangePolicy::Discard);
+    MUSICLIB_API babelwires::ResultT<Track> transposeTrack(const Track& trackIn, int pitchOffset, TransposeOutOfRangePolicy outOfRangePolicy = TransposeOutOfRangePolicy::Discard);
 } // namespace bw_music

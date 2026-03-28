@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <Domains/Music/MusicLib/musicLibExport.hpp>
+
 #include <MusicLib/Types/Track/trackInstance.hpp>
 #include <MusicLib/Types/Track/trackType.hpp>
 
@@ -17,7 +19,7 @@
 #include <BabelWiresLib/Types/Record/recordType.hpp>
 
 namespace bw_music {
-    class MergeProcessorInput : public babelwires::RecordType {
+    class MUSICLIB_API MergeProcessorInput : public babelwires::RecordType {
       public:
         DOWNCASTABLE(MergeProcessorInput, babelwires::RecordType);
         REGISTERED_TYPE("MergeTracksIn", "Merge Tracks Input", "15dd4564-e67f-4087-8609-ef5985b23dd7", 1);
@@ -29,7 +31,7 @@ namespace bw_music {
         DECLARE_INSTANCE_END()
     };
 
-    class MergeProcessorOutput : public babelwires::RecordType {
+    class MUSICLIB_API MergeProcessorOutput : public babelwires::RecordType {
       public:
         DOWNCASTABLE(MergeProcessorOutput, babelwires::RecordType);
         REGISTERED_TYPE("MergeTracksOut", "Merge Tracks Output", "9b797596-f6c2-4900-98a4-001ec7c18be4", 1);
@@ -41,7 +43,7 @@ namespace bw_music {
         DECLARE_INSTANCE_END()
     };
 
-    class MergeProcessor : public babelwires::Processor {
+    class MUSICLIB_API MergeProcessor : public babelwires::Processor {
       public:
         BW_PROCESSOR_WITH_DEFAULT_FACTORY("MergeTracks", "Merge", "ed004257-0ae3-44aa-abb9-d752c2eba0c1");
 

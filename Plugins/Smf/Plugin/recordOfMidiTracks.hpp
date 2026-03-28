@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <Domains/Music/Plugins/Smf/Plugin/smfLibExport.hpp>
+
 #include <Plugins/Smf/Plugin/instanceWithChannelOptionals.hpp>
 #include <Plugins/Smf/Plugin/smfCommon.hpp>
 
@@ -18,7 +20,7 @@
 
 namespace smf {
 
-    class RecordOfMidiTracks : public babelwires::RecordType {
+    class SMFLIB_API RecordOfMidiTracks : public babelwires::RecordType {
       public:
         DOWNCASTABLE(RecordOfMidiTracks, babelwires::RecordType);
         REGISTERED_TYPE("recordOfTracks", "Tracks", "44244cf8-8a05-4071-91a3-af77514ee03b", 1);
@@ -30,7 +32,7 @@ namespace smf {
         /// It's easier to work with a custom instance than the one the standard DSL would produce.
         /// The parent class provides index based access to the 16 optional tracks.
         template <typename VALUE_TREE_NODE>
-        class InstanceImpl : public InstanceWithChannelOptionals<VALUE_TREE_NODE, RecordOfMidiTracks> {
+        class SMFLIB_API InstanceImpl : public InstanceWithChannelOptionals<VALUE_TREE_NODE, RecordOfMidiTracks> {
           public:
             InstanceImpl(VALUE_TREE_NODE& valueFeature)
                 : InstanceWithChannelOptionals<VALUE_TREE_NODE, RecordOfMidiTracks>(valueFeature) {}

@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <Domains/Music/MusicLib/musicLibExport.hpp>
+
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/Utilities/filteredTrackIterator.hpp>
 
@@ -15,7 +17,7 @@ namespace bw_music {
     /// This just uses a first-come-first-serve policy, so the resulting track will probably not be as useful
     /// as the tracks which come out of the MonophonicSubtrackFunction / MonophonicSubtrackProcessor. 
     /// Any note started when the active note is playing is ignored.
-    struct MonophonicNoteIterator : FilteredTrackIterator<NoteEvent> {
+    struct MUSICLIB_API MonophonicNoteIterator : FilteredTrackIterator<NoteEvent> {
         enum InteriorEventFilter { OnOffOnly, AllEvents };
 
         /// If onOffOnly is true, then only NoteOnEvent and NoteOffEvent events will be returned.
@@ -29,6 +31,6 @@ namespace bw_music {
     };
 
     /// Return a span of iterators which only return non-overlapping notes.
-    babelwires::Span<MonophonicNoteIterator>
+    MUSICLIB_API babelwires::Span<MonophonicNoteIterator>
     iterateOverMonotonicNotes(const Track& track, MonophonicNoteIterator::InteriorEventFilter interiorEventFilter);
 } // namespace bw_music

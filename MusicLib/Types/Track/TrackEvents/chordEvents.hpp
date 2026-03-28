@@ -7,13 +7,15 @@
  **/
 #pragma once
 
+#include <Domains/Music/MusicLib/musicLibExport.hpp>
+
 #include <MusicLib/Types/Track/TrackEvents/trackEvent.hpp>
 #include <MusicLib/chord.hpp>
 
 namespace bw_music {
 
     /// A ChordEvent describes a musical chord.
-    struct ChordEvent : public TrackEvent {
+    struct MUSICLIB_API ChordEvent : public TrackEvent {
         DOWNCASTABLE(ChordEvent, TrackEvent);
         STREAM_EVENT_ABSTRACT(ChordEvent);
         ChordEvent() = default;
@@ -26,7 +28,7 @@ namespace bw_music {
     };
 
     /// Describes the start of a chord.
-    struct ChordOnEvent : public ChordEvent {
+    struct MUSICLIB_API ChordOnEvent : public ChordEvent {
         DOWNCASTABLE(ChordOnEvent, ChordEvent);
         STREAM_EVENT(ChordOnEvent);
         ChordOnEvent() = default;
@@ -44,7 +46,7 @@ namespace bw_music {
     };
 
     /// The end of a chord.
-    struct ChordOffEvent : public ChordEvent {
+    struct MUSICLIB_API ChordOffEvent : public ChordEvent {
         DOWNCASTABLE(ChordOffEvent, ChordEvent);
         STREAM_EVENT(ChordOffEvent);
         ChordOffEvent() = default;

@@ -1,3 +1,5 @@
+#include <Domains/Music/MusicLib/musicLibExport.hpp>
+
 /**
  * Function which maps notes events using a percussion map.
  *
@@ -22,7 +24,7 @@ namespace bw_music {
     /// A 0-ary type constructor which constructs a sum type of all registered percussion types.
     /// A type constructor is used, since when the SumType itself is built, we know all the percussion types should
     /// be registered already.
-    class PercussionMapType : public babelwires::TypeConstructor {
+    class MUSICLIB_API PercussionMapType : public babelwires::TypeConstructor {
       public:
         TYPE_CONSTRUCTOR("PercMaps", "Percussion Map Types", "c6d3d105-5823-4764-a4bb-5a9b12abab03", 1);
 
@@ -32,9 +34,9 @@ namespace bw_music {
                       const std::vector<babelwires::TypePtr>& resolvedTypeArguments) const override;
     };
 
-    babelwires::TypeExp getPercussionMapType();
+    MUSICLIB_API babelwires::TypeExp getPercussionMapType();
 
     ///
-    babelwires::ResultT<Track> mapPercussionFunction(const babelwires::TypeSystem& typeSystem, const Track& sourceTrack,
+    MUSICLIB_API babelwires::ResultT<Track> mapPercussionFunction(const babelwires::TypeSystem& typeSystem, const Track& sourceTrack,
                                 const babelwires::MapValue& percussionMapValue);
 } // namespace bw_music

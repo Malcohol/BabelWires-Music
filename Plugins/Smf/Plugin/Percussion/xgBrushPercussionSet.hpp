@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <Domains/Music/Plugins/Smf/Plugin/smfLibExport.hpp>
+
 #include <MusicLib/Percussion/percussionSetWithPitchMap.hpp>
 
 #include <BabelWiresLib/TypeSystem/registeredType.hpp>
@@ -14,7 +16,7 @@
 namespace smf {
     /// A PercussionSet corresponding to the instruments of XG Standard 1 percussion set.
     /// This also works as the XG Standard 2 percussion set.
-    class XgBrushPercussionSet : public bw_music::PercussionSetWithPitchMap {
+    class SMFLIB_API XgBrushPercussionSet : public bw_music::PercussionSetWithPitchMap {
       public:
         REGISTERED_TYPE("XGBrushPerc", "Yamaha XG BrushPercussion", "096bbcd8-5302-42e0-9ac9-560fd7a570f3", 1);
 

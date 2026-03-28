@@ -7,11 +7,13 @@
  **/
 #pragma once
 
+#include <Domains/Music/MusicLibUi/musicLibUiExport.hpp>
+
 #include <BabelWiresQtUi/ValueModels/valueModelWithRichText.hpp>
 
 namespace bw_musicUi {
 
-    class TrackValueModel : public babelwires::ValueModelWithRichText {
+    class MUSICLIBUI_API TrackValueModel : public babelwires::ValueModelWithRichText {
       public:
         QString getRichText() const override;
         QString getTooltip() const override;

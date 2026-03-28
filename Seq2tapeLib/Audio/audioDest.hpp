@@ -7,12 +7,14 @@
  **/
 #pragma once
 
+#include <Domains/Music/Seq2tapeLib/seq2tapeLibExport.hpp>
+
 #include <BaseLib/common.hpp>
 
 namespace babelwires {
 
     /// An interface for objects that can consume audio data.
-    struct AudioDest {
+    struct SEQ2TAPELIB_API AudioDest {
         virtual ~AudioDest();
 
         /// Return the number of channels in this audio source.
