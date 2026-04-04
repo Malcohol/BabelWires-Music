@@ -7,7 +7,7 @@
  **/
 #pragma once
 
-#include <Domains/Music/MusicLib/musicLibExport.hpp>
+#include <MusicLib/musicLibExport.hpp>
 
 #include <MusicLib/Functions/fingeredChordsFunction.hpp>
 #include <MusicLib/Types/Track/trackInstance.hpp>

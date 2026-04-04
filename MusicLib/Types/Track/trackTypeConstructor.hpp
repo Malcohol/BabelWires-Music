@@ -7,7 +7,7 @@
  **/
 #pragma once
 
-#include <Domains/Music/MusicLib/musicLibExport.hpp>
+#include <MusicLib/musicLibExport.hpp>
 
 #include <MusicLib/Types/Track/trackType.hpp>
 #include <MusicLib/musicTypes.hpp>

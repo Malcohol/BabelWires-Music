@@ -1,4 +1,4 @@
-#include <Domains/Music/MusicLib/musicLibExport.hpp>
+#include <MusicLib/musicLibExport.hpp>
 
 /**
  * Function which maps notes events using a percussion map.

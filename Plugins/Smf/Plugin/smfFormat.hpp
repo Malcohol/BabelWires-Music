@@ -7,7 +7,7 @@
  **/
 #pragma once
 
-#include <Domains/Music/Plugins/Smf/Plugin/smfLibExport.hpp>
+#include <Smf/Plugin/smfLibExport.hpp>
 
 #include <BabelWiresLib/FileFormat/sourceFileFormat.hpp>
 #include <BabelWiresLib/FileFormat/targetFileFormat.hpp>

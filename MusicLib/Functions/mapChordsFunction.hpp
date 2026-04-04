@@ -1,4 +1,4 @@
-#include <Domains/Music/MusicLib/musicLibExport.hpp>
+#include <MusicLib/musicLibExport.hpp>
 
 /**
  * Function which applies maps to chord events.

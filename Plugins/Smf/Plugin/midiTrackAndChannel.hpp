@@ -7,7 +7,7 @@
  **/
 #pragma once
 
-#include <Domains/Music/Plugins/Smf/Plugin/smfLibExport.hpp>
+#include <Smf/Plugin/smfLibExport.hpp>
 
 #include <Plugins/Smf/Plugin/instanceWithChannelOptionals.hpp>
 #include <Plugins/Smf/Plugin/smfCommon.hpp>
