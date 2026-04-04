@@ -7,12 +7,14 @@
  **/
 #pragma once
 
+#include <MusicLib/musicLibExport.hpp>
+
 #include <MusicLib/Types/Track/TrackEvents/trackEvent.hpp>
 
 namespace bw_music {
 
     /// Base type for note events.
-    struct NoteEvent : public TrackEvent {
+    struct MUSICLIB_API NoteEvent : public TrackEvent {
         DOWNCASTABLE(NoteEvent, TrackEvent);
         STREAM_EVENT_ABSTRACT(NoteEvent);
         NoteEvent(ModelDuration timeSinceLastEvent, Pitch pitch, Velocity velocity)
@@ -40,7 +42,7 @@ namespace bw_music {
     };
 
     /// The start of a musical note.
-    struct NoteOnEvent : public NoteEvent {
+    struct MUSICLIB_API NoteOnEvent : public NoteEvent {
         DOWNCASTABLE(NoteOnEvent, NoteEvent);
         STREAM_EVENT(NoteOnEvent);
         static constexpr const Velocity c_defaultVelocity = 127;
@@ -52,7 +54,7 @@ namespace bw_music {
     };
 
     /// The end of a musical note.
-    struct NoteOffEvent : public NoteEvent {
+    struct MUSICLIB_API NoteOffEvent : public NoteEvent {
         DOWNCASTABLE(NoteOffEvent, NoteEvent);
         STREAM_EVENT(NoteOffEvent);
         static constexpr const Velocity c_defaultVelocity = 64;

@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <MusicLib/musicLibExport.hpp>
+
 #include <MusicLib/Functions/monophonicSubtracksFunction.hpp>
 #include <MusicLib/Types/Track/trackInstance.hpp>
 #include <MusicLib/Types/Track/trackType.hpp>
@@ -18,7 +20,7 @@
 #include <BabelWiresLib/Types/Record/recordType.hpp>
 
 namespace bw_music {
-    class MonophonicSubtracksProcessorInput : public babelwires::RecordType {
+    class MUSICLIB_API MonophonicSubtracksProcessorInput : public babelwires::RecordType {
       public:
         DOWNCASTABLE(MonophonicSubtracksProcessorInput, babelwires::RecordType);
         REGISTERED_TYPE("MonoTracksIn", "Monophonic Tracks Input", "e8041fe6-29de-470e-9235-e1f05c5f791e", 1);
@@ -32,7 +34,7 @@ namespace bw_music {
         DECLARE_INSTANCE_END()
     };
 
-    class MonophonicSubtracksProcessorOutput : public babelwires::RecordType {
+    class MUSICLIB_API MonophonicSubtracksProcessorOutput : public babelwires::RecordType {
       public:
         DOWNCASTABLE(MonophonicSubtracksProcessorOutput, babelwires::RecordType);
         REGISTERED_TYPE("MonoTracksOut", "Monophonic Tracks Output", "c2228921-da8a-45c0-bebf-24951d651090", 1);
@@ -45,7 +47,7 @@ namespace bw_music {
         DECLARE_INSTANCE_END()
     };
 
-    class MonophonicSubtracksProcessor : public babelwires::Processor {
+    class MUSICLIB_API MonophonicSubtracksProcessor : public babelwires::Processor {
       public:
         BW_PROCESSOR_WITH_DEFAULT_FACTORY("MonoSubtracksProcessor", "Monophonic subtracks", "7b6bbc49-24a5-4657-86fd-c457d77feaf9");
 

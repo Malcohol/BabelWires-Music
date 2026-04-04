@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <Domains/Music/Seq2tapeLib/seq2tapeLibExport.hpp>
+
 #include <BaseLib/common.hpp>
 
 namespace babelwires {
@@ -15,7 +17,7 @@ namespace babelwires {
 
 namespace seq2tape {
     /// A SampleReader manages the buffered reading of samples from an AudioSource.
-    class SampleReader {
+    class SEQ2TAPELIB_API SampleReader {
       public:
         SampleReader(babelwires::AudioSource& audioSource);
 

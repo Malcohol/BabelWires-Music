@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <Domains/Music/Seq2tapeLib/seq2tapeLibExport.hpp>
+
 #include <BaseLib/Registry/registry.hpp>
 #include <BaseLib/Result/result.hpp>
 
@@ -16,7 +18,7 @@ namespace babelwires {
     struct AudioSource;
 
     /// A given audio interface (e.g. Alsa) must provide an implementation of this interface.
-    class AudioInterface : public RegistryEntry {
+    class SEQ2TAPELIB_API AudioInterface : public RegistryEntry {
       public:
         AudioInterface(LongId identifier, VersionNumber version);
 
@@ -29,7 +31,7 @@ namespace babelwires {
     };
 
     /// Find available audio sources and destinations.
-    class AudioInterfaceRegistry : public Registry<AudioInterface> {
+    class SEQ2TAPELIB_API AudioInterfaceRegistry : public Registry<AudioInterface> {
       public:
         AudioInterfaceRegistry();
 

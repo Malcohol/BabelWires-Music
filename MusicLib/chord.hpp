@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <MusicLib/musicLibExport.hpp>
+
 #include <MusicLib/musicTypes.hpp>
 
 #include <BabelWiresLib/Types/Enum/enumWithCppEnum.hpp>
@@ -70,7 +72,7 @@ namespace bw_music {
     typedef babelwires::Byte Velocity;
 
     /// Carries the enum of chord types.
-    class ChordType : public babelwires::EnumType {
+    class MUSICLIB_API ChordType : public babelwires::EnumType {
       public:
         DOWNCASTABLE(ChordType, babelwires::EnumType);
         REGISTERED_TYPE("ChordType", "Chord Type", "c63ea174-1562-4cb5-a456-d6c0bd89e335", 1);
@@ -82,7 +84,7 @@ namespace bw_music {
 
     /// Defines the state of a chord event.
     // Note: This does not currently include all the data in a XF chord event.
-    struct Chord {
+    struct MUSICLIB_API Chord {
         PitchClass::Value m_root = bw_music::PitchClass::Value::C;
         ChordType::Value m_chordType = bw_music::ChordType::Value::NotAValue;
 
@@ -92,7 +94,7 @@ namespace bw_music {
     };
 
     /// A type with a single value meaning "NoChord".
-    class NoChord : public babelwires::EnumType {
+    class MUSICLIB_API NoChord : public babelwires::EnumType {
       public:
         DOWNCASTABLE(NoChord, babelwires::EnumType);
         REGISTERED_TYPE("NoChord", "No Chord", "5f51a358-0121-4d1d-a0ab-cce5bddf92f1", 1);

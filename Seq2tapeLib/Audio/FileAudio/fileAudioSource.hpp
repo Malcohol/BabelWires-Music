@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <Domains/Music/Seq2tapeLib/seq2tapeLibExport.hpp>
+
 #include <Seq2tapeLib/Audio/audioSource.hpp>
 
 #include <BaseLib/Result/result.hpp>
@@ -16,7 +18,7 @@
 
 namespace babelwires {
 
-    class FileAudioSource : public AudioSource {
+    class SEQ2TAPELIB_API FileAudioSource : public AudioSource {
       public:
         FileAudioSource(FileAudioSource&&) = default;
         FileAudioSource& operator=(FileAudioSource&&) = default;

@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <MusicLib/musicLibExport.hpp>
+
 #include <MusicLib/Types/Track/TrackEvents/trackEvent.hpp>
 #include <MusicLib/musicTypes.hpp>
 
@@ -27,7 +29,7 @@ namespace bw_music {
     /// From the point of view of the project, Tracks are not editable: they can be manipulated only using Processors
     /// and can be serialized/deserialized only using SourceFileFormats and TargetFileFormats formats.
     /// The events in a track can belong to groups and those groups are subject to rules, see TrackBuilder.
-    class Track : public babelwires::Value {
+    class MUSICLIB_API Track : public babelwires::Value {
       public:
         DOWNCASTABLE(Track, babelwires::Value);
         CLONEABLE(Track);
@@ -102,7 +104,7 @@ namespace bw_music {
     };
 
     /// This is only intended for testing tracks.
-    class UnsafeTrack : public Track {
+    class MUSICLIB_API UnsafeTrack : public Track {
       public:
         using Track::addEvent;
     };

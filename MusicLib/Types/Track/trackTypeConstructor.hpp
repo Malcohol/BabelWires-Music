@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <MusicLib/musicLibExport.hpp>
+
 #include <MusicLib/Types/Track/trackType.hpp>
 #include <MusicLib/musicTypes.hpp>
 
@@ -14,7 +16,7 @@
 
 namespace bw_music {
     /// Construct a track type with an initial duration.
-    class TrackTypeConstructor : public babelwires::TypeConstructor {
+    class MUSICLIB_API TrackTypeConstructor : public babelwires::TypeConstructor {
       public:
         /// Note that the we don't represent the default in the name.
         TYPE_CONSTRUCTOR("Track", "Track", "bba2f18c-9ff1-406c-b39c-47a2e4047caa", 1);

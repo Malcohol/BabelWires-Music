@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <MusicLib/musicLibExport.hpp>
+
 #include <MusicLib/Types/Track/trackType.hpp>
 #include <MusicLib/Types/Track/track.hpp>
 
@@ -16,7 +18,7 @@
 namespace babelwires {
     template <typename VALUE_TREE_NODE, typename TRACK_TYPE>
         requires std::is_base_of_v<bw_music::TrackType, TRACK_TYPE>
-    class InstanceImpl<VALUE_TREE_NODE, TRACK_TYPE> : public InstanceCommonBase<VALUE_TREE_NODE, TRACK_TYPE> {
+    class MUSICLIB_API InstanceImpl<VALUE_TREE_NODE, TRACK_TYPE> : public InstanceCommonBase<VALUE_TREE_NODE, TRACK_TYPE> {
       public:
         InstanceImpl(VALUE_TREE_NODE& valueFeature)
             : InstanceCommonBase<VALUE_TREE_NODE, TRACK_TYPE>(valueFeature) {}

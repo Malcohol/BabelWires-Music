@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <MusicLib/musicLibExport.hpp>
+
 #include <MusicLib/Types/Track/trackInstance.hpp>
 #include <MusicLib/Types/Track/trackType.hpp>
 #include <MusicLib/pitch.hpp>
@@ -18,7 +20,7 @@
 #include <BabelWiresLib/Types/Record/recordType.hpp>
 
 namespace bw_music {
-    class SplitAtPitchProcessorInput : public babelwires::RecordType {
+    class MUSICLIB_API SplitAtPitchProcessorInput : public babelwires::RecordType {
       public:
         DOWNCASTABLE(SplitAtPitchProcessorInput, babelwires::RecordType);
         REGISTERED_TYPE("PitchSplitIn", "Split At Pitch Input", "f901af3a-c27b-449c-961a-8f43dee7d9a6", 1);
@@ -31,7 +33,7 @@ namespace bw_music {
         DECLARE_INSTANCE_END()
     };
 
-    class SplitAtPitchProcessorOutput : public babelwires::RecordType {
+    class MUSICLIB_API SplitAtPitchProcessorOutput : public babelwires::RecordType {
       public:
         DOWNCASTABLE(SplitAtPitchProcessorOutput, babelwires::RecordType);
         REGISTERED_TYPE("PitchSplitOut", "Split At Pitch Output", "50f790e1-0ef3-4f34-ad14-5a6762772e19", 1);
@@ -45,7 +47,7 @@ namespace bw_music {
         DECLARE_INSTANCE_END()
     };
 
-    class SplitAtPitchProcessor : public babelwires::Processor {
+    class MUSICLIB_API SplitAtPitchProcessor : public babelwires::Processor {
       public:
         BW_PROCESSOR_WITH_DEFAULT_FACTORY("SplitAtPitchProcessor", "Split At Pitch", "c7b79e31-98f4-4d20-b946-f55113eb3b75");
 

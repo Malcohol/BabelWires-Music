@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <MusicLib/musicLibExport.hpp>
+
 #include <MusicLib/instance.hpp>
 
 #include <BabelWiresLib/Processors/parallelProcessor.hpp>
@@ -16,7 +18,7 @@
 
 namespace bw_music {
 
-    class QuantizeProcessorInput : public babelwires::ParallelProcessorInputBase {
+    class MUSICLIB_API QuantizeProcessorInput : public babelwires::ParallelProcessorInputBase {
       public:
         DOWNCASTABLE(QuantizeProcessorInput, babelwires::ParallelProcessorInputBase);
         REGISTERED_TYPE("QuantTrcksIn", "Quantize In", "86a46b16-69a3-41bb-bbb3-19f8cb0a4e4d", 1);
@@ -29,7 +31,7 @@ namespace bw_music {
         DECLARE_INSTANCE_END()
     };
 
-    class QuantizeProcessorOutput : public babelwires::ParallelProcessorOutputBase {
+    class MUSICLIB_API QuantizeProcessorOutput : public babelwires::ParallelProcessorOutputBase {
       public:
         DOWNCASTABLE(QuantizeProcessorOutput, babelwires::ParallelProcessorOutputBase);
         REGISTERED_TYPE("QuantTrcksOut", "Quantize Out", "89feb462-63b1-473a-bc77-29540bda43f7", 1);
@@ -38,7 +40,7 @@ namespace bw_music {
     };
 
     /// A processor which quantizes the events in a track a specified number of times.
-    class QuantizeProcessor : public babelwires::ParallelProcessor {
+    class MUSICLIB_API QuantizeProcessor : public babelwires::ParallelProcessor {
       public:
         BW_PROCESSOR_WITH_DEFAULT_FACTORY("QuantizeTracks", "Quantize", "1ae89077-2cfb-4071-910c-2f5dcfc85b17");
 

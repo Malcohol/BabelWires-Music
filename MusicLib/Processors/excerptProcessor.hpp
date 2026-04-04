@@ -7,13 +7,15 @@
  **/
 #pragma once
 
+#include <MusicLib/musicLibExport.hpp>
+
 #include <BabelWiresLib/Instance/instance.hpp>
 #include <BabelWiresLib/Processors/parallelProcessor.hpp>
 #include <BabelWiresLib/Processors/processorFactory.hpp>
 
 namespace bw_music {
 
-    class ExcerptProcessorInput : public babelwires::ParallelProcessorInputBase {
+    class MUSICLIB_API ExcerptProcessorInput : public babelwires::ParallelProcessorInputBase {
       public:
         DOWNCASTABLE(ExcerptProcessorInput, babelwires::ParallelProcessorInputBase);
         REGISTERED_TYPE("ExcerptTrckIn", "Excerpt In", "68577705-b5c2-499c-a2db-8ab5f63e5728", 1);
@@ -27,7 +29,7 @@ namespace bw_music {
         DECLARE_INSTANCE_END()
     };
 
-    class ExcerptProcessorOutput : public babelwires::ParallelProcessorOutputBase {
+    class MUSICLIB_API ExcerptProcessorOutput : public babelwires::ParallelProcessorOutputBase {
       public:
         DOWNCASTABLE(ExcerptProcessorOutput, babelwires::ParallelProcessorOutputBase);
         REGISTERED_TYPE("ExcerptTrckOut", "Excerpt Out", "73469491-111c-441a-b89c-2f8aceaa640c", 1);
@@ -36,7 +38,7 @@ namespace bw_music {
     };
 
     /// A processor which limits a track to events between certain points.
-    class ExcerptProcessor : public babelwires::ParallelProcessor {
+    class MUSICLIB_API ExcerptProcessor : public babelwires::ParallelProcessor {
       public:
         BW_PROCESSOR_WITH_DEFAULT_FACTORY("TrackExcerpt", "Excerpt", "83c74dba-7861-447c-9abb-0b4439061baf");
 

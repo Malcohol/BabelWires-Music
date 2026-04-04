@@ -7,12 +7,14 @@
  **/
 #pragma once
 
+#include <MusicLib/musicLibExport.hpp>
+
 #include <MusicLib/Types/Track/TrackEvents/trackEvent.hpp>
 
 namespace bw_music {
 
     /// Base of type for percussion events.
-    struct PercussionEvent : public TrackEvent {
+    struct MUSICLIB_API PercussionEvent : public TrackEvent {
         DOWNCASTABLE(PercussionEvent, TrackEvent);
         STREAM_EVENT_ABSTRACT(PercussionEvent);
 
@@ -40,7 +42,7 @@ namespace bw_music {
     };
 
     /// The start of a percussion event.
-    struct PercussionOnEvent : public PercussionEvent {
+    struct MUSICLIB_API PercussionOnEvent : public PercussionEvent {
         DOWNCASTABLE(PercussionOnEvent, PercussionEvent);
         STREAM_EVENT(PercussionOnEvent);
         PercussionOnEvent(ModelDuration timeSinceLastEvent, babelwires::ShortId instrument, Velocity velocity = 127)
@@ -50,7 +52,7 @@ namespace bw_music {
     };
 
     /// The end of a percussion event.
-    struct PercussionOffEvent : public PercussionEvent {
+    struct MUSICLIB_API PercussionOffEvent : public PercussionEvent {
         DOWNCASTABLE(PercussionOffEvent, PercussionEvent);
         STREAM_EVENT(PercussionOffEvent);
         PercussionOffEvent(ModelDuration timeSinceLastEvent, babelwires::ShortId instrument, Velocity velocity = 64)

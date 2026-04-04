@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <MusicLib/musicLibExport.hpp>
+
 #include <MusicLib/Types/Track/track.hpp>
 
 #include <set>
@@ -16,7 +18,7 @@
 /// * All groups must have strictly positive duration
 /// * No overlapping groups of the same category and value.
 namespace bw_music {
-    class TrackBuilder {
+    class MUSICLIB_API TrackBuilder {
       public:
         TrackBuilder();
 

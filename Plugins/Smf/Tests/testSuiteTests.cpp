@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 
-#include <Plugins/Smf/Plugin/Percussion/gm2StandardPercussionSet.hpp>
-#include <Plugins/Smf/Plugin/libRegistration.hpp>
-#include <Plugins/Smf/Plugin/smfParser.hpp>
+#include <Smf/Percussion/gm2StandardPercussionSet.hpp>
+#include <Smf/libRegistration.hpp>
+#include <Smf/smfParser.hpp>
 
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/percussionEvents.hpp>

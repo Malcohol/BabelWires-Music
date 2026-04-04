@@ -5,9 +5,10 @@ SET( SEQ2TAPELIB_TESTS_SRCS
    )
 
 ADD_EXECUTABLE( seq2tapeLibTests ${SEQ2TAPELIB_TESTS_SRCS} )
-TARGET_INCLUDE_DIRECTORIES( seq2tapeLibTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../.. ${CMAKE_CURRENT_SOURCE_DIR}/../.. )
+TARGET_INCLUDE_DIRECTORIES( seq2tapeLibTests PRIVATE ${PROJECT_SOURCE_DIR} )
 TARGET_LINK_LIBRARIES(seq2tapeLibTests BaseLib Seq2tapeLib testUtils gtest)
 
 if(BUILD_TESTING)
-   gtest_discover_tests(seq2tapeLibTests)
+   gtest_discover_tests(seq2tapeLibTests TEST_LIST seq2tapeLibDiscoveredTests)
+   configure_shared_test_runtime(seq2tapeLibDiscoveredTests seq2tapeLibTests)
 endif()

@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <MusicLib/musicLibExport.hpp>
+
 #include <MusicLib/Types/Track/track.hpp>
 
 #include <BaseLib/Result/result.hpp>
@@ -17,5 +19,5 @@ namespace bw_music {
     /// A function which extracts a section of sequence data from a track.
     /// Groups which start before the excerpt are dropped.
     /// Groups which finish after the excerpt are truncated.
-    babelwires::ResultT<Track> getTrackExcerpt(const Track& trackIn, ModelDuration start, ModelDuration duration);
+    MUSICLIB_API babelwires::ResultT<Track> getTrackExcerpt(const Track& trackIn, ModelDuration start, ModelDuration duration);
 } // namespace bw_music

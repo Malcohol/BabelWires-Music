@@ -2,7 +2,7 @@ ADD_SUBDIRECTORY( MusicLib )
 ADD_SUBDIRECTORY( Seq2tapeLib )
 ADD_SUBDIRECTORY( MusicLibUi )
 
-ADD_SUBDIRECTORY( Plugins/Smf/Plugin )
+ADD_SUBDIRECTORY( Plugins/Smf/Smf )
 ADD_SUBDIRECTORY( Plugins/TestPlugin)
 ADD_SUBDIRECTORY( Plugins/Smf/Tests )
 

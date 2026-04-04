@@ -39,7 +39,6 @@ SET( MUSICLIB_SRCS
 	Types/Track/trackType.cpp
 	Types/Track/trackTypeConstructor.cpp
 	chord.cpp
-	musicTypes.cpp
 	Percussion/percussionTypeTag.cpp
 	Percussion/builtInPercussionInstruments.cpp
 	Percussion/percussionSetWithPitchMap.cpp
@@ -51,5 +50,19 @@ SET( MUSICLIB_SRCS
    )
 
 ADD_LIBRARY( musicLib ${MUSICLIB_SRCS} )
-TARGET_INCLUDE_DIRECTORIES( musicLib PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/.. ${CMAKE_CURRENT_SOURCE_DIR}/../../.. )
+TARGET_INCLUDE_DIRECTORIES( musicLib
+	PUBLIC
+		$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
+		$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/Domains/Music>
+		$<INSTALL_INTERFACE:include>
+)
 TARGET_LINK_LIBRARIES(musicLib PUBLIC BabelWiresLib tinyxml2)
+
+if(BUILD_SHARED_LIBS)
+	set_target_properties(musicLib PROPERTIES
+		CXX_VISIBILITY_PRESET hidden
+		VISIBILITY_INLINES_HIDDEN ON)
+	target_compile_definitions(musicLib PRIVATE MUSICLIB_EXPORTS)
+else()
+	target_compile_definitions(musicLib PUBLIC MUSICLIB_STATIC)
+endif()

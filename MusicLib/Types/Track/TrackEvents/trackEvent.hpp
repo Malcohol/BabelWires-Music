@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <MusicLib/musicLibExport.hpp>
+
 #include <BaseLib/BlockStream/blockStream.hpp>
 #include <BaseLib/Cloning/cloneable.hpp>
 #include <BaseLib/Utilities/enumFlags.hpp>
@@ -25,7 +27,7 @@ namespace bw_music {
     /// A track can carry arbitrary events. However, tracks often contain events which are
     /// related, For example: a noteOn event, a series of polyphonic aftertouch events,
     /// and a noteOff event, all sharing the same pitch.
-    class TrackEvent : public babelwires::StreamEvent {
+    class MUSICLIB_API TrackEvent : public babelwires::StreamEvent {
       public:
         DOWNCASTABLE(TrackEvent, babelwires::StreamEvent);
         STREAM_EVENT_ABSTRACT(TrackEvent);
@@ -54,7 +56,7 @@ namespace bw_music {
         /// A value which describes how this event can participate in a group of similar events:
         /// For example, a noteOn event, a sequence of after-touch events, and a noteOff event,
         /// all of the same pitch.
-        struct EventGroup {
+        struct MUSICLIB_API EventGroup {
             /// A pointer to a static string can act as a category.
             using Category = const char*;
 
@@ -73,7 +75,7 @@ namespace bw_music {
             GroupValue m_groupValue = c_notAValue;
         };
 
-        struct GroupingInfo : EventGroup {
+        struct MUSICLIB_API GroupingInfo : EventGroup {
             /// A value which determines the way in which this event belongs to a group.
             enum class Grouping : std::uint8_t {
                 /// This is a stand-alone event.

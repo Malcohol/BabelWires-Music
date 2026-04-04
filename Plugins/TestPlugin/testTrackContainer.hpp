@@ -1,4 +1,13 @@
+/**
+ * TestTrackContainer
+ *
+ * (C) 2021 Malcolm Tyrrell
+ *
+ * Licensed under the GPLv3.0. See LICENSE file.
+ **/
 #pragma once
+
+#include <Domains/Music/Plugins/TestPlugin/testPluginLibExport.hpp>
 
 #include <Domains/Music/MusicLib/Types/Track/trackType.hpp>
 #include <MusicLib/Types/Track/trackInstance.hpp>
@@ -11,7 +20,7 @@
 
 namespace bw_music_testplugin {
     /// A type that contains some tracks and other fields for testing.
-    class TestTrackContainer : public babelwires::RecordType {
+    class TESTPLUGINLIB_API TestTrackContainer : public babelwires::RecordType {
       public:
         DOWNCASTABLE(TestTrackContainer, babelwires::RecordType);
         REGISTERED_TYPE("TrackContainer", "Test Track Container", "2bfd356b-7974-4769-8a64-ef934c44a5a0", 1);

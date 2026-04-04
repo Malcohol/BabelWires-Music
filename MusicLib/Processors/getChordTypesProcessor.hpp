@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <MusicLib/musicLibExport.hpp>
+
 #include <MusicLib/Types/Track/trackInstance.hpp>
 #include <MusicLib/Types/Track/trackType.hpp>
 #include <MusicLib/Types/chordTypeSet.hpp>
@@ -18,7 +20,7 @@
 #include <BabelWiresLib/Types/Record/recordType.hpp>
 
 namespace bw_music {
-    class GetChordTypesProcessorInput : public babelwires::RecordType {
+    class MUSICLIB_API GetChordTypesProcessorInput : public babelwires::RecordType {
       public:
         DOWNCASTABLE(GetChordTypesProcessorInput, babelwires::RecordType);
         REGISTERED_TYPE("ChordTypesIn", "Get Chord Types In", "d74143a4-92c1-46a0-be85-350720a2045f", 1);
@@ -29,7 +31,7 @@ namespace bw_music {
         DECLARE_INSTANCE_END()
     };
 
-    class GetChordTypesProcessorOutput : public babelwires::RecordType {
+    class MUSICLIB_API GetChordTypesProcessorOutput : public babelwires::RecordType {
       public:
         DOWNCASTABLE(GetChordTypesProcessorOutput, babelwires::RecordType);
         REGISTERED_TYPE("ChordTypesOut", "Get Chord Types Out", "6336361f-1861-4cda-8363-cdfc9f0950ed", 1);
@@ -40,7 +42,7 @@ namespace bw_music {
         DECLARE_INSTANCE_END()
     };
 
-    class GetChordTypesProcessor : public babelwires::Processor {
+    class MUSICLIB_API GetChordTypesProcessor : public babelwires::Processor {
       public:
         BW_PROCESSOR_WITH_DEFAULT_FACTORY("GetChordTypes", "Get Chord Types", "20ee9695-8277-4a04-b380-098b0fd8c525");
 

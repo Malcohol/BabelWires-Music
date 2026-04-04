@@ -1,4 +1,11 @@
-#include <Domains/Music/Plugins/TestPlugin/testTrackContainer.hpp>
+/**
+ * TestTrackContainer
+ *
+ * (C) 2021 Malcolm Tyrrell
+ *
+ * Licensed under the GPLv3.0. See LICENSE file.
+ **/
+ #include <Domains/Music/Plugins/TestPlugin/testTrackContainer.hpp>
 
 bw_music_testplugin::TestTrackContainer::TestTrackContainer(const babelwires::TypeSystem& typeSystem)
     : babelwires::RecordType(getThisIdentifier(), typeSystem, {{getTrack1Id(), bw_music::DefaultTrackType::getThisIdentifier()},

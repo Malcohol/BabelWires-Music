@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <MusicLib/musicLibExport.hpp>
+
 #include <MusicLib/Types/Track/trackInstance.hpp>
 #include <MusicLib/Types/Track/trackType.hpp>
 
@@ -17,7 +19,7 @@
 #include <BabelWiresLib/Types/Record/recordType.hpp>
 
 namespace bw_music {
-    class SilenceProcessorInput : public babelwires::RecordType {
+    class MUSICLIB_API SilenceProcessorInput : public babelwires::RecordType {
       public:
         DOWNCASTABLE(SilenceProcessorInput, babelwires::RecordType);
         REGISTERED_TYPE("SilentTrackIn", "Silence In", "b3d5c37c-aa07-47ac-9ebb-3cf81731b97b", 1);
@@ -29,7 +31,7 @@ namespace bw_music {
         DECLARE_INSTANCE_END()
     };
 
-    class SilenceProcessorOutput : public babelwires::RecordType {
+    class MUSICLIB_API SilenceProcessorOutput : public babelwires::RecordType {
       public:
         DOWNCASTABLE(SilenceProcessorOutput, babelwires::RecordType);
         REGISTERED_TYPE("SilentTrackOut", "Silence Out", "fd8b4645-1435-448c-bf9d-0cebf8999a81", 1);
@@ -41,7 +43,7 @@ namespace bw_music {
         DECLARE_INSTANCE_END()
     };
 
-    class SilenceProcessor : public babelwires::Processor {
+    class MUSICLIB_API SilenceProcessor : public babelwires::Processor {
       public:
         BW_PROCESSOR_WITH_DEFAULT_FACTORY("SilentTrack", "Silence", "c59e4643-b7d8-430b-980b-bd81b5aa007b");
 

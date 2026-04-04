@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <MusicLib/musicLibExport.hpp>
+
 #include <BabelWiresLib/Types/Enum/enumWithCppEnum.hpp>
 #include <BabelWiresLib/TypeSystem/registeredType.hpp>
 
@@ -39,7 +41,7 @@ namespace bw_music {
     typedef babelwires::Byte Pitch;
 
     /// An Enum corresponding to the twelve pitch classes of the western scale.
-    class PitchClass : public babelwires::EnumType {
+    class MUSICLIB_API PitchClass : public babelwires::EnumType {
       public:
         DOWNCASTABLE(PitchClass, babelwires::EnumType);
         REGISTERED_TYPE("PitchClass", "Pitch Class", "0c7fed24-9923-42d3-9ad1-5879bf1c8af6", 1);
@@ -51,18 +53,18 @@ namespace bw_music {
     };
 
     /// Get the PitchClass of a Pitch.
-    PitchClass::Value pitchToPitchClass(Pitch p);
+    MUSICLIB_API PitchClass::Value pitchToPitchClass(Pitch p);
 
     /// Get a string representation of a Pitch.
-    std::string pitchToString(Pitch p);
+    MUSICLIB_API std::string pitchToString(Pitch p);
 
     /// Parse a Pitch from a string.
-    babelwires::ResultT<Pitch> stringToPitch(std::string_view s);
+    MUSICLIB_API babelwires::ResultT<Pitch> stringToPitch(std::string_view s);
 
     /// An enum for the 127 supported pitch values.
     /// Octaves start at 0, so middle C is C5 in this representation.
     // TODO: The UI dropdown presents this in a counter-intuitive order.
-    class PitchEnum : public babelwires::EnumType {
+    class MUSICLIB_API PitchEnum : public babelwires::EnumType {
       public:
         DOWNCASTABLE(PitchEnum, babelwires::EnumType);
         REGISTERED_TYPE("Pitch", "Pitch", "c3acb960-b472-488b-a6da-8672b584dfb1", 1);

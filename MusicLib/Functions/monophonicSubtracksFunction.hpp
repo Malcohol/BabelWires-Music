@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <MusicLib/musicLibExport.hpp>
+
 #include <MusicLib/Types/Track/track.hpp>
 
 #include <BabelWiresLib/Types/Enum/enumWithCppEnum.hpp>
@@ -22,7 +24,7 @@ namespace bw_music {
     X(LowEv, "Lower pitches evict", "7068c9fd-d80a-47fa-8f82-6b000cd1e0be")
 
     /// The enum that determines the algorithm used.
-    class MonophonicSubtracksPolicyEnum : public babelwires::EnumType {
+    class MUSICLIB_API MonophonicSubtracksPolicyEnum : public babelwires::EnumType {
       public:
         DOWNCASTABLE(MonophonicSubtracksPolicyEnum, babelwires::EnumType);
         REGISTERED_TYPE("MonoPolicy", "Monophonic Subtracks Policy", "d9ae8da5-3001-45ff-b2ce-4375f7d18afd", 1);
@@ -31,11 +33,11 @@ namespace bw_music {
         ENUM_DEFINE_CPP_ENUM(MONOPHONIC_SUBTRACK_POLICY);
     };
 
-    struct MonophonicSubtracksResult {
+    struct MUSICLIB_API MonophonicSubtracksResult {
         std::vector<Track> m_noteTracks;
         Track m_other;
     };
 
-    babelwires::ResultT<MonophonicSubtracksResult> getMonophonicSubtracks(const Track& trackIn, int numTracks,
+    MUSICLIB_API babelwires::ResultT<MonophonicSubtracksResult> getMonophonicSubtracks(const Track& trackIn, int numTracks,
                                                      MonophonicSubtracksPolicyEnum::Value policy);
 } // namespace bw_music
