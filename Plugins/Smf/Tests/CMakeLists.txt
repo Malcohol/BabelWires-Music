@@ -18,5 +18,6 @@ TARGET_INCLUDE_DIRECTORIES( SmfTests PRIVATE ${PROJECT_SOURCE_DIR} )
 TARGET_LINK_LIBRARIES(SmfTests BaseLib seqTestUtils SmfLib testUtils libTestUtils gtest)
 
 if(BUILD_TESTING)
-   gtest_discover_tests(SmfTests)
+   gtest_discover_tests(SmfTests TEST_LIST smfDiscoveredTests)
+   configure_shared_test_runtime(smfDiscoveredTests SmfTests)
 endif()
