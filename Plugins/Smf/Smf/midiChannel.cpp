@@ -1,0 +1,11 @@
+/**
+ * MidiChannel is an int type constrained to the legal range of a MIDI channel (0-15).
+ *
+ * (C) 2021 Malcolm Tyrrell
+ *
+ * Licensed under the GPLv3.0. See LICENSE file.
+ **/
+#include <Smf/midiChannel.hpp>
+
+smf::MidiChannel::MidiChannel()
+    : IntType(getThisIdentifier(), {0, 15}, 0) {}

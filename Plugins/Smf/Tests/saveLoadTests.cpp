@@ -1,10 +1,10 @@
 #include <gtest/gtest.h>
 
-#include <Plugins/Smf/Plugin/libRegistration.hpp>
-#include <Plugins/Smf/Plugin/midiTrackAndChannel.hpp>
-#include <Plugins/Smf/Plugin/midiTrackAndChannelArray.hpp>
-#include <Plugins/Smf/Plugin/smfParser.hpp>
-#include <Plugins/Smf/Plugin/smfWriter.hpp>
+#include <Smf/libRegistration.hpp>
+#include <Smf/midiTrackAndChannel.hpp>
+#include <Smf/midiTrackAndChannelArray.hpp>
+#include <Smf/smfParser.hpp>
+#include <Smf/smfWriter.hpp>
 
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/Types/Track/trackBuilder.hpp>
