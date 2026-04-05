@@ -15,6 +15,7 @@
 
 #include <alsa/asoundlib.h>
 
+#include <bit>
 #include <utility>
 
 struct babelwires_alsa::AlsaAudioDest::Impl {
@@ -56,7 +57,7 @@ babelwires::ResultT<babelwires_alsa::AlsaAudioDest> babelwires_alsa::AlsaAudioDe
     DO_OR_ERROR(babelwires_alsa::checkForError(
         snd_pcm_hw_params_set_access(outStream, hwParams, SND_PCM_ACCESS_RW_INTERLEAVED), "setting access type"));
 
-    const snd_pcm_format_t format = (babelwires::getPlatformEndianness() == babelwires::IS_BIG_ENDIAN)
+    const snd_pcm_format_t format = (std::endian::native == std::endian::big)
                                         ? SND_PCM_FORMAT_FLOAT_BE
                                         : SND_PCM_FORMAT_FLOAT_LE;
     DO_OR_ERROR(
