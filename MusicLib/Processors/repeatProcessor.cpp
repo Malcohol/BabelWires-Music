@@ -27,8 +27,8 @@ bw_music::RepeatProcessorOutput::RepeatProcessorOutput(const babelwires::TypeSys
     : babelwires::ParallelProcessorOutputBase(getThisIdentifier(), typeSystem, RepeatProcessor::getCommonArrayId(),
                                               bw_music::DefaultTrackType::getThisIdentifier()) {}
 
-bw_music::RepeatProcessor::RepeatProcessor(const babelwires::ProjectContext& projectContext)
-    : babelwires::ParallelProcessor(projectContext, RepeatProcessorInput::getThisIdentifier(),
+bw_music::RepeatProcessor::RepeatProcessor(const babelwires::Context& context)
+    : babelwires::ParallelProcessor(context, RepeatProcessorInput::getThisIdentifier(),
                                     RepeatProcessorOutput::getThisIdentifier()) {}
 
 babelwires::ShortId bw_music::RepeatProcessor::getCommonArrayId() {

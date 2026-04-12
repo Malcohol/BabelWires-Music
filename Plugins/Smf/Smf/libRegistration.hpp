@@ -10,11 +10,11 @@
 #include <Smf/smfLibExport.hpp>
 
 namespace babelwires {
-    struct ProjectContext;
+    struct Context;
 }
 
 namespace smf {
     /// Registration factories etc. for Standard MIDI File.
     /// Note: This is not a true plugin model, because everything is statically linked.
-    SMFLIB_API void registerLib(babelwires::ProjectContext& context);
+    SMFLIB_API void registerLib(babelwires::Context& context);
 } // namespace smf

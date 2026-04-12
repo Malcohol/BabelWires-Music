@@ -42,7 +42,7 @@ namespace bw_music {
       public:
         BW_PROCESSOR_WITH_DEFAULT_FACTORY("TransposeTracks", "Transpose", "3414f6cf-290a-421e-bce5-6a98ed0483af");
 
-        TransposeProcessor(const babelwires::ProjectContext& projectContext);
+        TransposeProcessor(const babelwires::Context& context);
 
         static babelwires::ShortId getCommonArrayId();
 

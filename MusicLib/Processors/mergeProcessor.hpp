@@ -47,7 +47,7 @@ namespace bw_music {
       public:
         BW_PROCESSOR_WITH_DEFAULT_FACTORY("MergeTracks", "Merge", "ed004257-0ae3-44aa-abb9-d752c2eba0c1");
 
-        MergeProcessor(const babelwires::ProjectContext& projectContext);
+        MergeProcessor(const babelwires::Context& context);
 
       protected:
         babelwires::Result processValue(babelwires::UserLogger& userLogger, const babelwires::ValueTreeNode& input,

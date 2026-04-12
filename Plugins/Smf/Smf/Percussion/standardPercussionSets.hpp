@@ -19,13 +19,13 @@
 #include <unordered_set>
 
 namespace babelwires {
-    struct ProjectContext;
+    struct Context;
 }
 
 namespace smf {
     class SMFLIB_API StandardPercussionSets {
       public:
-        StandardPercussionSets(const babelwires::ProjectContext& projectContext);
+        StandardPercussionSets(const babelwires::Context& context);
 
         /// Get the default set for each channel in the given spec.
         const bw_music::PercussionSetWithPitchMap* getDefaultPercussionSet(GMSpecType::Value gmSpec, int channelNumber);

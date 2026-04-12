@@ -42,7 +42,7 @@ namespace bw_music {
       public:
         BW_PROCESSOR_WITH_DEFAULT_FACTORY("TrackExcerpt", "Excerpt", "83c74dba-7861-447c-9abb-0b4439061baf");
 
-        ExcerptProcessor(const babelwires::ProjectContext& projectContext);
+        ExcerptProcessor(const babelwires::Context& context);
 
         static babelwires::ShortId getCommonArrayId();
 

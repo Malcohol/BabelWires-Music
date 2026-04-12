@@ -29,8 +29,8 @@ bw_music::QuantizeProcessorOutput::QuantizeProcessorOutput(const babelwires::Typ
     : babelwires::ParallelProcessorOutputBase(getThisIdentifier(), typeSystem, QuantizeProcessor::getCommonArrayId(),
                                               bw_music::DefaultTrackType::getThisIdentifier()) {}
 
-bw_music::QuantizeProcessor::QuantizeProcessor(const babelwires::ProjectContext& projectContext)
-    : babelwires::ParallelProcessor(projectContext, QuantizeProcessorInput::getThisIdentifier(),
+bw_music::QuantizeProcessor::QuantizeProcessor(const babelwires::Context& context)
+    : babelwires::ParallelProcessor(context, QuantizeProcessorInput::getThisIdentifier(),
                                     QuantizeProcessorOutput::getThisIdentifier()) {}
 
 babelwires::ShortId bw_music::QuantizeProcessor::getCommonArrayId() {

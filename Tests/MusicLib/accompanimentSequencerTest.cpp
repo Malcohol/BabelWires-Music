@@ -35,7 +35,7 @@ class AccompanimentSequencerTest : public MusicLibTestFixture {
         : m_processor(m_testEnv.m_projectContext) {}
 
     void SetUp() override {
-        const auto& typeSystem = m_testEnv.m_projectContext.m_typeSystem;
+        const auto& typeSystem = m_testEnv.m_projectContext.getService<babelwires::TypeSystem>();
         babelwires::ValueTreeRoot& input = m_processor.getInput();
         babelwires::ValueHolder inputValue = input.getValue();
         const auto& inputType = typeSystem.getRegisteredType<bw_music::AccompanimentSequencerProcessorInput>();

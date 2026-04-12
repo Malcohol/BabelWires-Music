@@ -37,13 +37,14 @@
 #include <Smf/Percussion/xgSFX2PercussionSet.hpp>
 #include <Smf/Percussion/xgStandard1PercussionSet.hpp>
 
-#include <BabelWiresLib/Project/projectContext.hpp>
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
+
+#include <BaseLib/Context/context.hpp>
 
 #include <cassert>
 
-smf::StandardPercussionSets::StandardPercussionSets(const babelwires::ProjectContext& projectContext) {
-#define DECLARE_PERCUSSION_SET(ENUM, CLASS) m_knownSets[ENUM] = projectContext.m_typeSystem.getRegisteredType<CLASS>();
+smf::StandardPercussionSets::StandardPercussionSets(const babelwires::Context& context) {
+#define DECLARE_PERCUSSION_SET(ENUM, CLASS) m_knownSets[ENUM] = context.getService<babelwires::TypeSystem>().getRegisteredType<CLASS>();
 
     DECLARE_PERCUSSION_SET(GM_PERCUSSION_SET, smf::GMPercussionSet)
     DECLARE_PERCUSSION_SET(GM2_STANDARD_PERCUSSION_SET, smf::GM2StandardPercussionSet)

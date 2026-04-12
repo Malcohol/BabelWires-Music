@@ -9,7 +9,7 @@
 
 #include <MusicLib/Functions/splitAtPitchFunction.hpp>
 
-#include <BabelWiresLib/Project/projectContext.hpp>
+#include <BaseLib/Context/context.hpp>
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 
 #include <BaseLib/Identifiers/registeredIdentifier.hpp>
@@ -32,9 +32,9 @@ bw_music::SplitAtPitchProcessorOutput::SplitAtPitchProcessorOutput(const babelwi
            DefaultTrackType::getThisIdentifier()},
       }) {}
 
-bw_music::SplitAtPitchProcessor::SplitAtPitchProcessor(const babelwires::ProjectContext& projectContext)
-    : Processor(projectContext, projectContext.m_typeSystem.getRegisteredType<SplitAtPitchProcessorInput>(),
-                     projectContext.m_typeSystem.getRegisteredType<SplitAtPitchProcessorOutput>()) {}
+bw_music::SplitAtPitchProcessor::SplitAtPitchProcessor(const babelwires::Context& context)
+    : Processor(context, context.getService<babelwires::TypeSystem>().getRegisteredType<SplitAtPitchProcessorInput>(),
+                     context.getService<babelwires::TypeSystem>().getRegisteredType<SplitAtPitchProcessorOutput>()) {}
 
 babelwires::Result bw_music::SplitAtPitchProcessor::processValue(babelwires::UserLogger& userLogger, const babelwires::ValueTreeNode& input, babelwires::ValueTreeNode& output) const {
     SplitAtPitchProcessorInput::ConstInstance in{input};

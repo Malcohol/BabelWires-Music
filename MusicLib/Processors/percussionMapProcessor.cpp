@@ -25,8 +25,8 @@ bw_music::PercussionMapProcessorOutput::PercussionMapProcessorOutput(const babel
     : babelwires::ParallelProcessorOutputBase(getThisIdentifier(), typeSystem, PercussionMapProcessor::getCommonArrayId(),
                                                    bw_music::DefaultTrackType::getThisIdentifier()) {}
 
-bw_music::PercussionMapProcessor::PercussionMapProcessor(const babelwires::ProjectContext& projectContext)
-    : babelwires::ParallelProcessor(projectContext, PercussionMapProcessorInput::getThisIdentifier(),
+bw_music::PercussionMapProcessor::PercussionMapProcessor(const babelwires::Context& context)
+    : babelwires::ParallelProcessor(context, PercussionMapProcessorInput::getThisIdentifier(),
                                          PercussionMapProcessorOutput::getThisIdentifier()) {}
 
 babelwires::ShortId bw_music::PercussionMapProcessor::getCommonArrayId() {

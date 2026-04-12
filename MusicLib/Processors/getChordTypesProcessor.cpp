@@ -10,7 +10,7 @@
 #include <MusicLib/Types/duration.hpp>
 #include <MusicLib/Functions/getChordTypesFunction.hpp>
 
-#include <BabelWiresLib/Project/projectContext.hpp>
+#include <BaseLib/Context/context.hpp>
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/Rational/rationalValue.hpp>
 
@@ -24,9 +24,9 @@ bw_music::GetChordTypesProcessorOutput::GetChordTypesProcessorOutput(const babel
     : babelwires::RecordType(getThisIdentifier(), typeSystem, {{BW_SHORT_ID("Chords", "Chords", "5f1aae17-1d3c-4a0c-9cbc-550cd2ff88a2"),
                                ChordTypeSet::getThisIdentifier()}}) {}
 
-bw_music::GetChordTypesProcessor::GetChordTypesProcessor(const babelwires::ProjectContext& projectContext)
-    : Processor(projectContext, projectContext.m_typeSystem.getRegisteredType<GetChordTypesProcessorInput>(),
-                     projectContext.m_typeSystem.getRegisteredType<GetChordTypesProcessorOutput>()) {}
+bw_music::GetChordTypesProcessor::GetChordTypesProcessor(const babelwires::Context& context)
+    : Processor(context, context.getService<babelwires::TypeSystem>().getRegisteredType<GetChordTypesProcessorInput>(),
+                     context.getService<babelwires::TypeSystem>().getRegisteredType<GetChordTypesProcessorOutput>()) {}
 
 babelwires::Result bw_music::GetChordTypesProcessor::processValue(babelwires::UserLogger& userLogger,
                                               const babelwires::ValueTreeNode& input,

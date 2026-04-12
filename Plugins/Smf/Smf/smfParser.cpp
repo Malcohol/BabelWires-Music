@@ -15,7 +15,7 @@
 #include <MusicLib/Types/Track/TrackEvents/percussionEvents.hpp>
 #include <MusicLib/Types/Track/trackBuilder.hpp>
 
-#include <BabelWiresLib/Project/projectContext.hpp>
+#include <BaseLib/Context/context.hpp>
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/File/fileTypeT.hpp>
 
@@ -33,18 +33,18 @@ namespace {
     const std::array<unsigned int, 16> s_gsBlockToPartMapping{10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16};
 } // namespace
 
-smf::SmfParser::SmfParser(babelwires::DataSource& dataSource, const babelwires::ProjectContext& projectContext,
+smf::SmfParser::SmfParser(babelwires::DataSource& dataSource, const babelwires::Context& context,
                           babelwires::UserLogger& userLogger)
-    : m_projectContext(projectContext)
+    : m_projectContext(context)
     , m_dataSource(dataSource)
     , m_userLogger(userLogger)
     , m_sequenceType(Format::SMF_UNKNOWN_FORMAT)
     , m_numTracks(-1)
     , m_division(-1)
-    , m_standardPercussionSets(projectContext) {
+    , m_standardPercussionSets(context) {
 
     m_result = std::make_unique<babelwires::ValueTreeRoot>(
-        projectContext.m_typeSystem, babelwires::FileTypeT<SmfSequence>::getType(projectContext.m_typeSystem));
+        context.getService<babelwires::TypeSystem>(), babelwires::FileTypeT<SmfSequence>::getType(context.getService<babelwires::TypeSystem>()));
     m_result->setToDefault();
 }
 
@@ -931,9 +931,9 @@ void smf::SmfParser::onChangeProgram(unsigned int channelNumber) {
 }
 
 babelwires::ResultT<std::unique_ptr<babelwires::ValueTreeRoot>>
-smf::parseSmfSequence(babelwires::DataSource& dataSource, const babelwires::ProjectContext& projectContext,
+smf::parseSmfSequence(babelwires::DataSource& dataSource, const babelwires::Context& context,
                       babelwires::UserLogger& userLogger) {
-    SmfParser parser(dataSource, projectContext, userLogger);
+    SmfParser parser(dataSource, context, userLogger);
     DO_OR_ERROR(parser.parse());
     return parser.getResult();
 }

@@ -30,7 +30,7 @@ namespace smf {
 
     class SMFLIB_API SmfWriter {
       public:
-        SmfWriter(const babelwires::ProjectContext& projectContext, babelwires::UserLogger& userLogger,
+        SmfWriter(const babelwires::Context& context, babelwires::UserLogger& userLogger,
                   const babelwires::ValueTreeRoot& sequence, std::ostream& output);
 
         void write();
@@ -77,7 +77,7 @@ namespace smf {
         template <std::size_t N> void writeMessage(const std::array<std::uint8_t, N>& message);
 
       private:
-        const babelwires::ProjectContext& m_projectContext;
+        const babelwires::Context& m_projectContext;
         babelwires::UserLogger& m_userLogger;
         const babelwires::ValueTreeRoot& m_smfFeature;
         std::ostream& m_ostream;
@@ -101,7 +101,7 @@ namespace smf {
         std::array<ChannelSetup, 16> m_channelSetup;
     };
 
-    SMFLIB_API void writeToSmf(const babelwires::ProjectContext& projectContext, babelwires::UserLogger& userLogger,
+    SMFLIB_API void writeToSmf(const babelwires::Context& context, babelwires::UserLogger& userLogger,
                     const babelwires::ValueTreeRoot& sequence, std::ostream& output);
 
 } // namespace smf

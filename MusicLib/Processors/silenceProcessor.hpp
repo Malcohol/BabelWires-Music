@@ -47,7 +47,7 @@ namespace bw_music {
       public:
         BW_PROCESSOR_WITH_DEFAULT_FACTORY("SilentTrack", "Silence", "c59e4643-b7d8-430b-980b-bd81b5aa007b");
 
-        SilenceProcessor(const babelwires::ProjectContext& projectContext);
+        SilenceProcessor(const babelwires::Context& context);
 
       protected:
         babelwires::Result processValue(babelwires::UserLogger& userLogger, const babelwires::ValueTreeNode& input,

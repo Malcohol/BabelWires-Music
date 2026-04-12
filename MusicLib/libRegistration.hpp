@@ -10,10 +10,10 @@
 #include <MusicLib/musicLibExport.hpp>
 
 namespace babelwires {
-    struct ProjectContext;
+    struct Context;
 }
 
 namespace bw_music {
     /// This is not a true plugin model, because everything is statically linked.
-    MUSICLIB_API void registerLib(babelwires::ProjectContext& context);
+    MUSICLIB_API void registerLib(babelwires::Context& context);
 } // namespace bw_music

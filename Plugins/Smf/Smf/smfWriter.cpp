@@ -17,7 +17,7 @@
 #include <MusicLib/Utilities/musicUtilities.hpp>
 #include <MusicLib/Utilities/trackTraverser.hpp>
 
-#include <BabelWiresLib/Project/projectContext.hpp>
+#include <BaseLib/Context/context.hpp>
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/File/fileTypeT.hpp>
 
@@ -33,15 +33,15 @@ namespace {
     const std::array<unsigned int, 16> s_gsChannelToBlockMapping{1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 10, 11, 12, 13, 14, 15};
 } // namespace
 
-smf::SmfWriter::SmfWriter(const babelwires::ProjectContext& projectContext, babelwires::UserLogger& userLogger,
+smf::SmfWriter::SmfWriter(const babelwires::Context& context, babelwires::UserLogger& userLogger,
                           const babelwires::ValueTreeRoot& sequence, std::ostream& ostream)
-    : m_projectContext(projectContext)
+    : m_projectContext(context)
     , m_userLogger(userLogger)
     , m_smfFeature(sequence)
     , m_ostream(ostream)
     , m_os(&m_ostream)
     , m_division(256)
-    , m_standardPercussionSets(projectContext) {}
+    , m_standardPercussionSets(context) {}
 
 void smf::SmfWriter::writeUint16(std::uint16_t i) {
     m_os->put(i >> 8);
@@ -423,8 +423,8 @@ void smf::SmfWriter::write() {
     }
 }
 
-void smf::writeToSmf(const babelwires::ProjectContext& projectContext, babelwires::UserLogger& userLogger,
+void smf::writeToSmf(const babelwires::Context& context, babelwires::UserLogger& userLogger,
                      const babelwires::ValueTreeRoot& sequence, std::ostream& output) {
-    smf::SmfWriter writer(projectContext, userLogger, sequence, output);
+    smf::SmfWriter writer(context, userLogger, sequence, output);
     writer.write();
 }

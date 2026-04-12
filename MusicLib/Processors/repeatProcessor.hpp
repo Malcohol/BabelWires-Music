@@ -40,7 +40,7 @@ namespace bw_music {
       public:
         BW_PROCESSOR_WITH_DEFAULT_FACTORY("RepeatTracks", "Repeat", "6c5b3e89-bb57-4c90-8a66-1d8cdeb29db9");
 
-        RepeatProcessor(const babelwires::ProjectContext& projectContext);
+        RepeatProcessor(const babelwires::Context& context);
 
         static babelwires::ShortId getCommonArrayId();
 

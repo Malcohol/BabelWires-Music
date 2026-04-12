@@ -7,7 +7,7 @@
  **/
 #include <Smf/smfFormat.hpp>
 
-#include <BabelWiresLib/Project/projectContext.hpp>
+#include <BaseLib/Context/context.hpp>
 #include <BabelWiresLib/Types/File/fileTypeT.hpp>
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 
@@ -43,11 +43,11 @@ std::string smf::SmfSourceFormat::getProductName() const {
 }
 
 babelwires::ResultT<std::unique_ptr<babelwires::ValueTreeRoot>>
-smf::SmfSourceFormat::loadFromFile(const std::filesystem::path& path, const babelwires::ProjectContext& projectContext,
+smf::SmfSourceFormat::loadFromFile(const std::filesystem::path& path, const babelwires::Context& context,
                                    babelwires::UserLogger& userLogger) const {
     ASSIGN_OR_ERROR(auto dataSource, babelwires::FileDataSource::open(path));
     ON_ERROR(dataSource.closeOnError());
-    ASSIGN_OR_ERROR(auto result, parseSmfSequence(dataSource, projectContext, userLogger));
+    ASSIGN_OR_ERROR(auto result, parseSmfSequence(dataSource, context, userLogger));
     DO_OR_ERROR(dataSource.close());
     return std::move(result);
 }
@@ -65,18 +65,18 @@ std::string smf::SmfTargetFormat::getProductName() const {
 }
 
 std::unique_ptr<babelwires::ValueTreeRoot>
-smf::SmfTargetFormat::createNewValue(const babelwires::ProjectContext& projectContext) const {
-    return std::make_unique<babelwires::ValueTreeRoot>(projectContext.m_typeSystem,
-                                                       babelwires::FileTypeT<SmfSequence>::getType(projectContext.m_typeSystem));
+smf::SmfTargetFormat::createNewValue(const babelwires::Context& context) const {
+    return std::make_unique<babelwires::ValueTreeRoot>(context.getService<babelwires::TypeSystem>(),
+                                                       babelwires::FileTypeT<SmfSequence>::getType(context.getService<babelwires::TypeSystem>()));
 }
 
-babelwires::Result smf::SmfTargetFormat::writeToFile(const babelwires::ProjectContext& projectContext,
+babelwires::Result smf::SmfTargetFormat::writeToFile(const babelwires::Context& context,
                                                       babelwires::UserLogger& userLogger,
                                                       const babelwires::ValueTreeRoot& contents,
                                                       const std::filesystem::path& path) const {
     ASSIGN_OR_ERROR(auto sink, babelwires::FileDataSink::open(path));
     ON_ERROR(sink.closeOnError());
-    writeToSmf(projectContext, userLogger, contents, sink.stream());
+    writeToSmf(context, userLogger, contents, sink.stream());
     DO_OR_ERROR(sink.close());
     return {};
 }
