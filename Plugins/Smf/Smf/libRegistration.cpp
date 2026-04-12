@@ -9,7 +9,7 @@
 
 #include <MusicLib/Percussion/builtInPercussionInstruments.hpp>
 
-#include <BabelWiresLib/Project/projectContext.hpp>
+#include <BaseLib/Context/context.hpp>
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 
 #include <Smf/Percussion/gm2AnalogPercussionSet.hpp>
@@ -50,49 +50,51 @@
 #include <Smf/smfFormat.hpp>
 #include <Smf/smfSequence.hpp>
 
-void smf::registerLib(babelwires::ProjectContext& context) {
+void smf::registerLib(babelwires::Context& context) {
+    babelwires::TypeSystem& typeSystem = context.get<babelwires::TypeSystem>();
+
     // Formats
-    context.m_sourceFileFormatReg.addEntry(std::make_unique<SmfSourceFormat>());
-    context.m_targetFileFormatReg.addEntry(std::make_unique<SmfTargetFormat>());
+    context.get<babelwires::SourceFileFormatRegistry>().addEntry(std::make_unique<SmfSourceFormat>());
+    context.get<babelwires::TargetFileFormatRegistry>().addEntry(std::make_unique<SmfTargetFormat>());
 
     // Types
-    context.m_typeSystem.addType<GMSpecType>();
-    context.m_typeSystem.addType<MidiMetadata>(context.m_typeSystem);
-    context.m_typeSystem.addType<MidiChannel>();
-    context.m_typeSystem.addType<MidiTrackAndChannel>(context.m_typeSystem);
-    context.m_typeSystem.addType<MidiTrackAndChannelArray>(context.m_typeSystem);
-    context.m_typeSystem.addType<RecordOfMidiTracks>(context.m_typeSystem);
-    context.m_typeSystem.addType<SmfSequence>(context.m_typeSystem);
+    typeSystem.addType<GMSpecType>();
+    typeSystem.addType<MidiMetadata>(typeSystem);
+    typeSystem.addType<MidiChannel>();
+    typeSystem.addType<MidiTrackAndChannel>(typeSystem);
+    typeSystem.addType<MidiTrackAndChannelArray>(typeSystem);
+    typeSystem.addType<RecordOfMidiTracks>(typeSystem);
+    typeSystem.addType<SmfSequence>(typeSystem);
 
     // Percussion types
-    const auto& builtInPercussion = context.m_typeSystem.getRegisteredType<bw_music::BuiltInPercussionInstruments>();
-    context.m_typeSystem.addType<GMPercussionSet>(*builtInPercussion);
-    context.m_typeSystem.addType<GM2StandardPercussionSet>(*builtInPercussion);
-    context.m_typeSystem.addType<GM2RoomPercussionSet>(*builtInPercussion);
-    context.m_typeSystem.addType<GM2PowerPercussionSet>(*builtInPercussion);
-    context.m_typeSystem.addType<GM2ElectronicPercussionSet>(*builtInPercussion);
-    context.m_typeSystem.addType<GM2AnalogPercussionSet>(*builtInPercussion);
-    context.m_typeSystem.addType<GM2JazzPercussionSet>(*builtInPercussion);
-    context.m_typeSystem.addType<GM2BrushPercussionSet>(*builtInPercussion);
-    context.m_typeSystem.addType<GM2OrchestraPercussionSet>(*builtInPercussion);
-    context.m_typeSystem.addType<GM2SFXPercussionSet>(*builtInPercussion);
-    context.m_typeSystem.addType<GsStandard1PercussionSet>(*builtInPercussion);
-    context.m_typeSystem.addType<GsRoomPercussionSet>(*builtInPercussion);
-    context.m_typeSystem.addType<GsPowerPercussionSet>(*builtInPercussion);
-    context.m_typeSystem.addType<GsElectronicPercussionSet>(*builtInPercussion);
-    context.m_typeSystem.addType<Gs808909PercussionSet>(*builtInPercussion);
-    context.m_typeSystem.addType<GsJazzPercussionSet>(*builtInPercussion);
-    context.m_typeSystem.addType<GsBrushPercussionSet>(*builtInPercussion);
-    context.m_typeSystem.addType<GsOrchestraPercussionSet>(*builtInPercussion);
-    context.m_typeSystem.addType<GsSFXPercussionSet>(*builtInPercussion);
-    context.m_typeSystem.addType<XgStandard1PercussionSet>(*builtInPercussion);
-    context.m_typeSystem.addType<XgRoomPercussionSet>(*builtInPercussion);
-    context.m_typeSystem.addType<XgRockPercussionSet>(*builtInPercussion);
-    context.m_typeSystem.addType<XgElectroPercussionSet>(*builtInPercussion);
-    context.m_typeSystem.addType<XgAnalogPercussionSet>(*builtInPercussion);
-    context.m_typeSystem.addType<XgJazzPercussionSet>(*builtInPercussion);
-    context.m_typeSystem.addType<XgBrushPercussionSet>(*builtInPercussion);
-    context.m_typeSystem.addType<XgClassicPercussionSet>(*builtInPercussion);
-    context.m_typeSystem.addType<XgSFX1PercussionSet>(*builtInPercussion);
-    context.m_typeSystem.addType<XgSFX2PercussionSet>(*builtInPercussion);
+    const auto& builtInPercussion = typeSystem.getRegisteredType<bw_music::BuiltInPercussionInstruments>();
+    typeSystem.addType<GMPercussionSet>(*builtInPercussion);
+    typeSystem.addType<GM2StandardPercussionSet>(*builtInPercussion);
+    typeSystem.addType<GM2RoomPercussionSet>(*builtInPercussion);
+    typeSystem.addType<GM2PowerPercussionSet>(*builtInPercussion);
+    typeSystem.addType<GM2ElectronicPercussionSet>(*builtInPercussion);
+    typeSystem.addType<GM2AnalogPercussionSet>(*builtInPercussion);
+    typeSystem.addType<GM2JazzPercussionSet>(*builtInPercussion);
+    typeSystem.addType<GM2BrushPercussionSet>(*builtInPercussion);
+    typeSystem.addType<GM2OrchestraPercussionSet>(*builtInPercussion);
+    typeSystem.addType<GM2SFXPercussionSet>(*builtInPercussion);
+    typeSystem.addType<GsStandard1PercussionSet>(*builtInPercussion);
+    typeSystem.addType<GsRoomPercussionSet>(*builtInPercussion);
+    typeSystem.addType<GsPowerPercussionSet>(*builtInPercussion);
+    typeSystem.addType<GsElectronicPercussionSet>(*builtInPercussion);
+    typeSystem.addType<Gs808909PercussionSet>(*builtInPercussion);
+    typeSystem.addType<GsJazzPercussionSet>(*builtInPercussion);
+    typeSystem.addType<GsBrushPercussionSet>(*builtInPercussion);
+    typeSystem.addType<GsOrchestraPercussionSet>(*builtInPercussion);
+    typeSystem.addType<GsSFXPercussionSet>(*builtInPercussion);
+    typeSystem.addType<XgStandard1PercussionSet>(*builtInPercussion);
+    typeSystem.addType<XgRoomPercussionSet>(*builtInPercussion);
+    typeSystem.addType<XgRockPercussionSet>(*builtInPercussion);
+    typeSystem.addType<XgElectroPercussionSet>(*builtInPercussion);
+    typeSystem.addType<XgAnalogPercussionSet>(*builtInPercussion);
+    typeSystem.addType<XgJazzPercussionSet>(*builtInPercussion);
+    typeSystem.addType<XgBrushPercussionSet>(*builtInPercussion);
+    typeSystem.addType<XgClassicPercussionSet>(*builtInPercussion);
+    typeSystem.addType<XgSFX1PercussionSet>(*builtInPercussion);
+    typeSystem.addType<XgSFX2PercussionSet>(*builtInPercussion);
 }

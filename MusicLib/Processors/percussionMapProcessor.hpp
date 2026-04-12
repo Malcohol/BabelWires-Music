@@ -43,7 +43,7 @@ namespace bw_music {
       public:
         BW_PROCESSOR_WITH_DEFAULT_FACTORY("PercussionMapProcessor", "Percussion Map", "1ab6fd2b-8176-4516-9d9a-3b2d91a53f42");
 
-        PercussionMapProcessor(const babelwires::ProjectContext& projectContext);
+        PercussionMapProcessor(const babelwires::Context& context);
 
         static babelwires::ShortId getCommonArrayId();
 

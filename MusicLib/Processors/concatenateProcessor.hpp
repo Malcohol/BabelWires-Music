@@ -49,7 +49,7 @@ namespace bw_music {
       public:
         BW_PROCESSOR_WITH_DEFAULT_FACTORY("ConcatenateTracks", "Concatenate", "42b00d10-9d16-42d2-8ba6-971aad016da0");
 
-        ConcatenateProcessor(const babelwires::ProjectContext& projectContext);
+        ConcatenateProcessor(const babelwires::Context& context);
 
       protected:
         babelwires::Result processValue(babelwires::UserLogger& userLogger, const babelwires::ValueTreeNode& input,

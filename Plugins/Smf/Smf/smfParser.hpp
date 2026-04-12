@@ -32,7 +32,7 @@ namespace smf {
 
     class SMFLIB_API SmfParser {
       public:
-        SmfParser(babelwires::DataSource& dataSource, const babelwires::ProjectContext& projectContext,
+        SmfParser(babelwires::DataSource& dataSource, const babelwires::Context& context,
                   babelwires::UserLogger& log);
         virtual ~SmfParser();
 
@@ -106,7 +106,7 @@ namespace smf {
         enum KnownPercussionSets { GM_PERCUSSION_KIT, GM2_STANDARD_PERCUSSION_KIT, NUM_KNOWN_PERCUSSION_KITS };
 
       private:
-        const babelwires::ProjectContext& m_projectContext;
+        const babelwires::Context& m_projectContext;
         babelwires::DataSource& m_dataSource;
         babelwires::UserLogger& m_userLogger;
         std::unique_ptr<babelwires::ValueTreeRoot> m_result;
@@ -133,7 +133,7 @@ namespace smf {
     };
 
     SMFLIB_API babelwires::ResultT<std::unique_ptr<babelwires::ValueTreeRoot>> parseSmfSequence(babelwires::DataSource& dataSource,
-                                                              const babelwires::ProjectContext& projectContext,
+                                                              const babelwires::Context& context,
                                                               babelwires::UserLogger& userLogger);
 
 } // namespace smf

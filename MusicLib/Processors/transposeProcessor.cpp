@@ -25,8 +25,8 @@ bw_music::TransposeProcessorInput::TransposeProcessorInput(const babelwires::Typ
             babelwires::IntTypeConstructor::makeTypeExp(-127, 127, 0)}},
           TransposeProcessor::getCommonArrayId(), bw_music::DefaultTrackType::getThisIdentifier()) {}
 
-bw_music::TransposeProcessor::TransposeProcessor(const babelwires::ProjectContext& projectContext)
-    : babelwires::ParallelProcessor(projectContext, TransposeProcessorInput::getThisIdentifier(),
+bw_music::TransposeProcessor::TransposeProcessor(const babelwires::Context& context)
+    : babelwires::ParallelProcessor(context, TransposeProcessorInput::getThisIdentifier(),
                                     TransposeProcessorOutput::getThisIdentifier()) {}
 
 bw_music::TransposeProcessorOutput::TransposeProcessorOutput(const babelwires::TypeSystem& typeSystem)

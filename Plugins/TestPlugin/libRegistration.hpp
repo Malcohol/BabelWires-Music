@@ -10,9 +10,9 @@
 #include <Domains/Music/Plugins/TestPlugin/testPluginLibExport.hpp>
 
 namespace babelwires {
-    struct ProjectContext;
+    class Context;
 }
 
 namespace bw_music_testplugin {
-    TESTPLUGINLIB_API void registerLib(babelwires::ProjectContext& context);
+    TESTPLUGINLIB_API void registerLib(babelwires::Context& context);
 } // namespace bw_music_testplugin

@@ -44,7 +44,7 @@ namespace bw_music {
       public:
         BW_PROCESSOR_WITH_DEFAULT_FACTORY("QuantizeTracks", "Quantize", "1ae89077-2cfb-4071-910c-2f5dcfc85b17");
 
-        QuantizeProcessor(const babelwires::ProjectContext& projectContext);
+        QuantizeProcessor(const babelwires::Context& context);
 
         static babelwires::ShortId getCommonArrayId();
 

@@ -43,7 +43,7 @@ namespace bw_music {
       public:
         BW_PROCESSOR_WITH_DEFAULT_FACTORY("ChordMapProcessor", "Chord Map", "b7227130-8274-4451-bd60-8fe34a74c4b6");
 
-        ChordMapProcessor(const babelwires::ProjectContext& projectContext);
+        ChordMapProcessor(const babelwires::Context& context);
 
         static babelwires::ShortId getCommonArrayId();
 

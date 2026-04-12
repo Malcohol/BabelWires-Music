@@ -10,12 +10,13 @@
 #include <MusicLib/Functions/accompanimentSequencerFunction.hpp>
 #include <MusicLib/Types/genericAccompaniment.hpp>
 
-#include <BabelWiresLib/Project/projectContext.hpp>
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/Failure/failureType.hpp>
 #include <BabelWiresLib/Types/Generic/typeVariableTypeConstructor.hpp>
 #include <BabelWiresLib/Types/Record/recordTypeConstructor.hpp>
 #include <BabelWiresLib/ValueTree/valueTreeNode.hpp>
+
+#include <BaseLib/Context/context.hpp>
 
 #include <BaseLib/Result/resultDSL.hpp>
 
@@ -35,9 +36,9 @@ bw_music::AccompanimentSequencerProcessorOutput::AccompanimentSequencerProcessor
                               1) {}
 
 bw_music::AccompanimentSequencerProcessor::AccompanimentSequencerProcessor(
-    const babelwires::ProjectContext& projectContext)
-    : Processor(projectContext, projectContext.m_typeSystem.getRegisteredType<AccompanimentSequencerProcessorInput>(),
-                projectContext.m_typeSystem.getRegisteredType<AccompanimentSequencerProcessorOutput>()) {}
+    const babelwires::Context& context)
+    : Processor(context, context.get<babelwires::TypeSystem>().getRegisteredType<AccompanimentSequencerProcessorInput>(),
+                context.get<babelwires::TypeSystem>().getRegisteredType<AccompanimentSequencerProcessorOutput>()) {}
 
 babelwires::Result bw_music::AccompanimentSequencerProcessor::processValue(babelwires::UserLogger& userLogger,
                                                              const babelwires::ValueTreeNode& input,

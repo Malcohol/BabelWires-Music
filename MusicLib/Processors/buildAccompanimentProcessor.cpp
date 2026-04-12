@@ -12,13 +12,14 @@
 #include <MusicLib/Types/chordTypeSet.hpp>
 #include <MusicLib/Types/genericAccompaniment.hpp>
 
-#include <BabelWiresLib/Project/projectContext.hpp>
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/Array/arrayTypeConstructor.hpp>
 #include <BabelWiresLib/Types/Generic/typeVariableTypeConstructor.hpp>
 #include <BabelWiresLib/Types/Record/recordTypeConstructor.hpp>
 #include <BabelWiresLib/Utilities/applyToSubvalues.hpp>
 #include <BabelWiresLib/ValueTree/valueTreeNode.hpp>
+
+#include <BaseLib/Context/context.hpp>
 
 bw_music::BuildAccompanimentProcessorInput::BuildAccompanimentProcessorInput(const babelwires::TypeSystem& typeSystem)
     : GenericType(getThisIdentifier(), typeSystem,
@@ -45,9 +46,9 @@ bw_music::BuildAccompanimentProcessorOutput::BuildAccompanimentProcessorOutput(c
                                                                                      getGenericAccompanimentTypeExp())),
                   1) {}
 
-bw_music::BuildAccompanimentProcessor::BuildAccompanimentProcessor(const babelwires::ProjectContext& projectContext)
-    : Processor(projectContext, projectContext.m_typeSystem.getRegisteredType<BuildAccompanimentProcessorInput>(),
-                projectContext.m_typeSystem.getRegisteredType<BuildAccompanimentProcessorOutput>()) {}
+bw_music::BuildAccompanimentProcessor::BuildAccompanimentProcessor(const babelwires::Context& context)
+    : Processor(context, context.get<babelwires::TypeSystem>().getRegisteredType<BuildAccompanimentProcessorInput>(),
+                context.get<babelwires::TypeSystem>().getRegisteredType<BuildAccompanimentProcessorOutput>()) {}
 
 namespace {
 
