@@ -39,78 +39,81 @@
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 
 void bw_music::registerLib(babelwires::Context& context) {
-    context.getService<babelwires::TypeSystem>().addType<DefaultTrackType>();
-    context.getService<babelwires::TypeSystem>().addType<ChordType>();
-    context.getService<babelwires::TypeSystem>().addType<NoChord>();
-    context.getService<babelwires::TypeSystem>().addType<PitchClass>();
-    context.getService<babelwires::TypeSystem>().addType<PitchEnum>();
-    context.getService<babelwires::TypeSystem>().addType<BuiltInPercussionInstruments>();
-    context.getService<babelwires::TypeSystem>().addType<Duration>();
-    context.getService<babelwires::TypeSystem>().addType<Tempo>();
-    context.getService<babelwires::TypeSystem>().addType<ChordTypeSet>(context.getService<babelwires::TypeSystem>());
+    babelwires::TypeSystem& typeSystem = context.getService<babelwires::TypeSystem>();
+    babelwires::ProcessorFactoryRegistry& processorFactoryRegistry = context.getService<babelwires::ProcessorFactoryRegistry>();
 
-    context.getService<babelwires::TypeSystem>().addTypeConstructor<TrackTypeConstructor>();
-    context.getService<babelwires::TypeSystem>().addTypeConstructor<PercussionMapType>();
+    typeSystem.addType<DefaultTrackType>();
+    typeSystem.addType<ChordType>();
+    typeSystem.addType<NoChord>();
+    typeSystem.addType<PitchClass>();
+    typeSystem.addType<PitchEnum>();
+    typeSystem.addType<BuiltInPercussionInstruments>();
+    typeSystem.addType<Duration>();
+    typeSystem.addType<Tempo>();
+    typeSystem.addType<ChordTypeSet>(typeSystem);
 
-    context.getService<babelwires::TypeSystem>().addType<SplitAtPitchProcessorInput>(context.getService<babelwires::TypeSystem>());
-    context.getService<babelwires::TypeSystem>().addType<SplitAtPitchProcessorOutput>(context.getService<babelwires::TypeSystem>());
-    context.getService<babelwires::ProcessorFactoryRegistry>().addProcessor<SplitAtPitchProcessor>();
+    typeSystem.addTypeConstructor<TrackTypeConstructor>();
+    typeSystem.addTypeConstructor<PercussionMapType>();
 
-    context.getService<babelwires::TypeSystem>().addType<MonophonicSubtracksPolicyEnum>();
-    context.getService<babelwires::TypeSystem>().addType<MonophonicSubtracksProcessorInput>(context.getService<babelwires::TypeSystem>());
-    context.getService<babelwires::TypeSystem>().addType<MonophonicSubtracksProcessorOutput>(context.getService<babelwires::TypeSystem>());
-    context.getService<babelwires::ProcessorFactoryRegistry>().addProcessor<MonophonicSubtracksProcessor>();
+    typeSystem.addType<SplitAtPitchProcessorInput>(typeSystem);
+    typeSystem.addType<SplitAtPitchProcessorOutput>(typeSystem);
+    processorFactoryRegistry.addProcessor<SplitAtPitchProcessor>();
 
-    context.getService<babelwires::TypeSystem>().addType<FingeredChordsSustainPolicyEnum>();
-    context.getService<babelwires::TypeSystem>().addType<FingeredChordsProcessorInput>(context.getService<babelwires::TypeSystem>());
-    context.getService<babelwires::TypeSystem>().addType<FingeredChordsProcessorOutput>(context.getService<babelwires::TypeSystem>());
-    context.getService<babelwires::ProcessorFactoryRegistry>().addProcessor<FingeredChordsProcessor>();
+    typeSystem.addType<MonophonicSubtracksPolicyEnum>();
+    typeSystem.addType<MonophonicSubtracksProcessorInput>(typeSystem);
+    typeSystem.addType<MonophonicSubtracksProcessorOutput>(typeSystem);
+    processorFactoryRegistry.addProcessor<MonophonicSubtracksProcessor>();
 
-    context.getService<babelwires::TypeSystem>().addType<GetChordTypesProcessorInput>(context.getService<babelwires::TypeSystem>());
-    context.getService<babelwires::TypeSystem>().addType<GetChordTypesProcessorOutput>(context.getService<babelwires::TypeSystem>());
-    context.getService<babelwires::ProcessorFactoryRegistry>().addProcessor<GetChordTypesProcessor>();
+    typeSystem.addType<FingeredChordsSustainPolicyEnum>();
+    typeSystem.addType<FingeredChordsProcessorInput>(typeSystem);
+    typeSystem.addType<FingeredChordsProcessorOutput>(typeSystem);
+    processorFactoryRegistry.addProcessor<FingeredChordsProcessor>();
 
-    context.getService<babelwires::TypeSystem>().addType<BuildAccompanimentProcessorInput>(context.getService<babelwires::TypeSystem>());
-    context.getService<babelwires::TypeSystem>().addType<BuildAccompanimentProcessorOutput>(context.getService<babelwires::TypeSystem>());
-    context.getService<babelwires::ProcessorFactoryRegistry>().addProcessor<BuildAccompanimentProcessor>();
+    typeSystem.addType<GetChordTypesProcessorInput>(typeSystem);
+    typeSystem.addType<GetChordTypesProcessorOutput>(typeSystem);
+    processorFactoryRegistry.addProcessor<GetChordTypesProcessor>();
 
-    context.getService<babelwires::TypeSystem>().addType<MergeProcessorInput>(context.getService<babelwires::TypeSystem>());
-    context.getService<babelwires::TypeSystem>().addType<MergeProcessorOutput>(context.getService<babelwires::TypeSystem>());
-    context.getService<babelwires::ProcessorFactoryRegistry>().addProcessor<MergeProcessor>();
+    typeSystem.addType<BuildAccompanimentProcessorInput>(typeSystem);
+    typeSystem.addType<BuildAccompanimentProcessorOutput>(typeSystem);
+    processorFactoryRegistry.addProcessor<BuildAccompanimentProcessor>();
 
-    context.getService<babelwires::TypeSystem>().addType<SilenceProcessorInput>(context.getService<babelwires::TypeSystem>());
-    context.getService<babelwires::TypeSystem>().addType<SilenceProcessorOutput>(context.getService<babelwires::TypeSystem>());
-    context.getService<babelwires::ProcessorFactoryRegistry>().addProcessor<SilenceProcessor>();
+    typeSystem.addType<MergeProcessorInput>(typeSystem);
+    typeSystem.addType<MergeProcessorOutput>(typeSystem);
+    processorFactoryRegistry.addProcessor<MergeProcessor>();
 
-    context.getService<babelwires::TypeSystem>().addType<ConcatenateProcessorInput>(context.getService<babelwires::TypeSystem>());
-    context.getService<babelwires::TypeSystem>().addType<ConcatenateProcessorOutput>(context.getService<babelwires::TypeSystem>());
-    context.getService<babelwires::ProcessorFactoryRegistry>().addProcessor<ConcatenateProcessor>();
+    typeSystem.addType<SilenceProcessorInput>(typeSystem);
+    typeSystem.addType<SilenceProcessorOutput>(typeSystem);
+    processorFactoryRegistry.addProcessor<SilenceProcessor>();
 
-    context.getService<babelwires::TypeSystem>().addType<ExcerptProcessorInput>(context.getService<babelwires::TypeSystem>());
-    context.getService<babelwires::TypeSystem>().addType<ExcerptProcessorOutput>(context.getService<babelwires::TypeSystem>());
-    context.getService<babelwires::ProcessorFactoryRegistry>().addProcessor<ExcerptProcessor>();
+    typeSystem.addType<ConcatenateProcessorInput>(typeSystem);
+    typeSystem.addType<ConcatenateProcessorOutput>(typeSystem);
+    processorFactoryRegistry.addProcessor<ConcatenateProcessor>();
 
-    context.getService<babelwires::TypeSystem>().addType<RepeatProcessorInput>(context.getService<babelwires::TypeSystem>());
-    context.getService<babelwires::TypeSystem>().addType<RepeatProcessorOutput>(context.getService<babelwires::TypeSystem>());
-    context.getService<babelwires::ProcessorFactoryRegistry>().addProcessor<RepeatProcessor>();
+    typeSystem.addType<ExcerptProcessorInput>(typeSystem);
+    typeSystem.addType<ExcerptProcessorOutput>(typeSystem);
+    processorFactoryRegistry.addProcessor<ExcerptProcessor>();
 
-    context.getService<babelwires::TypeSystem>().addType<TransposeProcessorInput>(context.getService<babelwires::TypeSystem>());
-    context.getService<babelwires::TypeSystem>().addType<TransposeProcessorOutput>(context.getService<babelwires::TypeSystem>());
-    context.getService<babelwires::ProcessorFactoryRegistry>().addProcessor<TransposeProcessor>();
+    typeSystem.addType<RepeatProcessorInput>(typeSystem);
+    typeSystem.addType<RepeatProcessorOutput>(typeSystem);
+    processorFactoryRegistry.addProcessor<RepeatProcessor>();
 
-    context.getService<babelwires::TypeSystem>().addType<QuantizeProcessorInput>(context.getService<babelwires::TypeSystem>());
-    context.getService<babelwires::TypeSystem>().addType<QuantizeProcessorOutput>(context.getService<babelwires::TypeSystem>());
-    context.getService<babelwires::ProcessorFactoryRegistry>().addProcessor<QuantizeProcessor>();
+    typeSystem.addType<TransposeProcessorInput>(typeSystem);
+    typeSystem.addType<TransposeProcessorOutput>(typeSystem);
+    processorFactoryRegistry.addProcessor<TransposeProcessor>();
 
-    context.getService<babelwires::TypeSystem>().addType<ChordMapProcessorInput>(context.getService<babelwires::TypeSystem>());
-    context.getService<babelwires::TypeSystem>().addType<ChordMapProcessorOutput>(context.getService<babelwires::TypeSystem>());
-    context.getService<babelwires::ProcessorFactoryRegistry>().addProcessor<ChordMapProcessor>();
+    typeSystem.addType<QuantizeProcessorInput>(typeSystem);
+    typeSystem.addType<QuantizeProcessorOutput>(typeSystem);
+    processorFactoryRegistry.addProcessor<QuantizeProcessor>();
 
-    context.getService<babelwires::TypeSystem>().addType<PercussionMapProcessorInput>(context.getService<babelwires::TypeSystem>());
-    context.getService<babelwires::TypeSystem>().addType<PercussionMapProcessorOutput>(context.getService<babelwires::TypeSystem>());
-    context.getService<babelwires::ProcessorFactoryRegistry>().addProcessor<PercussionMapProcessor>();
+    typeSystem.addType<ChordMapProcessorInput>(typeSystem);
+    typeSystem.addType<ChordMapProcessorOutput>(typeSystem);
+    processorFactoryRegistry.addProcessor<ChordMapProcessor>();
 
-    context.getService<babelwires::TypeSystem>().addType<AccompanimentSequencerProcessorInput>(context.getService<babelwires::TypeSystem>());
-    context.getService<babelwires::TypeSystem>().addType<AccompanimentSequencerProcessorOutput>(context.getService<babelwires::TypeSystem>());
-    context.getService<babelwires::ProcessorFactoryRegistry>().addProcessor<AccompanimentSequencerProcessor>();
+    typeSystem.addType<PercussionMapProcessorInput>(typeSystem);
+    typeSystem.addType<PercussionMapProcessorOutput>(typeSystem);
+    processorFactoryRegistry.addProcessor<PercussionMapProcessor>();
+
+    typeSystem.addType<AccompanimentSequencerProcessorInput>(typeSystem);
+    typeSystem.addType<AccompanimentSequencerProcessorOutput>(typeSystem);
+    processorFactoryRegistry.addProcessor<AccompanimentSequencerProcessor>();
 }
