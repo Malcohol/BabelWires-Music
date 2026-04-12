@@ -51,7 +51,7 @@ namespace bw_music {
       public:
         BW_PROCESSOR_WITH_DEFAULT_FACTORY("SplitAtPitchProcessor", "Split At Pitch", "c7b79e31-98f4-4d20-b946-f55113eb3b75");
 
-        SplitAtPitchProcessor(const babelwires::ProjectContext& projectContext);
+        SplitAtPitchProcessor(const babelwires::Context& context);
 
       protected:
         babelwires::Result processValue(babelwires::UserLogger& userLogger, const babelwires::ValueTreeNode& input,

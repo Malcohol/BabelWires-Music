@@ -51,7 +51,7 @@ namespace bw_music {
       public:
         BW_PROCESSOR_WITH_DEFAULT_FACTORY("MonoSubtracksProcessor", "Monophonic subtracks", "7b6bbc49-24a5-4657-86fd-c457d77feaf9");
 
-        MonophonicSubtracksProcessor(const babelwires::ProjectContext& projectContext);
+        MonophonicSubtracksProcessor(const babelwires::Context& context);
 
       protected:
         babelwires::Result processValue(babelwires::UserLogger& userLogger, const babelwires::ValueTreeNode& input,

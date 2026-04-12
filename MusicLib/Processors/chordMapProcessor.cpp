@@ -30,8 +30,8 @@ bw_music::ChordMapProcessorOutput::ChordMapProcessorOutput(const babelwires::Typ
     : babelwires::ParallelProcessorOutputBase(getThisIdentifier(), typeSystem, ChordMapProcessor::getCommonArrayId(),
                                               bw_music::DefaultTrackType::getThisIdentifier()) {}
 
-bw_music::ChordMapProcessor::ChordMapProcessor(const babelwires::ProjectContext& projectContext)
-    : babelwires::ParallelProcessor(projectContext, ChordMapProcessorInput::getThisIdentifier(),
+bw_music::ChordMapProcessor::ChordMapProcessor(const babelwires::Context& context)
+    : babelwires::ParallelProcessor(context, ChordMapProcessorInput::getThisIdentifier(),
                                     ChordMapProcessorOutput::getThisIdentifier()) {}
 
 babelwires::ShortId bw_music::ChordMapProcessor::getCommonArrayId() {

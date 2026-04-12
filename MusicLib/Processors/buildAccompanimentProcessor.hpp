@@ -45,7 +45,7 @@ namespace bw_music {
       public:
         BW_PROCESSOR_WITH_DEFAULT_FACTORY("BuildAccomp", "Build Accompaniment", "d604f85c-110d-4c11-aa99-3684cf12ab58");
 
-        BuildAccompanimentProcessor(const babelwires::ProjectContext& projectContext);
+        BuildAccompanimentProcessor(const babelwires::Context& context);
 
       protected:
         babelwires::Result processValue(babelwires::UserLogger& userLogger, const babelwires::ValueTreeNode& input,

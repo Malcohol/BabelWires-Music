@@ -7,14 +7,15 @@
  **/
 #include <Plugins/TestPlugin/libRegistration.hpp>
 
-#include <BabelWiresLib/Project/projectContext.hpp>
+#include <BaseLib/Context/context.hpp>
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 
 #include <Domains/Music/Plugins/TestPlugin/testTrackContainer.hpp>
 #include <Domains/Music/Plugins/TestPlugin/simpleAccompaniment.hpp>
 
-void bw_music_testplugin::registerLib(babelwires::ProjectContext& context) {
+void bw_music_testplugin::registerLib(babelwires::Context& context) {
     // Types
-    context.m_typeSystem.addType<bw_music_testplugin::TestTrackContainer>(context.m_typeSystem);
-    context.m_typeSystem.addType<bw_music_testplugin::SimpleAccompaniment>(context.m_typeSystem);
+    babelwires::TypeSystem& typeSystem = context.get<babelwires::TypeSystem>();
+    typeSystem.addType<bw_music_testplugin::TestTrackContainer>(typeSystem);
+    typeSystem.addType<bw_music_testplugin::SimpleAccompaniment>(typeSystem);
 }

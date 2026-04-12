@@ -56,7 +56,7 @@ namespace bw_music {
         BW_PROCESSOR_WITH_DEFAULT_FACTORY("AccompSeq", "Accompaniment Sequencer",
                                           "a8d2f6e1-4c9b-4f2e-7d3a-5e1b8c6f4a2d");
 
-        AccompanimentSequencerProcessor(const babelwires::ProjectContext& projectContext);
+        AccompanimentSequencerProcessor(const babelwires::Context& context);
 
       protected:
         babelwires::Result processValue(babelwires::UserLogger& userLogger, const babelwires::ValueTreeNode& input,

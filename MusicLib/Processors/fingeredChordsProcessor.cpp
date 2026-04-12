@@ -7,7 +7,7 @@
  **/
 #include <MusicLib/Processors/fingeredChordsProcessor.hpp>
 
-#include <BabelWiresLib/Project/projectContext.hpp>
+#include <BaseLib/Context/context.hpp>
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 
 #include <BaseLib/Result/resultDSL.hpp>
@@ -23,9 +23,9 @@ bw_music::FingeredChordsProcessorOutput::FingeredChordsProcessorOutput(const bab
                                DefaultTrackType::getThisIdentifier()}}) {}
 
 
-bw_music::FingeredChordsProcessor::FingeredChordsProcessor(const babelwires::ProjectContext& projectContext)
-    : Processor(projectContext, projectContext.m_typeSystem.getRegisteredType<FingeredChordsProcessorInput>(),
-                     projectContext.m_typeSystem.getRegisteredType<FingeredChordsProcessorOutput>()) {}
+bw_music::FingeredChordsProcessor::FingeredChordsProcessor(const babelwires::Context& context)
+    : Processor(context, context.get<babelwires::TypeSystem>().getRegisteredType<FingeredChordsProcessorInput>(),
+                     context.get<babelwires::TypeSystem>().getRegisteredType<FingeredChordsProcessorOutput>()) {}
 
 babelwires::Result bw_music::FingeredChordsProcessor::processValue(babelwires::UserLogger& userLogger,
                                                       const babelwires::ValueTreeNode& input,

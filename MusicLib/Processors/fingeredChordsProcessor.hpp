@@ -49,7 +49,7 @@ namespace bw_music {
       public:
         BW_PROCESSOR_WITH_DEFAULT_FACTORY("FingeredChords", "Fingered Chords", "c7beca58-d894-452c-8476-872db2173dd9");
 
-        FingeredChordsProcessor(const babelwires::ProjectContext& projectContext);
+        FingeredChordsProcessor(const babelwires::Context& context);
 
       protected:
         babelwires::Result processValue(babelwires::UserLogger& userLogger, const babelwires::ValueTreeNode& input,

@@ -30,8 +30,8 @@ babelwires::ShortId bw_music::ExcerptProcessor::getCommonArrayId() {
     return BW_SHORT_ID("Tracks", "Tracks", "983b3bcb-7086-4791-8e18-d8c7550d45d3");
 }
 
-bw_music::ExcerptProcessor::ExcerptProcessor(const babelwires::ProjectContext& projectContext)
-    : babelwires::ParallelProcessor(projectContext, ExcerptProcessorInput::getThisIdentifier(),
+bw_music::ExcerptProcessor::ExcerptProcessor(const babelwires::Context& context)
+    : babelwires::ParallelProcessor(context, ExcerptProcessorInput::getThisIdentifier(),
                                     ExcerptProcessorOutput::getThisIdentifier()) {}
 
 babelwires::Result bw_music::ExcerptProcessor::processEntry(babelwires::UserLogger& userLogger,

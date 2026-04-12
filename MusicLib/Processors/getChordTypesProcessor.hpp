@@ -46,7 +46,7 @@ namespace bw_music {
       public:
         BW_PROCESSOR_WITH_DEFAULT_FACTORY("GetChordTypes", "Get Chord Types", "20ee9695-8277-4a04-b380-098b0fd8c525");
 
-        GetChordTypesProcessor(const babelwires::ProjectContext& projectContext);
+        GetChordTypesProcessor(const babelwires::Context& context);
       protected:
         babelwires::Result processValue(babelwires::UserLogger& userLogger, const babelwires::ValueTreeNode& input,
                           babelwires::ValueTreeNode& output) const override;
