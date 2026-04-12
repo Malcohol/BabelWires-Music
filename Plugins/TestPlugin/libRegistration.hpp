@@ -10,7 +10,7 @@
 #include <Domains/Music/Plugins/TestPlugin/testPluginLibExport.hpp>
 
 namespace babelwires {
-    struct Context;
+    class Context;
 }
 
 namespace bw_music_testplugin {

@@ -10,7 +10,7 @@
 #include <Smf/smfLibExport.hpp>
 
 namespace babelwires {
-    struct Context;
+    class Context;
 }
 
 namespace smf {

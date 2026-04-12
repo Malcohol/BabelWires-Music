@@ -19,7 +19,7 @@
 #include <unordered_set>
 
 namespace babelwires {
-    struct Context;
+    class Context;
 }
 
 namespace smf {

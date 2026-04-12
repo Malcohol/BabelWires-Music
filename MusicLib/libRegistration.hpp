@@ -10,7 +10,7 @@
 #include <MusicLib/musicLibExport.hpp>
 
 namespace babelwires {
-    struct Context;
+    class Context;
 }
 
 namespace bw_music {
