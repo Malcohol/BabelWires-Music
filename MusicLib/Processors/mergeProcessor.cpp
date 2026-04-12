@@ -28,7 +28,7 @@ bw_music::MergeProcessorOutput::MergeProcessorOutput(const babelwires::TypeSyste
                                DefaultTrackType::getThisIdentifier()}}) {}
 
 bw_music::MergeProcessor::MergeProcessor(const babelwires::Context& context)
-    : Processor(context, context.getService<babelwires::TypeSystem>().getRegisteredType<MergeProcessorInput>(), context.getService<babelwires::TypeSystem>().getRegisteredType<MergeProcessorOutput>()) {}
+    : Processor(context, context.get<babelwires::TypeSystem>().getRegisteredType<MergeProcessorInput>(), context.get<babelwires::TypeSystem>().getRegisteredType<MergeProcessorOutput>()) {}
 
 babelwires::Result bw_music::MergeProcessor::processValue(babelwires::UserLogger& userLogger, const babelwires::ValueTreeNode& input,
                                             babelwires::ValueTreeNode& output) const {

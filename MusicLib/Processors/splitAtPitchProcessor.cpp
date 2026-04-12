@@ -33,8 +33,8 @@ bw_music::SplitAtPitchProcessorOutput::SplitAtPitchProcessorOutput(const babelwi
       }) {}
 
 bw_music::SplitAtPitchProcessor::SplitAtPitchProcessor(const babelwires::Context& context)
-    : Processor(context, context.getService<babelwires::TypeSystem>().getRegisteredType<SplitAtPitchProcessorInput>(),
-                     context.getService<babelwires::TypeSystem>().getRegisteredType<SplitAtPitchProcessorOutput>()) {}
+    : Processor(context, context.get<babelwires::TypeSystem>().getRegisteredType<SplitAtPitchProcessorInput>(),
+                     context.get<babelwires::TypeSystem>().getRegisteredType<SplitAtPitchProcessorOutput>()) {}
 
 babelwires::Result bw_music::SplitAtPitchProcessor::processValue(babelwires::UserLogger& userLogger, const babelwires::ValueTreeNode& input, babelwires::ValueTreeNode& output) const {
     SplitAtPitchProcessorInput::ConstInstance in{input};

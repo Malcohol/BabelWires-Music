@@ -46,8 +46,8 @@ TEST_P(SmfStandardPercussionTest, saveLoad) {
 
     {
         babelwires::ValueTreeRoot smfFeature(
-            testEnvironment.m_projectContext.getService<babelwires::TypeSystem>(),
-            babelwires::FileTypeT<smf::SmfSequence>::getType(testEnvironment.m_projectContext.getService<babelwires::TypeSystem>()));
+            testEnvironment.m_projectContext.get<babelwires::TypeSystem>(),
+            babelwires::FileTypeT<smf::SmfSequence>::getType(testEnvironment.m_projectContext.get<babelwires::TypeSystem>()));
         smfFeature.setToDefault();
 
         smf::SmfSequence::Instance smfType{smfFeature.getChild(0)->as<babelwires::ValueTreeNode>()};
@@ -178,8 +178,8 @@ TEST_P(SmfTrackAllocationPercussionTest, trackAllocation) {
 
     {
         babelwires::ValueTreeRoot smfFeature(
-            testEnvironment.m_projectContext.getService<babelwires::TypeSystem>(),
-            babelwires::FileTypeT<smf::SmfSequence>::getType(testEnvironment.m_projectContext.getService<babelwires::TypeSystem>()));
+            testEnvironment.m_projectContext.get<babelwires::TypeSystem>(),
+            babelwires::FileTypeT<smf::SmfSequence>::getType(testEnvironment.m_projectContext.get<babelwires::TypeSystem>()));
         smfFeature.setToDefault();
 
         smf::SmfSequence::Instance smfType{smfFeature.getChild(0)->as<babelwires::ValueTreeNode>()};

@@ -25,8 +25,8 @@ bw_music::GetChordTypesProcessorOutput::GetChordTypesProcessorOutput(const babel
                                ChordTypeSet::getThisIdentifier()}}) {}
 
 bw_music::GetChordTypesProcessor::GetChordTypesProcessor(const babelwires::Context& context)
-    : Processor(context, context.getService<babelwires::TypeSystem>().getRegisteredType<GetChordTypesProcessorInput>(),
-                     context.getService<babelwires::TypeSystem>().getRegisteredType<GetChordTypesProcessorOutput>()) {}
+    : Processor(context, context.get<babelwires::TypeSystem>().getRegisteredType<GetChordTypesProcessorInput>(),
+                     context.get<babelwires::TypeSystem>().getRegisteredType<GetChordTypesProcessorOutput>()) {}
 
 babelwires::Result bw_music::GetChordTypesProcessor::processValue(babelwires::UserLogger& userLogger,
                                               const babelwires::ValueTreeNode& input,

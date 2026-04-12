@@ -15,5 +15,5 @@
 #include <MusicLibUi/ValueModels/trackValueModel.hpp>
 
 void bw_musicUi::registerLib(babelwires::Context& context) {
-    context.getService<babelwires::ValueModelRegistry>().registryHandler<bw_music::TrackType, TrackValueModel>();
+    context.get<babelwires::ValueModelRegistry>().registryHandler<bw_music::TrackType, TrackValueModel>();
 }

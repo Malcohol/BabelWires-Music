@@ -44,7 +44,7 @@
 #include <cassert>
 
 smf::StandardPercussionSets::StandardPercussionSets(const babelwires::Context& context) {
-#define DECLARE_PERCUSSION_SET(ENUM, CLASS) m_knownSets[ENUM] = context.getService<babelwires::TypeSystem>().getRegisteredType<CLASS>();
+#define DECLARE_PERCUSSION_SET(ENUM, CLASS) m_knownSets[ENUM] = context.get<babelwires::TypeSystem>().getRegisteredType<CLASS>();
 
     DECLARE_PERCUSSION_SET(GM_PERCUSSION_SET, smf::GMPercussionSet)
     DECLARE_PERCUSSION_SET(GM2_STANDARD_PERCUSSION_SET, smf::GM2StandardPercussionSet)

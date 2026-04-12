@@ -29,8 +29,8 @@ bw_music::MonophonicSubtracksProcessorOutput::MonophonicSubtracksProcessorOutput
            {BW_SHORT_ID("Other", "Other", "bc3a5261-630c-43d7-bda5-f85dd6a1fe2b"), DefaultTrackType::getThisIdentifier()}}) {}
 
 bw_music::MonophonicSubtracksProcessor::MonophonicSubtracksProcessor(const babelwires::Context& context)
-    : Processor(context, context.getService<babelwires::TypeSystem>().getRegisteredType<MonophonicSubtracksProcessorInput>(),
-                context.getService<babelwires::TypeSystem>().getRegisteredType<MonophonicSubtracksProcessorOutput>()) {}
+    : Processor(context, context.get<babelwires::TypeSystem>().getRegisteredType<MonophonicSubtracksProcessorInput>(),
+                context.get<babelwires::TypeSystem>().getRegisteredType<MonophonicSubtracksProcessorOutput>()) {}
 
 babelwires::Result bw_music::MonophonicSubtracksProcessor::processValue(babelwires::UserLogger& userLogger,
                                                           const babelwires::ValueTreeNode& input,

@@ -37,8 +37,8 @@ bw_music::AccompanimentSequencerProcessorOutput::AccompanimentSequencerProcessor
 
 bw_music::AccompanimentSequencerProcessor::AccompanimentSequencerProcessor(
     const babelwires::Context& context)
-    : Processor(context, context.getService<babelwires::TypeSystem>().getRegisteredType<AccompanimentSequencerProcessorInput>(),
-                context.getService<babelwires::TypeSystem>().getRegisteredType<AccompanimentSequencerProcessorOutput>()) {}
+    : Processor(context, context.get<babelwires::TypeSystem>().getRegisteredType<AccompanimentSequencerProcessorInput>(),
+                context.get<babelwires::TypeSystem>().getRegisteredType<AccompanimentSequencerProcessorOutput>()) {}
 
 babelwires::Result bw_music::AccompanimentSequencerProcessor::processValue(babelwires::UserLogger& userLogger,
                                                              const babelwires::ValueTreeNode& input,

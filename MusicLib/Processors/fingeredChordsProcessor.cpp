@@ -24,8 +24,8 @@ bw_music::FingeredChordsProcessorOutput::FingeredChordsProcessorOutput(const bab
 
 
 bw_music::FingeredChordsProcessor::FingeredChordsProcessor(const babelwires::Context& context)
-    : Processor(context, context.getService<babelwires::TypeSystem>().getRegisteredType<FingeredChordsProcessorInput>(),
-                     context.getService<babelwires::TypeSystem>().getRegisteredType<FingeredChordsProcessorOutput>()) {}
+    : Processor(context, context.get<babelwires::TypeSystem>().getRegisteredType<FingeredChordsProcessorInput>(),
+                     context.get<babelwires::TypeSystem>().getRegisteredType<FingeredChordsProcessorOutput>()) {}
 
 babelwires::Result bw_music::FingeredChordsProcessor::processValue(babelwires::UserLogger& userLogger,
                                                       const babelwires::ValueTreeNode& input,

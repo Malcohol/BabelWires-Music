@@ -36,7 +36,7 @@ class BuildAccompanimentTest : public MusicLibTestFixture {
     void SetUp() override {}
 
     void instantiateInputTypeVariable(const babelwires::TypeExp& type) {
-        const auto& typeSystem = m_testEnv.m_projectContext.getService<babelwires::TypeSystem>();
+        const auto& typeSystem = m_testEnv.m_projectContext.get<babelwires::TypeSystem>();
         babelwires::ValueTreeRoot& input = m_processor.getInput();
         babelwires::ValueHolder inputValue = input.getValue();
         const auto& inputType = typeSystem.getRegisteredType<bw_music::BuildAccompanimentProcessorInput>();
@@ -45,7 +45,7 @@ class BuildAccompanimentTest : public MusicLibTestFixture {
     }
 
     void setInputValues(const std::set<bw_music::ChordType::Value>& chordTypes, babelwires::ValueHolder inputTracks) {
-        const auto& typeSystem = m_testEnv.m_projectContext.getService<babelwires::TypeSystem>();
+        const auto& typeSystem = m_testEnv.m_projectContext.get<babelwires::TypeSystem>();
         babelwires::ValueTreeRoot& input = m_processor.getInput();
         const babelwires::ValueHolder& inputValue = input.getValue();
         const auto& chordType = typeSystem.getRegisteredType<bw_music::ChordTypeSet>();
@@ -61,7 +61,7 @@ class BuildAccompanimentTest : public MusicLibTestFixture {
     }
 
     const babelwires::ValueTreeNode& getAccompanimentOutput() {
-        const auto& typeSystem = m_testEnv.m_projectContext.getService<babelwires::TypeSystem>();
+        const auto& typeSystem = m_testEnv.m_projectContext.get<babelwires::TypeSystem>();
         const babelwires::ValueTreeRoot& output = m_processor.getOutput();
         return babelwires::assertFollowPath(
             babelwires::Path({babelwires::PathStep(babelwires::GenericType::getStepToValue()),
@@ -73,7 +73,7 @@ class BuildAccompanimentTest : public MusicLibTestFixture {
 };
 
 TEST_F(BuildAccompanimentTest, trackTest) {
-    const auto& typeSystem = m_testEnv.m_projectContext.getService<babelwires::TypeSystem>();
+    const auto& typeSystem = m_testEnv.m_projectContext.get<babelwires::TypeSystem>();
 
     instantiateInputTypeVariable(bw_music::DefaultTrackType::getThisIdentifier());
 
@@ -106,7 +106,7 @@ TEST_F(BuildAccompanimentTest, trackTest) {
 }
 
 TEST_F(BuildAccompanimentTest, testTrackContainerTest) {
-    const auto& typeSystem = m_testEnv.m_projectContext.getService<babelwires::TypeSystem>();
+    const auto& typeSystem = m_testEnv.m_projectContext.get<babelwires::TypeSystem>();
 
     instantiateInputTypeVariable(bw_music_testplugin::TestTrackContainer::getThisIdentifier());
 

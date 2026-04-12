@@ -39,8 +39,8 @@
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 
 void bw_music::registerLib(babelwires::Context& context) {
-    babelwires::TypeSystem& typeSystem = context.getService<babelwires::TypeSystem>();
-    babelwires::ProcessorFactoryRegistry& processorFactoryRegistry = context.getService<babelwires::ProcessorFactoryRegistry>();
+    babelwires::TypeSystem& typeSystem = context.get<babelwires::TypeSystem>();
+    babelwires::ProcessorFactoryRegistry& processorFactoryRegistry = context.get<babelwires::ProcessorFactoryRegistry>();
 
     typeSystem.addType<DefaultTrackType>();
     typeSystem.addType<ChordType>();

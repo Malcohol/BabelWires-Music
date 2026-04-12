@@ -47,8 +47,8 @@ bw_music::BuildAccompanimentProcessorOutput::BuildAccompanimentProcessorOutput(c
                   1) {}
 
 bw_music::BuildAccompanimentProcessor::BuildAccompanimentProcessor(const babelwires::Context& context)
-    : Processor(context, context.getService<babelwires::TypeSystem>().getRegisteredType<BuildAccompanimentProcessorInput>(),
-                context.getService<babelwires::TypeSystem>().getRegisteredType<BuildAccompanimentProcessorOutput>()) {}
+    : Processor(context, context.get<babelwires::TypeSystem>().getRegisteredType<BuildAccompanimentProcessorInput>(),
+                context.get<babelwires::TypeSystem>().getRegisteredType<BuildAccompanimentProcessorOutput>()) {}
 
 namespace {
 

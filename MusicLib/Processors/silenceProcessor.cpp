@@ -22,8 +22,8 @@ bw_music::SilenceProcessorOutput::SilenceProcessorOutput(const babelwires::TypeS
                                DefaultTrackType::getThisIdentifier()}}) {}
 
 bw_music::SilenceProcessor::SilenceProcessor(const babelwires::Context& context)
-    : Processor(context, context.getService<babelwires::TypeSystem>().getRegisteredType<SilenceProcessorInput>(),
-                     context.getService<babelwires::TypeSystem>().getRegisteredType<SilenceProcessorOutput>()) {}
+    : Processor(context, context.get<babelwires::TypeSystem>().getRegisteredType<SilenceProcessorInput>(),
+                     context.get<babelwires::TypeSystem>().getRegisteredType<SilenceProcessorOutput>()) {}
 
 babelwires::Result bw_music::SilenceProcessor::processValue(babelwires::UserLogger& userLogger,
                                               const babelwires::ValueTreeNode& input,

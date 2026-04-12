@@ -15,7 +15,7 @@
 
 void bw_music_testplugin::registerLib(babelwires::Context& context) {
     // Types
-    babelwires::TypeSystem& typeSystem = context.getService<babelwires::TypeSystem>();
+    babelwires::TypeSystem& typeSystem = context.get<babelwires::TypeSystem>();
     typeSystem.addType<bw_music_testplugin::TestTrackContainer>(typeSystem);
     typeSystem.addType<bw_music_testplugin::SimpleAccompaniment>(typeSystem);
 }

@@ -24,8 +24,8 @@ bw_music::ConcatenateProcessorOutput::ConcatenateProcessorOutput(const babelwire
                                DefaultTrackType::getThisIdentifier()}}) {}
 
 bw_music::ConcatenateProcessor::ConcatenateProcessor(const babelwires::Context& context)
-    : babelwires::Processor(context, context.getService<babelwires::TypeSystem>().getRegisteredType<ConcatenateProcessorInput>(),
-                            context.getService<babelwires::TypeSystem>().getRegisteredType<ConcatenateProcessorOutput>()) {}
+    : babelwires::Processor(context, context.get<babelwires::TypeSystem>().getRegisteredType<ConcatenateProcessorInput>(),
+                            context.get<babelwires::TypeSystem>().getRegisteredType<ConcatenateProcessorOutput>()) {}
 
 babelwires::Result bw_music::ConcatenateProcessor::processValue(babelwires::UserLogger& userLogger,
                                                   const babelwires::ValueTreeNode& input,

@@ -51,11 +51,11 @@
 #include <Smf/smfSequence.hpp>
 
 void smf::registerLib(babelwires::Context& context) {
-    babelwires::TypeSystem& typeSystem = context.getService<babelwires::TypeSystem>();
+    babelwires::TypeSystem& typeSystem = context.get<babelwires::TypeSystem>();
 
     // Formats
-    context.getService<babelwires::SourceFileFormatRegistry>().addEntry(std::make_unique<SmfSourceFormat>());
-    context.getService<babelwires::TargetFileFormatRegistry>().addEntry(std::make_unique<SmfTargetFormat>());
+    context.get<babelwires::SourceFileFormatRegistry>().addEntry(std::make_unique<SmfSourceFormat>());
+    context.get<babelwires::TargetFileFormatRegistry>().addEntry(std::make_unique<SmfTargetFormat>());
 
     // Types
     typeSystem.addType<GMSpecType>();
