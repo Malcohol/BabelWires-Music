@@ -1,3 +1,6 @@
+# Directory-scope override: plugins created under this domain go to plugins/Music.
+set(BABELWIRES_PLUGIN_OUTPUT_DIR "${BABELWIRES_PLUGIN_OUTPUT_DIR}/Music")
+
 ADD_SUBDIRECTORY( MusicLib )
 ADD_SUBDIRECTORY( Seq2tapeLib )
 ADD_SUBDIRECTORY( MusicLibUi )
