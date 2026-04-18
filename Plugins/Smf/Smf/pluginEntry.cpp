@@ -8,5 +8,5 @@
 #include <Smf/libRegistration.hpp>
 
 #define PLUGIN_REGISTRATION_FUNCTION smf::registerLib;
-#include <BaseLib/PluginSupport/detail/pluginEntryBoilerplate.inc>
+#include <BaseLib/PluginSupport/Detail/pluginEntryBoilerplate.inc>
 
