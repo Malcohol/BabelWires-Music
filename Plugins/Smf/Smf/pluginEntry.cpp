@@ -17,16 +17,10 @@ namespace {
         return babelwires::writeBuildFingerprint(buffer, bufferSize);
     }
 
-    void smfRegisterPlugin(babelwires::Context& context) {
-        smf::registerLib(context);
-    }
-
 } // namespace
 
 extern "C" BABELWIRES_PLUGIN_EXPORT void babelwires_getPluginDescriptor(babelwires::PluginDescriptor* out) {
-    out->m_codebaseVersion = {babelwires::detail::c_codebaseVersionMajor,
-                              babelwires::detail::c_codebaseVersionMinor,
-                              babelwires::detail::c_codebaseVersionPatch};
+    out->m_codebaseVersion = babelwires::c_myCodebaseVersion;
     out->getBuildFingerprint = &smfGetBuildFingerprint;
-    out->registerPlugin = &smfRegisterPlugin;
+    out->registerPlugin = &smf::registerLib;
 }
