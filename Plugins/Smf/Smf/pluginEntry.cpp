@@ -7,20 +7,6 @@
  **/
 #include <Smf/libRegistration.hpp>
 
-#include <BaseLib/BuildCompatibility/buildFingerprint.hpp>
-#include <BaseLib/PluginSupport/pluginDescriptor.hpp>
-#include <BaseLib/Version/codebaseVersion_gen.hpp>
+#define PLUGIN_REGISTRATION_FUNCTION smf::registerLib;
+#include <BaseLib/PluginSupport/detail/pluginEntryBoilerplate.inc>
 
-namespace {
-
-    std::size_t smfGetBuildFingerprint(char* buffer, std::size_t bufferSize) {
-        return babelwires::writeMyBuildFingerprint(buffer, bufferSize);
-    }
-
-} // namespace
-
-extern "C" BABELWIRES_PLUGIN_EXPORT void babelwires_getPluginDescriptor(babelwires::PluginDescriptor* out) {
-    out->m_codebaseVersion = babelwires::c_myCodebaseVersion;
-    out->getBuildFingerprint = &smfGetBuildFingerprint;
-    out->registerPlugin = &smf::registerLib;
-}
