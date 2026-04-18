@@ -25,7 +25,7 @@
 TEST(SmfSaveLoadTest, cMajorScale) {
     testUtils::TestEnvironment testEnvironment;
     bw_music::registerLib(testEnvironment.m_projectContext);
-    smf::registerLib(testEnvironment.m_projectContext);
+    ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
 
     testUtils::TempFilePath tempFile("cMajor.mid");
 
@@ -110,7 +110,7 @@ namespace {
 TEST(SmfSaveLoadTest, cMajorScaleWithMetadata) {
     testUtils::TestEnvironment testEnvironment;
     bw_music::registerLib(testEnvironment.m_projectContext);
-    smf::registerLib(testEnvironment.m_projectContext);
+    ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
 
     const std::vector<bw_music::Pitch> pitches{60, 62, 64, 65, 67, 69, 71, 72};
 
@@ -170,7 +170,7 @@ namespace {
 TEST(SmfSaveLoadTest, format0Chords) {
     testUtils::TestEnvironment testEnvironment;
     bw_music::registerLib(testEnvironment.m_projectContext);
-    smf::registerLib(testEnvironment.m_projectContext);
+    ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
     testUtils::TempFilePath tempFile("format0Chords.mid");
 
     const char* trackName[3] = {"ch0", "ch1", "ch2"};
@@ -222,7 +222,7 @@ TEST(SmfSaveLoadTest, format0Chords) {
 TEST(SmfSaveLoadTest, format1Chords) {
     testUtils::TestEnvironment testEnvironment;
     bw_music::registerLib(testEnvironment.m_projectContext);
-    smf::registerLib(testEnvironment.m_projectContext);
+    ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
     testUtils::TempFilePath tempFile("format1Chords.mid");
 
     const char* trackName[3] = {"ch0", "ch1", "ch2"};
