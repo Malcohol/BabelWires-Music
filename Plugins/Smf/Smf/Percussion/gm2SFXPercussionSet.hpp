@@ -7,15 +7,13 @@
  **/
 #pragma once
 
-#include <Smf/smfLibExport.hpp>
-
 #include <MusicLib/Percussion/percussionSetWithPitchMap.hpp>
 
 #include <BabelWiresLib/TypeSystem/registeredType.hpp>
 
 namespace smf {
     /// A PercussionSet corresponding to the instruments of GM2 SFX percussion set.
-    class SMFLIB_API GM2SFXPercussionSet : public bw_music::PercussionSetWithPitchMap {
+    class GM2SFXPercussionSet : public bw_music::PercussionSetWithPitchMap {
       public:
         REGISTERED_TYPE("GM2SFXPerc", "General MIDI 2 SFX Percussion", "5d51ad28-2f32-467e-a5be-8caafe3e6b39", 1);
 

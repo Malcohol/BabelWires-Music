@@ -41,21 +41,12 @@ SET( SMFLIB_SRCS
 	smfSequence.cpp
 	smfWriter.cpp
 	)
-
-ADD_LIBRARY( SmfLib ${SMFLIB_SRCS} )
-TARGET_INCLUDE_DIRECTORIES( SmfLib
-	PUBLIC
+babelwires_add_plugin(Smf SmfLib
+	SOURCES ${SMFLIB_SRCS}
+	ENTRY_SOURCE pluginEntry.cpp
+	DEPS BabelWiresLib musicLib BaseLib
+	INCLUDE_DIRS
 		$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
 		$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/Domains/Music/Plugins/Smf>
 		$<INSTALL_INTERFACE:include>
 )
-TARGET_LINK_LIBRARIES(SmfLib BabelWiresLib musicLib BaseLib)
-
-if(BUILD_SHARED_LIBS)
-	set_target_properties(SmfLib PROPERTIES
-		CXX_VISIBILITY_PRESET hidden
-		VISIBILITY_INLINES_HIDDEN ON)
-	target_compile_definitions(SmfLib PRIVATE SMFLIB_EXPORTS)
-else()
-	target_compile_definitions(SmfLib PUBLIC SMFLIB_STATIC)
-endif()

@@ -7,8 +7,6 @@
  **/
 #pragma once
 
-#include <Smf/smfLibExport.hpp>
-
 #include <Smf/instanceWithChannelOptionals.hpp>
 #include <Smf/smfCommon.hpp>
 
@@ -36,7 +34,7 @@ namespace smf {
     /// and channel. This is less stable, but OK. Problems will arise in the very rare situation
     /// where a track had a similar number of events for two channels, and on reload, the
     /// the smaller became the larger.
-    class SMFLIB_API MidiTrackAndChannel : public babelwires::RecordType {
+    class MidiTrackAndChannel : public babelwires::RecordType {
       public:
         DOWNCASTABLE(MidiTrackAndChannel, babelwires::RecordType);
         REGISTERED_TYPE("TrackChannel", "Track and Channel", "5e9b395c-ec13-4bdb-9b2b-b060ba7fb707", 1);
@@ -47,7 +45,7 @@ namespace smf {
         /// It's easier to work with a custom instance than the one the standard DSL would produce.
         /// The parent class provides index based access to the 16 optional tracks.
         template <typename VALUE_TREE_NODE>
-        class SMFLIB_API InstanceImpl : public InstanceWithChannelOptionals<VALUE_TREE_NODE, MidiTrackAndChannel> {
+        class InstanceImpl : public InstanceWithChannelOptionals<VALUE_TREE_NODE, MidiTrackAndChannel> {
           public:
             InstanceImpl(VALUE_TREE_NODE& valueFeature)
                 : InstanceWithChannelOptionals<VALUE_TREE_NODE, MidiTrackAndChannel>(valueFeature) {}
