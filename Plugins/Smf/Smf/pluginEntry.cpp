@@ -7,6 +7,7 @@
  **/
 #include <Smf/libRegistration.hpp>
 
-#define PLUGIN_REGISTRATION_FUNCTION smf::registerLib;
+#define PLUGIN_REGISTRATION_FUNCTION smf::registerLib
+#define PLUGIN_UUID "eb407280-a6ce-46d0-91cd-02a91354757a"
 #include <BaseLib/PluginSupport/Detail/pluginEntryBoilerplate.inc>
 
