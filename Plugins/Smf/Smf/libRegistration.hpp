@@ -11,10 +11,10 @@
 
 namespace babelwires {
     class Context;
-    struct UserLogger;
+    struct UserAdvisoryLogger;
 }
 
 namespace smf {
     /// Register factories etc. for Standard MIDI File support.
-    babelwires::Result registerLib(babelwires::Context& context, babelwires::UserLogger& userLogger);
+    babelwires::Result registerLib(babelwires::Context& context, babelwires::UserAdvisoryLogger& userLogger);
 } // namespace smf

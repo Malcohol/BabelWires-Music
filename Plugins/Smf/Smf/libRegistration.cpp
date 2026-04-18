@@ -50,7 +50,7 @@
 #include <Smf/smfFormat.hpp>
 #include <Smf/smfSequence.hpp>
 
-babelwires::Result smf::registerLib(babelwires::Context& context, babelwires::UserLogger&) {
+babelwires::Result smf::registerLib(babelwires::Context& context, babelwires::UserAdvisoryLogger&) {
     babelwires::TypeSystem& typeSystem = context.get<babelwires::TypeSystem>();
 
     // Formats
