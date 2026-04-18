@@ -14,7 +14,7 @@
 namespace {
 
     std::size_t smfGetBuildFingerprint(char* buffer, std::size_t bufferSize) {
-        return babelwires::writeBuildFingerprint(buffer, bufferSize);
+        return babelwires::writeMyBuildFingerprint(buffer, bufferSize);
     }
 
 } // namespace
