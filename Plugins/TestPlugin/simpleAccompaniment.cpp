@@ -5,7 +5,7 @@
  *
  * Licensed under the GPLv3.0. See LICENSE file.
  **/
-#include <Domains/Music/Plugins/TestPlugin/simpleAccompaniment.hpp>
+#include <TestPlugin/simpleAccompaniment.hpp>
 
 #include <MusicLib/Functions/fitToChordFunction.hpp>
 #include <MusicLib/Functions/transposeFunction.hpp>
