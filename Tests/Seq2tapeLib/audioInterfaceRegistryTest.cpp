@@ -16,9 +16,9 @@ namespace {
         TestAudioDest(int numChannels)
             : m_numChannels(numChannels) {}
 
-        int getNumChannels() const { return m_numChannels; }
+        int getNumChannels() const override { return m_numChannels; }
 
-        babelwires::Duration getFrequency() const { return 0.0; }
+        babelwires::Duration getFrequency() const override { return 0.0; }
 
         unsigned long writeMoreAudioData(const babelwires::AudioSample* buffer, unsigned long bufSize) override {
             return 0;
@@ -53,7 +53,7 @@ namespace {
         }
 
         babelwires::ResultT<std::unique_ptr<babelwires::AudioDest>> getDestination(
-            std::string_view destinationName) const {
+            std::string_view destinationName) const override {
             if ((m_name + "1") == destinationName) {
                 return std::make_unique<TestAudioDest>(m_baseNumChannels + 1);
             } else if ((m_name + "2") == destinationName) {
@@ -63,11 +63,11 @@ namespace {
             }
         }
 
-        std::vector<std::string> getSourceNames() const {
+        std::vector<std::string> getSourceNames() const override {
             return std::vector<std::string>{m_name + "1", m_name + "2", m_name + "3"};
         }
 
-        babelwires::ResultT<std::unique_ptr<babelwires::AudioSource>> getSource(std::string_view sourceName) const {
+        babelwires::ResultT<std::unique_ptr<babelwires::AudioSource>> getSource(std::string_view sourceName) const override {
             if ((m_name + "1") == sourceName) {
                 return std::make_unique<TestAudioSource>(m_baseNumChannels + 1);
             } else if ((m_name + "2") == sourceName) {
