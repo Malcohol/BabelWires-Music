@@ -56,6 +56,10 @@ namespace seq2tape {
       private:
         /// Load the TapeFile from the data stream.
         TapeFile() = default;
+        TapeFile(TapeFile&& other) = default;
+
+        TapeFile& operator=(TapeFile&& other) = delete;
+        TapeFile(const TapeFile&) = delete;
 
       protected:
         babelwires::LongId m_formatIdentifier;
