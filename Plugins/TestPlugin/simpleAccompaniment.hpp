@@ -7,19 +7,17 @@
  **/
 #pragma once
 
-#include <Domains/Music/Plugins/TestPlugin/testPluginLibExport.hpp>
-
 #include <BabelWiresLib/Instance/instance.hpp>
 #include <BabelWiresLib/TypeSystem/registeredType.hpp>
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/Record/recordType.hpp>
 #include <BabelWiresLib/ValueTree/valueTreePathUtils.hpp>
 
-#include <Domains/Music/Plugins/TestPlugin/testTrackContainer.hpp>
+#include <TestPlugin/testTrackContainer.hpp>
 
 namespace bw_music_testplugin {
     /// A type that contains some tracks and other fields for testing.
-    class TESTPLUGINLIB_API SimpleAccompaniment : public babelwires::RecordType {
+    class SimpleAccompaniment : public babelwires::RecordType {
       public:
         DOWNCASTABLE(SimpleAccompaniment, babelwires::RecordType);
         REGISTERED_TYPE("SimpleAccomp", "Simple Accompaniment", "9a92a3e0-9613-46be-ad77-898896875ad4", 1);

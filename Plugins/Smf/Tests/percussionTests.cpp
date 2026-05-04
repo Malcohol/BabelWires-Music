@@ -37,7 +37,7 @@ class SmfStandardPercussionTest : public testing::TestWithParam<PercussionTestDa
 TEST_P(SmfStandardPercussionTest, saveLoad) {
     testUtils::TestEnvironment testEnvironment;
     bw_music::registerLib(testEnvironment.m_projectContext);
-    smf::registerLib(testEnvironment.m_projectContext);
+    ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
 
     const PercussionTestData& testData = GetParam();
 
@@ -169,7 +169,7 @@ class SmfTrackAllocationPercussionTest : public testing::TestWithParam<TrackAllo
 TEST_P(SmfTrackAllocationPercussionTest, trackAllocation) {
     testUtils::TestEnvironment testEnvironment;
     bw_music::registerLib(testEnvironment.m_projectContext);
-    smf::registerLib(testEnvironment.m_projectContext);
+    ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
 
     const TrackAllocationTestData& testData = GetParam();
 

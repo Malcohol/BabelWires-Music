@@ -7,12 +7,13 @@
  **/
 #pragma once
 
-#include <Domains/Music/Plugins/TestPlugin/testPluginLibExport.hpp>
+#include <BaseLib/Result/result.hpp>
 
 namespace babelwires {
     class Context;
+    struct UserAdvisoryLogger;
 }
 
 namespace bw_music_testplugin {
-    TESTPLUGINLIB_API void registerLib(babelwires::Context& context);
+    babelwires::Result registerLib(babelwires::Context& context, babelwires::UserAdvisoryLogger& userLogger);
 } // namespace bw_music_testplugin

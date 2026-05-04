@@ -7,7 +7,6 @@
  **/
 #pragma once
 
-#include <Smf/smfLibExport.hpp>
 
 #include <BabelWiresLib/Types/Enum/enumWithCppEnum.hpp>
 #include <BabelWiresLib/TypeSystem/registeredType.hpp>
@@ -23,7 +22,7 @@
 
 namespace smf {
     /// Carries the enum of GM Spec values.
-    class SMFLIB_API GMSpecType : public babelwires::EnumType {
+    class GMSpecType : public babelwires::EnumType {
       public:
         DOWNCASTABLE(GMSpecType, babelwires::EnumType);
         REGISTERED_TYPE("GMSpec", "GM Specification", "4dc2566d-1be8-468b-9aa0-2f4d63344a13", 1);

@@ -7,8 +7,6 @@
  **/
 #pragma once
 
-#include <Smf/smfLibExport.hpp>
-
 #include <MusicLib/Percussion/percussionSetWithPitchMap.hpp>
 
 #include <BabelWiresLib/TypeSystem/registeredType.hpp>
@@ -16,7 +14,7 @@
 namespace smf {
     /// A PercussionSet corresponding to the instruments of GS standard percussion set.
     /// There are two such sets, but we do not distinguish them
-    class SMFLIB_API GsBrushPercussionSet : public bw_music::PercussionSetWithPitchMap {
+    class GsBrushPercussionSet : public bw_music::PercussionSetWithPitchMap {
       public:
         REGISTERED_TYPE("GSBrushPerc", "Roland GS Brush Percussion", "8a2d5bde-833f-43ea-9c6c-86c22174688b", 1);
 

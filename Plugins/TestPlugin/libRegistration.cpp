@@ -5,17 +5,18 @@
  *
  * Licensed under the GPLv3.0. See LICENSE file.
  **/
-#include <Plugins/TestPlugin/libRegistration.hpp>
+#include <TestPlugin/libRegistration.hpp>
 
 #include <BaseLib/Context/context.hpp>
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 
-#include <Domains/Music/Plugins/TestPlugin/testTrackContainer.hpp>
-#include <Domains/Music/Plugins/TestPlugin/simpleAccompaniment.hpp>
+#include <TestPlugin/testTrackContainer.hpp>
+#include <TestPlugin/simpleAccompaniment.hpp>
 
-void bw_music_testplugin::registerLib(babelwires::Context& context) {
+babelwires::Result bw_music_testplugin::registerLib(babelwires::Context& context, babelwires::UserAdvisoryLogger& userLogger) {
     // Types
     babelwires::TypeSystem& typeSystem = context.get<babelwires::TypeSystem>();
     typeSystem.addType<bw_music_testplugin::TestTrackContainer>(typeSystem);
     typeSystem.addType<bw_music_testplugin::SimpleAccompaniment>(typeSystem);
+    return {};
 }

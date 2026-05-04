@@ -7,8 +7,6 @@
  **/
 #pragma once
 
-#include <Smf/smfLibExport.hpp>
-
 #include <Smf/gmSpec.hpp>
 
 #include <MusicLib/Types/tempo.hpp>
@@ -18,7 +16,7 @@
 #include <BabelWiresLib/ValueTree/valueTreeRoot.hpp>
 
 namespace smf {
-    class SMFLIB_API MidiMetadata : public babelwires::RecordType {
+    class MidiMetadata : public babelwires::RecordType {
       public:
         DOWNCASTABLE(MidiMetadata, babelwires::RecordType);
         REGISTERED_TYPE("midiMetadata", "MIDI Metadata", "5032054f-d1b7-4cb4-8bac-2de60a1bc078", 1);

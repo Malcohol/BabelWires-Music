@@ -7,14 +7,12 @@
  **/
 #pragma once
 
-#include <Smf/smfLibExport.hpp>
-
 #include <BabelWiresLib/FileFormat/sourceFileFormat.hpp>
 #include <BabelWiresLib/FileFormat/targetFileFormat.hpp>
 
 namespace smf {
     /// Format for loading Standard MIDI Files..
-    class SMFLIB_API SmfSourceFormat : public babelwires::SourceFileFormat {
+    class SmfSourceFormat : public babelwires::SourceFileFormat {
       public:
         SmfSourceFormat();
         static babelwires::LongId getThisIdentifier();
@@ -27,7 +25,7 @@ namespace smf {
     };
 
     /// Format for creating Standard MIDI Files.
-    class SMFLIB_API SmfTargetFormat : public babelwires::TargetFileFormat {
+    class SmfTargetFormat : public babelwires::TargetFileFormat {
       public:
         SmfTargetFormat();
 

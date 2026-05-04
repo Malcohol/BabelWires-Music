@@ -1,5 +1,5 @@
 /**
- * Registration of factories for the Standard MIDI File support.
+ * Registration of factories for Standard MIDI File support.
  * 
  * (C) 2021 Malcolm Tyrrell
  * 
@@ -7,14 +7,14 @@
  **/
 #pragma once
 
-#include <Smf/smfLibExport.hpp>
+#include <BaseLib/Result/result.hpp>
 
 namespace babelwires {
     class Context;
+    struct UserAdvisoryLogger;
 }
 
 namespace smf {
-    /// Registration factories etc. for Standard MIDI File.
-    /// Note: This is not a true plugin model, because everything is statically linked.
-    SMFLIB_API void registerLib(babelwires::Context& context);
+    /// Register factories etc. for Standard MIDI File support.
+    babelwires::Result registerLib(babelwires::Context& context, babelwires::UserAdvisoryLogger& userLogger);
 } // namespace smf

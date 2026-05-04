@@ -7,8 +7,6 @@
  **/
 #pragma once
 
-#include <Smf/smfLibExport.hpp>
-
 #include <Smf/gmSpec.hpp>
 #include <Smf/Percussion/standardPercussionSets.hpp>
 #include <Smf/smfSequence.hpp>
@@ -30,7 +28,7 @@ namespace bw_music {
 
 namespace smf {
 
-    class SMFLIB_API SmfParser {
+    class SmfParser {
       public:
         SmfParser(babelwires::DataSource& dataSource, const babelwires::Context& context,
                   babelwires::UserLogger& log);
@@ -122,7 +120,7 @@ namespace smf {
         StandardPercussionSets m_standardPercussionSets;
 
         /// Currently just used to determine which tracks are percussion tracks.
-        struct SMFLIB_API ChannelSetup {
+        struct ChannelSetup {
             StandardPercussionSets::ChannelSetupInfo m_channelSetupInfo;
             // This is non-null when the pitches in the data should be interpreted as percussion events from the given
             // kit.
@@ -132,7 +130,7 @@ namespace smf {
         std::array<ChannelSetup, 16> m_channelSetup;
     };
 
-    SMFLIB_API babelwires::ResultT<std::unique_ptr<babelwires::ValueTreeRoot>> parseSmfSequence(babelwires::DataSource& dataSource,
+    babelwires::ResultT<std::unique_ptr<babelwires::ValueTreeRoot>> parseSmfSequence(babelwires::DataSource& dataSource,
                                                               const babelwires::Context& context,
                                                               babelwires::UserLogger& userLogger);
 

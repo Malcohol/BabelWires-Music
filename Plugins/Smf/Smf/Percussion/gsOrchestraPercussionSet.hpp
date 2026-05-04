@@ -7,15 +7,13 @@
  **/
 #pragma once
 
-#include <Smf/smfLibExport.hpp>
-
 #include <MusicLib/Percussion/percussionSetWithPitchMap.hpp>
 
 #include <BabelWiresLib/TypeSystem/registeredType.hpp>
 
 namespace smf {
     /// A PercussionSet corresponding to the instruments of GS Orchestra percussion set.
-    class SMFLIB_API GsOrchestraPercussionSet : public bw_music::PercussionSetWithPitchMap {
+    class GsOrchestraPercussionSet : public bw_music::PercussionSetWithPitchMap {
       public:
         REGISTERED_TYPE("GSOrchPerc", "Roland GS Orchestra Percussion", "31152c6f-c782-4c02-9125-d2cbcc49ca7e", 1);
 

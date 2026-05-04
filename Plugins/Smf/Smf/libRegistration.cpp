@@ -1,5 +1,5 @@
 /**
- * Registration of factories for the Standard MIDI File support.
+ * Registration of factories for Standard MIDI File support.
  *
  * (C) 2021 Malcolm Tyrrell
  *
@@ -50,7 +50,7 @@
 #include <Smf/smfFormat.hpp>
 #include <Smf/smfSequence.hpp>
 
-void smf::registerLib(babelwires::Context& context) {
+babelwires::Result smf::registerLib(babelwires::Context& context, babelwires::UserAdvisoryLogger&) {
     babelwires::TypeSystem& typeSystem = context.get<babelwires::TypeSystem>();
 
     // Formats
@@ -97,4 +97,6 @@ void smf::registerLib(babelwires::Context& context) {
     typeSystem.addType<XgClassicPercussionSet>(*builtInPercussion);
     typeSystem.addType<XgSFX1PercussionSet>(*builtInPercussion);
     typeSystem.addType<XgSFX2PercussionSet>(*builtInPercussion);
+
+    return babelwires::Result{};
 }

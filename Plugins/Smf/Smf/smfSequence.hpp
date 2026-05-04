@@ -7,8 +7,6 @@
  **/
 #pragma once
 
-#include <Smf/smfLibExport.hpp>
-
 #include <Smf/midiMetadata.hpp>
 #include <Smf/midiTrackAndChannelArray.hpp>
 #include <Smf/recordOfMidiTracks.hpp>
@@ -25,7 +23,7 @@ namespace bw_music {
 namespace smf {
 
     /// A type corresponding to the contents of a Standard MIDI file.
-    class SMFLIB_API SmfSequence : public babelwires::RecordWithVariantsType {
+    class SmfSequence : public babelwires::RecordWithVariantsType {
       public:
         DOWNCASTABLE(SmfSequence, babelwires::RecordWithVariantsType);
         REGISTERED_TYPE("SmfSeqType", "Standard MIDI File", "d4c70fb2-fb67-4e69-82ca-328ec242b0a8", 1);

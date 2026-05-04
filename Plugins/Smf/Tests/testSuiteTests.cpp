@@ -19,7 +19,7 @@
 TEST(SmfTestSuiteTest, loadAllTestFilesWithoutCrashing) {
     testUtils::TestEnvironment testEnvironment;
     bw_music::registerLib(testEnvironment.m_projectContext);
-    smf::registerLib(testEnvironment.m_projectContext);
+    ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
 
     int numFilesTested = 0;
 
@@ -45,7 +45,7 @@ namespace {
 TEST(SmfTestSuiteTest, cMajorScale) {
     testUtils::TestEnvironment testEnvironment;
     bw_music::registerLib(testEnvironment.m_projectContext);
-    smf::registerLib(testEnvironment.m_projectContext);
+    ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
 
     auto midiFileResult = babelwires::FileDataSource::open("test-c-major-scale.mid");
     ASSERT_TRUE(midiFileResult.has_value());
@@ -83,7 +83,7 @@ TEST(SmfTestSuiteTest, cMajorScale) {
 TEST(SmfTestSuiteTest, multichannelChords0) {
     testUtils::TestEnvironment testEnvironment;
     bw_music::registerLib(testEnvironment.m_projectContext);
-    smf::registerLib(testEnvironment.m_projectContext);
+    ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
 
     auto midiFileResult = babelwires::FileDataSource::open("test-multichannel-chords-0.mid");
     ASSERT_TRUE(midiFileResult.has_value());
@@ -112,7 +112,7 @@ TEST(SmfTestSuiteTest, multichannelChords0) {
 TEST(SmfTestSuiteTest, multichannelChords1) {
     testUtils::TestEnvironment testEnvironment;
     bw_music::registerLib(testEnvironment.m_projectContext);
-    smf::registerLib(testEnvironment.m_projectContext);
+    ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
 
     auto midiFileResult = babelwires::FileDataSource::open("test-multichannel-chords-1.mid");
     ASSERT_TRUE(midiFileResult.has_value());
@@ -148,7 +148,7 @@ TEST(SmfTestSuiteTest, multichannelChords1) {
 TEST(SmfTestSuiteTest, multichannelChords2) {
     testUtils::TestEnvironment testEnvironment;
     bw_music::registerLib(testEnvironment.m_projectContext);
-    smf::registerLib(testEnvironment.m_projectContext);
+    ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
 
     auto midiFileResult = babelwires::FileDataSource::open("test-multichannel-chords-2.mid");
     ASSERT_TRUE(midiFileResult.has_value());
@@ -186,7 +186,7 @@ TEST(SmfTestSuiteTest, multichannelChords2) {
 TEST(SmfTestSuiteTest, multichannelChords3) {
     testUtils::TestEnvironment testEnvironment;
     bw_music::registerLib(testEnvironment.m_projectContext);
-    smf::registerLib(testEnvironment.m_projectContext);
+    ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
 
     auto midiFileResult = babelwires::FileDataSource::open("test-multichannel-chords-3.mid");
     ASSERT_TRUE(midiFileResult.has_value());
@@ -226,7 +226,7 @@ TEST(SmfTestSuiteTest, multichannelChords3) {
 TEST(SmfTestSuiteTest, trackLength) {
     testUtils::TestEnvironment testEnvironment;
     bw_music::registerLib(testEnvironment.m_projectContext);
-    smf::registerLib(testEnvironment.m_projectContext);
+    ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
 
     auto midiFileResult = babelwires::FileDataSource::open("test-track-length.mid");
     ASSERT_TRUE(midiFileResult.has_value());
@@ -252,7 +252,7 @@ TEST(SmfTestSuiteTest, trackLength) {
 TEST(SmfTestSuiteTest, tempoTest) {
     testUtils::TestEnvironment testEnvironment;
     bw_music::registerLib(testEnvironment.m_projectContext);
-    smf::registerLib(testEnvironment.m_projectContext);
+    ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
 
     auto midiFileResult = babelwires::FileDataSource::open("test-karaoke-kar.mid");
     ASSERT_TRUE(midiFileResult.has_value());
@@ -275,7 +275,7 @@ TEST(SmfTestSuiteTest, tempoTest) {
 TEST(SmfTestSuiteTest, corruptFiles) {
     testUtils::TestEnvironment testEnvironment;
     bw_music::registerLib(testEnvironment.m_projectContext);
-    smf::registerLib(testEnvironment.m_projectContext);
+    ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
 
     {
         auto midiFileResult = babelwires::FileDataSource::open("test-corrupt-file-extra-byte.mid");
@@ -299,7 +299,7 @@ TEST(SmfTestSuiteTest, corruptFiles) {
 TEST(SmfTestSuiteTest, testAllGMPercussion) {
     testUtils::TestEnvironment testEnvironment;
     bw_music::registerLib(testEnvironment.m_projectContext);
-    smf::registerLib(testEnvironment.m_projectContext);
+    ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
 
     auto midiFileResult = babelwires::FileDataSource::open("test-all-gm-percussion.mid");
     ASSERT_TRUE(midiFileResult.has_value());
@@ -345,7 +345,7 @@ TEST(SmfTestSuiteTest, testAllGMPercussion) {
 TEST(SmfTestSuiteTest, testGSDrumPartChange) {
     testUtils::TestEnvironment testEnvironment;
     bw_music::registerLib(testEnvironment.m_projectContext);
-    smf::registerLib(testEnvironment.m_projectContext);
+    ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
 
     auto midiFileResult = babelwires::FileDataSource::open("test-sysex-gs-40-1x-15-drum-part-change.mid");
     ASSERT_TRUE(midiFileResult.has_value());

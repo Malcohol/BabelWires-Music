@@ -22,7 +22,7 @@ namespace {
       public:
         MusicLibTestFixture() {
             bw_music::registerLib(m_testEnv.m_projectContext);
-            bw_music_testplugin::registerLib(m_testEnv.m_projectContext);
+            ASSERT_NO_ERROR(bw_music_testplugin::registerLib(m_testEnv.m_projectContext, m_testEnv.m_log));
         }
         testUtils::TestEnvironment m_testEnv;
     };

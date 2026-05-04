@@ -7,8 +7,6 @@
  **/
 #pragma once
 
-#include <Smf/smfLibExport.hpp>
-
 #include <MusicLib/Percussion/percussionSetWithPitchMap.hpp>
 #include <Smf/gmSpec.hpp>
 
@@ -23,7 +21,7 @@ namespace babelwires {
 }
 
 namespace smf {
-    class SMFLIB_API StandardPercussionSets {
+    class StandardPercussionSets {
       public:
         StandardPercussionSets(const babelwires::Context& context);
 
@@ -31,7 +29,7 @@ namespace smf {
         const bw_music::PercussionSetWithPitchMap* getDefaultPercussionSet(GMSpecType::Value gmSpec, int channelNumber);
 
         // TODO This isn't percussion specific.
-        struct SMFLIB_API ChannelSetupInfo {
+        struct ChannelSetupInfo {
             babelwires::Byte m_bankMSB = 0;
             babelwires::Byte m_bankLSB = 0;
             babelwires::Byte m_program = 0;
