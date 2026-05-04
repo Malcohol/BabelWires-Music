@@ -32,6 +32,7 @@ namespace seq2tape {
       public:
         /// Construct an empty TapeFile for the given format.
         TapeFile(babelwires::LongId formatIdentifier);
+        TapeFile(TapeFile&& other) = default;
 
         static babelwires::ResultT<TapeFile> load(babelwires::DataSource& dataSource);
 
@@ -56,6 +57,9 @@ namespace seq2tape {
       private:
         /// Load the TapeFile from the data stream.
         TapeFile() = default;
+
+        TapeFile& operator=(TapeFile&& other) = delete;
+        TapeFile(const TapeFile&) = delete;
 
       protected:
         babelwires::LongId m_formatIdentifier;
