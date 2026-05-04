@@ -32,6 +32,5 @@ TARGET_INCLUDE_DIRECTORIES( musicLibTests PRIVATE ${PROJECT_SOURCE_DIR} )
 TARGET_LINK_LIBRARIES(musicLibTests BaseLib musicLib testUtils libTestUtils TestPluginLib seqTestUtils gtest)
 
 if(BUILD_TESTING)
-   gtest_discover_tests(musicLibTests TEST_LIST musicLibDiscoveredTests)
-   configure_shared_test_runtime(musicLibDiscoveredTests musicLibTests)
+   register_test_executable(musicLibTests)
 endif()
