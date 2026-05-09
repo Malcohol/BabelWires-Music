@@ -7,12 +7,14 @@
  **/
 #pragma once
 
+#include <MusicLib/musicLibExport.hpp>
+
 #include <BabelWiresLib/TypeSystem/registeredType.hpp>
 #include <BabelWiresLib/Types/Enum/enumType.hpp>
 
 namespace bw_music {
 
     /// Percussion types should use this tag.
-    babelwires::Type::Tag percussionTypeTag();
+    MUSICLIB_API babelwires::Type::Tag percussionTypeTag();
 
 } // namespace bw_music
