@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<contents>
-    <project filePath="/home/malcohol/MyStuff/Projects/Programming/C++/BabelWires2/Domains/Music/Samples/MidiToMidi/DucksInARow_Round/DucksInARow.babelwires">
+<contents xmlns:meta="urn:babelwires:serialization-meta">
+    <project filePath="/home/malcohol/MyStuff/Projects/Programming/C++/BabelWires/Domains/Music/Samples/MidiToMidi/DucksInARow_Round/DucksInARow.babelwires">
         <projectData id="50232">
             <elements>
                 <processor id="5" factory="SilentTrack'1">
                     <modifiers>
                         <assign path="Durn'1">
-                            <value typeName="rational" value="3 1/2"/>
+                            <value meta:type="rational" value="3 1/2"/>
                         </assign>
                     </modifiers>
                     <uiData x="-93" y="571" width="250"/>
@@ -30,13 +30,13 @@
                 <processor id="8" factory="TrackExcerpt'1">
                     <modifiers>
                         <assign path="Duratn'1">
-                            <value typeName="rational" value="7"/>
+                            <value meta:type="rational" value="7"/>
                         </assign>
                         <arraySize path="Tracks'1" size="2"/>
                         <assignFrom path="Tracks'1/0" sourceId="15" sourcePath="Conts'1/Trcks0'1/ch0'1"/>
                         <assignFrom path="Tracks'1/1" sourceId="15" sourcePath="Conts'1/Trcks0'1/ch1'1"/>
                     </modifiers>
-                    <uiData x="-90" y="25" width="250"/>
+                    <uiData x="-91" y="25" width="250"/>
                     <expandedPaths>
                         <path value=""/>
                         <path value="Tracks'1"/>
@@ -45,7 +45,7 @@
                 <processor id="10" factory="TransposeTracks'1">
                     <modifiers>
                         <assign path="Offset'1">
-                            <value typeName="int" value="12"/>
+                            <value meta:type="int" value="12"/>
                         </assign>
                         <assignFrom path="Tracks'2/0" sourceId="6" sourcePath="Output'1"/>
                     </modifiers>
@@ -58,10 +58,10 @@
                 <processor id="11" factory="TrackExcerpt'1">
                     <modifiers>
                         <assign path="Duratn'1">
-                            <value typeName="rational" value="1/2"/>
+                            <value meta:type="rational" value="1/2"/>
                         </assign>
                         <assign path="Start'1">
-                            <value typeName="rational" value="7"/>
+                            <value meta:type="rational" value="7"/>
                         </assign>
                         <arraySize path="Tracks'1" size="2"/>
                         <assignFrom path="Tracks'1/0" sourceId="15" sourcePath="Conts'1/Trcks0'1/ch0'1"/>
@@ -98,7 +98,7 @@
                 <processor id="14" factory="RepeatTracks'1">
                     <modifiers>
                         <assign path="Count'1">
-                            <value typeName="int" value="2"/>
+                            <value meta:type="int" value="2"/>
                         </assign>
                         <assignFrom path="Tracks'3" sourceId="8" sourcePath="Tracks'1"/>
                     </modifiers>
@@ -121,7 +121,7 @@
                     <modifiers>
                         <assignFrom path="Conts'1/Meta'1" sourceId="15" sourcePath="Conts'1/Meta'1"/>
                         <assign path="Conts'1/Meta'1/Name'1">
-                            <value typeName="string" value="Ducks in a Row (Round)"/>
+                            <value meta:type="string" value="Ducks in a Row (Round)"/>
                         </assign>
                         <selectOptionals path="Conts'1/Trcks0'1">
                             <optionals>
@@ -184,7 +184,7 @@
         </identifierMetadata>
     </project>
     <serializationMetadata>
-        <serializable type="activatedOptionals" version="1"/>
+        <serializable type="activate" version="1"/>
         <serializable type="arraySize" version="1"/>
         <serializable type="assign" version="1"/>
         <serializable type="assignFrom" version="1"/>
@@ -196,6 +196,7 @@
         <serializable type="project" version="1"/>
         <serializable type="projectData" version="1"/>
         <serializable type="rational" version="1"/>
+        <serializable type="selectOptionals" version="1"/>
         <serializable type="sourceFile" version="1"/>
         <serializable type="string" version="1"/>
         <serializable type="targetFile" version="1"/>
