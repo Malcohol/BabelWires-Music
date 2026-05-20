@@ -1,5 +1,5 @@
 project:
-  filePath: /home/malcohol/MyStuff/Projects/Programming/C++/BabelWires/Domains/Music/Samples/MidiToMidi/DucksInARow_Round/DucksInARow2.babelwires
+  filePath: /home/malcohol/MyStuff/Projects/Programming/C++/BabelWires/Domains/Music/Samples/MidiToMidi/DucksInARow_Round/DucksInARow.babelwires
   projectData:
     id: 50232
     elements:
@@ -9,408 +9,158 @@ project:
         modifiers:
           - $type: assign
             path: Durn'1
-            value:
-              $type: rational
-              value: 3 1/2
-        uiData:
-          x: -93
-          y: 571
-          width: 250
-        expandedPaths:
-          - ""
+            value: {$type: rational, value: 3 1/2}
+        uiData: {x: -93, y: 571, width: 250}
+        expandedPaths: [""]
       - $type: processor
         id: 6
         factory: ConcatenateTracks'1
         modifiers:
-          - $type: arraySize
-            path: Input'1
-            size: 3
-          - $type: assignFrom
-            path: Input'1/0
-            sourceId: 5
-            sourcePath: Track'1
-          - $type: assignFrom
-            path: Input'1/1
-            sourceId: 8
-            sourcePath: Tracks'1/0
-          - $type: assignFrom
-            path: Input'1/2
-            sourceId: 11
-            sourcePath: Tracks'1/0
-        uiData:
-          x: 340
-          y: 459
-          width: 250
-        expandedPaths:
-          - ""
-          - Input'1
+          - {$type: arraySize, path: Input'1, size: 3}
+          - {$type: assignFrom, path: Input'1/0, sourceId: 5, sourcePath: Track'1}
+          - {$type: assignFrom, path: Input'1/1, sourceId: 8, sourcePath: Tracks'1/0}
+          - {$type: assignFrom, path: Input'1/2, sourceId: 11, sourcePath: Tracks'1/0}
+        uiData: {x: 340, y: 459, width: 250}
+        expandedPaths: ["", Input'1]
       - $type: processor
         id: 8
         factory: TrackExcerpt'1
         modifiers:
           - $type: assign
             path: Duratn'1
-            value:
-              $type: rational
-              value: 7
-          - $type: arraySize
-            path: Tracks'1
-            size: 2
-          - $type: assignFrom
-            path: Tracks'1/0
-            sourceId: 15
-            sourcePath: Conts'1/Trcks0'1/ch0'1
-          - $type: assignFrom
-            path: Tracks'1/1
-            sourceId: 15
-            sourcePath: Conts'1/Trcks0'1/ch1'1
-        uiData:
-          x: -91
-          y: 25
-          width: 250
-        expandedPaths:
-          - ""
-          - Tracks'1
+            value: {$type: rational, value: 7}
+          - {$type: arraySize, path: Tracks'1, size: 2}
+          - {$type: assignFrom, path: Tracks'1/0, sourceId: 15, sourcePath: Conts'1/Trcks0'1/ch0'1}
+          - {$type: assignFrom, path: Tracks'1/1, sourceId: 15, sourcePath: Conts'1/Trcks0'1/ch1'1}
+        uiData: {x: -91, y: 23, width: 250}
+        expandedPaths: ["", Tracks'1]
       - $type: processor
         id: 10
         factory: TransposeTracks'1
         modifiers:
           - $type: assign
             path: Offset'1
-            value:
-              $type: int
-              value: 12
-          - $type: assignFrom
-            path: Tracks'2/0
-            sourceId: 6
-            sourcePath: Output'1
-        uiData:
-          x: 787
-          y: 500
-          width: 265
-        expandedPaths:
-          - ""
-          - Tracks'2
+            value: {$type: int, value: 12}
+          - {$type: assignFrom, path: Tracks'2/0, sourceId: 6, sourcePath: Output'1}
+        uiData: {x: 787, y: 500, width: 265}
+        expandedPaths: ["", Tracks'2]
       - $type: processor
         id: 11
         factory: TrackExcerpt'1
         modifiers:
           - $type: assign
             path: Duratn'1
-            value:
-              $type: rational
-              value: 1/2
+            value: {$type: rational, value: 1/2}
           - $type: assign
             path: Start'1
-            value:
-              $type: rational
-              value: 7
-          - $type: arraySize
-            path: Tracks'1
-            size: 2
-          - $type: assignFrom
-            path: Tracks'1/0
-            sourceId: 15
-            sourcePath: Conts'1/Trcks0'1/ch0'1
-          - $type: assignFrom
-            path: Tracks'1/1
-            sourceId: 15
-            sourcePath: Conts'1/Trcks0'1/ch1'1
-        uiData:
-          x: -95
-          y: 297
-          width: 250
-        expandedPaths:
-          - ""
-          - Tracks'1
+            value: {$type: rational, value: 7}
+          - {$type: arraySize, path: Tracks'1, size: 2}
+          - {$type: assignFrom, path: Tracks'1/0, sourceId: 15, sourcePath: Conts'1/Trcks0'1/ch0'1}
+          - {$type: assignFrom, path: Tracks'1/1, sourceId: 15, sourcePath: Conts'1/Trcks0'1/ch1'1}
+        uiData: {x: -95, y: 297, width: 250}
+        expandedPaths: ["", Tracks'1]
       - $type: processor
         id: 12
         factory: ConcatenateTracks'1
         modifiers:
-          - $type: assignFrom
-            path: Input'1/0
-            sourceId: 14
-            sourcePath: Tracks'3/0
-          - $type: assignFrom
-            path: Input'1/1
-            sourceId: 11
-            sourcePath: Tracks'1/0
-        uiData:
-          x: 788
-          y: 18
-          width: 250
-        expandedPaths:
-          - ""
-          - Input'1
+          - {$type: assignFrom, path: Input'1/0, sourceId: 14, sourcePath: Tracks'3/0}
+          - {$type: assignFrom, path: Input'1/1, sourceId: 11, sourcePath: Tracks'1/0}
+        uiData: {x: 788, y: 18, width: 250}
+        expandedPaths: ["", Input'1]
       - $type: processor
         id: 13
         factory: ConcatenateTracks'1
         modifiers:
-          - $type: assignFrom
-            path: Input'1/0
-            sourceId: 14
-            sourcePath: Tracks'3/1
-          - $type: assignFrom
-            path: Input'1/1
-            sourceId: 11
-            sourcePath: Tracks'1/1
-        uiData:
-          x: 791
-          y: 261
-          width: 250
-        expandedPaths:
-          - ""
-          - Input'1
+          - {$type: assignFrom, path: Input'1/0, sourceId: 14, sourcePath: Tracks'3/1}
+          - {$type: assignFrom, path: Input'1/1, sourceId: 11, sourcePath: Tracks'1/1}
+        uiData: {x: 791, y: 261, width: 250}
+        expandedPaths: ["", Input'1]
       - $type: processor
         id: 14
         factory: RepeatTracks'1
         modifiers:
           - $type: assign
             path: Count'1
-            value:
-              $type: int
-              value: 2
-          - $type: assignFrom
-            path: Tracks'3
-            sourceId: 8
-            sourcePath: Tracks'1
-        uiData:
-          x: 335
-          y: -3
-          width: 250
-        expandedPaths:
-          - ""
-          - Tracks'3
+            value: {$type: int, value: 2}
+          - {$type: assignFrom, path: Tracks'3, sourceId: 8, sourcePath: Tracks'1}
+        uiData: {x: 335, y: -3, width: 250}
+        expandedPaths: ["", Tracks'3]
       - $type: sourceFile
         id: 15
         factory: StandardMIDIFile'1
         filePath: DucksInARow.mid
-        uiData:
-          x: -478
-          y: 173
-          width: 250
-        expandedPaths:
-          - ""
-          - Conts'1
-          - Conts'1/Meta'1
-          - Conts'1/Trcks0'1
+        uiData: {x: -478, y: 173, width: 250}
+        expandedPaths: ["", Conts'1, Conts'1/Meta'1, Conts'1/Trcks0'1]
       - $type: targetFile
         id: 17
         factory: SmfFile'1
         filePath: DucksInARow_Round.mid
         modifiers:
-          - $type: assignFrom
-            path: Conts'1/Meta'1
-            sourceId: 15
-            sourcePath: Conts'1/Meta'1
+          - {$type: assignFrom, path: Conts'1/Meta'1, sourceId: 15, sourcePath: Conts'1/Meta'1}
           - $type: assign
             path: Conts'1/Meta'1/Name'1
-            value:
-              $type: string
-              value: Ducks in a Row (Round)
+            value: {$type: string, value: Ducks in a Row (Round)}
           - $type: selectOptionals
             path: Conts'1/Trcks0'1
             optionals:
-              - $type: activate
-                optional: ch0'1
-              - $type: activate
-                optional: ch1'1
-              - $type: activate
-                optional: ch2'1
-          - $type: assignFrom
-            path: Conts'1/Trcks0'1/ch0'1
-            sourceId: 12
-            sourcePath: Output'1
-          - $type: assignFrom
-            path: Conts'1/Trcks0'1/ch1'1
-            sourceId: 13
-            sourcePath: Output'1
-          - $type: assignFrom
-            path: Conts'1/Trcks0'1/ch2'1
-            sourceId: 10
-            sourcePath: Tracks'2/0
-        uiData:
-          x: 1201
-          y: 104
-          width: 250
-        expandedPaths:
-          - ""
-          - Conts'1
-          - Conts'1/Meta'1
-          - Conts'1/Trcks0'1
+              - {$type: activate, optional: ch0'1}
+              - {$type: activate, optional: ch1'1}
+              - {$type: activate, optional: ch2'1}
+          - {$type: assignFrom, path: Conts'1/Trcks0'1/ch0'1, sourceId: 12, sourcePath: Output'1}
+          - {$type: assignFrom, path: Conts'1/Trcks0'1/ch1'1, sourceId: 13, sourcePath: Output'1}
+          - {$type: assignFrom, path: Conts'1/Trcks0'1/ch2'1, sourceId: 10, sourcePath: Tracks'2/0}
+        uiData: {x: 1201, y: 104, width: 250}
+        expandedPaths: ["", Conts'1, Conts'1/Meta'1, Conts'1/Trcks0'1]
   factoryMetadata:
-    - $type: factory
-      id: ConcatenateTracks'1
-      version: 1
-    - $type: factory
-      id: RepeatTracks'1
-      version: 1
-    - $type: factory
-      id: SilentTrack'1
-      version: 1
-    - $type: factory
-      id: SmfFile'1
-      version: 1
-    - $type: factory
-      id: StandardMIDIFile'1
-      version: 1
-    - $type: factory
-      id: TrackExcerpt'1
-      version: 1
-    - $type: factory
-      id: TransposeTracks'1
-      version: 1
+    - {$type: factory, id: ConcatenateTracks'1, version: 1}
+    - {$type: factory, id: RepeatTracks'1, version: 1}
+    - {$type: factory, id: SilentTrack'1, version: 1}
+    - {$type: factory, id: SmfFile'1, version: 1}
+    - {$type: factory, id: StandardMIDIFile'1, version: 1}
+    - {$type: factory, id: TrackExcerpt'1, version: 1}
+    - {$type: factory, id: TransposeTracks'1, version: 1}
   identifierMetadata:
     identifiers:
-      - $type: identifier
-        id: ConcatenateTracks'1
-        name: Concatenate
-        uuid: 42b00d10-9d16-42d2-8ba6-971aad016da0
-      - $type: identifier
-        id: Conts'1
-        name: Contents
-        uuid: 5144fef7-7361-495b-8967-ac6a28aa13bd
-      - $type: identifier
-        id: Count'1
-        name: Count
-        uuid: f5d2ab08-4430-47fa-b26c-0ff2154826e3
-      - $type: identifier
-        id: Duratn'1
-        name: Duration
-        uuid: d83ebbc2-1492-4578-a3b8-4969eb6a2042
-      - $type: identifier
-        id: Durn'1
-        name: Duration
-        uuid: 05d3ea91-cb90-42f5-9988-2fb2e02e231c
-      - $type: identifier
-        id: Input'1
-        name: Input tracks
-        uuid: 3b8d8cd7-21d9-44a1-877e-134915fe5aca
-      - $type: identifier
-        id: Meta'1
-        name: Metadata
-        uuid: 72bbbcee-2b53-4fb2-bfb8-4f5e495f9166
-      - $type: identifier
-        id: Name'1
-        name: Name
-        uuid: c2e4910f-d006-4a93-97a7-ae5973157ec8
-      - $type: identifier
-        id: Offset'1
-        name: Pitch Offset
-        uuid: 5cfa1541-f25e-4671-ac11-2ff71c883418
-      - $type: identifier
-        id: Output'1
-        name: Output track
-        uuid: 873d5d66-c5ec-46a4-9aba-f5f4223bdfd4
-      - $type: identifier
-        id: RepeatTracks'1
-        name: Repeat
-        uuid: 6c5b3e89-bb57-4c90-8a66-1d8cdeb29db9
-      - $type: identifier
-        id: SilentTrack'1
-        name: Silence
-        uuid: c59e4643-b7d8-430b-980b-bd81b5aa007b
-      - $type: identifier
-        id: SmfFile'1
-        name: Standard MIDI file (out)
-        uuid: f29cd3b0-8a46-4a21-bb7d-53acd6702944
-      - $type: identifier
-        id: StandardMIDIFile'1
-        name: Standard MIDI file (in)
-        uuid: 418b8238-c184-4885-a369-b24c4e0d06ec
-      - $type: identifier
-        id: Start'1
-        name: Start
-        uuid: 4b95f5db-a542-4660-a8db-97d3a5f831ca
-      - $type: identifier
-        id: Track'1
-        name: Track
-        uuid: 86f3d028-a616-4a95-a566-a010ffcabb19
-      - $type: identifier
-        id: TrackExcerpt'1
-        name: Excerpt
-        uuid: 83c74dba-7861-447c-9abb-0b4439061baf
-      - $type: identifier
-        id: Tracks'1
-        name: Tracks
-        uuid: 983b3bcb-7086-4791-8e18-d8c7550d45d3
-      - $type: identifier
-        id: Tracks'2
-        name: Tracks
-        uuid: 83f05b66-7890-4542-8344-1409e50539b5
-      - $type: identifier
-        id: Tracks'3
-        name: Tracks
-        uuid: f727937f-0215-4527-bab4-0eca269d6c5c
-      - $type: identifier
-        id: TransposeTracks'1
-        name: Transpose
-        uuid: 3414f6cf-290a-421e-bce5-6a98ed0483af
-      - $type: identifier
-        id: Trcks0'1
-        name: Tracks
-        uuid: 9ec1a1af-82dc-4085-9f97-f5dbbfb9f837
-      - $type: identifier
-        id: ch0'1
-        name: Ch. 0
-        uuid: 18cb72e5-6891-428c-beae-aa17db453852
-      - $type: identifier
-        id: ch1'1
-        name: Ch. 1
-        uuid: f4bc5369-5d7e-4e18-83ec-44560309edb7
-      - $type: identifier
-        id: ch2'1
-        name: Ch. 2
-        uuid: 8e58bcc7-af0b-40d0-8a13-ca2c35db8c5e
+      - {$type: identifier, id: ConcatenateTracks'1, name: Concatenate, uuid: 42b00d10-9d16-42d2-8ba6-971aad016da0}
+      - {$type: identifier, id: Conts'1, name: Contents, uuid: 5144fef7-7361-495b-8967-ac6a28aa13bd}
+      - {$type: identifier, id: Count'1, name: Count, uuid: f5d2ab08-4430-47fa-b26c-0ff2154826e3}
+      - {$type: identifier, id: Duratn'1, name: Duration, uuid: d83ebbc2-1492-4578-a3b8-4969eb6a2042}
+      - {$type: identifier, id: Durn'1, name: Duration, uuid: 05d3ea91-cb90-42f5-9988-2fb2e02e231c}
+      - {$type: identifier, id: Input'1, name: Input tracks, uuid: 3b8d8cd7-21d9-44a1-877e-134915fe5aca}
+      - {$type: identifier, id: Meta'1, name: Metadata, uuid: 72bbbcee-2b53-4fb2-bfb8-4f5e495f9166}
+      - {$type: identifier, id: Name'1, name: Name, uuid: c2e4910f-d006-4a93-97a7-ae5973157ec8}
+      - {$type: identifier, id: Offset'1, name: Pitch Offset, uuid: 5cfa1541-f25e-4671-ac11-2ff71c883418}
+      - {$type: identifier, id: Output'1, name: Output track, uuid: 873d5d66-c5ec-46a4-9aba-f5f4223bdfd4}
+      - {$type: identifier, id: RepeatTracks'1, name: Repeat, uuid: 6c5b3e89-bb57-4c90-8a66-1d8cdeb29db9}
+      - {$type: identifier, id: SilentTrack'1, name: Silence, uuid: c59e4643-b7d8-430b-980b-bd81b5aa007b}
+      - {$type: identifier, id: SmfFile'1, name: Standard MIDI file (out), uuid: f29cd3b0-8a46-4a21-bb7d-53acd6702944}
+      - {$type: identifier, id: StandardMIDIFile'1, name: Standard MIDI file (in), uuid: 418b8238-c184-4885-a369-b24c4e0d06ec}
+      - {$type: identifier, id: Start'1, name: Start, uuid: 4b95f5db-a542-4660-a8db-97d3a5f831ca}
+      - {$type: identifier, id: Track'1, name: Track, uuid: 86f3d028-a616-4a95-a566-a010ffcabb19}
+      - {$type: identifier, id: TrackExcerpt'1, name: Excerpt, uuid: 83c74dba-7861-447c-9abb-0b4439061baf}
+      - {$type: identifier, id: Tracks'1, name: Tracks, uuid: 983b3bcb-7086-4791-8e18-d8c7550d45d3}
+      - {$type: identifier, id: Tracks'2, name: Tracks, uuid: 83f05b66-7890-4542-8344-1409e50539b5}
+      - {$type: identifier, id: Tracks'3, name: Tracks, uuid: f727937f-0215-4527-bab4-0eca269d6c5c}
+      - {$type: identifier, id: TransposeTracks'1, name: Transpose, uuid: 3414f6cf-290a-421e-bce5-6a98ed0483af}
+      - {$type: identifier, id: Trcks0'1, name: Tracks, uuid: 9ec1a1af-82dc-4085-9f97-f5dbbfb9f837}
+      - {$type: identifier, id: ch0'1, name: Ch. 0, uuid: 18cb72e5-6891-428c-beae-aa17db453852}
+      - {$type: identifier, id: ch1'1, name: Ch. 1, uuid: f4bc5369-5d7e-4e18-83ec-44560309edb7}
+      - {$type: identifier, id: ch2'1, name: Ch. 2, uuid: 8e58bcc7-af0b-40d0-8a13-ca2c35db8c5e}
 serializationMetadata:
-  - $type: serializable
-    type: activate
-    version: 1
-  - $type: serializable
-    type: arraySize
-    version: 1
-  - $type: serializable
-    type: assign
-    version: 1
-  - $type: serializable
-    type: assignFrom
-    version: 1
-  - $type: serializable
-    type: factory
-    version: 1
-  - $type: serializable
-    type: identifier
-    version: 1
-  - $type: serializable
-    type: identifierMetadata
-    version: 1
-  - $type: serializable
-    type: int
-    version: 1
-  - $type: serializable
-    type: processor
-    version: 1
-  - $type: serializable
-    type: project
-    version: 1
-  - $type: serializable
-    type: projectData
-    version: 1
-  - $type: serializable
-    type: rational
-    version: 1
-  - $type: serializable
-    type: selectOptionals
-    version: 1
-  - $type: serializable
-    type: sourceFile
-    version: 1
-  - $type: serializable
-    type: string
-    version: 1
-  - $type: serializable
-    type: targetFile
-    version: 1
-  - $type: serializable
-    type: uiData
-    version: 1
+  - {$type: serializable, type: activate, version: 1}
+  - {$type: serializable, type: arraySize, version: 1}
+  - {$type: serializable, type: assign, version: 1}
+  - {$type: serializable, type: assignFrom, version: 1}
+  - {$type: serializable, type: factory, version: 1}
+  - {$type: serializable, type: identifier, version: 1}
+  - {$type: serializable, type: identifierMetadata, version: 1}
+  - {$type: serializable, type: int, version: 1}
+  - {$type: serializable, type: processor, version: 1}
+  - {$type: serializable, type: project, version: 1}
+  - {$type: serializable, type: projectData, version: 1}
+  - {$type: serializable, type: rational, version: 1}
+  - {$type: serializable, type: selectOptionals, version: 1}
+  - {$type: serializable, type: sourceFile, version: 1}
+  - {$type: serializable, type: string, version: 1}
+  - {$type: serializable, type: targetFile, version: 1}
+  - {$type: serializable, type: uiData, version: 1}
