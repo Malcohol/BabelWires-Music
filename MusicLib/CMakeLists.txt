@@ -56,7 +56,7 @@ TARGET_INCLUDE_DIRECTORIES( musicLib
 		$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/Domains/Music>
 		$<INSTALL_INTERFACE:include>
 )
-TARGET_LINK_LIBRARIES(musicLib PUBLIC BabelWiresLib tinyxml2)
+TARGET_LINK_LIBRARIES(musicLib PUBLIC BabelWiresLib)
 
 if(BUILD_SHARED_LIBS)
 	set_target_properties(musicLib PROPERTIES
