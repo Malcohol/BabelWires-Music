@@ -1,6 +1,7 @@
 SET( SMF_TESTS_SRCS
       percussionTests.cpp
       smfTests.cpp
+      sampleProjectLoadTest.cpp
       saveLoadTests.cpp
       testSuiteTests.cpp
    )
@@ -14,6 +15,9 @@ FOREACH(file ${MidiTestSuiteFiles})
 ENDFOREACH()
 
 ADD_EXECUTABLE( SmfTests ${SMF_TESTS_SRCS} )
+TARGET_COMPILE_DEFINITIONS(SmfTests PRIVATE
+   BW_MIDI_TO_MIDI_SAMPLE_PROJECT_DIR="${PROJECT_SOURCE_DIR}/Domains/Music/Samples/MidiToMidi/DucksInARow_Round"
+)
 TARGET_INCLUDE_DIRECTORIES( SmfTests PRIVATE ${PROJECT_SOURCE_DIR} )
 TARGET_LINK_LIBRARIES(SmfTests BaseLib seqTestUtils SmfLib testUtils libTestUtils gtest)
 
