@@ -10,6 +10,7 @@
 #include <MusicLib/musicLibExport.hpp>
 
 #include <MusicLib/Types/Track/TrackEvents/trackEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/transposable.hpp>
 #include <MusicLib/chord.hpp>
 
 namespace bw_music {
@@ -28,8 +29,9 @@ namespace bw_music {
     };
 
     /// Describes the start of a chord.
-    struct MUSICLIB_API ChordOnEvent : public ChordEvent {
+    struct MUSICLIB_API ChordOnEvent : public ChordEvent, public Transposable {
         DOWNCASTABLE(ChordOnEvent, ChordEvent);
+        INTERFACE_QUERYABLE(ChordEvent, Transposable);
         STREAM_EVENT(ChordOnEvent);
         ChordOnEvent() = default;
         ChordOnEvent(ModelDuration timeSinceLastEvent, Chord chord)

@@ -12,6 +12,7 @@
 #include <BaseLib/BlockStream/blockStream.hpp>
 #include <BaseLib/Cloning/cloneable.hpp>
 #include <BaseLib/Utilities/enumFlags.hpp>
+#include <BaseLib/Utilities/interfaceQueryable.hpp>
 
 #include <MusicLib/Utilities/musicUtilities.hpp>
 #include <MusicLib/musicTypes.hpp>
@@ -31,6 +32,7 @@ namespace bw_music {
     class MUSICLIB_API TrackEvent : public babelwires::StreamEvent {
       public:
         DOWNCASTABLE(TrackEvent, babelwires::StreamEvent);
+        INTERFACE_QUERYABLE_BASE();
         STREAM_EVENT_ABSTRACT(TrackEvent);
         TrackEvent() = default;
         TrackEvent(ModelDuration timeSinceLastEvent)
@@ -103,12 +105,6 @@ namespace bw_music {
 
         /// The default implementation returns values suitable for generic, ungrouped events.
         virtual GroupingInfo getGroupingInfo() const;
-
-        /// If it makes sense, transpose the pitch or pitches described by this event by the given number of semitones.
-        /// Return false if the event has become invalidated.
-        /// The default implementation does nothing and returns true.
-        virtual bool transpose(int pitchOffset,
-                               TransposeOutOfRangePolicy outOfRangePolicy = TransposeOutOfRangePolicy::Discard);
 
       protected:
         /// Subclasses should override this. They can assume that other is of their type.

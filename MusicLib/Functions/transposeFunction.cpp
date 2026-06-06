@@ -7,6 +7,7 @@
  **/
 #include <MusicLib/Functions/transposeFunction.hpp>
 
+#include <MusicLib/Types/Track/TrackEvents/transposable.hpp>
 #include <MusicLib/Types/Track/trackBuilder.hpp>
 
 babelwires::ResultT<bw_music::Track> bw_music::transposeTrack(const Track& trackIn, int pitchOffset, TransposeOutOfRangePolicy outOfRangePolicy) {
@@ -18,15 +19,19 @@ babelwires::ResultT<bw_music::Track> bw_music::transposeTrack(const Track& track
     
     for (auto it = trackIn.begin(); it != trackIn.end(); ++it) {
         TrackEventHolder holder(*it);
-        if (holder->transpose(pitchOffset, outOfRangePolicy)) {
-            if (durationOfDroppedEvents > 0) {
-                holder->setTimeSinceLastEvent(holder->getTimeSinceLastEvent() + durationOfDroppedEvents);
-                durationOfDroppedEvents = 0;
+        if (auto* transposable = holder->tryInterface<Transposable>()) {
+            if (!transposable->transpose(pitchOffset, outOfRangePolicy)) {
+                durationOfDroppedEvents += holder->getTimeSinceLastEvent();
+                continue;
             }
-            trackOut.addEvent(holder.release());
-        } else {
-            durationOfDroppedEvents += holder->getTimeSinceLastEvent();
         }
+
+        if (durationOfDroppedEvents > 0) {
+            holder->setTimeSinceLastEvent(holder->getTimeSinceLastEvent() + durationOfDroppedEvents);
+            durationOfDroppedEvents = 0;
+        }
+
+        trackOut.addEvent(holder.release());
     }
 
     return trackOut.finishAndGetTrack(trackIn.getDuration());

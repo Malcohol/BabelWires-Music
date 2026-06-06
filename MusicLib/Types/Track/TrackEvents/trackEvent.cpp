@@ -27,7 +27,3 @@ bool bw_music::TrackEvent::operator!=(const TrackEvent& other) const {
 bw_music::TrackEvent::GroupingInfo bw_music::TrackEvent::getGroupingInfo() const {
     return {};
 }
-
-bool bw_music::TrackEvent::transpose(int pitchOffset, TransposeOutOfRangePolicy outOfRangePolicy) {
-    return true;
-}

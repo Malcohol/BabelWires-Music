@@ -10,12 +10,14 @@
 #include <MusicLib/musicLibExport.hpp>
 
 #include <MusicLib/Types/Track/TrackEvents/trackEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/transposable.hpp>
 
 namespace bw_music {
 
     /// Base type for note events.
-    struct MUSICLIB_API NoteEvent : public TrackEvent {
+    struct MUSICLIB_API NoteEvent : public TrackEvent, public Transposable {
         DOWNCASTABLE(NoteEvent, TrackEvent);
+        INTERFACE_QUERYABLE(TrackEvent, Transposable);
         STREAM_EVENT_ABSTRACT(NoteEvent);
         NoteEvent(ModelDuration timeSinceLastEvent, Pitch pitch, Velocity velocity)
             : TrackEvent(timeSinceLastEvent)
@@ -33,7 +35,7 @@ namespace bw_music {
         Velocity getVelocity() const { return m_velocity; }
 
         void createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const override;
-        
+
         Pitch m_pitch;
         Velocity m_velocity;
 
