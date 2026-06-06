@@ -17,8 +17,8 @@ namespace bw_music {
     /// Base type for note events.
     struct MUSICLIB_API NoteEvent : public TrackEvent, public Transposable {
         DOWNCASTABLE(NoteEvent, TrackEvent);
-        INTERFACE_QUERYABLE(TrackEvent, Transposable);
         STREAM_EVENT_ABSTRACT(NoteEvent);
+        QUERYABLE_INTERFACE_PROVIDER(TrackEvent, Transposable);
         NoteEvent(ModelDuration timeSinceLastEvent, Pitch pitch, Velocity velocity)
             : TrackEvent(timeSinceLastEvent)
             , m_pitch(pitch)

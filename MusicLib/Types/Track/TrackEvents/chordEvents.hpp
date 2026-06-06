@@ -31,8 +31,8 @@ namespace bw_music {
     /// Describes the start of a chord.
     struct MUSICLIB_API ChordOnEvent : public ChordEvent, public Transposable {
         DOWNCASTABLE(ChordOnEvent, ChordEvent);
-        INTERFACE_QUERYABLE(ChordEvent, Transposable);
         STREAM_EVENT(ChordOnEvent);
+        QUERYABLE_INTERFACE_PROVIDER(ChordEvent, Transposable);
         ChordOnEvent() = default;
         ChordOnEvent(ModelDuration timeSinceLastEvent, Chord chord)
             : ChordEvent(timeSinceLastEvent)

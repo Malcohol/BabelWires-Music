@@ -11,7 +11,7 @@
 
 #include <MusicLib/Utilities/musicUtilities.hpp>
 
-#include <BaseLib/Utilities/interfaceQueryable.hpp>
+#include <BaseLib/Utilities/queryableInterfaceProvider.hpp>
 
 namespace bw_music {
 

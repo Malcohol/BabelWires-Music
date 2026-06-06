@@ -12,7 +12,7 @@
 #include <BaseLib/BlockStream/blockStream.hpp>
 #include <BaseLib/Cloning/cloneable.hpp>
 #include <BaseLib/Utilities/enumFlags.hpp>
-#include <BaseLib/Utilities/interfaceQueryable.hpp>
+#include <BaseLib/Utilities/queryableInterfaceProvider.hpp>
 
 #include <MusicLib/Utilities/musicUtilities.hpp>
 #include <MusicLib/musicTypes.hpp>
@@ -32,7 +32,7 @@ namespace bw_music {
     class MUSICLIB_API TrackEvent : public babelwires::StreamEvent {
       public:
         DOWNCASTABLE(TrackEvent, babelwires::StreamEvent);
-        INTERFACE_QUERYABLE_BASE();
+        QUERYABLE_INTERFACE_PROVIDER_BASE();
         STREAM_EVENT_ABSTRACT(TrackEvent);
         TrackEvent() = default;
         TrackEvent(ModelDuration timeSinceLastEvent)
