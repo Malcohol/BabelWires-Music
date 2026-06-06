@@ -18,7 +18,7 @@ namespace bw_music {
         DOWNCASTABLE(PercussionEvent, TrackEvent);
         STREAM_EVENT_ABSTRACT(PercussionEvent);
 
-        static GroupingInfo::Category s_percussionEventCategory;
+        static GroupKey::Category s_percussionEventCategory;
 
         void setInstrument(babelwires::ShortId instrument) { m_instrument = instrument; }
         babelwires::ShortId getInstrument() const { return m_instrument; }

@@ -24,7 +24,7 @@ namespace bw_music {
 
         virtual bool transpose(int pitchOffset, TransposeOutOfRangePolicy outOfRangePolicy) override;
 
-        static GroupingInfo::Category s_noteEventCategory;
+        static GroupKey::Category s_noteEventCategory;
 
         void setPitch(Pitch pitch) { m_pitch = pitch; }
         Pitch getPitch() const { return m_pitch; }

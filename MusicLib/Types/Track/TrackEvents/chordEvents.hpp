@@ -22,7 +22,7 @@ namespace bw_music {
         ChordEvent(ModelDuration timeSinceLastEvent)
             : TrackEvent(timeSinceLastEvent) {}
 
-        static GroupingInfo::Category s_chordEventCategory;
+        static GroupKey::Category s_chordEventCategory;
 
         void createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const override;
     };

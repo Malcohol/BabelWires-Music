@@ -21,7 +21,7 @@ namespace {
 
         bw_music::TrackEvent::GroupingInfo getGroupingInfo() const override {
             return {bw_music::NoteEvent::s_noteEventCategory, m_pitch,
-                    bw_music::TrackEvent::GroupingInfo::Grouping::EnclosedInGroup};
+                bw_music::TrackEvent::GroupRole::EnclosedInGroup};
         }
         void createEndEvent(bw_music::TrackEventHolder& dest,
                             bw_music::ModelDuration timeSinceLastEvent) const override {}
@@ -433,7 +433,7 @@ TEST(TrackBuilderTest, builder_InvalidMixture) {
 
     unsigned int goodEventCount = 0;
     for (const auto& builtEvent : builtTrack) {
-        if (builtEvent.getGroupingInfo().m_groupValue < 72) {
+        if (builtEvent.getGroupingInfo().m_groupKey.m_groupValue < 72) {
             ++goodEventCount;
         }
     }

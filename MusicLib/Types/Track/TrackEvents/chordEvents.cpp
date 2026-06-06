@@ -12,7 +12,7 @@
 
 #include <sstream>
 
-bw_music::TrackEvent::GroupingInfo::Category bw_music::ChordEvent::s_chordEventCategory = "Chords";
+bw_music::TrackEvent::GroupKey::Category bw_music::ChordEvent::s_chordEventCategory = "Chords";
 
 void bw_music::ChordEvent::createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const {
     dest = ChordOffEvent(timeSinceLastEvent);
@@ -23,7 +23,7 @@ std::size_t bw_music::ChordOnEvent::getHash() const {
 }
 
 bw_music::TrackEvent::GroupingInfo bw_music::ChordOnEvent::getGroupingInfo() const {
-    return {s_chordEventCategory, 0, GroupingInfo::Grouping::StartOfGroup};
+    return {s_chordEventCategory, 0, GroupRole::StartOfGroup};
 }
 
 bool bw_music::ChordOnEvent::transpose(int pitchOffset, TransposeOutOfRangePolicy outOfRangePolicy) {
@@ -39,7 +39,7 @@ std::size_t bw_music::ChordOffEvent::getHash() const {
 }
 
 bw_music::TrackEvent::GroupingInfo bw_music::ChordOffEvent::getGroupingInfo() const {
-    return {s_chordEventCategory, 0, GroupingInfo::Grouping::EndOfGroup};
+    return {s_chordEventCategory, 0, GroupRole::EndOfGroup};
 }
 
 bool bw_music::ChordOnEvent::doIsEqualTo(const TrackEvent& other) const {

@@ -1,8 +1,8 @@
 /**
  * A TrackEvent is the base class of the events that occur in tracks.
- * 
+ *
  * (C) 2021 Malcolm Tyrrell
- * 
+ *
  * Licensed under the GPLv3.0. See LICENSE file.
  **/
 #pragma once
@@ -12,8 +12,9 @@
 #include <BaseLib/BlockStream/blockStream.hpp>
 #include <BaseLib/Cloning/cloneable.hpp>
 #include <BaseLib/Utilities/enumFlags.hpp>
-#include <MusicLib/musicTypes.hpp>
+
 #include <MusicLib/Utilities/musicUtilities.hpp>
+#include <MusicLib/musicTypes.hpp>
 
 #include <BaseLib/BlockStream/streamEventHolder.hpp>
 
@@ -32,7 +33,8 @@ namespace bw_music {
         DOWNCASTABLE(TrackEvent, babelwires::StreamEvent);
         STREAM_EVENT_ABSTRACT(TrackEvent);
         TrackEvent() = default;
-        TrackEvent(ModelDuration timeSinceLastEvent) : m_timeSinceLastEvent(timeSinceLastEvent) {}
+        TrackEvent(ModelDuration timeSinceLastEvent)
+            : m_timeSinceLastEvent(timeSinceLastEvent) {}
 
         /// The amount of time passed since the last event occurred.
         /// This can be 0 if the events are intended to occur at the same time.
@@ -53,10 +55,22 @@ namespace bw_music {
         // group should be removed.
         virtual void createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const = 0;
 
-        /// A value which describes how this event can participate in a group of similar events:
+        /// Describes the role an event plays in a group.
+        enum class GroupRole : std::uint8_t {
+            /// This is a stand-alone event.
+            NotInGroup = 0,
+            /// This event represents the start of a group.
+            StartOfGroup,
+            /// This event represents the end of a group.
+            EndOfGroup,
+            /// This event is (expected to be) inside a group.
+            EnclosedInGroup
+        };
+
+        /// Identifies a group of related events.
         /// For example, a noteOn event, a sequence of after-touch events, and a noteOff event,
         /// all of the same pitch.
-        struct MUSICLIB_API EventGroup {
+        struct MUSICLIB_API GroupKey {
             /// A pointer to a static string can act as a category.
             using Category = const char*;
 
@@ -67,26 +81,24 @@ namespace bw_music {
             /// E.g. notes or chords.
             Category m_category = s_genericCategory;
 
-            auto operator<=>(const EventGroup&) const = default;
+            /// A type that is (hopefully) big enough to distinguish all possible event groups of the same category.
+            using GroupValue = std::uint64_t;
+
+            /// The default value.
+            constexpr static GroupValue c_notAValue = -1;
 
             /// A value which is expected to agree for all events in the same group.
-            using GroupValue = std::uint64_t;
-            constexpr static GroupValue c_notAValue = -1;
             GroupValue m_groupValue = c_notAValue;
+
+            auto operator<=>(const GroupKey&) const = default;
         };
 
-        struct MUSICLIB_API GroupingInfo : EventGroup {
-            /// A value which determines the way in which this event belongs to a group.
-            enum class Grouping : std::uint8_t {
-                /// This is a stand-alone event.
-                NotInGroup = 0,
-                /// This event represents the start of a group.
-                StartOfGroup,
-                /// This event represents the end of a group.
-                EndOfGroup,
-                /// This event is (expected to be) inside a group.
-                EnclosedInGroup
-            } m_grouping = Grouping::NotInGroup;
+        /// The GroupKey and GroupRole information for an event.
+        struct MUSICLIB_API GroupingInfo {
+            GroupKey m_groupKey;
+            GroupRole m_groupRole = GroupRole::NotInGroup;
+
+            bool hasGroup() const { return m_groupRole != GroupRole::NotInGroup; }
         };
 
         /// The default implementation returns values suitable for generic, ungrouped events.
@@ -95,7 +107,8 @@ namespace bw_music {
         /// If it makes sense, transpose the pitch or pitches described by this event by the given number of semitones.
         /// Return false if the event has become invalidated.
         /// The default implementation does nothing and returns true.
-        virtual bool transpose(int pitchOffset, TransposeOutOfRangePolicy outOfRangePolicy = TransposeOutOfRangePolicy::Discard);
+        virtual bool transpose(int pitchOffset,
+                               TransposeOutOfRangePolicy outOfRangePolicy = TransposeOutOfRangePolicy::Discard);
 
       protected:
         /// Subclasses should override this. They can assume that other is of their type.

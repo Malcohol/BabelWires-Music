@@ -79,9 +79,9 @@ void bw_music::Track::onNewEvent(const TrackEvent& event) {
     m_totalEventDuration += event.getTimeSinceLastEvent();
     babelwires::hash::mixInto(m_eventHash, event.getHash());
     TrackEvent::GroupingInfo groupingInfo = event.getGroupingInfo();
-    if ((groupingInfo.m_grouping == TrackEvent::GroupingInfo::Grouping::NotInGroup) ||
-        (groupingInfo.m_grouping == TrackEvent::GroupingInfo::Grouping::StartOfGroup)) {
-        ++m_numEventGroupsByCategory[groupingInfo.m_category];
+    if ((groupingInfo.m_groupRole == TrackEvent::GroupRole::NotInGroup) ||
+        (groupingInfo.m_groupRole == TrackEvent::GroupRole::StartOfGroup)) {
+        ++m_numEventGroupsByCategory[groupingInfo.m_groupKey.m_category];
     }
 }
 

@@ -12,7 +12,7 @@
 #include <algorithm>
 #include <sstream>
 
-bw_music::TrackEvent::GroupingInfo::Category bw_music::NoteEvent::s_noteEventCategory = "Notes";
+bw_music::TrackEvent::GroupKey::Category bw_music::NoteEvent::s_noteEventCategory = "Notes";
 
 void bw_music::NoteEvent::createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const {
     // Create a NoteOffEvent with the same pitch.
@@ -35,7 +35,7 @@ std::size_t bw_music::NoteOnEvent::getHash() const {
 }
 
 bw_music::TrackEvent::GroupingInfo bw_music::NoteOnEvent::getGroupingInfo() const {
-    return {s_noteEventCategory, m_pitch, GroupingInfo::Grouping::StartOfGroup};
+    return {s_noteEventCategory, m_pitch, GroupRole::StartOfGroup};
 }
 
 std::size_t bw_music::NoteOffEvent::getHash() const {
@@ -43,7 +43,7 @@ std::size_t bw_music::NoteOffEvent::getHash() const {
 }
 
 bw_music::TrackEvent::GroupingInfo bw_music::NoteOffEvent::getGroupingInfo() const {
-    return {s_noteEventCategory, m_pitch, GroupingInfo::Grouping::EndOfGroup};
+    return {s_noteEventCategory, m_pitch, GroupRole::EndOfGroup};
 }
 
 bool bw_music::NoteEvent::doIsEqualTo(const TrackEvent& other) const {

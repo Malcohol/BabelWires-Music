@@ -9,7 +9,7 @@
 
 #include <BaseLib/Hash/hash.hpp>
 
-const char* bw_music::TrackEvent::EventGroup::s_genericCategory = "Generic";
+const char* bw_music::TrackEvent::GroupKey::s_genericCategory = "Generic";
 
 std::size_t bw_music::TrackEvent::getHash() const {
     // Since this is common to every event, there's no need to distinguish it from hashes of other events.
@@ -25,7 +25,7 @@ bool bw_music::TrackEvent::operator!=(const TrackEvent& other) const {
 }
 
 bw_music::TrackEvent::GroupingInfo bw_music::TrackEvent::getGroupingInfo() const {
-    return GroupingInfo();
+    return {};
 }
 
 bool bw_music::TrackEvent::transpose(int pitchOffset, TransposeOutOfRangePolicy outOfRangePolicy) {

@@ -14,16 +14,16 @@ bw_music::TrackBuilder::TrackBuilder(Track startState)
 
 bool bw_music::TrackBuilder::onNewEvent(const TrackEvent& event) {
     const TrackEvent::GroupingInfo groupInfo = event.getGroupingInfo();
-    if (groupInfo.m_grouping == TrackEvent::GroupingInfo::Grouping::NotInGroup) {
+    if (groupInfo.m_groupRole == TrackEvent::GroupRole::NotInGroup) {
         return true;
     }
     if (!m_eventsAtCurrentTime.empty()) {
         m_eventsAtCurrentTime.emplace_back(event);
         return false;
     }
-    const auto it = m_activeGroups.find(groupInfo);
+    const auto it = m_activeGroups.find(groupInfo.m_groupKey);
     if (it == m_activeGroups.end()) {
-        if (groupInfo.m_grouping == TrackEvent::GroupingInfo::Grouping::StartOfGroup) {
+        if (groupInfo.m_groupRole == TrackEvent::GroupRole::StartOfGroup) {
             m_eventsAtCurrentTime.emplace_back(event);
             // This is the necessarily the first event that will end up in m_eventsAtCurrentTime,
             // so the only one that could be carrying any time.
@@ -31,12 +31,12 @@ bool bw_music::TrackBuilder::onNewEvent(const TrackEvent& event) {
             return false;
         }
     } else {
-        if (groupInfo.m_grouping == TrackEvent::GroupingInfo::Grouping::EndOfGroup) {
+        if (groupInfo.m_groupRole == TrackEvent::GroupRole::EndOfGroup) {
             m_activeGroups.erase(it);
             return true;
-        } else if (groupInfo.m_grouping == TrackEvent::GroupingInfo::Grouping::EnclosedInGroup) {
+        } else if (groupInfo.m_groupRole == TrackEvent::GroupRole::EnclosedInGroup) {
             return true;
-        } else if (groupInfo.m_grouping == TrackEvent::GroupingInfo::Grouping::StartOfGroup) {
+        } else if (groupInfo.m_groupRole == TrackEvent::GroupRole::StartOfGroup) {
             m_eventsAtCurrentTime.emplace_back(event);
             // This is the necessarily the first event that will end up in m_eventsAtCurrentTime,
             // so the only one that could be carrying any time.
@@ -96,15 +96,15 @@ void bw_music::TrackBuilder::processEventsAtCurrentTime(bool atEndOfTrack) {
     while (i < m_eventsAtCurrentTime.size()) {
         if (auto& event = m_eventsAtCurrentTime[i]) {
             const TrackEvent::GroupingInfo groupInfo = event->getGroupingInfo();
-            const auto activeGroupIt = m_activeGroups.find(groupInfo);
-            if (groupInfo.m_grouping == TrackEvent::GroupingInfo::Grouping::StartOfGroup) {
+            const auto activeGroupIt = m_activeGroups.find(groupInfo.m_groupKey);
+            if (groupInfo.m_groupRole == TrackEvent::GroupRole::StartOfGroup) {
                 // See whether there's a matching end at the same time as the start.
                 unsigned int j = m_eventsAtCurrentTime.size() - 1;
                 while (j >= i + 1) {
                     if (auto& otherEvent = m_eventsAtCurrentTime[j]) {
                         const TrackEvent::GroupingInfo otherGroupInfo = otherEvent->getGroupingInfo();
-                        if (groupInfo == otherGroupInfo) {
-                            if (otherGroupInfo.m_grouping == TrackEvent::GroupingInfo::Grouping::EndOfGroup) {
+                        if (groupInfo.m_groupKey == otherGroupInfo.m_groupKey) {
+                            if (otherGroupInfo.m_groupRole == TrackEvent::GroupRole::EndOfGroup) {
                                 // Drop any matching events that were between the start and end.
                                 // They either belong to a zero length group or, in the reorder case, we don't know
                                 // which group they belong to.
@@ -112,7 +112,7 @@ void bw_music::TrackBuilder::processEventsAtCurrentTime(bool atEndOfTrack) {
                                     if (auto& eventInRange = m_eventsAtCurrentTime[k]) {
                                         const TrackEvent::GroupingInfo eventInRangeGroupInfo =
                                             eventInRange->getGroupingInfo();
-                                        if (eventInRangeGroupInfo == groupInfo) {
+                                        if (eventInRangeGroupInfo.m_groupKey == groupInfo.m_groupKey) {
                                             eventInRange.reset();
                                         }
                                     }
@@ -134,17 +134,17 @@ void bw_music::TrackBuilder::processEventsAtCurrentTime(bool atEndOfTrack) {
                     // Unmatched start: This is the normal case, but we still need to check for start in active group.
                     // Also, don't add start events if we're at the end of the track.
                     if ((activeGroupIt == m_activeGroups.end()) && !atEndOfTrack) {
-                        m_activeGroups.emplace(groupInfo);
+                        m_activeGroups.emplace(groupInfo.m_groupKey);
                         issueEvent(event.release());
                     }
                 }
-            } else if (groupInfo.m_grouping == TrackEvent::GroupingInfo::Grouping::EndOfGroup) {
+            } else if (groupInfo.m_groupRole == TrackEvent::GroupRole::EndOfGroup) {
                 if (activeGroupIt != m_activeGroups.end()) {
                     m_activeGroups.erase(activeGroupIt);
                     issueEvent(event.release());
                 }
             } else {
-                assert(groupInfo.m_grouping == TrackEvent::GroupingInfo::Grouping::EnclosedInGroup);
+                assert(groupInfo.m_groupRole == TrackEvent::GroupRole::EnclosedInGroup);
                 if (activeGroupIt != m_activeGroups.end()) {
                     issueEvent(event.release());
                 }
@@ -164,14 +164,14 @@ void bw_music::TrackBuilder::endActiveGroups() {
         auto it = m_track.rbegin();
         while (it != m_track.rend()) {
             const TrackEvent::GroupingInfo groupInfo = it->getGroupingInfo();
-            if (groupInfo.m_grouping == TrackEvent::GroupingInfo::Grouping::StartOfGroup) {
-                const auto activeGroupIt = m_activeGroups.find(groupInfo);
+            if (groupInfo.m_groupRole == TrackEvent::GroupRole::StartOfGroup) {
+                const auto activeGroupIt = m_activeGroups.find(groupInfo.m_groupKey);
                 if (activeGroupIt != m_activeGroups.end()) {
                     it->createEndEvent(endEventsToAdd.emplace_back(), initialTime);
                     assert(endEventsToAdd.back().hasEvent() && "A start event failed to create a corresponding end event");
-                    assert(endEventsToAdd.back()->getGroupingInfo().m_grouping == TrackEvent::GroupingInfo::Grouping::EndOfGroup && "A start event created an event that was not an end event");
-                    assert(endEventsToAdd.back()->getGroupingInfo().m_category == groupInfo.m_category && "A start event created an end event of the wrong category");
-                    assert(endEventsToAdd.back()->getGroupingInfo().m_groupValue == groupInfo.m_groupValue && "A start event created an end event of the wrong value");
+                    assert(endEventsToAdd.back()->getGroupingInfo().m_groupRole == TrackEvent::GroupRole::EndOfGroup && "A start event created an event that was not an end event");
+                    assert(endEventsToAdd.back()->getGroupingInfo().m_groupKey.m_category == groupInfo.m_groupKey.m_category && "A start event created an end event of the wrong category");
+                    assert(endEventsToAdd.back()->getGroupingInfo().m_groupKey.m_groupValue == groupInfo.m_groupKey.m_groupValue && "A start event created an end event of the wrong value");
                     initialTime = 0;
                     m_activeGroups.erase(activeGroupIt);
                     if (m_activeGroups.empty()) {

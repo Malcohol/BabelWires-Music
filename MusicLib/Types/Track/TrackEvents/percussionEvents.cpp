@@ -13,7 +13,7 @@
 #include <sstream>
 #include <algorithm>
 
-bw_music::TrackEvent::GroupingInfo::Category bw_music::PercussionEvent::s_percussionEventCategory = "Percussion";
+bw_music::TrackEvent::GroupKey::Category bw_music::PercussionEvent::s_percussionEventCategory = "Percussion";
 
 void bw_music::PercussionEvent::createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const {
     dest = PercussionOffEvent(timeSinceLastEvent, m_instrument, m_velocity);
@@ -24,7 +24,7 @@ std::size_t bw_music::PercussionOnEvent::getHash() const {
 }
 
 bw_music::TrackEvent::GroupingInfo bw_music::PercussionOnEvent::getGroupingInfo() const {
-    return {s_percussionEventCategory, m_instrument.toCode(), GroupingInfo::Grouping::StartOfGroup};
+    return {s_percussionEventCategory, m_instrument.toCode(), GroupRole::StartOfGroup};
 }
 
 std::size_t bw_music::PercussionOffEvent::getHash() const {
@@ -32,7 +32,7 @@ std::size_t bw_music::PercussionOffEvent::getHash() const {
 }
 
 bw_music::TrackEvent::GroupingInfo bw_music::PercussionOffEvent::getGroupingInfo() const {
-    return {s_percussionEventCategory, m_instrument.toCode(), GroupingInfo::Grouping::EndOfGroup};
+    return {s_percussionEventCategory, m_instrument.toCode(), GroupRole::EndOfGroup};
 }
 
 bool bw_music::PercussionEvent::doIsEqualTo(const TrackEvent& other) const {
