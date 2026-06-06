@@ -8,7 +8,6 @@ namespace testUtils {
         TestTrackEvent(bw_music::ModelDuration d, int value = 1)
             : TrackEvent(d)
             , m_value(value) {}
-        void createEndEvent(bw_music::TrackEventHolder& dest, bw_music::ModelDuration timeSinceLastEvent) const override {}
 
         int m_value;
 
@@ -25,7 +24,6 @@ namespace testUtils {
         TestTrackEvent2(bw_music::ModelDuration d, float value)
             : TrackEvent(d)
             , m_value(value) {}
-        void createEndEvent(bw_music::TrackEventHolder& dest, bw_music::ModelDuration timeSinceLastEvent) const override {}
 
         float m_value;
 
@@ -41,7 +39,6 @@ namespace testUtils {
         STREAM_EVENT(BigTestTrackEvent);
         BigTestTrackEvent(bw_music::ModelDuration d)
             : TrackEvent(d) {}
-        void createEndEvent(bw_music::TrackEventHolder& dest, bw_music::ModelDuration timeSinceLastEvent) const override {}
 
         std::uint64_t m_big[5] = {};
     };
@@ -73,8 +70,6 @@ namespace testUtils {
             , m_payload(std::make_unique<Payload>(*other.m_payload)) {}
 
         ~TestTrackEventWithPayload() { m_payload.reset(); }
-
-        void createEndEvent(bw_music::TrackEventHolder& dest, bw_music::ModelDuration timeSinceLastEvent) const override {}
 
         std::unique_ptr<Payload> m_payload;
     };

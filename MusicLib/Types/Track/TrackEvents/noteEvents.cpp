@@ -14,7 +14,7 @@
 
 bw_music::TrackEvent::GroupKey::Category bw_music::NoteEvent::s_noteEventCategory = "Notes";
 
-void bw_music::NoteEvent::createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const {
+void bw_music::NoteOnEvent::createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const {
     // Create a NoteOffEvent with the same pitch.
     // Use the default NoteOffEvent velocity unless the NoteOnEvent's velocity is lower.
     dest = NoteOffEvent(timeSinceLastEvent, m_pitch, std::min(m_velocity, static_cast<Velocity>(NoteOffEvent::c_defaultVelocity)));

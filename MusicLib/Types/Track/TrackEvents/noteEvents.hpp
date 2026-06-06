@@ -9,6 +9,7 @@
 
 #include <MusicLib/musicLibExport.hpp>
 
+#include <MusicLib/Types/Track/TrackEvents/startEventInterface.hpp>
 #include <MusicLib/Types/Track/TrackEvents/trackEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/transposable.hpp>
 
@@ -34,8 +35,6 @@ namespace bw_music {
         void setVelocity(Velocity velocity) { m_velocity = velocity; }
         Velocity getVelocity() const { return m_velocity; }
 
-        void createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const override;
-
         Pitch m_pitch;
         Velocity m_velocity;
 
@@ -44,13 +43,15 @@ namespace bw_music {
     };
 
     /// The start of a musical note.
-    struct MUSICLIB_API NoteOnEvent : public NoteEvent {
+    struct MUSICLIB_API NoteOnEvent : public NoteEvent, public StartEventInterface {
         DOWNCASTABLE(NoteOnEvent, NoteEvent);
         STREAM_EVENT(NoteOnEvent);
+        QUERYABLE_INTERFACE_PROVIDER(NoteEvent, StartEventInterface);
         static constexpr const Velocity c_defaultVelocity = 127;
         NoteOnEvent(ModelDuration timeSinceLastEvent, Pitch pitch, Velocity velocity = c_defaultVelocity)
             : NoteEvent(timeSinceLastEvent, pitch, velocity) {}
 
+        void createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const override;
         virtual std::size_t getHash() const override;
         virtual GroupingInfo getGroupingInfo() const override;
     };

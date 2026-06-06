@@ -15,7 +15,7 @@
 
 bw_music::TrackEvent::GroupKey::Category bw_music::PercussionEvent::s_percussionEventCategory = "Percussion";
 
-void bw_music::PercussionEvent::createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const {
+void bw_music::PercussionOnEvent::createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const {
     dest = PercussionOffEvent(timeSinceLastEvent, m_instrument, m_velocity);
 }
 

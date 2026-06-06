@@ -23,8 +23,6 @@ namespace {
             return {bw_music::NoteEvent::s_noteEventCategory, m_pitch,
                 bw_music::TrackEvent::GroupRole::EnclosedInGroup};
         }
-        void createEndEvent(bw_music::TrackEventHolder& dest,
-                            bw_music::ModelDuration timeSinceLastEvent) const override {}
         bw_music::Pitch m_pitch;
 
       protected:

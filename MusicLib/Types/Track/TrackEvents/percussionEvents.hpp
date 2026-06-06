@@ -9,6 +9,7 @@
 
 #include <MusicLib/musicLibExport.hpp>
 
+#include <MusicLib/Types/Track/TrackEvents/startEventInterface.hpp>
 #include <MusicLib/Types/Track/TrackEvents/trackEvent.hpp>
 
 namespace bw_music {
@@ -26,8 +27,6 @@ namespace bw_music {
         void setVelocity(Velocity velocity) { m_velocity = velocity; }
         Velocity getVelocity() const { return m_velocity; }
 
-        void createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const override;
-
       protected:
         PercussionEvent(ModelDuration timeSinceLastEvent, babelwires::ShortId instrument, Velocity velocity)
             : TrackEvent(timeSinceLastEvent)
@@ -42,11 +41,13 @@ namespace bw_music {
     };
 
     /// The start of a percussion event.
-    struct MUSICLIB_API PercussionOnEvent : public PercussionEvent {
+    struct MUSICLIB_API PercussionOnEvent : public PercussionEvent, public StartEventInterface {
         DOWNCASTABLE(PercussionOnEvent, PercussionEvent);
         STREAM_EVENT(PercussionOnEvent);
+        QUERYABLE_INTERFACE_PROVIDER(PercussionEvent, StartEventInterface);
         PercussionOnEvent(ModelDuration timeSinceLastEvent, babelwires::ShortId instrument, Velocity velocity = 127)
             : PercussionEvent(timeSinceLastEvent, instrument, velocity) {}
+        void createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const override;
         virtual std::size_t getHash() const override;
         virtual GroupingInfo getGroupingInfo() const override;
     };

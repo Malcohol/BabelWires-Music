@@ -14,7 +14,7 @@
 
 bw_music::TrackEvent::GroupKey::Category bw_music::ChordEvent::s_chordEventCategory = "Chords";
 
-void bw_music::ChordEvent::createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const {
+void bw_music::ChordOnEvent::createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const {
     dest = ChordOffEvent(timeSinceLastEvent);
 }
 

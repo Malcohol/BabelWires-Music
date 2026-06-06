@@ -32,8 +32,10 @@ namespace bw_music {
     class MUSICLIB_API TrackEvent : public babelwires::StreamEvent {
       public:
         DOWNCASTABLE(TrackEvent, babelwires::StreamEvent);
-        QUERYABLE_INTERFACE_PROVIDER_BASE();
         STREAM_EVENT_ABSTRACT(TrackEvent);
+        /// Events can support difference interfaces, queryable with tryInterface.
+        QUERYABLE_INTERFACE_PROVIDER_BASE();
+
         TrackEvent() = default;
         TrackEvent(ModelDuration timeSinceLastEvent)
             : m_timeSinceLastEvent(timeSinceLastEvent) {}
@@ -50,18 +52,12 @@ namespace bw_music {
         bool operator==(const TrackEvent& other) const;
         bool operator!=(const TrackEvent& other) const;
 
-        /// To correctly terminate truncated groups, a start event can be asked to construct a matching end event
-        /// of the same category and value. The default implementation asserts;
-        // MAYBEDO Consider providing an iterator so the implementation can traverse the group.
-        // MAYBEDO If this returns nullptr for a start event, then it means the group cannot be truncated and the
-        // group should be removed.
-        virtual void createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const = 0;
-
         /// Describes the role an event plays in a group.
         enum class GroupRole : std::uint8_t {
             /// This is a stand-alone event.
             NotInGroup = 0,
             /// This event represents the start of a group.
+            /// Important: An event of this type is required to provide the StartEventInterface.
             StartOfGroup,
             /// This event represents the end of a group.
             EndOfGroup,

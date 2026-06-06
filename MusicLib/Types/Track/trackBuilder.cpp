@@ -7,6 +7,8 @@
  **/
 #include <MusicLib/Types/Track/trackBuilder.hpp>
 
+#include <MusicLib/Types/Track/TrackEvents/startEventInterface.hpp>
+
 bw_music::TrackBuilder::TrackBuilder() {}
 
 bw_music::TrackBuilder::TrackBuilder(Track startState)
@@ -167,7 +169,9 @@ void bw_music::TrackBuilder::endActiveGroups() {
             if (groupInfo.m_groupRole == TrackEvent::GroupRole::StartOfGroup) {
                 const auto activeGroupIt = m_activeGroups.find(groupInfo.m_groupKey);
                 if (activeGroupIt != m_activeGroups.end()) {
-                    it->createEndEvent(endEventsToAdd.emplace_back(), initialTime);
+                    const auto* endEventCreator = it->tryInterface<StartEventInterface>();
+                    assert(endEventCreator && "A start event did not provide StartEventInterface");
+                    endEventCreator->createEndEvent(endEventsToAdd.emplace_back(), initialTime);
                     assert(endEventsToAdd.back().hasEvent() && "A start event failed to create a corresponding end event");
                     assert(endEventsToAdd.back()->getGroupingInfo().m_groupRole == TrackEvent::GroupRole::EndOfGroup && "A start event created an event that was not an end event");
                     assert(endEventsToAdd.back()->getGroupingInfo().m_groupKey.m_category == groupInfo.m_groupKey.m_category && "A start event created an end event of the wrong category");
