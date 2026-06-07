@@ -20,11 +20,9 @@ namespace {
             , m_pitch(pitch) {}
 
         bw_music::TrackEvent::GroupingInfo getGroupingInfo() const override {
-            return {bw_music::NoteEvent::s_noteEventCategory, m_pitch,
-                    bw_music::TrackEvent::GroupingInfo::Grouping::EnclosedInGroup};
+            return {bw_music::NoteEvent::getNoteEventCategory(), m_pitch,
+                bw_music::TrackEvent::GroupRole::EnclosedInGroup};
         }
-        void createEndEvent(bw_music::TrackEventHolder& dest,
-                            bw_music::ModelDuration timeSinceLastEvent) const override {}
         bw_music::Pitch m_pitch;
 
       protected:
@@ -36,6 +34,8 @@ namespace {
 } // namespace
 
 TEST(TrackBuilderTest, validator_validSimple) {
+    testUtils::TestLog log;
+
     bw_music::UnsafeTrack track;
 
     track.addEvent(bw_music::NoteOnEvent(0, 60));
@@ -51,6 +51,8 @@ TEST(TrackBuilderTest, validator_validSimple) {
 }
 
 TEST(TrackBuilderTest, validator_invalidSimpleZeroLengthNote) {
+    testUtils::TestLog log;
+
     bw_music::UnsafeTrack track;
 
     track.addEvent(bw_music::NoteOnEvent(0, 60));
@@ -66,6 +68,8 @@ TEST(TrackBuilderTest, validator_invalidSimpleZeroLengthNote) {
 }
 
 TEST(TrackBuilderTest, validator_invalidSimpleEndEventOutsideGroup) {
+    testUtils::TestLog log;
+
     bw_music::UnsafeTrack track;
 
     track.addEvent(bw_music::NoteOnEvent(0, 60));
@@ -82,6 +86,8 @@ TEST(TrackBuilderTest, validator_invalidSimpleEndEventOutsideGroup) {
 }
 
 TEST(TrackBuilderTest, validator_invalidStartEventInsideGroup) {
+    testUtils::TestLog log;
+
     bw_music::UnsafeTrack track;
 
     track.addEvent(bw_music::NoteOnEvent(0, 60));
@@ -98,6 +104,8 @@ TEST(TrackBuilderTest, validator_invalidStartEventInsideGroup) {
 }
 
 TEST(TrackBuilderTest, validator_invalidUnterminatedGroup) {
+    testUtils::TestLog log;
+
     bw_music::UnsafeTrack track;
 
     track.addEvent(bw_music::NoteOnEvent(0, 60));
@@ -114,6 +122,8 @@ TEST(TrackBuilderTest, validator_invalidUnterminatedGroup) {
 }
 
 TEST(TrackBuilderTest, builder_validSimple) {
+    testUtils::TestLog log;
+
     bw_music::UnsafeTrack track;
     bw_music::TrackBuilder trackBuilder;
 
@@ -140,6 +150,8 @@ TEST(TrackBuilderTest, builder_validSimple) {
 }
 
 TEST(TrackBuilderTest, builder_InvalidSimpleZeroLengthNote) {
+    testUtils::TestLog log;
+
     bw_music::UnsafeTrack track;
     bw_music::TrackBuilder trackBuilder;
 
@@ -166,6 +178,8 @@ TEST(TrackBuilderTest, builder_InvalidSimpleZeroLengthNote) {
 }
 
 TEST(TrackBuilderTest, builder_InvalidSimpleEndEventOutsideGroup) {
+    testUtils::TestLog log;
+    
     bw_music::UnsafeTrack track;
     bw_music::TrackBuilder trackBuilder;
 
@@ -193,6 +207,8 @@ TEST(TrackBuilderTest, builder_InvalidSimpleEndEventOutsideGroup) {
 }
 
 TEST(TrackBuilderTest, builder_InvalidStartEventInsideGroup) {
+    testUtils::TestLog log;
+    
     bw_music::UnsafeTrack track;
     bw_music::TrackBuilder trackBuilder;
 
@@ -220,6 +236,8 @@ TEST(TrackBuilderTest, builder_InvalidStartEventInsideGroup) {
 }
 
 TEST(TrackBuilderTest, builder_InvalidReordered) {
+    testUtils::TestLog log;
+    
     bw_music::UnsafeTrack track;
     bw_music::TrackBuilder trackBuilder;
 
@@ -246,6 +264,8 @@ TEST(TrackBuilderTest, builder_InvalidReordered) {
 }
 
 TEST(TrackBuilderTest, builder_invalidUnterminatedGroup) {
+    testUtils::TestLog log;
+
     bw_music::UnsafeTrack track;
     bw_music::TrackBuilder trackBuilder;
 
@@ -278,6 +298,8 @@ TEST(TrackBuilderTest, builder_invalidUnterminatedGroup) {
 }
 
 TEST(TrackBuilderTest, builder_invalidUnterminatedGroupWithDuration) {
+    testUtils::TestLog log;
+
     bw_music::UnsafeTrack track;
     bw_music::TrackBuilder trackBuilder;
 
@@ -310,6 +332,8 @@ TEST(TrackBuilderTest, builder_invalidUnterminatedGroupWithDuration) {
 }
 
 TEST(TrackBuilderTest, builder_invalidUnterminatedGroupWithDuration2) {
+    testUtils::TestLog log;
+
     bw_music::UnsafeTrack track;
     bw_music::TrackBuilder trackBuilder;
 
@@ -343,6 +367,8 @@ TEST(TrackBuilderTest, builder_invalidUnterminatedGroupWithDuration2) {
 }
 
 TEST(TrackBuilderTest, builder_InvalidReorderedAndZeroLength) {
+    testUtils::TestLog log;
+
     bw_music::UnsafeTrack track;
     bw_music::TrackBuilder trackBuilder;
 
@@ -373,6 +399,8 @@ TEST(TrackBuilderTest, builder_InvalidReorderedAndZeroLength) {
 }
 
 TEST(TrackBuilderTest, builder_InvalidMixture) {
+    testUtils::TestLog log;
+
     bw_music::UnsafeTrack goodEvents;
     goodEvents.addEvent(bw_music::NoteOnEvent(0, 60));
     goodEvents.addEvent(TestEnclosedEvent(bw_music::ModelDuration(1, 8), 60));
@@ -433,7 +461,7 @@ TEST(TrackBuilderTest, builder_InvalidMixture) {
 
     unsigned int goodEventCount = 0;
     for (const auto& builtEvent : builtTrack) {
-        if (builtEvent.getGroupingInfo().m_groupValue < 72) {
+        if (builtEvent.getGroupingInfo().m_groupKey.m_groupValue < 72) {
             ++goodEventCount;
         }
     }

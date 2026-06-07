@@ -16,6 +16,8 @@
 #include <Tests/TestUtils/resultTestUtils.hpp>
 
 TEST(SplitAtPitchProcessorTest, monophonicSplit) {
+    testUtils::TestLog log;
+
     bw_music::TrackBuilder track;
     testUtils::addSimpleNotes({60, 62, 64, 65, 67, 69, 71, 72}, track);
 
@@ -43,6 +45,8 @@ TEST(SplitAtPitchProcessorTest, monophonicSplit) {
 }
 
 TEST(SplitAtPitchProcessorTest, aboveAndBelowSplit) {
+    testUtils::TestLog log;
+
     bw_music::TrackBuilder trackBuilder;
     trackBuilder.addEvent(bw_music::NoteOnEvent{0, 72});
     trackBuilder.addEvent(bw_music::NoteOnEvent{0, 48});

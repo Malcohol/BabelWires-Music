@@ -28,7 +28,7 @@ namespace {
 
     struct TrackInfo {
         bw_music::ModelDuration m_timeSinceLastEvent;
-        bw_music::TrackEvent::GroupingInfo::GroupValue m_activeValue = bw_music::TrackEvent::GroupingInfo::c_notAValue;
+        bw_music::TrackEvent::GroupKey::GroupValue m_activeValue = bw_music::TrackEvent::GroupKey::c_notAValue;
     };
 
     struct NoteEventInfo {
@@ -38,9 +38,7 @@ namespace {
         int m_originalIndex;
     };
 
-    using PitchSet = std::set<bw_music::TrackEvent::GroupingInfo::GroupValue>;
-
-    const bw_music::TrackEvent::GroupingInfo::Category c_noteCategory = bw_music::NoteEvent::s_noteEventCategory;
+    using PitchSet = std::set<bw_music::TrackEvent::GroupKey::GroupValue>;
 
     void moveEventToOtherTrack(bw_music::ModelDuration& timeSinceLastEventOther, bw_music::TrackEventHolder& event,
                                TrackBuilders& result) {
@@ -55,12 +53,12 @@ namespace {
         auto& t = trackInfos[trackToUse];
         noteEvent.m_event->setTimeSinceLastEvent(t.m_timeSinceLastEvent);
         result.m_noteTracks[trackToUse].addEvent(noteEvent.m_event.release());
-        if (groupInfo.m_grouping == bw_music::TrackEvent::GroupingInfo::Grouping::StartOfGroup) {
+        if (groupInfo.m_groupRole == bw_music::TrackEvent::GroupRole::StartOfGroup) {
             // Too strong?
-            assert(t.m_activeValue == bw_music::TrackEvent::GroupingInfo::c_notAValue);
-            t.m_activeValue = groupInfo.m_groupValue;
-        } else if (groupInfo.m_grouping == bw_music::TrackEvent::GroupingInfo::Grouping::EndOfGroup) {
-            t.m_activeValue = bw_music::TrackEvent::GroupingInfo::c_notAValue;
+            assert(t.m_activeValue == bw_music::TrackEvent::GroupKey::c_notAValue);
+            t.m_activeValue = groupInfo.m_groupKey.m_groupValue;
+        } else if (groupInfo.m_groupRole == bw_music::TrackEvent::GroupRole::EndOfGroup) {
+            t.m_activeValue = bw_music::TrackEvent::GroupKey::c_notAValue;
         }
         t.m_timeSinceLastEvent = 0;
     }
@@ -72,7 +70,7 @@ namespace {
         assert((evictedPitches.find(pitchToEvict) == evictedPitches.end()) && "Evicting an already evicted pitch");
         evictedPitches.insert(pitchToEvict);
         result.m_noteTracks[trackToUse].addEvent(bw_music::NoteOffEvent{t.m_timeSinceLastEvent, pitchToEvict});
-        t.m_activeValue = bw_music::TrackEvent::GroupingInfo::c_notAValue;
+        t.m_activeValue = bw_music::TrackEvent::GroupKey::c_notAValue;
         t.m_timeSinceLastEvent = 0;
     }
 
@@ -87,14 +85,14 @@ namespace {
         int trackToUse = -1;
         bool shouldEvict = false;
         const auto& groupInfo = event->getGroupingInfo();
-        assert(groupInfo.m_category == c_noteCategory);
+        assert(groupInfo.m_groupKey.m_category == bw_music::NoteEvent::getNoteEventCategory());
         for (int i = 0; i < trackInfos.size(); ++i) {
             auto& t = trackInfos[i];
-            if (t.m_activeValue == groupInfo.m_groupValue) {
+            if (t.m_activeValue == groupInfo.m_groupKey.m_groupValue) {
                 trackToUse = i;
                 break;
-            } else if ((trackToUse == -1) && (t.m_activeValue == bw_music::TrackEvent::GroupingInfo::c_notAValue) &&
-                        (groupInfo.m_grouping == bw_music::TrackEvent::GroupingInfo::Grouping::StartOfGroup)) {
+            } else if ((trackToUse == -1) && (t.m_activeValue == bw_music::TrackEvent::GroupKey::c_notAValue) &&
+                        (groupInfo.m_groupRole == bw_music::TrackEvent::GroupRole::StartOfGroup)) {
                 trackToUse = i;
             }
         }
@@ -103,7 +101,7 @@ namespace {
                                                                      : std::numeric_limits<bw_music::Pitch>::min();
             for (int i = 0; i < trackInfos.size(); ++i) {
                 auto& t = trackInfos[i];
-                if (((groupInfo.m_groupValue > t.m_activeValue) == preferHigherPitches) &&
+                if (((groupInfo.m_groupKey.m_groupValue > t.m_activeValue) == preferHigherPitches) &&
                     ((t.m_activeValue < bestEvictablePitch) == preferHigherPitches)) {
                     trackToUse = i;
                     bestEvictablePitch = t.m_activeValue;
@@ -123,18 +121,18 @@ namespace {
         const auto lessThan = [preferHigherPitches](NoteEventInfo& a, NoteEventInfo& b) {
             const auto& groupInfoA = a.m_event->getGroupingInfo();
             const auto& groupInfoB = b.m_event->getGroupingInfo();
-            if ((groupInfoA.m_grouping == bw_music::TrackEvent::GroupingInfo::Grouping::EndOfGroup) &&
-                (groupInfoB.m_grouping == bw_music::TrackEvent::GroupingInfo::Grouping::StartOfGroup)) {
+            if ((groupInfoA.m_groupRole == bw_music::TrackEvent::GroupRole::EndOfGroup) &&
+                (groupInfoB.m_groupRole == bw_music::TrackEvent::GroupRole::StartOfGroup)) {
                 return true;
             }
-            if ((groupInfoA.m_grouping == bw_music::TrackEvent::GroupingInfo::Grouping::StartOfGroup) &&
-                (groupInfoB.m_grouping == bw_music::TrackEvent::GroupingInfo::Grouping::EndOfGroup)) {
+            if ((groupInfoA.m_groupRole == bw_music::TrackEvent::GroupRole::StartOfGroup) &&
+                (groupInfoB.m_groupRole == bw_music::TrackEvent::GroupRole::EndOfGroup)) {
                 return false;
             }
-            if (groupInfoA.m_groupValue > groupInfoB.m_groupValue) {
+            if (groupInfoA.m_groupKey.m_groupValue > groupInfoB.m_groupKey.m_groupValue) {
                 return preferHigherPitches;
             }
-            if (groupInfoA.m_groupValue < groupInfoB.m_groupValue) {
+            if (groupInfoA.m_groupKey.m_groupValue < groupInfoB.m_groupKey.m_groupValue) {
                 return !preferHigherPitches;
             }
             // Preserve the original order in other cases.
@@ -145,9 +143,9 @@ namespace {
 
         for (auto& noteEvent : noteEvents) {
             const bw_music::TrackEvent::GroupingInfo groupInfo = noteEvent.m_event->getGroupingInfo();
-            const auto it = evictedPitches.find(groupInfo.m_groupValue);
+            const auto it = evictedPitches.find(groupInfo.m_groupKey.m_groupValue);
             if (it != evictedPitches.end()) {
-                if (groupInfo.m_grouping == bw_music::TrackEvent::GroupingInfo::Grouping::EndOfGroup) {
+                if (groupInfo.m_groupRole == bw_music::TrackEvent::GroupRole::EndOfGroup) {
                     evictedPitches.erase(it);
                 } // else ignore this event.
             } else {
@@ -175,8 +173,6 @@ babelwires::ResultT<bw_music::MonophonicSubtracksResult> bw_music::getMonophonic
     builders.m_noteTracks.resize(numTracks);
     ModelDuration timeSinceLastEventOther;
 
-    using Group = std::tuple<TrackEvent::GroupingInfo::Category, TrackEvent::GroupingInfo::GroupValue>;
-
     std::vector<NoteEventInfo> noteEventsNow;
     PitchSet evictedPitches;
 
@@ -193,7 +189,7 @@ babelwires::ResultT<bw_music::MonophonicSubtracksResult> bw_music::getMonophonic
         }
 
         const TrackEvent::GroupingInfo groupInfo = event.getGroupingInfo();
-        if (groupInfo.m_category == c_noteCategory) {
+        if (groupInfo.m_groupKey.m_category == bw_music::NoteEvent::getNoteEventCategory()) {
             NoteEventInfo& noteInfo = noteEventsNow.emplace_back();
             noteInfo.m_event = event;
             noteInfo.m_originalIndex = noteEventsNow.size() - 1;

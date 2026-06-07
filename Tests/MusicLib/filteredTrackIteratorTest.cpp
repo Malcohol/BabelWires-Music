@@ -4,9 +4,13 @@
 #include <MusicLib/Types/Track/trackBuilder.hpp>
 #include <MusicLib/Types/Track/TrackEvents/trackEvent.hpp>
 
+#include <Tests/TestUtils/testLog.hpp>
+
 #include <Tests/TestUtils/testTrackEvents.hpp>
 
 TEST(FilteredTrackIterator, Basic) {
+    testUtils::TestLog log;
+
     bw_music::TrackBuilder trackBuilder;
 
     for (int i = 0; i < 100; ++i) {

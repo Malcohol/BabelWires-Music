@@ -34,6 +34,8 @@ class GetChordTypesProcessorTest : public ::testing::Test {
         EXPECT_NE(chordTypes.find(bw_music::ChordType::Value::dim), chordTypes.end());
         EXPECT_NE(chordTypes.find(bw_music::ChordType::Value::aug), chordTypes.end());
     }
+
+    testUtils::TestLog m_log;
 };
 
 TEST_F(GetChordTypesProcessorTest, functionBasic) {

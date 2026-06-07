@@ -1,34 +1,38 @@
 /**
  * ChordEvents describe musical chords.
- * 
+ *
  * (C) 2021 Malcolm Tyrrell
- * 
+ *
  * Licensed under the GPLv3.0. See LICENSE file.
  **/
 #include <MusicLib/Types/Track/TrackEvents/chordEvents.hpp>
 
-
 #include <BaseLib/Hash/hash.hpp>
+#include <BaseLib/Identifiers/registeredIdentifier.hpp>
 
 #include <sstream>
 
-bw_music::TrackEvent::GroupingInfo::Category bw_music::ChordEvent::s_chordEventCategory = "Chords";
+bw_music::TrackEvent::GroupKey::Category bw_music::ChordEvent::getChordEventCategory() {
+    return BW_SHORT_ID("Chords", "Chords", "4f338e52-ac8e-422e-b3c5-143f84ccfcdd");
+}
 
-void bw_music::ChordEvent::createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const {
+void bw_music::ChordOnEvent::createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const {
     dest = ChordOffEvent(timeSinceLastEvent);
 }
 
 std::size_t bw_music::ChordOnEvent::getHash() const {
-    return babelwires::hash::mixtureOf(static_cast<const char*>("ChordOn"), m_timeSinceLastEvent, m_chord.m_root, m_chord.m_chordType);
+    return babelwires::hash::mixtureOf(static_cast<const char*>("ChordOn"), m_timeSinceLastEvent, m_chord.m_root,
+                                       m_chord.m_chordType);
 }
 
 bw_music::TrackEvent::GroupingInfo bw_music::ChordOnEvent::getGroupingInfo() const {
-    return {s_chordEventCategory, 0, GroupingInfo::Grouping::StartOfGroup};
+    return {getChordEventCategory(), 0, GroupRole::StartOfGroup};
 }
 
 bool bw_music::ChordOnEvent::transpose(int pitchOffset, TransposeOutOfRangePolicy outOfRangePolicy) {
     // Ignore the policy here, as chord roots are always mapped to within an octave.
-    const auto newPitchOpt = bw_music::transposePitch(static_cast<int>(m_chord.m_root), pitchOffset, TransposeOutOfRangePolicy::MapToNearestOctave, 0, 11);
+    const auto newPitchOpt = bw_music::transposePitch(static_cast<int>(m_chord.m_root), pitchOffset,
+                                                      TransposeOutOfRangePolicy::MapToNearestOctave, 0, 11);
     assert(newPitchOpt.has_value());
     m_chord.m_root = static_cast<PitchClass::Value>(newPitchOpt.value());
     return true;
@@ -39,7 +43,7 @@ std::size_t bw_music::ChordOffEvent::getHash() const {
 }
 
 bw_music::TrackEvent::GroupingInfo bw_music::ChordOffEvent::getGroupingInfo() const {
-    return {s_chordEventCategory, 0, GroupingInfo::Grouping::EndOfGroup};
+    return {getChordEventCategory(), 0, GroupRole::EndOfGroup};
 }
 
 bool bw_music::ChordOnEvent::doIsEqualTo(const TrackEvent& other) const {

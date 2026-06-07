@@ -76,6 +76,7 @@ class FitToChordFunctionTest : public ::testing::Test {
         EXPECT_EQ(it, track.end());
     };
 
+    testUtils::TestLog m_log;
     bw_music::Track m_cMajorChordTrack;
     bw_music::Track m_lowerLimitTrack;
     bw_music::Track m_upperLimitTrack;

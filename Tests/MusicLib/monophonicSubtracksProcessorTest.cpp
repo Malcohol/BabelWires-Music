@@ -103,6 +103,8 @@ namespace {
 } // namespace
 
 TEST(MonophonicSubtracksProcessorTest, simpleFunction) {
+    testUtils::TestLog log;
+
     bw_music::Track track = getSamplePolyphonicTrack();
 
     BW_ASSERT_RESULT_ASSIGN(bw_music::MonophonicSubtracksResult result,
@@ -121,6 +123,8 @@ TEST(MonophonicSubtracksProcessorTest, simpleFunction) {
 }
 
 TEST(MonophonicSubtracksProcessorTest, FunctionLower) {
+    testUtils::TestLog log;
+
     bw_music::Track track = getSamplePolyphonicTrack();
 
     BW_ASSERT_RESULT_ASSIGN(bw_music::MonophonicSubtracksResult result,
@@ -139,6 +143,8 @@ TEST(MonophonicSubtracksProcessorTest, FunctionLower) {
 }
 
 TEST(MonophonicSubtracksProcessorTest, redundantTracks) {
+    testUtils::TestLog log;
+
     bw_music::Track track = getSamplePolyphonicTrack();
 
     BW_ASSERT_RESULT_ASSIGN(bw_music::MonophonicSubtracksResult result,
@@ -159,6 +165,8 @@ TEST(MonophonicSubtracksProcessorTest, redundantTracks) {
 }
 
 TEST(MonophonicSubtracksProcessorTest, eventToOther) {
+    testUtils::TestLog log;
+
     bw_music::Track track = getSamplePolyphonicTrack();
 
     BW_ASSERT_RESULT_ASSIGN(bw_music::MonophonicSubtracksResult result,
@@ -188,6 +196,8 @@ TEST(MonophonicSubtracksProcessorTest, eventToOther) {
 }
 
 TEST(MonophonicSubtracksProcessorTest, higherPitchesEvictOneTrack) {
+    testUtils::TestLog log;
+
     bw_music::Track track = getStaggeredPolyphonicTrack();
 
     BW_ASSERT_RESULT_ASSIGN(bw_music::MonophonicSubtracksResult result,
@@ -226,6 +236,8 @@ TEST(MonophonicSubtracksProcessorTest, higherPitchesEvictOneTrack) {
 }
 
 TEST(MonophonicSubtracksProcessorTest, higherPitchesEvictTwoTracks) {
+    testUtils::TestLog log;
+
     bw_music::Track track = getStaggeredPolyphonicTrack();
 
     BW_ASSERT_RESULT_ASSIGN(bw_music::MonophonicSubtracksResult result,
@@ -270,6 +282,8 @@ TEST(MonophonicSubtracksProcessorTest, higherPitchesEvictTwoTracks) {
 }
 
 TEST(MonophonicSubtracksProcessorTest, lowerPitchesEvictOneTrack) {
+    testUtils::TestLog log;
+
     bw_music::Track track = getStaggeredPolyphonicTrack2();
 
     BW_ASSERT_RESULT_ASSIGN(bw_music::MonophonicSubtracksResult result,
@@ -308,6 +322,8 @@ TEST(MonophonicSubtracksProcessorTest, lowerPitchesEvictOneTrack) {
 }
 
 TEST(MonophonicSubtracksProcessorTest, lowerPitchesEvictTwoTracks) {
+    testUtils::TestLog log;
+
     bw_music::Track track = getStaggeredPolyphonicTrack2();
 
     BW_ASSERT_RESULT_ASSIGN(bw_music::MonophonicSubtracksResult result,

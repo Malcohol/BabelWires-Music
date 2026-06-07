@@ -10,7 +10,7 @@
 #include <map>
 
 bool bw_music::Detail::isTrackValidInternal(const bw_music::Track& track, bool assertIfInvalid = false) {
-    std::map<bw_music::TrackEvent::EventGroup, bw_music::ModelDuration> activeGroups;
+    std::map<bw_music::TrackEvent::GroupKey, bw_music::ModelDuration> activeGroups;
     for (const auto& e : track) {
         if (e.getTimeSinceLastEvent() > 0) {
             for (auto& times : activeGroups) {
@@ -18,19 +18,19 @@ bool bw_music::Detail::isTrackValidInternal(const bw_music::Track& track, bool a
             }
         }
         const auto groupInfo = e.getGroupingInfo();
-        auto activeGroupIt = activeGroups.find(groupInfo);
-        switch (groupInfo.m_grouping) {
-            case bw_music::TrackEvent::GroupingInfo::Grouping::StartOfGroup: {
+        auto activeGroupIt = activeGroups.find(groupInfo.m_groupKey);
+        switch (groupInfo.m_groupRole) {
+            case bw_music::TrackEvent::GroupRole::StartOfGroup: {
                 const bool noActiveGroup = (activeGroupIt == activeGroups.end());
                 assert((!assertIfInvalid || noActiveGroup) &&
                        "Encountered a start event when there was already a matching group.");
                 if (!noActiveGroup) {
                     return false;
                 }
-                activeGroups.emplace(groupInfo, 0);
+                activeGroups.emplace(groupInfo.m_groupKey, 0);
                 break;
             }
-            case bw_music::TrackEvent::GroupingInfo::Grouping::EnclosedInGroup: {
+            case bw_music::TrackEvent::GroupRole::EnclosedInGroup: {
                 const bool alreadyAGroup = (activeGroupIt != activeGroups.end());
                 assert((!assertIfInvalid || alreadyAGroup) &&
                        "Encountered an enclosed event when there was no matching group.");
@@ -39,7 +39,7 @@ bool bw_music::Detail::isTrackValidInternal(const bw_music::Track& track, bool a
                 }
                 break;
             }
-            case bw_music::TrackEvent::GroupingInfo::Grouping::EndOfGroup: {
+            case bw_music::TrackEvent::GroupRole::EndOfGroup: {
                 const bool alreadyAGroup = (activeGroupIt != activeGroups.end());
                 assert((!assertIfInvalid || alreadyAGroup) &&
                        "Encountered an end event when there was no matching group.");
@@ -55,7 +55,7 @@ bool bw_music::Detail::isTrackValidInternal(const bw_music::Track& track, bool a
                 activeGroups.erase(activeGroupIt);
                 break;
             }
-            case bw_music::TrackEvent::GroupingInfo::Grouping::NotInGroup:
+            case bw_music::TrackEvent::GroupRole::NotInGroup:
             default:
                 break;
         }

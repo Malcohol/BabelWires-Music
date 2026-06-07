@@ -50,7 +50,7 @@ namespace bw_music {
       private:
         Track m_track;
 
-        std::set<TrackEvent::EventGroup> m_activeGroups;
+        std::set<TrackEvent::GroupKey> m_activeGroups;
 
         /// When events are dropped, their time gets added to the next actual event.
         ModelDuration m_timeSinceLastEvent;

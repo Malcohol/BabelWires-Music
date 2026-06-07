@@ -79,9 +79,10 @@ void bw_music::Track::onNewEvent(const TrackEvent& event) {
     m_totalEventDuration += event.getTimeSinceLastEvent();
     babelwires::hash::mixInto(m_eventHash, event.getHash());
     TrackEvent::GroupingInfo groupingInfo = event.getGroupingInfo();
-    if ((groupingInfo.m_grouping == TrackEvent::GroupingInfo::Grouping::NotInGroup) ||
-        (groupingInfo.m_grouping == TrackEvent::GroupingInfo::Grouping::StartOfGroup)) {
-        ++m_numEventGroupsByCategory[groupingInfo.m_category];
+    if ((groupingInfo.m_groupRole == TrackEvent::GroupRole::NotInGroup) ||
+        (groupingInfo.m_groupRole == TrackEvent::GroupRole::StartOfGroup)) {
+        assert(groupingInfo.m_groupKey.m_category.getDiscriminator() != 0 && "Unresolved category identifier");
+        ++m_numEventGroupsByCategory[groupingInfo.m_groupKey.m_category];
     }
 }
 
@@ -102,6 +103,6 @@ std::reverse_iterator<bw_music::Track::const_iterator> bw_music::Track::rend() c
 }
 
 
-const std::unordered_map<const char*, int>& bw_music::Track::getNumEventGroupsByCategory() const {
+const std::unordered_map<bw_music::TrackEvent::GroupKey::Category, int>& bw_music::Track::getNumEventGroupsByCategory() const {
     return m_numEventGroupsByCategory;
 }

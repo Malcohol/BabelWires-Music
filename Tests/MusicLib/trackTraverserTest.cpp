@@ -6,7 +6,11 @@
 
 #include <Tests/TestUtils/testTrackEvents.hpp>
 
+#include <Tests/TestUtils/testLog.hpp>
+
 TEST(TrackTraverser, leastUpperBoundDuration) {
+    testUtils::TestLog log;
+
     bw_music::Track track;
 
     track.setDuration(10);
@@ -27,6 +31,8 @@ TEST(TrackTraverser, leastUpperBoundDuration) {
 }
 
 TEST(TrackTraverser, greatestLowerBoundNextEvent) {
+    testUtils::TestLog log;
+
     bw_music::TrackBuilder track1Builder;
     bw_music::TrackBuilder track2Builder;
     bw_music::TrackBuilder track3Builder;
@@ -53,6 +59,8 @@ TEST(TrackTraverser, greatestLowerBoundNextEvent) {
 }
 
 TEST(TrackTraverser, filteredIteration) {
+    testUtils::TestLog log;
+
     bw_music::TrackBuilder trackBuilder;
 
     for (int i = 0; i < 10; ++i) {

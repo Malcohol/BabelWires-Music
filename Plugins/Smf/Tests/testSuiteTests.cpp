@@ -73,8 +73,8 @@ TEST(SmfTestSuiteTest, cMajorScale) {
 
     const bw_music::Track& track = track0->get();
     const auto& categoryMap = track.getNumEventGroupsByCategory();
-    EXPECT_NE(categoryMap.find(bw_music::NoteEvent::s_noteEventCategory), categoryMap.end());
-    EXPECT_EQ(categoryMap.find(bw_music::NoteEvent::s_noteEventCategory)->second, 8);
+    EXPECT_NE(categoryMap.find(bw_music::NoteEvent::getNoteEventCategory()), categoryMap.end());
+    EXPECT_EQ(categoryMap.find(bw_music::NoteEvent::getNoteEventCategory())->second, 8);
     EXPECT_EQ(track.getDuration(), babelwires::Rational(1, 4) * 8);
 
     testUtils::testSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65, 67, 69, 71, 72}, track);
@@ -320,8 +320,8 @@ TEST(SmfTestSuiteTest, testAllGMPercussion) {
     const bw_music::Track& track = track9->get();
 
     auto categoryMap = track.getNumEventGroupsByCategory();
-    EXPECT_EQ(categoryMap.find(bw_music::NoteEvent::s_noteEventCategory), categoryMap.end());
-    EXPECT_NE(categoryMap.find(bw_music::PercussionEvent::s_percussionEventCategory), categoryMap.end());
+    EXPECT_EQ(categoryMap.find(bw_music::NoteEvent::getNoteEventCategory()), categoryMap.end());
+    EXPECT_NE(categoryMap.find(bw_music::PercussionEvent::getPercussionEventCategory()), categoryMap.end());
 
     const auto& gm2StandardPercussionSet =
         testEnvironment.m_typeSystem.getRegisteredType<smf::GM2StandardPercussionSet>();
@@ -370,16 +370,16 @@ TEST(SmfTestSuiteTest, testGSDrumPartChange) {
         const bw_music::Track& track = track0->get();
 
         auto categoryMap = track.getNumEventGroupsByCategory();
-        EXPECT_EQ(categoryMap.find(bw_music::NoteEvent::s_noteEventCategory), categoryMap.end());
-        ASSERT_NE(categoryMap.find(bw_music::PercussionEvent::s_percussionEventCategory), categoryMap.end());
-        EXPECT_EQ(categoryMap.find(bw_music::PercussionEvent::s_percussionEventCategory)->second, 4);
+        EXPECT_EQ(categoryMap.find(bw_music::NoteEvent::getNoteEventCategory()), categoryMap.end());
+        ASSERT_NE(categoryMap.find(bw_music::PercussionEvent::getPercussionEventCategory()), categoryMap.end());
+        EXPECT_EQ(categoryMap.find(bw_music::PercussionEvent::getPercussionEventCategory())->second, 4);
     }
     {
         const bw_music::Track& track = track9->get();
 
         auto categoryMap = track.getNumEventGroupsByCategory();
-        EXPECT_EQ(categoryMap.find(bw_music::PercussionEvent::s_percussionEventCategory), categoryMap.end());
-        ASSERT_NE(categoryMap.find(bw_music::NoteEvent::s_noteEventCategory), categoryMap.end());
-        EXPECT_EQ(categoryMap.find(bw_music::NoteEvent::s_noteEventCategory)->second, 4);
+        EXPECT_EQ(categoryMap.find(bw_music::PercussionEvent::getPercussionEventCategory()), categoryMap.end());
+        ASSERT_NE(categoryMap.find(bw_music::NoteEvent::getNoteEventCategory()), categoryMap.end());
+        EXPECT_EQ(categoryMap.find(bw_music::NoteEvent::getNoteEventCategory())->second, 4);
     }
 }

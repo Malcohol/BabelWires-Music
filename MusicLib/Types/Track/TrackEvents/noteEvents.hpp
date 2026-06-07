@@ -9,14 +9,17 @@
 
 #include <MusicLib/musicLibExport.hpp>
 
+#include <MusicLib/Types/Track/TrackEvents/startEventInterface.hpp>
 #include <MusicLib/Types/Track/TrackEvents/trackEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/transposable.hpp>
 
 namespace bw_music {
 
     /// Base type for note events.
-    struct MUSICLIB_API NoteEvent : public TrackEvent {
+    struct MUSICLIB_API NoteEvent : public TrackEvent, public Transposable {
         DOWNCASTABLE(NoteEvent, TrackEvent);
         STREAM_EVENT_ABSTRACT(NoteEvent);
+        QUERYABLE_INTERFACE_PROVIDER(TrackEvent, Transposable);
         NoteEvent(ModelDuration timeSinceLastEvent, Pitch pitch, Velocity velocity)
             : TrackEvent(timeSinceLastEvent)
             , m_pitch(pitch)
@@ -24,7 +27,7 @@ namespace bw_music {
 
         virtual bool transpose(int pitchOffset, TransposeOutOfRangePolicy outOfRangePolicy) override;
 
-        static GroupingInfo::Category s_noteEventCategory;
+        static GroupKey::Category getNoteEventCategory();
 
         void setPitch(Pitch pitch) { m_pitch = pitch; }
         Pitch getPitch() const { return m_pitch; }
@@ -32,8 +35,6 @@ namespace bw_music {
         void setVelocity(Velocity velocity) { m_velocity = velocity; }
         Velocity getVelocity() const { return m_velocity; }
 
-        void createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const override;
-        
         Pitch m_pitch;
         Velocity m_velocity;
 
@@ -42,13 +43,15 @@ namespace bw_music {
     };
 
     /// The start of a musical note.
-    struct MUSICLIB_API NoteOnEvent : public NoteEvent {
+    struct MUSICLIB_API NoteOnEvent : public NoteEvent, public StartEventInterface {
         DOWNCASTABLE(NoteOnEvent, NoteEvent);
         STREAM_EVENT(NoteOnEvent);
+        QUERYABLE_INTERFACE_PROVIDER(NoteEvent, StartEventInterface);
         static constexpr const Velocity c_defaultVelocity = 127;
         NoteOnEvent(ModelDuration timeSinceLastEvent, Pitch pitch, Velocity velocity = c_defaultVelocity)
             : NoteEvent(timeSinceLastEvent, pitch, velocity) {}
 
+        void createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const override;
         virtual std::size_t getHash() const override;
         virtual GroupingInfo getGroupingInfo() const override;
     };

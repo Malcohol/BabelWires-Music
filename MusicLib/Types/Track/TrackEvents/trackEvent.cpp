@@ -8,8 +8,11 @@
 #include <MusicLib/Types/Track/TrackEvents/trackEvent.hpp>
 
 #include <BaseLib/Hash/hash.hpp>
+#include <BaseLib/Identifiers/registeredIdentifier.hpp>
 
-const char* bw_music::TrackEvent::EventGroup::s_genericCategory = "Generic";
+bw_music::TrackEvent::GroupKey::Category bw_music::TrackEvent::GroupKey::getGenericCategory() {
+    return BW_SHORT_ID("Genric", "Generic", "3908254a-c900-4426-96c4-34273eb8238d");
+}
 
 std::size_t bw_music::TrackEvent::getHash() const {
     // Since this is common to every event, there's no need to distinguish it from hashes of other events.
@@ -25,9 +28,5 @@ bool bw_music::TrackEvent::operator!=(const TrackEvent& other) const {
 }
 
 bw_music::TrackEvent::GroupingInfo bw_music::TrackEvent::getGroupingInfo() const {
-    return GroupingInfo();
-}
-
-bool bw_music::TrackEvent::transpose(int pitchOffset, TransposeOutOfRangePolicy outOfRangePolicy) {
-    return true;
+    return {{GroupKey::getGenericCategory()}, GroupRole::NotInGroup};
 }

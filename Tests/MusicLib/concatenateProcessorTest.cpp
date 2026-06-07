@@ -12,6 +12,8 @@
 #include <Tests/TestUtils/seqTestUtils.hpp>
 
 TEST(ConcatenateProcessorTest, appendFuncSimple) {
+    testUtils::TestLog log;
+
     bw_music::TrackBuilder trackBuilderA;
     testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65}, trackBuilderA);
     bw_music::Track trackA = trackBuilderA.finishAndGetTrack();
@@ -26,6 +28,8 @@ TEST(ConcatenateProcessorTest, appendFuncSimple) {
 }
 
 TEST(ConcatenateProcessorTest, appendFuncGaps) {
+    testUtils::TestLog log;
+
     bw_music::TrackBuilder trackBuilderA;
     const std::vector<testUtils::NoteInfo> noteInfosA{{60, babelwires::Rational(1, 4), 1},
                                                       {62, babelwires::Rational(1, 4)},
