@@ -24,7 +24,7 @@ namespace bw_music {
         ChordEvent(ModelDuration timeSinceLastEvent)
             : TrackEvent(timeSinceLastEvent) {}
 
-        static GroupKey::Category s_chordEventCategory;
+        static GroupKey::Category getChordEventCategory();
 
     };
 

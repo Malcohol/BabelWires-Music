@@ -14,6 +14,8 @@
 #include <Tests/TestUtils/resultTestUtils.hpp>
 
 TEST(QuantizeProcessorTest, funcSimple) {
+    testUtils::TestLog log;
+
     bw_music::TrackBuilder trackBuilderIn;
 
     testUtils::addNotes(
@@ -56,6 +58,8 @@ TEST(QuantizeProcessorTest, funcSimple) {
 }
 
 TEST(QuantizeProcessorTest, funcCollapsedGroup) {
+    testUtils::TestLog log;
+
     bw_music::TrackBuilder trackIn;
 
     testUtils::addNotes(

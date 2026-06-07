@@ -72,7 +72,7 @@ babelwires::ResultT<bw_music::Track> bw_music::mapPercussionFunction(const babel
 
     for (auto it = trackIn.begin(); it != trackIn.end(); ++it) {
         const TrackEvent::GroupingInfo info = it->getGroupingInfo();
-        if (info.m_groupKey.m_category == PercussionEvent::s_percussionEventCategory) {
+        if (info.m_groupKey.m_category == PercussionEvent::getPercussionEventCategory()) {
             TrackEventHolder holder(*it);
             PercussionEvent& percussionEvent = static_cast<PercussionEvent&>(*holder);
             babelwires::ShortId newInstrument = mapApplicator[percussionEvent.getInstrument()];

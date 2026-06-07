@@ -5,6 +5,8 @@
 
 #include <Tests/TestUtils/testTrackEvents.hpp>
 
+#include <Tests/TestUtils/testLog.hpp>
+
 namespace {
     bw_music::Track createTestTrack() {
         bw_music::TrackBuilder track;
@@ -70,6 +72,8 @@ namespace {
 } // namespace
 
 TEST(MonophonicNoteIterator, OnOffOnly) {
+    testUtils::TestLog log;
+
     bw_music::Track track = createTestTrack();
 
     auto [it, end] = bw_music::iterateOverMonotonicNotes(track, bw_music::MonophonicNoteIterator::OnOffOnly);

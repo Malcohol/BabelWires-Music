@@ -16,6 +16,8 @@
 #include <Tests/TestUtils/resultTestUtils.hpp>
 
 TEST(TransposeProcessorTest, funcSimpleZero) {
+    testUtils::TestLog log;
+
     bw_music::TrackBuilder trackIn;
 
     testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65}, trackIn);
@@ -26,6 +28,8 @@ TEST(TransposeProcessorTest, funcSimpleZero) {
 }
 
 TEST(TransposeProcessorTest, funcSimplePositive) {
+    testUtils::TestLog log;
+
     bw_music::TrackBuilder trackIn;
 
     testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65}, trackIn);
@@ -36,6 +40,8 @@ TEST(TransposeProcessorTest, funcSimplePositive) {
 }
 
 TEST(TransposeProcessorTest, funcSimpleNegative) {
+    testUtils::TestLog log;
+
     bw_music::TrackBuilder trackIn;
 
     testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65}, trackIn);
@@ -46,6 +52,8 @@ TEST(TransposeProcessorTest, funcSimpleNegative) {
 }
 
 TEST(TransposeProcessorTest, funcSimplePositiveLimitDiscard) {
+    testUtils::TestLog log;
+
     bw_music::TrackBuilder trackIn;
 
     testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{120, 122, 124, 125, 124, 122, 120}, trackIn);
@@ -56,6 +64,8 @@ TEST(TransposeProcessorTest, funcSimplePositiveLimitDiscard) {
 }
 
 TEST(TransposeProcessorTest, funcSimplePositiveLimitMap) {
+    testUtils::TestLog log;
+
     bw_music::TrackBuilder trackIn;
 
     testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{120, 122, 124, 125, 124, 122, 120}, trackIn);
@@ -67,6 +77,8 @@ TEST(TransposeProcessorTest, funcSimplePositiveLimitMap) {
 }
 
 TEST(TransposeProcessorTest, funcSimpleNegativeLimitDiscard) {
+    testUtils::TestLog log;
+
     bw_music::TrackBuilder trackIn;
 
     testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{17, 16, 14, 12, 14, 16, 17}, trackIn);
@@ -77,6 +89,8 @@ TEST(TransposeProcessorTest, funcSimpleNegativeLimitDiscard) {
 }
 
 TEST(TransposeProcessorTest, funcSimpleNegativeLimitMap) {
+    testUtils::TestLog log;
+
     bw_music::TrackBuilder trackIn;
 
     testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{17, 16, 14, 12, 14, 16, 17}, trackIn);
@@ -88,6 +102,8 @@ TEST(TransposeProcessorTest, funcSimpleNegativeLimitMap) {
 }
 
 TEST(TransposeProcessorTest, funcSimpleChordsZero) {
+    testUtils::TestLog log;
+
     // Some random chords.
     auto trackIn = testUtils::getTrackOfChords({
         {bw_music::PitchClass::PitchClass::Value::C, bw_music::ChordType::ChordType::Value::M},
@@ -109,6 +125,8 @@ TEST(TransposeProcessorTest, funcSimpleChordsZero) {
 }
 
 TEST(TransposeProcessorTest, funcSimpleChordsPositive) {
+    testUtils::TestLog log;
+
     // Some random chords.
     auto trackIn = testUtils::getTrackOfChords({
         {bw_music::PitchClass::PitchClass::Value::C, bw_music::ChordType::ChordType::Value::M},
@@ -130,6 +148,8 @@ TEST(TransposeProcessorTest, funcSimpleChordsPositive) {
 }
 
 TEST(TransposeProcessorTest, funcSimpleChordsNegative) {
+    testUtils::TestLog log;
+
     // Some random chords.
     auto trackIn = testUtils::getTrackOfChords({
         {bw_music::PitchClass::PitchClass::Value::C, bw_music::ChordType::ChordType::Value::M},

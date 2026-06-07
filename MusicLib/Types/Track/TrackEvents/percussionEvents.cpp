@@ -9,11 +9,14 @@
 
 
 #include <BaseLib/Hash/hash.hpp>
+#include <BaseLib/Identifiers/registeredIdentifier.hpp>
 
 #include <sstream>
 #include <algorithm>
 
-bw_music::TrackEvent::GroupKey::Category bw_music::PercussionEvent::s_percussionEventCategory = "Percussion";
+bw_music::TrackEvent::GroupKey::Category bw_music::PercussionEvent::getPercussionEventCategory() {
+    return BW_SHORT_ID("Perc", "Percussion", "ec551665-cb7f-404a-9219-401a7624a1f6");
+}
 
 void bw_music::PercussionOnEvent::createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const {
     dest = PercussionOffEvent(timeSinceLastEvent, m_instrument, m_velocity);
@@ -24,7 +27,7 @@ std::size_t bw_music::PercussionOnEvent::getHash() const {
 }
 
 bw_music::TrackEvent::GroupingInfo bw_music::PercussionOnEvent::getGroupingInfo() const {
-    return {s_percussionEventCategory, m_instrument.toCode(), GroupRole::StartOfGroup};
+    return {getPercussionEventCategory(), m_instrument.toCode(), GroupRole::StartOfGroup};
 }
 
 std::size_t bw_music::PercussionOffEvent::getHash() const {
@@ -32,7 +35,7 @@ std::size_t bw_music::PercussionOffEvent::getHash() const {
 }
 
 bw_music::TrackEvent::GroupingInfo bw_music::PercussionOffEvent::getGroupingInfo() const {
-    return {s_percussionEventCategory, m_instrument.toCode(), GroupRole::EndOfGroup};
+    return {getPercussionEventCategory(), m_instrument.toCode(), GroupRole::EndOfGroup};
 }
 
 bool bw_music::PercussionEvent::doIsEqualTo(const TrackEvent& other) const {

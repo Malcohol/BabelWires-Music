@@ -14,6 +14,8 @@
 #include <Tests/TestUtils/resultTestUtils.hpp>
 
 TEST(MergeProcessorTest, simpleFunction) {
+    testUtils::TestLog log;
+
     bw_music::TrackBuilder trackBuilderA;
     testUtils::addSimpleNotes({72, 74, 76, 77}, trackBuilderA);
     bw_music::Track trackA = trackBuilderA.finishAndGetTrack();
@@ -63,6 +65,8 @@ TEST(MergeProcessorTest, simpleFunction) {
 }
 
 TEST(MergeProcessorTest, functionOverlaps) {
+    testUtils::TestLog log;
+    
     bw_music::TrackBuilder trackBuilderA;
     testUtils::addSimpleNotes({72, 74, 76, 77}, trackBuilderA);
     bw_music::Track trackA = trackBuilderA.finishAndGetTrack();

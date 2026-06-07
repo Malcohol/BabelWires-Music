@@ -15,6 +15,8 @@
 #include <Tests/TestUtils/resultTestUtils.hpp>
 
 TEST(RepeatProcessorTest, funcSimpleZero) {
+    testUtils::TestLog log;
+
     bw_music::TrackBuilder trackIn;
 
     testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65}, trackIn);
@@ -26,6 +28,8 @@ TEST(RepeatProcessorTest, funcSimpleZero) {
 }
 
 TEST(RepeatProcessorTest, funcSimpleOnce) {
+    testUtils::TestLog log;
+
     bw_music::TrackBuilder trackIn;
 
     testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65}, trackIn);
@@ -36,6 +40,8 @@ TEST(RepeatProcessorTest, funcSimpleOnce) {
 }
 
 TEST(RepeatProcessorTest, funcSimpleTwice) {
+    testUtils::TestLog log;
+
     bw_music::TrackBuilder trackIn;
 
     testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65}, trackIn);

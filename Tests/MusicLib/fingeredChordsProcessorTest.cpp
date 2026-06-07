@@ -14,6 +14,8 @@
 #include <Tests/TestUtils/resultTestUtils.hpp>
 
 TEST(FingeredChordsTest, functionBasicNotesPolicy) {
+    testUtils::TestLog log;
+
     bw_music::TrackBuilder track;
     track.addEvent(bw_music::NoteOnEvent(0, 60));
     track.addEvent(bw_music::NoteOnEvent(0, 64));
@@ -52,6 +54,8 @@ TEST(FingeredChordsTest, functionBasicNotesPolicy) {
 }
 
 TEST(FingeredChordsTest, functionBasicHoldPolicy) {
+    testUtils::TestLog log;
+
     bw_music::TrackBuilder track;
     track.addEvent(bw_music::NoteOnEvent(0, 60));
     track.addEvent(bw_music::NoteOnEvent(0, 64));
@@ -90,6 +94,8 @@ TEST(FingeredChordsTest, functionBasicHoldPolicy) {
 }
 
 TEST(FingeredChordsTest, rootPitchClass) {
+    testUtils::TestLog log;
+
     bw_music::TrackBuilder track;
 
     for (int i = 0; i < 12 * 10; ++i) {
@@ -116,6 +122,8 @@ TEST(FingeredChordsTest, rootPitchClass) {
 }
 
 TEST(FingeredChordsTest, functionChordToChord) {
+    testUtils::TestLog log;
+
     bw_music::TrackBuilder track;
     track.addEvent(bw_music::NoteOnEvent(0, 60));
     track.addEvent(bw_music::NoteOnEvent(0, 64));
@@ -142,6 +150,8 @@ TEST(FingeredChordsTest, functionChordToChord) {
 
 // Only major and minor inversions are guaranteed to be recognized.
 TEST(FingeredChordsTest, majorInversions) {
+    testUtils::TestLog log;
+
     bw_music::TrackBuilder track;
     track.addEvent(bw_music::NoteOnEvent(0, 60));
     track.addEvent(bw_music::NoteOnEvent(0, 64));
@@ -181,6 +191,8 @@ TEST(FingeredChordsTest, majorInversions) {
 
 // Only major and minor inversions are guaranteed to be recognized.
 TEST(FingeredChordsTest, minorInversions) {
+    testUtils::TestLog log;
+
     bw_music::TrackBuilder track;
     track.addEvent(bw_music::NoteOnEvent(0, 60));
     track.addEvent(bw_music::NoteOnEvent(0, 63));
@@ -220,6 +232,7 @@ TEST(FingeredChordsTest, minorInversions) {
 
 // Yamaha-style fingered chords.
 TEST(FingeredChordsTest, schemeY) {
+    testUtils::TestLog log;
     using namespace bw_music;
 
     std::vector<std::vector<bw_music::Pitch>> pitches = {// C1+8
@@ -383,6 +396,7 @@ TEST(FingeredChordsTest, schemeY) {
 
 // Roland-style fingered chords.
 TEST(FingeredChordsTest, schemeR) {
+    testUtils::TestLog log;
     using namespace bw_music;
 
     std::vector<std::vector<bw_music::Pitch>> pitches = {// C

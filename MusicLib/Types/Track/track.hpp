@@ -61,7 +61,7 @@ namespace bw_music {
         std::size_t getHash() const override;
 
         /// Get a summary of the track contents, by category.
-        const std::unordered_map<const char*, int>& getNumEventGroupsByCategory() const;
+        const std::unordered_map<TrackEvent::GroupKey::Category, int>& getNumEventGroupsByCategory() const;
 
       private:
         friend TrackBuilder;
@@ -100,7 +100,7 @@ namespace bw_music {
         std::size_t m_eventHash = 0;
 
         /// A summary of information about the track.
-        std::unordered_map<const char*, int> m_numEventGroupsByCategory;
+        std::unordered_map<TrackEvent::GroupKey::Category, int> m_numEventGroupsByCategory;
     };
 
     /// This is only intended for testing tracks.

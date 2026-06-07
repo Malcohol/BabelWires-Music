@@ -92,8 +92,8 @@ TEST_P(SmfStandardPercussionTest, saveLoad) {
         const auto& track = track9->get();
 
         auto categoryMap = track.getNumEventGroupsByCategory();
-        EXPECT_EQ(categoryMap.find(bw_music::NoteEvent::s_noteEventCategory), categoryMap.end());
-        EXPECT_NE(categoryMap.find(bw_music::PercussionEvent::s_percussionEventCategory), categoryMap.end());
+        EXPECT_EQ(categoryMap.find(bw_music::NoteEvent::getNoteEventCategory()), categoryMap.end());
+        EXPECT_NE(categoryMap.find(bw_music::PercussionEvent::getPercussionEventCategory()), categoryMap.end());
 
         auto span = bw_music::iterateOver<bw_music::PercussionEvent>(track);
 
@@ -233,12 +233,12 @@ TEST_P(SmfTrackAllocationPercussionTest, trackAllocation) {
             auto categoryMap = track.getNumEventGroupsByCategory();
 
             if (testData.m_hasNotes[i]) {
-                ASSERT_NE(categoryMap.find(bw_music::NoteEvent::s_noteEventCategory), categoryMap.end());
-                EXPECT_EQ(categoryMap.find(bw_music::NoteEvent::s_noteEventCategory)->second, 1);
-                EXPECT_EQ(categoryMap.find(bw_music::PercussionEvent::s_percussionEventCategory), categoryMap.end());
+                ASSERT_NE(categoryMap.find(bw_music::NoteEvent::getNoteEventCategory()), categoryMap.end());
+                EXPECT_EQ(categoryMap.find(bw_music::NoteEvent::getNoteEventCategory())->second, 1);
+                EXPECT_EQ(categoryMap.find(bw_music::PercussionEvent::getPercussionEventCategory()), categoryMap.end());
             } else {
-                EXPECT_EQ(categoryMap.find(bw_music::NoteEvent::s_noteEventCategory), categoryMap.end());
-                ASSERT_NE(categoryMap.find(bw_music::PercussionEvent::s_percussionEventCategory), categoryMap.end());
+                EXPECT_EQ(categoryMap.find(bw_music::NoteEvent::getNoteEventCategory()), categoryMap.end());
+                ASSERT_NE(categoryMap.find(bw_music::PercussionEvent::getPercussionEventCategory()), categoryMap.end());
 
                 std::vector<babelwires::ShortId> instrumentsInTrack;
                 for (auto event : bw_music::iterateOver<bw_music::PercussionOnEvent>(track)) {

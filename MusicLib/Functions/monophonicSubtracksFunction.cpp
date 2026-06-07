@@ -40,8 +40,6 @@ namespace {
 
     using PitchSet = std::set<bw_music::TrackEvent::GroupKey::GroupValue>;
 
-    const bw_music::TrackEvent::GroupKey::Category c_noteCategory = bw_music::NoteEvent::s_noteEventCategory;
-
     void moveEventToOtherTrack(bw_music::ModelDuration& timeSinceLastEventOther, bw_music::TrackEventHolder& event,
                                TrackBuilders& result) {
         event->setTimeSinceLastEvent(timeSinceLastEventOther);
@@ -87,7 +85,7 @@ namespace {
         int trackToUse = -1;
         bool shouldEvict = false;
         const auto& groupInfo = event->getGroupingInfo();
-        assert(groupInfo.m_groupKey.m_category == c_noteCategory);
+        assert(groupInfo.m_groupKey.m_category == bw_music::NoteEvent::getNoteEventCategory());
         for (int i = 0; i < trackInfos.size(); ++i) {
             auto& t = trackInfos[i];
             if (t.m_activeValue == groupInfo.m_groupKey.m_groupValue) {
@@ -191,7 +189,7 @@ babelwires::ResultT<bw_music::MonophonicSubtracksResult> bw_music::getMonophonic
         }
 
         const TrackEvent::GroupingInfo groupInfo = event.getGroupingInfo();
-        if (groupInfo.m_groupKey.m_category == c_noteCategory) {
+        if (groupInfo.m_groupKey.m_category == bw_music::NoteEvent::getNoteEventCategory()) {
             NoteEventInfo& noteInfo = noteEventsNow.emplace_back();
             noteInfo.m_event = event;
             noteInfo.m_originalIndex = noteEventsNow.size() - 1;

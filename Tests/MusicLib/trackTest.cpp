@@ -7,8 +7,11 @@
 #include <Tests/TestUtils/seqTestUtils.hpp>
 #include <Tests/TestUtils/testTrackEvents.hpp>
 
+#include <Tests/TestUtils/testLog.hpp>
 
 TEST(Track, Simple) {
+    testUtils::TestLog log;
+
     bw_music::UnsafeTrack track;
     const size_t hashWhenEmpty = track.getHash();
 
@@ -41,6 +44,8 @@ TEST(Track, Simple) {
 }
 
 TEST(Track, BlocksAndAlignment) {
+    testUtils::TestLog log;
+
     EXPECT_NE(testUtils::TestTrackEvent(1).getSize(), testUtils::BigTestTrackEvent(1).getSize());
     EXPECT_NE(testUtils::TestTrackEvent(1).getAlignment(), testUtils::BigTestTrackEvent(1).getAlignment());
 
@@ -70,6 +75,8 @@ TEST(Track, BlocksAndAlignment) {
 }
 
 TEST(Track, PayloadTest) {
+    testUtils::TestLog log;
+
     int counter = 0;
 
     {
@@ -86,6 +93,8 @@ TEST(Track, PayloadTest) {
 }
 
 TEST(Track, equality) {
+    testUtils::TestLog log;
+
     bw_music::UnsafeTrack emptyTrack0;
     bw_music::UnsafeTrack emptyTrack1;
     bw_music::UnsafeTrack emptyTrackWithPositiveDuration;

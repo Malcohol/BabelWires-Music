@@ -15,6 +15,8 @@
 #include <Tests/TestUtils/resultTestUtils.hpp>
 
 TEST(ExcerptProcessorTest, funcSimple) {
+    testUtils::TestLog log;
+
     bw_music::TrackBuilder trackIn;
 
     testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65, 67, 69, 71, 72}, trackIn);
@@ -25,6 +27,8 @@ TEST(ExcerptProcessorTest, funcSimple) {
 }
 
 TEST(ExcerptProcessorTest, funcEmptyBefore) {
+    testUtils::TestLog log;
+
     bw_music::TrackBuilder trackIn;
     bw_music::NoteOnEvent note(10, 64, 100);
     trackIn.addEvent(note);
@@ -36,6 +40,8 @@ TEST(ExcerptProcessorTest, funcEmptyBefore) {
 }
 
 TEST(ExcerptProcessorTest, funcEmptyAfter) {
+    testUtils::TestLog log;
+
     bw_music::Track trackIn;
 
     BW_ASSERT_RESULT_ASSIGN(auto trackOut, bw_music::getTrackExcerpt(trackIn, 2, 2));
@@ -45,6 +51,8 @@ TEST(ExcerptProcessorTest, funcEmptyAfter) {
 }
 
 TEST(ExcerptProcessorTest, funcEmptyBetween) {
+    testUtils::TestLog log;
+
     bw_music::TrackBuilder trackIn;
     bw_music::NoteOnEvent noteOn(1, 64, 100);
     trackIn.addEvent(noteOn);
@@ -58,6 +66,8 @@ TEST(ExcerptProcessorTest, funcEmptyBetween) {
 }
 
 TEST(ExcerptProcessorTest, funcDropSpanningGroup) {
+    testUtils::TestLog log;
+
     bw_music::TrackBuilder trackIn;
     bw_music::NoteOnEvent noteOn(1, 40, 100);
     trackIn.addEvent(noteOn);
@@ -71,6 +81,7 @@ TEST(ExcerptProcessorTest, funcDropSpanningGroup) {
 }
 
 TEST(ExcerptProcessorTest, funcDropInitialGroup) {
+    testUtils::TestLog log;
     bw_music::TrackBuilder trackIn;
 
     bw_music::NoteOnEvent noteOn(1, 40, 100);
@@ -89,6 +100,8 @@ TEST(ExcerptProcessorTest, funcDropInitialGroup) {
 }
 
 TEST(ExcerptProcessorTest, funcGaps) {
+    testUtils::TestLog log;
+
     bw_music::TrackBuilder trackIn;
 
     testUtils::addSimpleNotes(std::vector<bw_music::Pitch>{60, 62, 64, 65, 67, 69, 71, 72}, trackIn);

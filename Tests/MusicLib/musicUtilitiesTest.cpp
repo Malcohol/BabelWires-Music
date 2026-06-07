@@ -4,7 +4,11 @@
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/Types/Track/trackBuilder.hpp>
 
+#include <Tests/TestUtils/testLog.hpp>
+
 TEST(MusicUtilitiesTest, GetMinimumDenominator) {
+    testUtils::TestLog log;
+
     bw_music::TrackBuilder track;
     track.addEvent(bw_music::NoteOnEvent(babelwires::Rational(1, 4), 60, 100));
     track.addEvent(bw_music::NoteOffEvent(babelwires::Rational(1, 8), 60));
@@ -16,6 +20,8 @@ TEST(MusicUtilitiesTest, GetMinimumDenominator) {
 }
 
 TEST(MusicUtilitiesTest, TransposePitch) {
+    testUtils::TestLog log;
+
     using namespace bw_music;
 
     // Test transposing within range

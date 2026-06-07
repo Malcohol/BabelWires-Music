@@ -9,6 +9,8 @@
 
 #include <MusicLib/Types/Track/track.hpp>
 
+#include <BaseLib/Identifiers/identifierRegistry.hpp>
+
 #include <QString>
 
 #include <cassert>
@@ -23,11 +25,13 @@ QString bw_musicUi::TrackValueModel::getTooltip() const {
     const bw_music::Track& track = getValue()->as<bw_music::Track>();
     const auto& numEventGroupsByCategory = track.getNumEventGroupsByCategory();
     if (!numEventGroupsByCategory.empty()) {
+        auto identifierRegistry = babelwires::IdentifierRegistry::read();
         QString summary;
         const char* delim = "";
         for (auto p : numEventGroupsByCategory) {
             summary += delim;
-            summary += QString("%1: %2").arg(p.first, QString::number(p.second));
+            summary += QString("%1: %2").arg(
+                QString::fromStdString(identifierRegistry->getName(p.first)), QString::number(p.second));
             delim = "\n";
         }
         return summary;

@@ -8,16 +8,20 @@
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 
 #include <BaseLib/Hash/hash.hpp>
+#include <BaseLib/Identifiers/registeredIdentifier.hpp>
 
 #include <algorithm>
 #include <sstream>
 
-bw_music::TrackEvent::GroupKey::Category bw_music::NoteEvent::s_noteEventCategory = "Notes";
+bw_music::TrackEvent::GroupKey::Category bw_music::NoteEvent::getNoteEventCategory() {
+    return BW_SHORT_ID("Notes", "Notes", "b4303406-2c1d-477d-ae0e-7db718096c4d");
+}
 
 void bw_music::NoteOnEvent::createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const {
     // Create a NoteOffEvent with the same pitch.
     // Use the default NoteOffEvent velocity unless the NoteOnEvent's velocity is lower.
-    dest = NoteOffEvent(timeSinceLastEvent, m_pitch, std::min(m_velocity, static_cast<Velocity>(NoteOffEvent::c_defaultVelocity)));
+    dest = NoteOffEvent(timeSinceLastEvent, m_pitch,
+                        std::min(m_velocity, static_cast<Velocity>(NoteOffEvent::c_defaultVelocity)));
 }
 
 bool bw_music::NoteEvent::transpose(int pitchOffset, TransposeOutOfRangePolicy outOfRangePolicy) {
@@ -35,7 +39,7 @@ std::size_t bw_music::NoteOnEvent::getHash() const {
 }
 
 bw_music::TrackEvent::GroupingInfo bw_music::NoteOnEvent::getGroupingInfo() const {
-    return {s_noteEventCategory, m_pitch, GroupRole::StartOfGroup};
+    return {getNoteEventCategory(), m_pitch, GroupRole::StartOfGroup};
 }
 
 std::size_t bw_music::NoteOffEvent::getHash() const {
@@ -43,11 +47,10 @@ std::size_t bw_music::NoteOffEvent::getHash() const {
 }
 
 bw_music::TrackEvent::GroupingInfo bw_music::NoteOffEvent::getGroupingInfo() const {
-    return {s_noteEventCategory, m_pitch, GroupRole::EndOfGroup};
+    return {getNoteEventCategory(), m_pitch, GroupRole::EndOfGroup};
 }
 
 bool bw_music::NoteEvent::doIsEqualTo(const TrackEvent& other) const {
     auto& otherNote = static_cast<const NoteEvent&>(other);
-    return TrackEvent::doIsEqualTo(other) && (m_pitch == otherNote.m_pitch) &&
-           (m_velocity == otherNote.m_velocity);
+    return TrackEvent::doIsEqualTo(other) && (m_pitch == otherNote.m_pitch) && (m_velocity == otherNote.m_velocity);
 }

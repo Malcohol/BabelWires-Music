@@ -11,6 +11,7 @@
 
 #include <BaseLib/BlockStream/blockStream.hpp>
 #include <BaseLib/Cloning/cloneable.hpp>
+#include <BaseLib/Identifiers/identifier.hpp>
 #include <BaseLib/Utilities/enumFlags.hpp>
 #include <BaseLib/Utilities/queryableInterfaceProvider.hpp>
 
@@ -69,15 +70,15 @@ namespace bw_music {
         /// For example, a noteOn event, a sequence of after-touch events, and a noteOff event,
         /// all of the same pitch.
         struct MUSICLIB_API GroupKey {
-            /// A pointer to a static string can act as a category.
-            using Category = const char*;
+            /// A resolved identifier gives a stable category identity and lookupable display name.
+            using Category = babelwires::ShortId;
 
             /// A category that can be used for events of no particular category.
-            static Category s_genericCategory;
+            static Category getGenericCategory();
 
             /// Categories are used to identify events which have the same grouping logic.
             /// E.g. notes or chords.
-            Category m_category = s_genericCategory;
+            Category m_category;
 
             /// A type that is (hopefully) big enough to distinguish all possible event groups of the same category.
             using GroupValue = std::uint64_t;
@@ -88,7 +89,11 @@ namespace bw_music {
             /// A value which is expected to agree for all events in the same group.
             GroupValue m_groupValue = c_notAValue;
 
-            auto operator<=>(const GroupKey&) const = default;
+            bool operator==(const GroupKey&) const = default;
+
+            bool operator<(const GroupKey& other) const {
+                return std::tie(m_category, m_groupValue) < std::tie(other.m_category, other.m_groupValue);
+            }
         };
 
         /// The GroupKey and GroupRole information for an event.
