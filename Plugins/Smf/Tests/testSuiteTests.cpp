@@ -22,6 +22,8 @@ TEST(SmfTestSuiteTest, loadAllTestFilesWithoutCrashing) {
     ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
 
     int numFilesTested = 0;
+    int numSucceeded = 0;
+    int numFailed = 0;
 
     for (auto& p : std::filesystem::directory_iterator(std::filesystem::current_path())) {
         if (p.path().extension() == ".mid") {
@@ -30,12 +32,20 @@ TEST(SmfTestSuiteTest, loadAllTestFilesWithoutCrashing) {
             ON_ERROR(midiFile.closeOnError());
             // This test is not testing that the files are correctly parsed, just that they don't cause crashes or
             // exceptions.
-            (void)smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+            const auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+            if (result.has_value()) {
+                ++numSucceeded;
+            } else {
+                ++numFailed;
+            }
             midiFile.close();
         }
     }
 
     EXPECT_GT(numFilesTested, 0);
+    EXPECT_GT(numSucceeded, 0);
+    EXPECT_GT(numFailed, 0);
+    EXPECT_EQ(numFilesTested, numSucceeded + numFailed);
 }
 
 namespace {
