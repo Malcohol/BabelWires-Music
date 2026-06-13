@@ -14,7 +14,7 @@
 #include <sstream>
 
 bw_music::TrackEvent::GroupKey::Category bw_music::NoteEvent::getNoteEventCategory() {
-    return BW_SHORT_ID("Notes", "Notes", "b4303406-2c1d-477d-ae0e-7db718096c4d");
+    return BW_MEDIUM_ID("Notes", "Notes", "b4303406-2c1d-477d-ae0e-7db718096c4d");
 }
 
 void bw_music::NoteOnEvent::createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const {

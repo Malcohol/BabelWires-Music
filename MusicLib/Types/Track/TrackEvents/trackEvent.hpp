@@ -71,7 +71,7 @@ namespace bw_music {
         /// all of the same pitch.
         struct MUSICLIB_API GroupKey {
             /// A resolved identifier gives a stable category identity and lookupable display name.
-            using Category = babelwires::ShortId;
+            using Category = babelwires::MediumId;
 
             /// A category that can be used for events of no particular category.
             static Category getGenericCategory();

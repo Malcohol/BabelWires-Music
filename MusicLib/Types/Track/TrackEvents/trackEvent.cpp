@@ -11,7 +11,7 @@
 #include <BaseLib/Identifiers/registeredIdentifier.hpp>
 
 bw_music::TrackEvent::GroupKey::Category bw_music::TrackEvent::GroupKey::getGenericCategory() {
-    return BW_SHORT_ID("Genric", "Generic", "3908254a-c900-4426-96c4-34273eb8238d");
+    return BW_MEDIUM_ID("Generic", "Generic", "3908254a-c900-4426-96c4-34273eb8238d");
 }
 
 std::size_t bw_music::TrackEvent::getHash() const {

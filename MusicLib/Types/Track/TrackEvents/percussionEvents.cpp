@@ -15,7 +15,7 @@
 #include <algorithm>
 
 bw_music::TrackEvent::GroupKey::Category bw_music::PercussionEvent::getPercussionEventCategory() {
-    return BW_SHORT_ID("Perc", "Percussion", "ec551665-cb7f-404a-9219-401a7624a1f6");
+    return BW_MEDIUM_ID("Percussion", "Percussion", "ec551665-cb7f-404a-9219-401a7624a1f6");
 }
 
 void bw_music::PercussionOnEvent::createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const {

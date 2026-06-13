@@ -13,7 +13,7 @@
 #include <sstream>
 
 bw_music::TrackEvent::GroupKey::Category bw_music::ChordEvent::getChordEventCategory() {
-    return BW_SHORT_ID("Chords", "Chords", "4f338e52-ac8e-422e-b3c5-143f84ccfcdd");
+    return BW_MEDIUM_ID("Chords", "Chords", "4f338e52-ac8e-422e-b3c5-143f84ccfcdd");
 }
 
 void bw_music::ChordOnEvent::createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const {
