@@ -95,16 +95,17 @@ void smf::SmfWriter::writeTempoEvent(int bpm) {
     writeUint24(d);
 }
 
-void smf::SmfWriter::writeTextMetaEvent(int type, std::string text) {
+void smf::SmfWriter::writeTextMetaEvent(int type, const babelwires::Text& text) {
     assert((0 <= type) && (type <= 15) && "Type is out-of-range.");
     babelwires::Byte t = type;
     m_os->put(0x00u);
     m_os->put(0xffu);
     m_os->put(t);
-    writeVariableLengthQuantity(text.length());
 
-    // TODO assert text is ASCII.
-    *m_os << text;
+    const std::string asciiText = text.tryToPrintableAscii();
+    writeVariableLengthQuantity(asciiText.length());
+
+    *m_os << asciiText;
 }
 
 smf::SmfSequence::ConstInstance smf::SmfWriter::getSmfSequenceConst() const {
@@ -262,12 +263,12 @@ void smf::SmfWriter::writeGlobalSetup() {
     }
 
     if (const auto& copyright = metadata.tryGetCopyR()) {
-        if (!copyright->get().empty()) {
+        if (!copyright->get().getData().empty()) {
             writeTextMetaEvent(2, copyright->get());
         }
     }
     if (const auto& sequenceOrTrackName = metadata.tryGetName()) {
-        if (!sequenceOrTrackName->get().empty()) {
+        if (!sequenceOrTrackName->get().getData().empty()) {
             writeTextMetaEvent(3, sequenceOrTrackName->get());
         }
     }

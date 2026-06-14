@@ -15,9 +15,9 @@
 #include <MusicLib/Types/Track/TrackEvents/percussionEvents.hpp>
 #include <MusicLib/Types/Track/trackBuilder.hpp>
 
-#include <BaseLib/Context/context.hpp>
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/File/fileTypeT.hpp>
+#include <BaseLib/Context/context.hpp>
 
 #include <BaseLib/Log/debugLogger.hpp>
 #include <BaseLib/Result/result.hpp>
@@ -44,7 +44,8 @@ smf::SmfParser::SmfParser(babelwires::DataSource& dataSource, const babelwires::
     , m_standardPercussionSets(context) {
 
     m_result = std::make_unique<babelwires::ValueTreeRoot>(
-        context.get<babelwires::TypeSystem>(), babelwires::FileTypeT<SmfSequence>::getType(context.get<babelwires::TypeSystem>()));
+        context.get<babelwires::TypeSystem>(),
+        babelwires::FileTypeT<SmfSequence>::getType(context.get<babelwires::TypeSystem>()));
     m_result->setToDefault();
 }
 
@@ -138,13 +139,23 @@ babelwires::ResultT<bw_music::ModelDuration> smf::SmfParser::readModelDuration()
     return bw_music::ModelDuration(numDivisions) * bw_music::ModelDuration(1, m_division * 4);
 }
 
-babelwires::ResultT<std::string> smf::SmfParser::readTextMetaEvent(int length) {
-    std::vector<char> text;
+babelwires::ResultT<babelwires::Text> smf::SmfParser::readTextMetaEvent(int length) {
+    std::string text;
+    text.reserve(length);
     for (int i = 0; i < length; ++i) {
         ASSIGN_OR_ERROR(const babelwires::Byte c, getNext());
         text.push_back(c);
     }
-    return std::string(text.data(), length);
+    // There's probably no ideal way to handle this. Quoting from the Standard MIDI File Specification:
+    // "The text in this event should be printable ASCII characters for maximum
+    // interchange. However, other character codes using the high-order bit may be used for
+    // interchange of files between different programs on the same computer which supports
+    // an extended character set. Programs on a computer which does not support non-ASCII
+    // characters should ignore those characters." Unfortunately, there's no way to know how
+    // to interpret the non-ASCII characters. It may be possible to use other context (e.g. sys-ex)
+    // to determine the character set, and then convert to UTF-8. For now we just assume
+    // the set of printable ASCII characters.
+    return babelwires::Text::tryFromPrintableAscii(text);
 }
 
 babelwires::Result smf::SmfParser::readHeaderChunk() {
@@ -619,13 +630,13 @@ babelwires::Result smf::SmfParser::readTrack(int trackIndex, TrackSplitter& trac
                         }
                         case 0x01: // Text event
                         {
-                            ASSIGN_OR_ERROR(const auto text, readTextMetaEvent(length));
-                            babelwires::logDebug() << "Ignored meta-event! Text event: " << text;
+                            ASSIGN_OR_ERROR(const babelwires::Text text, readTextMetaEvent(length));
+                            babelwires::logDebug() << "Ignored meta-event! Text event: " << text.toUtf8();
                             break;
                         }
                         case 0x02: // Copyright
                         {
-                            ASSIGN_OR_ERROR(std::string text, readTextMetaEvent(length));
+                            ASSIGN_OR_ERROR(const babelwires::Text text, readTextMetaEvent(length));
                             if (hasMainMetadata) {
                                 getMidiMetadata().activateAndGetCopyR().set(text);
                             }
@@ -633,7 +644,7 @@ babelwires::Result smf::SmfParser::readTrack(int trackIndex, TrackSplitter& trac
                         }
                         case 0x03: // Sequence or track name.
                         {
-                            ASSIGN_OR_ERROR(std::string text, readTextMetaEvent(length));
+                            ASSIGN_OR_ERROR(const babelwires::Text text, readTextMetaEvent(length));
                             if (hasMainMetadata) {
                                 getMidiMetadata().activateAndGetName().set(text);
                             }
@@ -641,26 +652,26 @@ babelwires::Result smf::SmfParser::readTrack(int trackIndex, TrackSplitter& trac
                         }
                         case 0x04: // Instrument name
                         {
-                            ASSIGN_OR_ERROR(const auto text, readTextMetaEvent(length));
-                            babelwires::logDebug() << "Ignored MIDI Event! Instrument name: " << text;
+                            ASSIGN_OR_ERROR(const babelwires::Text text, readTextMetaEvent(length));
+                            babelwires::logDebug() << "Ignored MIDI Event! Instrument name: " << text.toUtf8();
                             break;
                         }
                         case 0x05: // Lyric
                         {
-                            ASSIGN_OR_ERROR(const auto text, readTextMetaEvent(length));
-                            babelwires::logDebug() << "Ignored meta-event! Lyric: " << text;
+                            ASSIGN_OR_ERROR(const babelwires::Text text, readTextMetaEvent(length));
+                            babelwires::logDebug() << "Ignored meta-event! Lyric: " << text.toUtf8();
                             break;
                         }
                         case 0x06: // Marker
                         {
-                            ASSIGN_OR_ERROR(const auto text, readTextMetaEvent(length));
-                            babelwires::logDebug() << "Ignored meta-event! Marker: " << text;
+                            ASSIGN_OR_ERROR(const babelwires::Text text, readTextMetaEvent(length));
+                            babelwires::logDebug() << "Ignored meta-event! Marker: " << text.toUtf8();
                             break;
                         }
                         case 0x07: // Cue point
                         {
-                            ASSIGN_OR_ERROR(const auto text, readTextMetaEvent(length));
-                            babelwires::logDebug() << "Ignored meta-event! Cue point: " << text;
+                            ASSIGN_OR_ERROR(const babelwires::Text text, readTextMetaEvent(length));
+                            babelwires::logDebug() << "Ignored meta-event! Cue point: " << text.toUtf8();
                             break;
                         }
                         case 0x20: // Channel prefix

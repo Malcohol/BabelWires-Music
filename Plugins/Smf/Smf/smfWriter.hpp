@@ -50,7 +50,7 @@ namespace smf {
         void writeTempoEvent(int bpm);
 
         /// type is the integer 0..15 which defines which type of text meta-event should be issued.
-        void writeTextMetaEvent(int type, std::string text);
+        void writeTextMetaEvent(int type, const babelwires::Text& text);
 
         using ChannelAndTrack = std::tuple<unsigned int, const bw_music::Track*>;
 
