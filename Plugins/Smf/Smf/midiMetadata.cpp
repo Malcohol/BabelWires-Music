@@ -12,7 +12,7 @@
 #include <MusicLib/Types/tempo.hpp>
 
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
-#include <BabelWiresLib/Types/String/textType.hpp>
+#include <BabelWiresLib/Types/Text/textType.hpp>
 
 #include <BaseLib/Identifiers/registeredIdentifier.hpp>
 
