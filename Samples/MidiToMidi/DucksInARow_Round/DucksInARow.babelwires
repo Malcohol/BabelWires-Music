@@ -99,7 +99,7 @@ project:
           - !assignFrom {path: Conts'1/Meta'1, sourceId: 15, sourcePath: Conts'1/Meta'1}
           - !assign
             path: Conts'1/Meta'1/Name'1
-            value: !string {value: Ducks in a Row (Round)}
+            value: !text {value: Ducks in a Row (Round)}
           - !selectOptionals
             path: Conts'1/Trcks0'1
             optionals:
@@ -161,6 +161,6 @@ serializationMetadata:
   - !serializable {type: rational, version: 1}
   - !serializable {type: selectOptionals, version: 1}
   - !serializable {type: sourceFile, version: 1}
-  - !serializable {type: string, version: 1}
+  - !serializable {type: text, version: 1}
   - !serializable {type: targetFile, version: 1}
   - !serializable {type: uiData, version: 1}
