@@ -71,9 +71,9 @@ TEST(SmfTestSuiteTest, cMajorScale) {
 
     const auto& metadata = smfSequence.getMeta();
     ASSERT_TRUE(metadata.tryGetName().has_value());
-    EXPECT_EQ(metadata.tryGetName()->get(), "C Major Scale Test");
+    EXPECT_EQ(metadata.tryGetName()->get(), u8"C Major Scale Test");
     ASSERT_TRUE(metadata.tryGetCopyR().has_value());
-    EXPECT_EQ(metadata.tryGetCopyR()->get(), "https://jazz-soft.net");
+    EXPECT_EQ(metadata.tryGetCopyR()->get(), u8"https://jazz-soft.net");
 
     auto tracks = smfSequence.getTrcks0();
     EXPECT_EQ(tracks->getNumChildren(), 1);
@@ -109,7 +109,7 @@ TEST(SmfTestSuiteTest, multichannelChords0) {
 
     const auto& metadata = smfSequence.getMeta();
     ASSERT_TRUE(metadata.tryGetName().has_value());
-    EXPECT_EQ(metadata.tryGetName()->get(), "Multi-channel chords Test 0");
+    EXPECT_EQ(metadata.tryGetName()->get(), u8"Multi-channel chords Test 0");
 
     auto tracks = smfSequence.getTrcks0();
     EXPECT_EQ(tracks->getNumChildren(), 3);
@@ -138,7 +138,7 @@ TEST(SmfTestSuiteTest, multichannelChords1) {
 
     const auto& metadata = smfSequence.getMeta();
     ASSERT_TRUE(metadata.tryGetName().has_value());
-    EXPECT_EQ(metadata.tryGetName()->get(), "Multi-channel chords Test 1");
+    EXPECT_EQ(metadata.tryGetName()->get(), u8"Multi-channel chords Test 1");
 
     auto tracks = smfSequence.getTrcks1();
     ASSERT_EQ(tracks.getSize(), 3);
@@ -174,7 +174,7 @@ TEST(SmfTestSuiteTest, multichannelChords2) {
 
     const auto& metadata = smfSequence.getMeta();
     ASSERT_TRUE(metadata.tryGetName().has_value());
-    EXPECT_EQ(metadata.tryGetName()->get(), "Multi-channel chords Test 2");
+    EXPECT_EQ(metadata.tryGetName()->get(), u8"Multi-channel chords Test 2");
 
     auto tracks = smfSequence.getTrcks1();
     ASSERT_EQ(tracks.getSize(), 2);
@@ -215,7 +215,7 @@ TEST(SmfTestSuiteTest, multichannelChords3) {
 
     const auto& metadata = smfSequence.getMeta();
     ASSERT_TRUE(metadata.tryGetName().has_value());
-    EXPECT_EQ(metadata.tryGetName()->get(), "Multi-channel chords Test 3");
+    EXPECT_EQ(metadata.tryGetName()->get(), u8"Multi-channel chords Test 3");
 
     const int expectedChannelMapping[] = {0, 1, 0};
 
@@ -277,7 +277,7 @@ TEST(SmfTestSuiteTest, tempoTest) {
 
     const auto& metadata = smfSequence.getMeta();
     ASSERT_TRUE(metadata.tryGetName().has_value());
-    EXPECT_EQ(metadata.tryGetName()->get(), "Karaoke .KAR Test");
+    EXPECT_EQ(metadata.tryGetName()->get(), u8"Karaoke .KAR Test");
     ASSERT_TRUE(metadata.tryGetTempo().has_value());
     EXPECT_EQ(metadata.tryGetTempo()->get(), 90);
 }

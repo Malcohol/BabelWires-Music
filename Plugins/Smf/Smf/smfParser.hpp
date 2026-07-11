@@ -16,6 +16,7 @@
 #include <BaseLib/IO/dataSource.hpp>
 #include <BaseLib/Log/userLogger.hpp>
 #include <BaseLib/Result/result.hpp>
+#include <BaseLib/Text/text.hpp>
 
 #include <cstdint>
 #include <memory>
@@ -66,7 +67,7 @@ namespace smf {
 
         void readTempoEvent(std::uint32_t tempoValue);
 
-        babelwires::ResultT<std::string> readTextMetaEvent(int length);
+        babelwires::ResultT<babelwires::Text> readTextMetaEvent(int length);
 
         babelwires::Result skipBytes(int numBytes);
 

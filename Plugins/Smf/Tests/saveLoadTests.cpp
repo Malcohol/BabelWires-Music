@@ -79,10 +79,10 @@ namespace {
         auto metadata = smfType.getMeta();
 
         if (flags & HAS_SEQUENCE_NAME) {
-            metadata.activateAndGetName().set("Test Sequence Name");
+            metadata.activateAndGetName().set(u8"Test Sequence Name");
         }
         if (flags & HAS_COPYRIGHT) {
-            metadata.activateAndGetCopyR().set("(C)2021 Test Copyright");
+            metadata.activateAndGetCopyR().set(u8"(C)2021 Test Copyright");
         }
         if (flags & HAS_TEMPO) {
             metadata.activateAndGetTempo().set(100);
@@ -94,11 +94,11 @@ namespace {
 
         if (flags & HAS_SEQUENCE_NAME) {
             ASSERT_TRUE(metadata.tryGetName());
-            EXPECT_EQ(metadata.tryGetName()->get(), "Test Sequence Name");
+            EXPECT_EQ(metadata.tryGetName()->get(), u8"Test Sequence Name");
         }
         if (flags & HAS_COPYRIGHT) {
             ASSERT_TRUE(metadata.tryGetCopyR());
-            EXPECT_EQ(metadata.tryGetCopyR()->get(), "(C)2021 Test Copyright");
+            EXPECT_EQ(metadata.tryGetCopyR()->get(), u8"(C)2021 Test Copyright");
         }
         if (flags & HAS_TEMPO) {
             ASSERT_TRUE(metadata.tryGetTempo());
