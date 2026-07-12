@@ -9,6 +9,7 @@
 
 #include <Smf/Percussion/standardPercussionSets.hpp>
 #include <Smf/smfSequence.hpp>
+#include <Smf/smfTempoTrackEvent.hpp>
 
 #include <MusicLib/musicTypes.hpp>
 
@@ -47,6 +48,8 @@ namespace smf {
         WriteTrackEventResult writeTrackEvent(int channelNumber, bw_music::ModelDuration timeSinceLastEvent,
                                               const bw_music::TrackEvent& e);
 
+        bool writeGlobalTrackEvent(bw_music::ModelDuration timeSinceLastEvent, const bw_music::TrackEvent& e);
+
         void writeTempoEvent(int bpm);
 
         /// type is the integer 0..15 which defines which type of text meta-event should be issued.
@@ -56,15 +59,16 @@ namespace smf {
 
         void applyToAllTracks(std::function<void(unsigned int, const bw_music::Track&)> function);
 
-        void writeNotes(const std::vector<ChannelAndTrack>& tracks);
+        void writeTrackEvents(const std::vector<ChannelAndTrack>& tracks, const bw_music::Track* globalTrack);
 
         void writeHeaderChunk(unsigned int numTracks);
 
         /// Write the events for the given track.
-        void writeTrack(const std::vector<ChannelAndTrack>& tracks, bool includeGlobalSetup);
+        void writeTrack(const std::vector<ChannelAndTrack>& tracks, bool includeGlobalSetup,
+            const bw_music::Track* globalTrack);
 
         /// Write non-channel-specific setup information.
-        void writeGlobalSetup();
+        void writeGlobalSetup(bool emitTempoFallback);
 
         /// Determine from the events in the tracks what percussion kit (allowed for the channelNumber) includes the
         /// largest number of the events.

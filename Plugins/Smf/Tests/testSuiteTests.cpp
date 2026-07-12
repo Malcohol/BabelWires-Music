@@ -3,6 +3,7 @@
 #include <Smf/Percussion/gm2StandardPercussionSet.hpp>
 #include <Smf/libRegistration.hpp>
 #include <Smf/smfParser.hpp>
+#include <Smf/smfTempoTrackEvent.hpp>
 
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/percussionEvents.hpp>
@@ -280,6 +281,14 @@ TEST(SmfTestSuiteTest, tempoTest) {
     EXPECT_EQ(metadata.tryGetName()->get(), u8"Karaoke .KAR Test");
     ASSERT_TRUE(metadata.tryGetTempo().has_value());
     EXPECT_EQ(metadata.tryGetTempo()->get(), 90);
+
+    const auto& globalTrack = smfSequence.getGlobal().get();
+    auto [tempoBegin, tempoEnd] = bw_music::iterateOver<smf::TempoTrackEvent>(globalTrack);
+    ASSERT_NE(tempoBegin, tempoEnd);
+    EXPECT_EQ(tempoBegin->getBpm(), 90);
+    EXPECT_EQ(tempoBegin->getTimeSinceLastEvent(), 0);
+    ++tempoBegin;
+    EXPECT_EQ(tempoBegin, tempoEnd);
 }
 
 TEST(SmfTestSuiteTest, corruptFiles) {

@@ -85,7 +85,6 @@ void smf::SmfWriter::writeModelDuration(const bw_music::ModelDuration& d) {
 }
 
 void smf::SmfWriter::writeTempoEvent(int bpm) {
-    m_os->put(0x00u);
     m_os->put(0xffu);
     m_os->put(0x51u);
     m_os->put(0x03u);
@@ -98,7 +97,6 @@ void smf::SmfWriter::writeTempoEvent(int bpm) {
 void smf::SmfWriter::writeTextMetaEvent(int type, const babelwires::Text& text) {
     assert((0 <= type) && (type <= 15) && "Type is out-of-range.");
     babelwires::Byte t = type;
-    m_os->put(0x00u);
     m_os->put(0xffu);
     m_os->put(t);
 
@@ -129,6 +127,7 @@ void smf::SmfWriter::writeHeaderChunk(unsigned int numTracks) {
         applyToAllTracks([&division](unsigned int channelNumber, const bw_music::Track& track) {
             division = babelwires::lcm(division, bw_music::getMinimumDenominator(track));
         });
+        division = babelwires::lcm(division, bw_music::getMinimumDenominator(smfType.getGlobal().get()));
         m_division = division;
     }
 
@@ -183,7 +182,16 @@ smf::SmfWriter::WriteTrackEventResult smf::SmfWriter::writeTrackEvent(int channe
     return WriteTrackEventResult::WrongCategory;
 }
 
-void smf::SmfWriter::writeNotes(const std::vector<ChannelAndTrack>& tracks) {
+bool smf::SmfWriter::writeGlobalTrackEvent(bw_music::ModelDuration timeSinceLastEvent, const bw_music::TrackEvent& e) {
+    if (const auto* tempo = e.tryAs<smf::TempoTrackEvent>()) {
+        writeModelDuration(timeSinceLastEvent);
+        writeTempoEvent(tempo->getBpm());
+        return true;
+    }
+    return false;
+}
+
+void smf::SmfWriter::writeTrackEvents(const std::vector<ChannelAndTrack>& tracks, const bw_music::Track* globalTrack) {
     const int numTracks = tracks.size();
 
     bw_music::ModelDuration trackDuration = 0;
@@ -198,15 +206,39 @@ void smf::SmfWriter::writeNotes(const std::vector<ChannelAndTrack>& tracks) {
         traversers.back().leastUpperBoundDuration(trackDuration);
     }
 
+    std::optional<bw_music::TrackTraverser<bw_music::FilteredTrackIterator<bw_music::TrackEvent>>> globalTraverser;
+    if (globalTrack != nullptr) {
+        globalTraverser.emplace(*globalTrack, bw_music::iterateOver<bw_music::TrackEvent>(*globalTrack));
+        globalTraverser->leastUpperBoundDuration(trackDuration);
+    }
+
     bw_music::ModelDuration timeSinceStart = 0;
     bw_music::ModelDuration timeOfLastEvent = 0;
     while (timeSinceStart < trackDuration) {
         bw_music::ModelDuration timeToNextEvent = trackDuration - timeSinceStart;
+        if (globalTraverser) {
+            globalTraverser->greatestLowerBoundNextEvent(timeToNextEvent);
+        }
         for (int i = 0; i < numTracks; ++i) {
             traversers[i].greatestLowerBoundNextEvent(timeToNextEvent);
         }
 
         bool isFirstEventAtThisTime = true;
+        if (globalTraverser) {
+            globalTraverser->advance(
+                timeToNextEvent,
+                [this, &isFirstEventAtThisTime, &timeToNextEvent, &timeOfLastEvent,
+                 &timeSinceStart](const bw_music::TrackEvent& event) {
+                    const bw_music::ModelDuration timeToThisEvent = isFirstEventAtThisTime ? timeToNextEvent : 0;
+                    if (writeGlobalTrackEvent(timeToThisEvent, event)) {
+                        timeOfLastEvent = timeSinceStart + timeToNextEvent;
+                        isFirstEventAtThisTime = false;
+                    } else {
+                        m_userLogger.logWarning() << "Global timed metadata event could not be written";
+                    }
+                });
+        }
+
         for (int i = 0; i < numTracks; ++i) {
             const unsigned int channelNumber = std::get<0>(tracks[i]);
             traversers[i].advance(timeToNextEvent, [this, &isFirstEventAtThisTime, &timeToNextEvent, &timeOfLastEvent,
@@ -226,6 +258,36 @@ void smf::SmfWriter::writeNotes(const std::vector<ChannelAndTrack>& tracks) {
         timeSinceStart += timeToNextEvent;
     }
 
+    {
+        bool isFirstEventAtThisTime = true;
+        if (globalTraverser) {
+            globalTraverser->advance(0,
+                                     [this, &isFirstEventAtThisTime, &timeOfLastEvent,
+                                      &timeSinceStart](const bw_music::TrackEvent& event) {
+                                         if (writeGlobalTrackEvent(0, event)) {
+                                             timeOfLastEvent = timeSinceStart;
+                                             isFirstEventAtThisTime = false;
+                                         } else {
+                                             m_userLogger.logWarning() << "Global timed metadata event could not be written";
+                                         }
+                                     });
+        }
+
+        for (int i = 0; i < numTracks; ++i) {
+            const unsigned int channelNumber = std::get<0>(tracks[i]);
+            traversers[i].advance(0, [this, &isFirstEventAtThisTime, &timeOfLastEvent,
+                                      &timeSinceStart, channelNumber](const bw_music::TrackEvent& event) {
+                const WriteTrackEventResult result = writeTrackEvent(channelNumber, isFirstEventAtThisTime ? 0 : 0, event);
+                if (result == WriteTrackEventResult::Written) {
+                    timeOfLastEvent = timeSinceStart;
+                    isFirstEventAtThisTime = false;
+                } else {
+                    m_userLogger.logWarning() << "Event could not be written";
+                }
+            });
+        }
+    }
+
     // End of track event.
     writeModelDuration(trackDuration - timeOfLastEvent);
 }
@@ -236,7 +298,7 @@ template <std::size_t N> void smf::SmfWriter::writeMessage(const std::array<std:
     }
 }
 
-void smf::SmfWriter::writeGlobalSetup() {
+void smf::SmfWriter::writeGlobalSetup(bool emitTempoFallback) {
     const auto& metadata = getSmfSequenceConst().getMeta();
 
     switch (metadata.getSpec().get()) {
@@ -264,27 +326,34 @@ void smf::SmfWriter::writeGlobalSetup() {
 
     if (const auto& copyright = metadata.tryGetCopyR()) {
         if (!copyright->get().getData().empty()) {
+            writeModelDuration(0);
             writeTextMetaEvent(2, copyright->get());
         }
     }
     if (const auto& sequenceOrTrackName = metadata.tryGetName()) {
         if (!sequenceOrTrackName->get().getData().empty()) {
+            writeModelDuration(0);
             writeTextMetaEvent(3, sequenceOrTrackName->get());
         }
     }
-
-    if (const auto& tempo = metadata.tryGetTempo()) {
-        writeTempoEvent(tempo->get());
+    if (emitTempoFallback) {
+        if (const auto& tempo = metadata.tryGetTempo()) {
+            writeModelDuration(0);
+            writeTempoEvent(tempo->get());
+        }
     }
 }
 
-void smf::SmfWriter::writeTrack(const std::vector<ChannelAndTrack>& tracks, bool includeGlobalSetup) {
+void smf::SmfWriter::writeTrack(const std::vector<ChannelAndTrack>& tracks, bool includeGlobalSetup,
+                                const bw_music::Track* globalTrack) {
     std::ostream* oldStream = m_os;
     std::ostringstream tempStream;
     m_os = &tempStream;
 
+    const bool hasGlobalTimedMetadata = (globalTrack != nullptr) && (globalTrack->getNumEvents() > 0);
+
     if (includeGlobalSetup) {
-        writeGlobalSetup();
+        writeGlobalSetup(!hasGlobalTimedMetadata);
     }
 
     const GMSpecType::Value gmSpec = getSmfSequenceConst().getMeta().getSpec().get();
@@ -325,7 +394,7 @@ void smf::SmfWriter::writeTrack(const std::vector<ChannelAndTrack>& tracks, bool
         }
     }
 
-    writeNotes(tracks);
+    writeTrackEvents(tracks, globalTrack);
 
     // End of track.
     m_os->put(0xffu);
@@ -336,6 +405,35 @@ void smf::SmfWriter::writeTrack(const std::vector<ChannelAndTrack>& tracks, bool
     m_os->write("MTrk", 4);
     writeUint32(static_cast<std::uint32_t>(tempStream.tellp()));
     m_os->write(tempStream.str().data(), tempStream.tellp());
+}
+
+namespace {
+    bool hasGlobalSetupMetadata(const smf::SmfSequence::ConstInstance& smfType) {
+        const auto& metadata = smfType.getMeta();
+        if (metadata.getSpec().get() != smf::GMSpecType::Value::NONE) {
+            return true;
+        }
+        if (const auto& copyright = metadata.tryGetCopyR()) {
+            if (!copyright->get().getData().empty()) {
+                return true;
+            }
+        }
+        if (const auto& sequenceOrTrackName = metadata.tryGetName()) {
+            if (!sequenceOrTrackName->get().getData().empty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool hasAnyMusicalTrackData(const std::vector<std::tuple<unsigned int, const bw_music::Track*>>& tracks) {
+        for (const auto& [channelNumber, track] : tracks) {
+            if (track->getNumEvents() > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
 void smf::SmfWriter::setUpPercussionKit(const std::unordered_set<babelwires::ShortId>& instrumentsInUse,
@@ -395,6 +493,11 @@ void smf::SmfWriter::write() {
     std::vector<ChannelAndTrack> channelAndTrackValues;
 
     const auto& smfType = getSmfSequenceConst();
+    const auto& globalTrack = smfType.getGlobal().get();
+    const bool hasGlobalTimedMetadata = globalTrack.getNumEvents() > 0;
+    const bool hasGlobalSetup = hasGlobalSetupMetadata(smfType);
+    const bool hasMetadataTempoFallback = !hasGlobalTimedMetadata && smfType.getMeta().tryGetTempo().has_value();
+    const bool emitDedicatedMetadataTrack = hasGlobalSetup || hasGlobalTimedMetadata || hasMetadataTempoFallback;
 
     if (smfType.getInstanceType().getIndexOfTag(smfType.getSelectedTag()) == 0) {
         const auto& tracks = smfType.getTrcks0();
@@ -404,22 +507,53 @@ void smf::SmfWriter::write() {
             }
         }
         writeHeaderChunk(channelAndTrackValues.size());
-        writeTrack(channelAndTrackValues, true);
+        writeTrack(channelAndTrackValues, true, &globalTrack);
     } else {
         const auto& tracks = smfType.getTrcks1();
         const int numTracks = tracks.getSize();
-        writeHeaderChunk(numTracks);
+        int numTracksToWrite = 0;
         for (int i = 0; i < numTracks; ++i) {
             channelAndTrackValues.clear();
             auto trackAndChannel = tracks.getEntry(i);
-            channelAndTrackValues.emplace_back(
-                ChannelAndTrack{trackAndChannel.getChan().get(), &trackAndChannel.getTrack().get()});
+            if (trackAndChannel.getTrack().get().getNumEvents() > 0) {
+                channelAndTrackValues.emplace_back(
+                    ChannelAndTrack{trackAndChannel.getChan().get(), &trackAndChannel.getTrack().get()});
+            }
             for (unsigned int c = 0; c < 16; ++c) {
                 if (auto extraTrack = trackAndChannel.tryGetTrack(c)) {
-                    channelAndTrackValues.emplace_back(ChannelAndTrack{c, &extraTrack->get()});
+                    if (extraTrack->get().getNumEvents() > 0) {
+                        channelAndTrackValues.emplace_back(ChannelAndTrack{c, &extraTrack->get()});
+                    }
                 }
             }
-            writeTrack(channelAndTrackValues, (i == 0));
+            if (hasAnyMusicalTrackData(channelAndTrackValues)) {
+                ++numTracksToWrite;
+            }
+        }
+
+        writeHeaderChunk(numTracksToWrite + (emitDedicatedMetadataTrack ? 1 : 0));
+
+        if (emitDedicatedMetadataTrack) {
+            writeTrack({}, true, &globalTrack);
+        }
+
+        for (int i = 0; i < numTracks; ++i) {
+            channelAndTrackValues.clear();
+            auto trackAndChannel = tracks.getEntry(i);
+            if (trackAndChannel.getTrack().get().getNumEvents() > 0) {
+                channelAndTrackValues.emplace_back(
+                    ChannelAndTrack{trackAndChannel.getChan().get(), &trackAndChannel.getTrack().get()});
+            }
+            for (unsigned int c = 0; c < 16; ++c) {
+                if (auto extraTrack = trackAndChannel.tryGetTrack(c)) {
+                    if (extraTrack->get().getNumEvents() > 0) {
+                        channelAndTrackValues.emplace_back(ChannelAndTrack{c, &extraTrack->get()});
+                    }
+                }
+            }
+            if (hasAnyMusicalTrackData(channelAndTrackValues)) {
+                writeTrack(channelAndTrackValues, false, nullptr);
+            }
         }
     }
 }

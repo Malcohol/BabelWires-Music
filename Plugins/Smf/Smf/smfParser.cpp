@@ -9,6 +9,7 @@
 
 #include <Smf/Percussion/gm2StandardPercussionSet.hpp>
 #include <Smf/Percussion/gmPercussionSet.hpp>
+#include <Smf/smfTempoTrackEvent.hpp>
 
 #include <MusicLib/Percussion/builtInPercussionInstruments.hpp>
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
@@ -211,13 +212,48 @@ babelwires::Result smf::SmfParser::parse() {
             return babelwires::Error() << "The data is not in one of the understood sequence types";
         }
     }
+    finalizeGlobalTempoTrack();
     return {};
 }
 
-void smf::SmfParser::readTempoEvent(std::uint32_t tempoValue) {
+void smf::SmfParser::readTempoEvent(int trackIndex, bw_music::ModelDuration absoluteTime, std::uint32_t tempoValue) {
     const double d = tempoValue;
     const double bpm = 60'000'000 / d;
-    getMidiMetadata().activateAndGetTempo().set(std::round(bpm));
+    const int roundedBpm = std::round(bpm);
+
+    if (auto existing = m_globalTempoEvents.find(absoluteTime); existing != m_globalTempoEvents.end()) {
+        if (existing->second.m_trackIndex == trackIndex) {
+            m_userLogger.logWarning()
+                << "Multiple tempo events at the same tick in SMF track " << trackIndex
+                << "; using the last event in stream order";
+            existing->second.m_bpm = roundedBpm;
+        } else {
+            m_userLogger.logWarning()
+                << "Conflicting simultaneous tempo events in multiple SMF1 tracks; using the lower-numbered track";
+            if (existing->second.m_trackIndex < trackIndex) {
+                return;
+            }
+            existing->second = {trackIndex, roundedBpm};
+        }
+    } else {
+        m_globalTempoEvents.emplace(absoluteTime, NormalizedTempoEvent{trackIndex, roundedBpm});
+    }
+
+    getMidiMetadata().activateAndGetTempo().set(roundedBpm);
+}
+
+void smf::SmfParser::finalizeGlobalTempoTrack() {
+    if (m_globalTempoEvents.empty()) {
+        return;
+    }
+
+    bw_music::TrackBuilder globalTrack;
+    bw_music::ModelDuration timeOfLastEvent = 0;
+    for (const auto& [absoluteTime, tempo] : m_globalTempoEvents) {
+        globalTrack.addEvent(smf::TempoTrackEvent{absoluteTime - timeOfLastEvent, tempo.m_bpm});
+        timeOfLastEvent = absoluteTime;
+    }
+    getSmfSequence().getGlobal().set(globalTrack.finishAndGetTrack());
 }
 
 class smf::SmfParser::TrackSplitter {
@@ -568,11 +604,13 @@ babelwires::Result smf::SmfParser::readTrack(int trackIndex, TrackSplitter& trac
     const int currentIndex = m_dataSource.getAbsolutePosition();
 
     bw_music::ModelDuration timeSinceLastNoteEvent = 0;
+    bw_music::ModelDuration timeSinceTrackStart = 0;
     babelwires::Byte lastStatusByte = 0;
     while ((m_dataSource.getAbsolutePosition() - currentIndex) < trackLength) {
         {
             ASSIGN_OR_ERROR(const auto duration, readModelDuration());
             timeSinceLastNoteEvent += duration;
+            timeSinceTrackStart += duration;
         }
 
         // Peek in case running status should be used.
@@ -712,9 +750,7 @@ babelwires::Result smf::SmfParser::readTrack(int trackIndex, TrackSplitter& trac
                                                             length));
                             } else {
                                 ASSIGN_OR_ERROR(const std::uint32_t tempoValue, readU24());
-                                if (hasMainMetadata) {
-                                    readTempoEvent(tempoValue);
-                                }
+                                readTempoEvent(trackIndex, timeSinceTrackStart, tempoValue);
                             }
                             break;
                         }
@@ -856,10 +892,10 @@ babelwires::Result smf::SmfParser::readFormat0Sequence() {
     return {};
 }
 
-babelwires::Result smf::SmfParser::readFormat1SequenceTrack(MidiTrackAndChannel::Instance& track,
-                                                            bool hasMainMetadata) {
+babelwires::ResultT<std::optional<smf::SmfParser::Format1TrackData>>
+smf::SmfParser::readFormat1SequenceTrack(int trackIndex, bool hasMainMetadata) {
     TrackSplitter splitTrack(m_channelSetup);
-    DO_OR_ERROR(readTrack(0, splitTrack, hasMainMetadata));
+    DO_OR_ERROR(readTrack(trackIndex, splitTrack, hasMainMetadata));
 
     // Convert the builders to actual tracks.
     std::array<bw_music::Track, 16> tracks;
@@ -877,24 +913,41 @@ babelwires::Result smf::SmfParser::readFormat1SequenceTrack(MidiTrackAndChannel:
             }
         }
     }
+
+    if (privilegedTrack < 0) {
+        // No channels had any events (after global events such as tempo were removed).
+        return std::optional<Format1TrackData>{};
+    }
+
+    Format1TrackData result{static_cast<unsigned int>(privilegedTrack), std::move(tracks[privilegedTrack]), {}};
     for (int channelNumber = 0; channelNumber < MAX_CHANNELS; ++channelNumber) {
-        if (channelNumber == privilegedTrack) {
-            track.getChan().set(channelNumber);
-            track.getTrack().set(std::move(tracks[channelNumber]));
-        } else if (splitTrack.m_channels[channelNumber] != nullptr) {
-            // All other tracks are added as extra.
-            track.activateAndGetTrack(channelNumber).set(std::move(tracks[channelNumber]));
+        if ((channelNumber != privilegedTrack) && (splitTrack.m_channels[channelNumber] != nullptr)) {
+            result.m_extraTracks.emplace_back(channelNumber, std::move(tracks[channelNumber]));
         }
     }
-    return {};
+    return std::optional<Format1TrackData>{std::move(result)};
 }
 
 babelwires::Result smf::SmfParser::readFormat1Sequence() {
-    auto tracks = getSmfSequence().getTrcks1();
-    tracks.setSize(m_numTracks);
+    std::vector<Format1TrackData> normalizedTracks;
+    normalizedTracks.reserve(m_numTracks);
+
     for (int i = 0; i < m_numTracks; ++i) {
+        ASSIGN_OR_ERROR(auto maybeTrackData, readFormat1SequenceTrack(i, (i == 0)));
+        if (maybeTrackData) {
+            normalizedTracks.emplace_back(std::move(*maybeTrackData));
+        }
+    }
+
+    auto tracks = getSmfSequence().getTrcks1();
+    tracks.setSize(std::max(1, static_cast<int>(normalizedTracks.size())));
+    for (int i = 0; i < normalizedTracks.size(); ++i) {
         auto track = tracks.getEntry(i);
-        DO_OR_ERROR(readFormat1SequenceTrack(track, (i == 0)));
+        track.getChan().set(normalizedTracks[i].m_channelNumber);
+        track.getTrack().set(std::move(normalizedTracks[i].m_track));
+        for (auto& [channelNumber, extraTrack] : normalizedTracks[i].m_extraTracks) {
+            track.activateAndGetTrack(channelNumber).set(std::move(extraTrack));
+        }
     }
     return {};
 }

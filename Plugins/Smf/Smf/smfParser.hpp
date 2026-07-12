@@ -19,6 +19,7 @@
 #include <BaseLib/Text/text.hpp>
 
 #include <cstdint>
+#include <map>
 #include <memory>
 #include <sstream>
 #include <vector>
@@ -55,7 +56,15 @@ namespace smf {
 
         babelwires::Result readFormat0Sequence();
         babelwires::Result readFormat1Sequence();
-        babelwires::Result readFormat1SequenceTrack(MidiTrackAndChannel::Instance& track, bool hasMainMetadata = false);
+
+        struct Format1TrackData {
+          unsigned int m_channelNumber;
+          bw_music::Track m_track;
+          std::vector<std::pair<unsigned int, bw_music::Track>> m_extraTracks;
+        };
+
+        babelwires::ResultT<std::optional<Format1TrackData>> readFormat1SequenceTrack(int trackIndex,
+                                                 bool hasMainMetadata = false);
 
         MidiMetadata::Instance getMidiMetadata();
 
@@ -65,7 +74,8 @@ namespace smf {
 
         babelwires::ResultT<bw_music::ModelDuration> readModelDuration();
 
-        void readTempoEvent(std::uint32_t tempoValue);
+        void readTempoEvent(int trackIndex, bw_music::ModelDuration absoluteTime, std::uint32_t tempoValue);
+        void finalizeGlobalTempoTrack();
 
         babelwires::ResultT<babelwires::Text> readTextMetaEvent(int length);
 
@@ -116,6 +126,13 @@ namespace smf {
         Format m_sequenceType;
         int m_numTracks;
         int m_division;
+
+        struct NormalizedTempoEvent {
+          int m_trackIndex;
+          int m_bpm;
+        };
+
+        std::map<bw_music::ModelDuration, NormalizedTempoEvent> m_globalTempoEvents;
 
         /// Knowledge of how pitches map to percussion instruments.
         StandardPercussionSets m_standardPercussionSets;

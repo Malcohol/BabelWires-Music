@@ -4,9 +4,11 @@
 #include <Smf/midiTrackAndChannel.hpp>
 #include <Smf/midiTrackAndChannelArray.hpp>
 #include <Smf/smfParser.hpp>
+#include <Smf/smfTempoTrackEvent.hpp>
 #include <Smf/smfWriter.hpp>
 
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
+#include <MusicLib/Utilities/filteredTrackIterator.hpp>
 #include <MusicLib/Types/Track/trackBuilder.hpp>
 #include <MusicLib/libRegistration.hpp>
 
@@ -85,7 +87,9 @@ namespace {
             metadata.activateAndGetCopyR().set(u8"(C)2021 Test Copyright");
         }
         if (flags & HAS_TEMPO) {
-            metadata.activateAndGetTempo().set(100);
+            bw_music::TrackBuilder globalTrack;
+            globalTrack.addEvent(smf::TempoTrackEvent(0, 100));
+            smfType.getGlobal().set(globalTrack.finishAndGetTrack());
         }
     }
 
@@ -103,6 +107,13 @@ namespace {
         if (flags & HAS_TEMPO) {
             ASSERT_TRUE(metadata.tryGetTempo());
             EXPECT_EQ(metadata.tryGetTempo()->get(), 100);
+
+            const auto& globalTrack = smfType.getGlobal().get();
+            auto [tempoBegin, tempoEnd] = bw_music::iterateOver<smf::TempoTrackEvent>(globalTrack);
+            ASSERT_NE(tempoBegin, tempoEnd);
+            EXPECT_EQ(tempoBegin->getBpm(), 100);
+            ++tempoBegin;
+            EXPECT_EQ(tempoBegin, tempoEnd);
         }
     }
 } // namespace
@@ -273,4 +284,60 @@ TEST(SmfSaveLoadTest, format1Chords) {
             testUtils::testSimpleNotes(chordPitches[i], track.getTrack().get());
         }
     }
+}
+
+TEST(SmfSaveLoadTest, format1TempoGlobalTrack) {
+    testUtils::TestEnvironment testEnvironment;
+    bw_music::registerLib(testEnvironment.m_projectContext);
+    ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
+    testUtils::TempFilePath tempFile("format1TempoGlobalTrack.mid");
+
+    {
+        babelwires::ValueTreeRoot smfFeature(testEnvironment.m_projectContext.get<babelwires::TypeSystem>(),
+                                             babelwires::FileTypeT<smf::SmfSequence>::getType(
+                                                 testEnvironment.m_projectContext.get<babelwires::TypeSystem>()));
+        smfFeature.setToDefault();
+
+        smf::SmfSequence::Instance smfType{smfFeature.getChild(0)->as<babelwires::ValueTreeNode>()};
+        smfType.selectTag("SMF1");
+
+        bw_music::TrackBuilder globalTrack;
+        globalTrack.addEvent(smf::TempoTrackEvent(0, 100));
+        smfType.getGlobal().set(globalTrack.finishAndGetTrack());
+
+        auto tracks = smfType.getTrcks1();
+        tracks.setSize(1);
+        auto trackAndChan = tracks.getEntry(0);
+        trackAndChan.getChan().set(0);
+
+        bw_music::TrackBuilder track;
+        testUtils::addSimpleNotes(chordPitches[0], track);
+        trackAndChan.getTrack().set(track.finishAndGetTrack());
+
+        std::ofstream os = tempFile.openForWriting(std::ios_base::binary);
+        smf::writeToSmf(testEnvironment.m_projectContext, testEnvironment.m_log, smfFeature, os);
+    }
+
+    auto midiFileResult = babelwires::FileDataSource::open(tempFile);
+    ASSERT_TRUE(midiFileResult.has_value());
+    auto midiFile = std::move(*midiFileResult);
+
+    auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+    ASSERT_TRUE(midiFile.close().has_value());
+    ASSERT_TRUE(result.has_value());
+    const auto& feature = *result;
+
+    smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
+    ASSERT_EQ(smfSequence.getInstanceType().getIndexOfTag(smfSequence.getSelectedTag()), 1);
+
+    auto tracks = smfSequence.getTrcks1();
+    EXPECT_EQ(tracks.getSize(), 1);
+    testUtils::testSimpleNotes(chordPitches[0], tracks.getEntry(0).getTrack().get());
+
+    const auto& globalTrack = smfSequence.getGlobal().get();
+    auto [tempoBegin, tempoEnd] = bw_music::iterateOver<smf::TempoTrackEvent>(globalTrack);
+    ASSERT_NE(tempoBegin, tempoEnd);
+    EXPECT_EQ(tempoBegin->getBpm(), 100);
+    ++tempoBegin;
+    EXPECT_EQ(tempoBegin, tempoEnd);
 }
