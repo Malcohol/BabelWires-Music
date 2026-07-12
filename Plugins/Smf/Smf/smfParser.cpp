@@ -9,11 +9,11 @@
 
 #include <Smf/Percussion/gm2StandardPercussionSet.hpp>
 #include <Smf/Percussion/gmPercussionSet.hpp>
-#include <Smf/smfTempoTrackEvent.hpp>
 
 #include <MusicLib/Percussion/builtInPercussionInstruments.hpp>
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/percussionEvents.hpp>
+#include <MusicLib/Types/Track/TrackEvents/tempoTrackEvent.hpp>
 #include <MusicLib/Types/Track/trackBuilder.hpp>
 
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
@@ -250,7 +250,7 @@ void smf::SmfParser::finalizeGlobalTempoTrack() {
     bw_music::TrackBuilder globalTrack;
     bw_music::ModelDuration timeOfLastEvent = 0;
     for (const auto& [absoluteTime, tempo] : m_globalTempoEvents) {
-        globalTrack.addEvent(smf::TempoTrackEvent{absoluteTime - timeOfLastEvent, tempo.m_bpm});
+        globalTrack.addEvent(bw_music::TempoTrackEvent{absoluteTime - timeOfLastEvent, tempo.m_bpm});
         timeOfLastEvent = absoluteTime;
     }
     getSmfSequence().getGlobal().set(globalTrack.finishAndGetTrack());

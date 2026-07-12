@@ -39,7 +39,6 @@ SET( SMFLIB_SRCS
 	smfFormat.cpp
 	smfParser.cpp
 	smfSequence.cpp
-	smfTempoTrackEvent.cpp
 	smfWriter.cpp
 	)
 babelwires_add_plugin(Smf SmfLib

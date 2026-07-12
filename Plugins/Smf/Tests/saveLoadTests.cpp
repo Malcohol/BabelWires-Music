@@ -4,10 +4,10 @@
 #include <Smf/midiTrackAndChannel.hpp>
 #include <Smf/midiTrackAndChannelArray.hpp>
 #include <Smf/smfParser.hpp>
-#include <Smf/smfTempoTrackEvent.hpp>
 #include <Smf/smfWriter.hpp>
 
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
+#include <MusicLib/Types/Track/TrackEvents/tempoTrackEvent.hpp>
 #include <MusicLib/Utilities/filteredTrackIterator.hpp>
 #include <MusicLib/Types/Track/trackBuilder.hpp>
 #include <MusicLib/libRegistration.hpp>
@@ -88,7 +88,7 @@ namespace {
         }
         if (flags & HAS_TEMPO) {
             bw_music::TrackBuilder globalTrack;
-            globalTrack.addEvent(smf::TempoTrackEvent(0, 100));
+            globalTrack.addEvent(bw_music::TempoTrackEvent(0, 100));
             smfType.getGlobal().set(globalTrack.finishAndGetTrack());
         }
     }
@@ -109,7 +109,7 @@ namespace {
             EXPECT_EQ(metadata.tryGetTempo()->get(), 100);
 
             const auto& globalTrack = smfType.getGlobal().get();
-            auto [tempoBegin, tempoEnd] = bw_music::iterateOver<smf::TempoTrackEvent>(globalTrack);
+            auto [tempoBegin, tempoEnd] = bw_music::iterateOver<bw_music::TempoTrackEvent>(globalTrack);
             ASSERT_NE(tempoBegin, tempoEnd);
             EXPECT_EQ(tempoBegin->getBpm(), 100);
             ++tempoBegin;
@@ -302,7 +302,7 @@ TEST(SmfSaveLoadTest, format1TempoGlobalTrack) {
         smfType.selectTag("SMF1");
 
         bw_music::TrackBuilder globalTrack;
-        globalTrack.addEvent(smf::TempoTrackEvent(0, 100));
+        globalTrack.addEvent(bw_music::TempoTrackEvent(0, 100));
         smfType.getGlobal().set(globalTrack.finishAndGetTrack());
 
         auto tracks = smfType.getTrcks1();
@@ -335,7 +335,7 @@ TEST(SmfSaveLoadTest, format1TempoGlobalTrack) {
     testUtils::testSimpleNotes(chordPitches[0], tracks.getEntry(0).getTrack().get());
 
     const auto& globalTrack = smfSequence.getGlobal().get();
-    auto [tempoBegin, tempoEnd] = bw_music::iterateOver<smf::TempoTrackEvent>(globalTrack);
+    auto [tempoBegin, tempoEnd] = bw_music::iterateOver<bw_music::TempoTrackEvent>(globalTrack);
     ASSERT_NE(tempoBegin, tempoEnd);
     EXPECT_EQ(tempoBegin->getBpm(), 100);
     ++tempoBegin;

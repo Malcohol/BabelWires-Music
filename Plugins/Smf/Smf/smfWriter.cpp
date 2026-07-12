@@ -143,7 +143,7 @@ smf::SmfWriter::WriteTrackEventResult smf::SmfWriter::writeTrackEvent(int channe
     assert(channelNumber <= 15);
 
     if (channelNumber == -1) {
-        if (const auto* tempo = e.tryAs<smf::TempoTrackEvent>()) {
+        if (const auto* tempo = e.tryAs<bw_music::TempoTrackEvent>()) {
             writeModelDuration(timeSinceLastEvent);
             writeTempoEvent(tempo->getBpm());
             return WriteTrackEventResult::Written;

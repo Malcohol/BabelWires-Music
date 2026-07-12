@@ -3,10 +3,10 @@
 #include <Smf/Percussion/gm2StandardPercussionSet.hpp>
 #include <Smf/libRegistration.hpp>
 #include <Smf/smfParser.hpp>
-#include <Smf/smfTempoTrackEvent.hpp>
 
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/percussionEvents.hpp>
+#include <MusicLib/Types/Track/TrackEvents/tempoTrackEvent.hpp>
 #include <MusicLib/Utilities/filteredTrackIterator.hpp>
 #include <MusicLib/libRegistration.hpp>
 
@@ -283,7 +283,7 @@ TEST(SmfTestSuiteTest, tempoTest) {
     EXPECT_EQ(metadata.tryGetTempo()->get(), 90);
 
     const auto& globalTrack = smfSequence.getGlobal().get();
-    auto [tempoBegin, tempoEnd] = bw_music::iterateOver<smf::TempoTrackEvent>(globalTrack);
+    auto [tempoBegin, tempoEnd] = bw_music::iterateOver<bw_music::TempoTrackEvent>(globalTrack);
     ASSERT_NE(tempoBegin, tempoEnd);
     EXPECT_EQ(tempoBegin->getBpm(), 90);
     EXPECT_EQ(tempoBegin->getTimeSinceLastEvent(), 0);

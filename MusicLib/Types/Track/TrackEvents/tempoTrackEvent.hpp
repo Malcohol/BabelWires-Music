@@ -1,5 +1,5 @@
 /**
- * A timed track event for sequence-wide SMF tempo changes.
+ * A timed track event for sequence-wide tempo changes.
  *
  * (C) 2021 Malcolm Tyrrell
  *
@@ -7,15 +7,17 @@
  **/
 #pragma once
 
+#include <MusicLib/musicLibExport.hpp>
+
 #include <MusicLib/Types/Track/TrackEvents/trackEvent.hpp>
 
-namespace smf {
+namespace bw_music {
 
-    struct TempoTrackEvent : public bw_music::TrackEvent {
-        DOWNCASTABLE(TempoTrackEvent, bw_music::TrackEvent);
+    struct MUSICLIB_API TempoTrackEvent : public TrackEvent {
+        DOWNCASTABLE(TempoTrackEvent, TrackEvent);
         STREAM_EVENT(TempoTrackEvent);
 
-        TempoTrackEvent(bw_music::ModelDuration timeSinceLastEvent, int bpm)
+        TempoTrackEvent(ModelDuration timeSinceLastEvent, int bpm)
             : TrackEvent(timeSinceLastEvent)
             , m_bpm(bpm) {}
 
@@ -24,9 +26,9 @@ namespace smf {
         std::size_t getHash() const override;
 
       protected:
-        bool doIsEqualTo(const bw_music::TrackEvent& other) const override;
+        bool doIsEqualTo(const TrackEvent& other) const override;
 
       private:
         int m_bpm;
     };
-} // namespace smf
+} // namespace bw_music
