@@ -248,7 +248,20 @@ template <std::size_t N> void smf::SmfWriter::writeMessage(const std::array<std:
     }
 }
 
-void smf::SmfWriter::writeGlobalSetup(bool emitTempoFallback) {
+namespace {
+    std::optional<int> tryGetTempoEventAtTimeZero(const bw_music::Track& track) {
+        for (const auto& event : track) {
+            if (event.getTimeSinceLastEvent() > 0) {
+                return {};
+            } else if (const auto* tempoEvent = event.tryAs<bw_music::TempoTrackEvent>()) {
+                return tempoEvent->getBpm();
+            }
+        }
+        return {};
+    }
+} // namespace
+
+void smf::SmfWriter::writeGlobalSetup(const bw_music::Track* globalTrack) {
     const auto& metadata = getSmfSequenceConst().getMeta();
 
     switch (metadata.getSpec().get()) {
@@ -286,11 +299,17 @@ void smf::SmfWriter::writeGlobalSetup(bool emitTempoFallback) {
             writeTextMetaEvent(3, sequenceOrTrackName->get());
         }
     }
-    if (emitTempoFallback) {
-        if (const auto& tempo = metadata.tryGetTempo()) {
+    if (const auto& initialTempo = metadata.tryGetITempo()) {
+        if (globalTrack && tryGetTempoEventAtTimeZero(*globalTrack)) {
+            // The logic for preferring the global track's initial tempo is that that the tempo events in the global
+            // track might have subtle relationships not accounted for by the explicitly set initial tempo.
+            m_userLogger.logWarning()
+                << "The global track has a tempo event at time 0, so the explicitly set initial tempo will be ignored.";
+        } else {
             writeModelDuration(0);
-            writeTempoEvent(tempo->get());
+            writeTempoEvent(initialTempo->get());
         }
+        // MAYBEDO If neither then write a 120 bpm tempo event, since that is the MIDI default.
     }
 }
 
@@ -300,7 +319,14 @@ void smf::SmfWriter::writeTrack(const std::vector<ChannelAndTrack>& tracks, bool
     m_os = &tempStream;
 
     if (includeGlobalSetup) {
-        writeGlobalSetup(true);
+        const bw_music::Track* globalTrack = nullptr;
+        for (const auto& trackAndChannel : tracks) {
+            if (std::get<0>(trackAndChannel) == -1) {
+                globalTrack = std::get<1>(trackAndChannel);
+                break;
+            }
+        }
+        writeGlobalSetup(globalTrack);
     }
 
     const GMSpecType::Value gmSpec = getSmfSequenceConst().getMeta().getSpec().get();
@@ -357,35 +383,6 @@ void smf::SmfWriter::writeTrack(const std::vector<ChannelAndTrack>& tracks, bool
     writeUint32(static_cast<std::uint32_t>(tempStream.tellp()));
     m_os->write(tempStream.str().data(), tempStream.tellp());
 }
-
-namespace {
-    bool hasGlobalSetupMetadata(const smf::SmfSequence::ConstInstance& smfType) {
-        const auto& metadata = smfType.getMeta();
-        if (metadata.getSpec().get() != smf::GMSpecType::Value::NONE) {
-            return true;
-        }
-        if (const auto& copyright = metadata.tryGetCopyR()) {
-            if (!copyright->get().getData().empty()) {
-                return true;
-            }
-        }
-        if (const auto& sequenceOrTrackName = metadata.tryGetName()) {
-            if (!sequenceOrTrackName->get().getData().empty()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    bool hasAnyMusicalTrackData(const std::vector<std::tuple<unsigned int, const bw_music::Track*>>& tracks) {
-        for (const auto& [channelNumber, track] : tracks) {
-            if (track->getNumEvents() > 0) {
-                return true;
-            }
-        }
-        return false;
-    }
-} // namespace
 
 void smf::SmfWriter::setUpPercussionKit(const std::unordered_set<babelwires::ShortId>& instrumentsInUse,
                                         int channelNumber) {

@@ -279,8 +279,8 @@ TEST(SmfTestSuiteTest, tempoTest) {
     const auto& metadata = smfSequence.getMeta();
     ASSERT_TRUE(metadata.tryGetName().has_value());
     EXPECT_EQ(metadata.tryGetName()->get(), u8"Karaoke .KAR Test");
-    ASSERT_TRUE(metadata.tryGetTempo().has_value());
-    EXPECT_EQ(metadata.tryGetTempo()->get(), 90);
+    ASSERT_TRUE(metadata.tryGetITempo().has_value());
+    EXPECT_EQ(metadata.tryGetITempo()->get(), 90);
 
     const auto& globalTrack = smfSequence.getGlobal().get();
     auto [tempoBegin, tempoEnd] = bw_music::iterateOver<bw_music::TempoTrackEvent>(globalTrack);

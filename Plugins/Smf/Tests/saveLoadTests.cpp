@@ -105,8 +105,8 @@ namespace {
             EXPECT_EQ(metadata.tryGetCopyR()->get(), u8"(C)2021 Test Copyright");
         }
         if (flags & HAS_TEMPO) {
-            ASSERT_TRUE(metadata.tryGetTempo());
-            EXPECT_EQ(metadata.tryGetTempo()->get(), 100);
+            ASSERT_TRUE(metadata.tryGetITempo());
+            EXPECT_EQ(metadata.tryGetITempo()->get(), 100);
 
             const auto& globalTrack = smfType.getGlobal().get();
             auto [tempoBegin, tempoEnd] = bw_music::iterateOver<bw_music::TempoTrackEvent>(globalTrack);

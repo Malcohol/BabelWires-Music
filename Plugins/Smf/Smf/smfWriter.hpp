@@ -67,7 +67,7 @@ namespace smf {
         void writeTrack(const std::vector<ChannelAndTrack>& tracks, bool includeGlobalSetup);
 
         /// Write non-channel-specific setup information.
-        void writeGlobalSetup(bool emitTempoFallback);
+        void writeGlobalSetup(const bw_music::Track* globalTrack);
 
         /// Determine from the events in the tracks what percussion kit (allowed for the channelNumber) includes the
         /// largest number of the events.

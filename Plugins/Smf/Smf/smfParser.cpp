@@ -239,7 +239,10 @@ void smf::SmfParser::readTempoEvent(int trackIndex, bw_music::ModelDuration abso
         m_globalTempoEvents.emplace(absoluteTime, NormalizedTempoEvent{trackIndex, roundedBpm});
     }
 
-    getMidiMetadata().activateAndGetTempo().set(roundedBpm);
+    // TODO: Always activate the ITempo field, since 120 bpm should be assumed if no other tempo event is present.
+    if (absoluteTime == 0) {
+        getMidiMetadata().activateAndGetITempo().set(roundedBpm);
+    }
 }
 
 void smf::SmfParser::finalizeGlobalTempoTrack() {
