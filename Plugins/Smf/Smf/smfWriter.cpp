@@ -17,9 +17,9 @@
 #include <MusicLib/Utilities/musicUtilities.hpp>
 #include <MusicLib/Utilities/trackTraverser.hpp>
 
-#include <BaseLib/Context/context.hpp>
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/File/fileTypeT.hpp>
+#include <BaseLib/Context/context.hpp>
 
 #include <BaseLib/Log/userLogger.hpp>
 
@@ -138,60 +138,60 @@ void smf::SmfWriter::writeHeaderChunk(unsigned int numTracks) {
 smf::SmfWriter::WriteTrackEventResult smf::SmfWriter::writeTrackEvent(int channelNumber,
                                                                       bw_music::ModelDuration timeSinceLastEvent,
                                                                       const bw_music::TrackEvent& e) {
-    assert(channelNumber >= 0);
+    // Channel number -1 is used for global events such as tempo.
+    assert(channelNumber >= -1);
     assert(channelNumber <= 15);
 
-    if (const bw_music::PercussionSetWithPitchMap* const kitIfPercussion =
-            m_channelSetup[channelNumber].m_kitIfPercussion) {
-        if (const bw_music::PercussionOnEvent* percussionOn = e.tryAs<bw_music::PercussionOnEvent>()) {
-            if (auto maybePitch = kitIfPercussion->tryGetPitchFromInstrument(percussionOn->getInstrument())) {
-                writeModelDuration(timeSinceLastEvent);
-                m_os->put(0b10010000 | channelNumber);
-                m_os->put(*maybePitch);
-                m_os->put(percussionOn->getVelocity());
-                return WriteTrackEventResult::Written;
-            } else {
-                return WriteTrackEventResult::NotInPercussionSet;
-            }
-        } else if (const bw_music::PercussionOffEvent* percussionOff = e.tryAs<bw_music::PercussionOffEvent>()) {
-            if (auto maybePitch = kitIfPercussion->tryGetPitchFromInstrument(percussionOff->getInstrument())) {
-                writeModelDuration(timeSinceLastEvent);
-                m_os->put(0b10000000 | channelNumber);
-                m_os->put(*maybePitch);
-                m_os->put(percussionOff->getVelocity());
-                return WriteTrackEventResult::Written;
-            } else {
-                return WriteTrackEventResult::NotInPercussionSet;
-            }
+    if (channelNumber == -1) {
+        if (const auto* tempo = e.tryAs<smf::TempoTrackEvent>()) {
+            writeModelDuration(timeSinceLastEvent);
+            writeTempoEvent(tempo->getBpm());
+            return WriteTrackEventResult::Written;
         }
     } else {
-        if (const bw_music::NoteOnEvent* noteOn = e.tryAs<bw_music::NoteOnEvent>()) {
-            writeModelDuration(timeSinceLastEvent);
-            m_os->put(0b10010000 | channelNumber);
-            m_os->put(noteOn->m_pitch);
-            m_os->put(noteOn->m_velocity);
-            return WriteTrackEventResult::Written;
-        } else if (const bw_music::NoteOffEvent* noteOff = e.tryAs<bw_music::NoteOffEvent>()) {
-            writeModelDuration(timeSinceLastEvent);
-            m_os->put(0b10000000 | channelNumber);
-            m_os->put(noteOff->m_pitch);
-            m_os->put(noteOff->m_velocity);
-            return WriteTrackEventResult::Written;
+        if (const bw_music::PercussionSetWithPitchMap* const kitIfPercussion =
+                m_channelSetup[channelNumber].m_kitIfPercussion) {
+            if (const bw_music::PercussionOnEvent* percussionOn = e.tryAs<bw_music::PercussionOnEvent>()) {
+                if (auto maybePitch = kitIfPercussion->tryGetPitchFromInstrument(percussionOn->getInstrument())) {
+                    writeModelDuration(timeSinceLastEvent);
+                    m_os->put(0b10010000 | channelNumber);
+                    m_os->put(*maybePitch);
+                    m_os->put(percussionOn->getVelocity());
+                    return WriteTrackEventResult::Written;
+                } else {
+                    return WriteTrackEventResult::NotInPercussionSet;
+                }
+            } else if (const bw_music::PercussionOffEvent* percussionOff = e.tryAs<bw_music::PercussionOffEvent>()) {
+                if (auto maybePitch = kitIfPercussion->tryGetPitchFromInstrument(percussionOff->getInstrument())) {
+                    writeModelDuration(timeSinceLastEvent);
+                    m_os->put(0b10000000 | channelNumber);
+                    m_os->put(*maybePitch);
+                    m_os->put(percussionOff->getVelocity());
+                    return WriteTrackEventResult::Written;
+                } else {
+                    return WriteTrackEventResult::NotInPercussionSet;
+                }
+            }
+        } else {
+            if (const bw_music::NoteOnEvent* noteOn = e.tryAs<bw_music::NoteOnEvent>()) {
+                writeModelDuration(timeSinceLastEvent);
+                m_os->put(0b10010000 | channelNumber);
+                m_os->put(noteOn->m_pitch);
+                m_os->put(noteOn->m_velocity);
+                return WriteTrackEventResult::Written;
+            } else if (const bw_music::NoteOffEvent* noteOff = e.tryAs<bw_music::NoteOffEvent>()) {
+                writeModelDuration(timeSinceLastEvent);
+                m_os->put(0b10000000 | channelNumber);
+                m_os->put(noteOff->m_pitch);
+                m_os->put(noteOff->m_velocity);
+                return WriteTrackEventResult::Written;
+            }
         }
     }
     return WriteTrackEventResult::WrongCategory;
 }
 
-bool smf::SmfWriter::writeGlobalTrackEvent(bw_music::ModelDuration timeSinceLastEvent, const bw_music::TrackEvent& e) {
-    if (const auto* tempo = e.tryAs<smf::TempoTrackEvent>()) {
-        writeModelDuration(timeSinceLastEvent);
-        writeTempoEvent(tempo->getBpm());
-        return true;
-    }
-    return false;
-}
-
-void smf::SmfWriter::writeTrackEvents(const std::vector<ChannelAndTrack>& tracks, const bw_music::Track* globalTrack) {
+void smf::SmfWriter::writeTrackEvents(const std::vector<ChannelAndTrack>& tracks) {
     const int numTracks = tracks.size();
 
     bw_music::ModelDuration trackDuration = 0;
@@ -206,38 +206,17 @@ void smf::SmfWriter::writeTrackEvents(const std::vector<ChannelAndTrack>& tracks
         traversers.back().leastUpperBoundDuration(trackDuration);
     }
 
-    std::optional<bw_music::TrackTraverser<bw_music::FilteredTrackIterator<bw_music::TrackEvent>>> globalTraverser;
-    if (globalTrack != nullptr) {
-        globalTraverser.emplace(*globalTrack, bw_music::iterateOver<bw_music::TrackEvent>(*globalTrack));
-        globalTraverser->leastUpperBoundDuration(trackDuration);
-    }
-
     bw_music::ModelDuration timeSinceStart = 0;
     bw_music::ModelDuration timeOfLastEvent = 0;
-    while (timeSinceStart < trackDuration) {
+    bool hasMoreEvents = true;
+    while (hasMoreEvents) {
         bw_music::ModelDuration timeToNextEvent = trackDuration - timeSinceStart;
-        if (globalTraverser) {
-            globalTraverser->greatestLowerBoundNextEvent(timeToNextEvent);
-        }
         for (int i = 0; i < numTracks; ++i) {
             traversers[i].greatestLowerBoundNextEvent(timeToNextEvent);
         }
 
         bool isFirstEventAtThisTime = true;
-        if (globalTraverser) {
-            globalTraverser->advance(
-                timeToNextEvent,
-                [this, &isFirstEventAtThisTime, &timeToNextEvent, &timeOfLastEvent,
-                 &timeSinceStart](const bw_music::TrackEvent& event) {
-                    const bw_music::ModelDuration timeToThisEvent = isFirstEventAtThisTime ? timeToNextEvent : 0;
-                    if (writeGlobalTrackEvent(timeToThisEvent, event)) {
-                        timeOfLastEvent = timeSinceStart + timeToNextEvent;
-                        isFirstEventAtThisTime = false;
-                    } else {
-                        m_userLogger.logWarning() << "Global timed metadata event could not be written";
-                    }
-                });
-        }
+        hasMoreEvents = false;
 
         for (int i = 0; i < numTracks; ++i) {
             const unsigned int channelNumber = std::get<0>(tracks[i]);
@@ -249,43 +228,14 @@ void smf::SmfWriter::writeTrackEvents(const std::vector<ChannelAndTrack>& tracks
                     timeOfLastEvent = timeSinceStart + timeToNextEvent;
                     isFirstEventAtThisTime = false;
                 } else {
-                    // TODO Warn user about events which could not be written.
+                    // TODO Build summary and report once, rather than one at a time.
                     m_userLogger.logWarning() << "Event could not be written";
                 }
             });
+            hasMoreEvents = hasMoreEvents || traversers[i].hasMoreEvents();
         }
 
         timeSinceStart += timeToNextEvent;
-    }
-
-    {
-        bool isFirstEventAtThisTime = true;
-        if (globalTraverser) {
-            globalTraverser->advance(0,
-                                     [this, &isFirstEventAtThisTime, &timeOfLastEvent,
-                                      &timeSinceStart](const bw_music::TrackEvent& event) {
-                                         if (writeGlobalTrackEvent(0, event)) {
-                                             timeOfLastEvent = timeSinceStart;
-                                             isFirstEventAtThisTime = false;
-                                         } else {
-                                             m_userLogger.logWarning() << "Global timed metadata event could not be written";
-                                         }
-                                     });
-        }
-
-        for (int i = 0; i < numTracks; ++i) {
-            const unsigned int channelNumber = std::get<0>(tracks[i]);
-            traversers[i].advance(0, [this, &isFirstEventAtThisTime, &timeOfLastEvent,
-                                      &timeSinceStart, channelNumber](const bw_music::TrackEvent& event) {
-                const WriteTrackEventResult result = writeTrackEvent(channelNumber, isFirstEventAtThisTime ? 0 : 0, event);
-                if (result == WriteTrackEventResult::Written) {
-                    timeOfLastEvent = timeSinceStart;
-                    isFirstEventAtThisTime = false;
-                } else {
-                    m_userLogger.logWarning() << "Event could not be written";
-                }
-            });
-        }
     }
 
     // End of track event.
@@ -344,22 +294,23 @@ void smf::SmfWriter::writeGlobalSetup(bool emitTempoFallback) {
     }
 }
 
-void smf::SmfWriter::writeTrack(const std::vector<ChannelAndTrack>& tracks, bool includeGlobalSetup,
-                                const bw_music::Track* globalTrack) {
+void smf::SmfWriter::writeTrack(const std::vector<ChannelAndTrack>& tracks, bool includeGlobalSetup) {
     std::ostream* oldStream = m_os;
     std::ostringstream tempStream;
     m_os = &tempStream;
 
-    const bool hasGlobalTimedMetadata = (globalTrack != nullptr) && (globalTrack->getNumEvents() > 0);
-
     if (includeGlobalSetup) {
-        writeGlobalSetup(!hasGlobalTimedMetadata);
+        writeGlobalSetup(true);
     }
 
     const GMSpecType::Value gmSpec = getSmfSequenceConst().getMeta().getSpec().get();
 
     for (int i = 0; i < tracks.size(); ++i) {
         const unsigned int channelNumber = std::get<0>(tracks[i]);
+        if (channelNumber == -1) {
+            // No channel setup required when track is just for global events.
+            continue;
+        }
         ChannelSetup& channelSetup = m_channelSetup[channelNumber];
         if (!channelSetup.m_setupWritten) {
             const std::optional<StandardPercussionSets::ChannelSetupInfo> info =
@@ -394,7 +345,7 @@ void smf::SmfWriter::writeTrack(const std::vector<ChannelAndTrack>& tracks, bool
         }
     }
 
-    writeTrackEvents(tracks, globalTrack);
+    writeTrackEvents(tracks);
 
     // End of track.
     m_os->put(0xffu);
@@ -434,7 +385,7 @@ namespace {
         }
         return false;
     }
-}
+} // namespace
 
 void smf::SmfWriter::setUpPercussionKit(const std::unordered_set<babelwires::ShortId>& instrumentsInUse,
                                         int channelNumber) {
@@ -494,48 +445,25 @@ void smf::SmfWriter::write() {
 
     const auto& smfType = getSmfSequenceConst();
     const auto& globalTrack = smfType.getGlobal().get();
-    const bool hasGlobalTimedMetadata = globalTrack.getNumEvents() > 0;
-    const bool hasGlobalSetup = hasGlobalSetupMetadata(smfType);
-    const bool hasMetadataTempoFallback = !hasGlobalTimedMetadata && smfType.getMeta().tryGetTempo().has_value();
-    const bool emitDedicatedMetadataTrack = hasGlobalSetup || hasGlobalTimedMetadata || hasMetadataTempoFallback;
 
     if (smfType.getInstanceType().getIndexOfTag(smfType.getSelectedTag()) == 0) {
         const auto& tracks = smfType.getTrcks0();
+        channelAndTrackValues.emplace_back(ChannelAndTrack{-1, &globalTrack});
         for (unsigned int c = 0; c < 16; ++c) {
             if (auto track = tracks.tryGetTrack(c)) {
                 channelAndTrackValues.emplace_back(ChannelAndTrack{c, &track->get()});
             }
         }
         writeHeaderChunk(channelAndTrackValues.size());
-        writeTrack(channelAndTrackValues, true, &globalTrack);
+        writeTrack(channelAndTrackValues, true);
     } else {
         const auto& tracks = smfType.getTrcks1();
         const int numTracks = tracks.getSize();
-        int numTracksToWrite = 0;
-        for (int i = 0; i < numTracks; ++i) {
-            channelAndTrackValues.clear();
-            auto trackAndChannel = tracks.getEntry(i);
-            if (trackAndChannel.getTrack().get().getNumEvents() > 0) {
-                channelAndTrackValues.emplace_back(
-                    ChannelAndTrack{trackAndChannel.getChan().get(), &trackAndChannel.getTrack().get()});
-            }
-            for (unsigned int c = 0; c < 16; ++c) {
-                if (auto extraTrack = trackAndChannel.tryGetTrack(c)) {
-                    if (extraTrack->get().getNumEvents() > 0) {
-                        channelAndTrackValues.emplace_back(ChannelAndTrack{c, &extraTrack->get()});
-                    }
-                }
-            }
-            if (hasAnyMusicalTrackData(channelAndTrackValues)) {
-                ++numTracksToWrite;
-            }
-        }
 
-        writeHeaderChunk(numTracksToWrite + (emitDedicatedMetadataTrack ? 1 : 0));
+        // 1 for the track of Global events.
+        writeHeaderChunk(numTracks + 1);
 
-        if (emitDedicatedMetadataTrack) {
-            writeTrack({}, true, &globalTrack);
-        }
+        writeTrack({ChannelAndTrack{-1, &globalTrack}}, true);
 
         for (int i = 0; i < numTracks; ++i) {
             channelAndTrackValues.clear();
@@ -551,9 +479,7 @@ void smf::SmfWriter::write() {
                     }
                 }
             }
-            if (hasAnyMusicalTrackData(channelAndTrackValues)) {
-                writeTrack(channelAndTrackValues, false, nullptr);
-            }
+            writeTrack(channelAndTrackValues, false);
         }
     }
 }

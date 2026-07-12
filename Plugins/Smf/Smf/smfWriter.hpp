@@ -59,13 +59,12 @@ namespace smf {
 
         void applyToAllTracks(std::function<void(unsigned int, const bw_music::Track&)> function);
 
-        void writeTrackEvents(const std::vector<ChannelAndTrack>& tracks, const bw_music::Track* globalTrack);
+        void writeTrackEvents(const std::vector<ChannelAndTrack>& tracks);
 
         void writeHeaderChunk(unsigned int numTracks);
 
         /// Write the events for the given track.
-        void writeTrack(const std::vector<ChannelAndTrack>& tracks, bool includeGlobalSetup,
-            const bw_music::Track* globalTrack);
+        void writeTrack(const std::vector<ChannelAndTrack>& tracks, bool includeGlobalSetup);
 
         /// Write non-channel-specific setup information.
         void writeGlobalSetup(bool emitTempoFallback);
