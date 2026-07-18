@@ -223,14 +223,15 @@ void smf::SmfParser::readTempoEvent(int trackIndex, bw_music::ModelDuration abso
 
     if (auto existing = m_globalTempoEvents.find(absoluteTime); existing != m_globalTempoEvents.end()) {
         if (existing->second.m_trackIndex == trackIndex) {
-            m_userLogger.logWarning()
-                << "Multiple tempo events at the same tick in SMF track " << trackIndex
-                << "; using the last event in stream order";
+            m_userLogger.logWarning() << "Multiple tempo events at the same tick in SMF track " << trackIndex
+                                      << "; using the last event in stream order";
             existing->second.m_bpm = roundedBpm;
         } else {
+            // It isn't specified how to handle this, but higher-numbered tracks are often processed after
+            // lower-numbered tracks, so this policy seems pragmatic.
             m_userLogger.logWarning()
-                << "Conflicting simultaneous tempo events in multiple SMF1 tracks; using the lower-numbered track";
-            if (existing->second.m_trackIndex < trackIndex) {
+                << "Conflicting simultaneous tempo events in multiple SMF1 tracks; using the higher-numbered track";
+            if (existing->second.m_trackIndex > trackIndex) {
                 return;
             }
             existing->second = {trackIndex, roundedBpm};

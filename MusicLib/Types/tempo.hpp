@@ -14,7 +14,6 @@
 namespace bw_music {
 
     /// Tempo is an IntType for holding a tempo value in bpm.
-    /// Tempos are limited to integral bpm.
     /// The default tempo is 120.
     class MUSICLIB_API Tempo : public babelwires::IntType {
       public:
