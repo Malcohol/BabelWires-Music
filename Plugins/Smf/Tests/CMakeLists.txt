@@ -6,13 +6,10 @@ SET( SMF_TESTS_SRCS
       testSuiteTests.cpp
    )
 
-FILE(GLOB MidiTestSuiteFiles "${CMAKE_CURRENT_SOURCE_DIR}/test-midi-files/midi/*.mid")
+FILE(GLOB MidiTestSuiteFiles CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/test-midi-files/midi/*.mid")
 
 MESSAGE("Copying test suite files to build folder")
-FOREACH(file ${MidiTestSuiteFiles})
-   GET_FILENAME_COMPONENT(fileName ${file} NAME)
-   CONFIGURE_FILE(${file} "${CMAKE_CURRENT_BINARY_DIR}/${fileName}" COPYONLY)
-ENDFOREACH()
+FILE(COPY ${MidiTestSuiteFiles} DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 
 ADD_EXECUTABLE( SmfTests ${SMF_TESTS_SRCS} )
 TARGET_COMPILE_DEFINITIONS(SmfTests PRIVATE

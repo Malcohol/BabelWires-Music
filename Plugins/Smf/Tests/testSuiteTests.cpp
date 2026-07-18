@@ -265,30 +265,47 @@ TEST(SmfTestSuiteTest, tempoTest) {
     bw_music::registerLib(testEnvironment.m_projectContext);
     ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
 
-    auto midiFileResult = babelwires::FileDataSource::open("test-karaoke-kar.mid");
-    ASSERT_TRUE(midiFileResult.has_value());
-    auto midiFile = std::move(*midiFileResult);
+    // All these files should be interpreted as having the same sequence of tempo events.
+    // The SMF plugin will make those events available in a canonical way via the global track.
+    const char* fileNames[] = {
+        "test-tempo-events-track-smf0.mid",
+        "test-tempo-events-track-smf1.mid",
+        "test-tempo-events-track-smf1-nonstandard.mid",
+        "test-tempo-events-track-smf1-bad.mid"
+    };
 
-    auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
-    ASSERT_TRUE(midiFile.close().has_value());
-    ASSERT_TRUE(result.has_value());
-    const auto& feature = *result;
+    const int expectedBpms[] = {100, 120, 140, 160};
+    const babelwires::Rational expectedDeltaTimes[] = {0, 1, 1, 1};
 
-    smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
+    for (const auto& fileName : fileNames) {
+        SCOPED_TRACE(fileName);
 
-    const auto& metadata = smfSequence.getMeta();
-    ASSERT_TRUE(metadata.tryGetName().has_value());
-    EXPECT_EQ(metadata.tryGetName()->get(), u8"Karaoke .KAR Test");
-    ASSERT_TRUE(metadata.tryGetITempo().has_value());
-    EXPECT_EQ(metadata.tryGetITempo()->get(), 90);
+        auto midiFileResult = babelwires::FileDataSource::open(fileName);
+        ASSERT_TRUE(midiFileResult.has_value());
+        auto midiFile = std::move(*midiFileResult);
 
-    const auto& globalTrack = smfSequence.getGlobal().get();
-    auto [tempoBegin, tempoEnd] = bw_music::iterateOver<bw_music::TempoTrackEvent>(globalTrack);
-    ASSERT_NE(tempoBegin, tempoEnd);
-    EXPECT_EQ(tempoBegin->getBpm(), 90);
-    EXPECT_EQ(tempoBegin->getTimeSinceLastEvent(), 0);
-    ++tempoBegin;
-    EXPECT_EQ(tempoBegin, tempoEnd);
+        auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+        ASSERT_TRUE(midiFile.close().has_value());
+        ASSERT_TRUE(result.has_value());
+        const auto& feature = *result;
+
+        smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
+
+        const auto& metadata = smfSequence.getMeta();
+        ASSERT_TRUE(metadata.tryGetITempo().has_value());
+        EXPECT_EQ(metadata.tryGetITempo()->get(), 100);
+
+        const auto& globalTrack = smfSequence.getGlobal().get();
+        auto [tempoBegin, tempoEnd] = bw_music::iterateOver<bw_music::TempoTrackEvent>(globalTrack);
+
+        for (int i = 0; i < 4; ++i) {
+            ASSERT_NE(tempoBegin, tempoEnd);
+            EXPECT_EQ(tempoBegin->getBpm(), expectedBpms[i]);
+            EXPECT_EQ(tempoBegin->getTimeSinceLastEvent(), expectedDeltaTimes[i]);
+            ++tempoBegin;
+        }
+        EXPECT_EQ(tempoBegin, tempoEnd);
+    }
 }
 
 TEST(SmfTestSuiteTest, corruptFiles) {
