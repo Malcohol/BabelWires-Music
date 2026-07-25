@@ -11,11 +11,14 @@
 #include <Smf/Percussion/gmPercussionSet.hpp>
 #include <Smf/gmSpec.hpp>
 #include <Smf/midiTrackAndChannel.hpp>
+#include <Smf/smfCommon.hpp>
 
+#include <MusicLib/Types/Track/TrackEvents/channelVoiceEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/percussionEvents.hpp>
 #include <MusicLib/Utilities/filteredTrackIterator.hpp>
 #include <MusicLib/Utilities/musicUtilities.hpp>
 #include <MusicLib/Utilities/trackTraverser.hpp>
+#include <MusicLib/Utilities/valueResolutionConversion.hpp>
 
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/File/fileTypeT.hpp>
@@ -31,6 +34,7 @@ namespace {
     // See page 237 of the SC-8850 English manual for the part to block conversion.
     // We will always use the default part mapping, where parts correspond to midi channels.
     const std::array<unsigned int, 16> s_gsChannelToBlockMapping{1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 10, 11, 12, 13, 14, 15};
+
 } // namespace
 
 smf::SmfWriter::SmfWriter(const babelwires::Context& context, babelwires::UserLogger& userLogger,
@@ -149,6 +153,56 @@ smf::SmfWriter::WriteTrackEventResult smf::SmfWriter::writeTrackEvent(int channe
             return WriteTrackEventResult::Written;
         }
     } else {
+        if (const auto* pan = e.tryAs<bw_music::PanTrackEvent>()) {
+            writeModelDuration(timeSinceLastEvent);
+            m_os->put(0b10110000 | channelNumber);
+            m_os->put(c_panController);
+            m_os->put(pan->getValue<7>());
+            return WriteTrackEventResult::Written;
+        }
+        if (const auto* volume = e.tryAs<bw_music::VolumeTrackEvent>()) {
+            writeModelDuration(timeSinceLastEvent);
+            m_os->put(0b10110000 | channelNumber);
+            m_os->put(c_volumeController);
+            m_os->put(volume->getMidiValue());
+            return WriteTrackEventResult::Written;
+        }
+        if (const auto* expression = e.tryAs<bw_music::ExpressionTrackEvent>()) {
+            writeModelDuration(timeSinceLastEvent);
+            m_os->put(0b10110000 | channelNumber);
+            m_os->put(c_expressionController);
+            m_os->put(expression->getMidiValue());
+            return WriteTrackEventResult::Written;
+        }
+        if (const auto* sustain = e.tryAs<bw_music::SustainTrackEvent>()) {
+            writeModelDuration(timeSinceLastEvent);
+            m_os->put(0b10110000 | channelNumber);
+            m_os->put(c_sustainController);
+            m_os->put(sustain->getMidiValue());
+            return WriteTrackEventResult::Written;
+        }
+        if (const auto* pitchBend = e.tryAs<bw_music::PitchBendTrackEvent>()) {
+            writeModelDuration(timeSinceLastEvent);
+            const std::uint16_t encodedPitchBend = static_cast<std::uint16_t>(pitchBend->getBend() + 8192);
+            m_os->put(0b11100000 | channelNumber);
+            m_os->put(encodedPitchBend & 0x7f);
+            m_os->put((encodedPitchBend >> 7) & 0x7f);
+            return WriteTrackEventResult::Written;
+        }
+        if (const auto* channelPressure = e.tryAs<bw_music::ChannelPressureEvent>()) {
+            writeModelDuration(timeSinceLastEvent);
+            m_os->put(0b11010000 | channelNumber);
+            m_os->put(channelPressure->getMidiValue());
+            return WriteTrackEventResult::Written;
+        }
+        if (const auto* polyphonicAftertouch = e.tryAs<bw_music::PolyphonicAftertouchEvent>()) {
+            writeModelDuration(timeSinceLastEvent);
+            m_os->put(0b10100000 | channelNumber);
+            m_os->put(polyphonicAftertouch->getPitch());
+            m_os->put(polyphonicAftertouch->getMidiValue());
+            return WriteTrackEventResult::Written;
+        }
+
         if (const bw_music::PercussionSetWithPitchMap* const kitIfPercussion =
                 m_channelSetup[channelNumber].m_kitIfPercussion) {
             if (const bw_music::PercussionOnEvent* percussionOn = e.tryAs<bw_music::PercussionOnEvent>()) {

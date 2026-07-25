@@ -101,8 +101,15 @@ namespace smf {
 
         template <typename STREAMLIKE> void logMessageBuffer(STREAMLIKE log) const;
 
-        babelwires::Result readControlChange(unsigned int channelNumber);
+        babelwires::ResultT<bool> readPolyphonicAftertouch(TrackSplitter& tracks, unsigned int channelNumber,
+                       bw_music::ModelDuration timeSinceLastTrackEvent);
+        babelwires::ResultT<bool> readControlChange(TrackSplitter& tracks, unsigned int channelNumber,
+                      bw_music::ModelDuration timeSinceLastTrackEvent);
+        babelwires::ResultT<bool> readPitchBend(TrackSplitter& tracks, unsigned int channelNumber,
+                  bw_music::ModelDuration timeSinceLastTrackEvent);
         babelwires::Result readProgramChange(unsigned int channelNumber);
+        babelwires::ResultT<bool> readChannelPressure(TrackSplitter& tracks, unsigned int channelNumber,
+                        bw_music::ModelDuration timeSinceLastTrackEvent);
         void setBankMSB(unsigned int channelNumber, const babelwires::Byte msbValue);
         void setBankLSB(unsigned int channelNumber, const babelwires::Byte lsbValue);
         void setProgram(unsigned int channelNumber, const babelwires::Byte value);

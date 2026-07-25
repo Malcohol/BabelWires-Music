@@ -32,6 +32,7 @@ SET( MUSICLIB_SRCS
 	Types/chordTypeSet.cpp
 	Types/genericAccompaniment.cpp
 	Types/Track/TrackEvents/chordEvents.cpp
+	Types/Track/TrackEvents/channelVoiceEvents.cpp
 	Types/Track/TrackEvents/noteEvents.cpp
 	Types/Track/TrackEvents/percussionEvents.cpp
 	Types/Track/TrackEvents/tempoTrackEvent.cpp
@@ -45,6 +46,7 @@ SET( MUSICLIB_SRCS
 	Percussion/percussionSetWithPitchMap.cpp
 	pitch.cpp
 	Utilities/monophonicNoteIterator.cpp
+	Utilities/valueResolutionConversion.cpp
 	Types/Track/trackBuilder.cpp
 	Utilities/trackValidator.cpp
 	libRegistration.cpp
