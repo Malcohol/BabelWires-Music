@@ -127,4 +127,3 @@ namespace bw_music {
 
 } // namespace bw_music
 
-#include <MusicLib/Types/Track/TrackEvents/pitchBendTrackEvent.hpp>
