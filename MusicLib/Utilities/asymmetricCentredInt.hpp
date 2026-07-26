@@ -24,11 +24,27 @@ namespace bw_music {
         static AsymmetricCentredInt fromUnsigned32(std::uint32_t highResValue);
 
         /// Construct from a value in the asymmetric range [0,... 2^(numSourceBits - 1),.. (2^numSourceBits) - 1].
+        /// Fails if the value is out of range.
+        /// Note: There's no best effort "try" equivalent to this method: If the value is out of range, this class doesn't have the context to repair the situation.
         template <std::uint8_t numSourceBits>
-        static AsymmetricCentredInt fromUnsigned(std::uint32_t value);
+        static babelwires::ResultT<AsymmetricCentredInt> fromUnsigned(std::uint32_t value);
 
-        /// Construct from a value in the range [-1.0,.. 0.0,.. 1.0].
-        static AsymmetricCentredInt fromSignedNormalizedDouble(double signedNormalizedValue);
+        /// Construct from a value in the asymmetric range [0,... 2^(numSourceBits - 1),.. (2^numSourceBits) - 1].
+        /// Asserts that the value is in range.
+        template <std::uint8_t numSourceBits>
+        static AsymmetricCentredInt assertFromUnsigned(std::uint32_t value);
+
+        /// Construct from a value in the range [-1.0, 1.0].
+        /// Fails if the value is out of range.
+        static babelwires::ResultT<AsymmetricCentredInt> fromSignedNormalizedDouble(double signedNormalizedValue);
+
+        /// Construct from a value in the range [-1.0, 1.0].
+        /// Clamps to the nearest valid value if the input is out of range.
+        static AsymmetricCentredInt tryFromSignedNormalizedDouble(double signedNormalizedValue);
+
+        /// Construct from a value in the range [-1.0, 1.0].
+        /// Asserts that the value is in range.
+        static AsymmetricCentredInt assertFromSignedNormalizedDouble(double signedNormalizedValue);
 
         /// Get a value in the asymmetric range [0,... 0x80000000,.. 0xFFFFFFFF].
         std::uint32_t getUnsigned32() const;
@@ -52,35 +68,22 @@ namespace bw_music {
         std::uint32_t m_value;
     };
 
-    /// Scale the source value from a smaller to a larger domain of values using the MIDI 2.0 "min-centre-max" scaling
-    /// scheme.
-    /// Assumes that the domain of source values is the range [0,.. 2^(numSourceBits - 1),.. (2^numSourceBits) - 1]
-    /// and that the domain of dest values is the range [0,.. 2^(numDestBits - 1),.. (2^numDestBits) - 1].
-    template <std::uint8_t numSourceBits, std::uint8_t numDestBits>
-    constexpr std::uint32_t minCentreMaxScaleUp(std::uint32_t sourceValue);
+    namespace detail {
+        /// Scale the source value from a smaller to a larger domain of values using the MIDI 2.0 "min-centre-max" scaling
+        /// scheme.
+        /// Assumes that the domain of source values is the range [0,.. 2^(numSourceBits - 1),.. (2^numSourceBits) - 1]
+        /// and that the domain of dest values is the range [0,.. 2^(numDestBits - 1),.. (2^numDestBits) - 1].
+        template <std::uint8_t numSourceBits, std::uint8_t numDestBits>
+        constexpr std::uint32_t minCentreMaxScaleUp(std::uint32_t sourceValue);
 
-    /// Scale the source value from a larger to a smaller domain of values using the MIDI 2.0 "min-centre-max" scaling
-    /// scheme.
-    /// Assumes that the domain of source values is the range [0,.. 2^(numSourceBits - 1),.. (2^numSourceBits) - 1]
-    /// and that the domain of dest values is the range [0,.. 2^(numDestBits - 1),.. (2^numDestBits) - 1].
-    template <std::uint8_t numSourceBits, std::uint8_t numDestBits>
-    constexpr std::uint32_t minCentreMaxScaleDown(std::uint32_t sourceValue);
+        /// Scale the source value from a larger to a smaller domain of values using the MIDI 2.0 "min-centre-max" scaling
+        /// scheme.
+        /// Assumes that the domain of source values is the range [0,.. 2^(numSourceBits - 1),.. (2^numSourceBits) - 1]
+        /// and that the domain of dest values is the range [0,.. 2^(numDestBits - 1),.. (2^numDestBits) - 1].
+        template <std::uint8_t numSourceBits, std::uint8_t numDestBits>
+        constexpr std::uint32_t minCentreMaxScaleDown(std::uint32_t sourceValue);
 
-    /// Scale a signed normalized value in the range ([-1.0,.. 0.0,.. 1.0]) to a 32-bit value ([0,.. 0x80000000,..
-    /// 0xFFFFFFFF]). Fails if the input value is outside the range.
-    MUSICLIB_API babelwires::ResultT<std::uint32_t> scaleSignedNormalizedDoubleto32(double signedNormalizedValue);
-
-    /// Scale a signed normalized value in the range ([-1.0,.. 0.0,.. 1.0]) to a 32-bit value ([0,.. 0x80000000,..
-    /// 0xFFFFFFFF]). Asserts that the input value is within the range.
-    MUSICLIB_API std::uint32_t assertScaleSignedNormalizedDoubleto32(double signedNormalizedValue);
-
-    /// Scale a signed normalized value in the range ([-1.0,.. 0.0,.. 1.0]) to a 32-bit value ([0,.. 0x80000000,..
-    /// 0xFFFFFFFF]). Clamps the output value to the range if the input value is outside the range.
-    MUSICLIB_API std::uint32_t tryScaleSignedNormalizedDoubleto32(double signedNormalizedValue);
-
-    /// Scale a 32-bit value ([0,.. 0x80000000,.. 0xFFFFFFFF]) to a signed normalized value ([-1.0,.. 0.0,.. 1.0]).
-    MUSICLIB_API double scale32toSignedNormalizedDouble(std::uint32_t highResValue);
-
+    } // namespace detail 
 } // namespace bw_music
 
 namespace std {

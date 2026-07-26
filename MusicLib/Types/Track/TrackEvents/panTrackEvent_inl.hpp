@@ -13,7 +13,7 @@ inline bw_music::PanTrackEvent::PanTrackEvent(ModelDuration timeSinceLastEvent, 
 }
 
 inline bw_music::PanTrackEvent::PanTrackEvent(ModelDuration timeSinceLastEvent, double signedNormalizedValue)
-    : PanTrackEvent(timeSinceLastEvent, bw_music::AsymmetricCentredInt::fromSignedNormalizedDouble(signedNormalizedValue)) {
+    : PanTrackEvent(timeSinceLastEvent, bw_music::AsymmetricCentredInt::assertFromSignedNormalizedDouble(signedNormalizedValue)) {
 }
 
 inline bw_music::AsymmetricCentredInt bw_music::PanTrackEvent::getAsymmetricCentredInt() const { return m_value; }

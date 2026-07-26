@@ -6,10 +6,11 @@
  * Licensed under the GPLv3.0. See LICENSE file.
  **/
 #include <cassert>
+#include <BaseLib/Result/error.hpp>
 
 // See M2-115-U MIDI 2.0 Bit Scaling and Resolution Conversion.
 template <std::uint8_t numSourceBits, std::uint8_t numDestBits>
-constexpr std::uint32_t bw_music::minCentreMaxScaleUp(std::uint32_t sourceValue) {
+constexpr std::uint32_t bw_music::detail::minCentreMaxScaleUp(std::uint32_t sourceValue) {
     static_assert(numSourceBits > 1, "numSourceBits must be greater than 1");
     static_assert(numDestBits <= 32, "numDestBits must be less than or equal to 32");
     static_assert(numSourceBits < numDestBits, "numSourceBits must be less than numDestBits");
@@ -37,7 +38,7 @@ constexpr std::uint32_t bw_music::minCentreMaxScaleUp(std::uint32_t sourceValue)
 }
 
 template <std::uint8_t numSourceBits, std::uint8_t numDestBits>
-constexpr std::uint32_t bw_music::minCentreMaxScaleDown(std::uint32_t sourceValue) {
+constexpr std::uint32_t bw_music::detail::minCentreMaxScaleDown(std::uint32_t sourceValue) {
     static_assert(numDestBits > 1, "numDestBits must be greater than 1");
     static_assert(numSourceBits <= 32, "numSourceBits must be less than or equal to 32");
     static_assert(numSourceBits > numDestBits, "numSourceBits must be greater than numDestBits");
@@ -54,16 +55,17 @@ inline bw_music::AsymmetricCentredInt bw_music::AsymmetricCentredInt::fromUnsign
     return AsymmetricCentredInt(highResValue);
 }
 
-/// Construct from a value in the range [0,.. 2^(numSourceBits - 1),.. (2^numSourceBits) - 1].
 template <std::uint8_t numSourceBits>
-bw_music::AsymmetricCentredInt bw_music::AsymmetricCentredInt::fromUnsigned(std::uint32_t value) {
-    return AsymmetricCentredInt(bw_music::minCentreMaxScaleUp<numSourceBits, 32>(value));
+babelwires::ResultT<bw_music::AsymmetricCentredInt> bw_music::AsymmetricCentredInt::fromUnsigned(std::uint32_t value) {
+    if (value >= (1 << numSourceBits)) {
+        return babelwires::Error() << "Value is out of range for the specified number of source bits";
+    }
+    return AsymmetricCentredInt(bw_music::detail::minCentreMaxScaleUp<numSourceBits, 32>(value));
 }
 
-/// Construct from a value in the range [-1.0,.. 0.0,.. 1.0].
-inline bw_music::AsymmetricCentredInt
-bw_music::AsymmetricCentredInt::fromSignedNormalizedDouble(double signedNormalizedValue) {
-    return AsymmetricCentredInt(bw_music::assertScaleSignedNormalizedDoubleto32(signedNormalizedValue));
+template <std::uint8_t numSourceBits>
+bw_music::AsymmetricCentredInt bw_music::AsymmetricCentredInt::assertFromUnsigned(std::uint32_t value) {
+    return AsymmetricCentredInt(bw_music::detail::minCentreMaxScaleUp<numSourceBits, 32>(value));
 }
 
 inline std::uint32_t bw_music::AsymmetricCentredInt::getUnsigned32() const {
@@ -72,10 +74,5 @@ inline std::uint32_t bw_music::AsymmetricCentredInt::getUnsigned32() const {
 
 /// Construct from a value in the range [0,.. 2^(numSourceBits - 1),.. (2^numSourceBits) - 1].
 template <std::uint8_t numSourceBits> std::uint32_t bw_music::AsymmetricCentredInt::getUnsigned() const {
-    return bw_music::minCentreMaxScaleDown<32, numSourceBits>(m_value);
-}
-
-/// Get a value in the range [-1.0,.. 0.0,.. 1.0].
-inline double bw_music::AsymmetricCentredInt::getSignedNormalizedValue() const {
-    return bw_music::scale32toSignedNormalizedDouble(m_value);
+    return bw_music::detail::minCentreMaxScaleDown<32, numSourceBits>(m_value);
 }

@@ -12,7 +12,7 @@ inline bw_music::PitchBendTrackEvent::PitchBendTrackEvent(ModelDuration timeSinc
 
 inline bw_music::PitchBendTrackEvent::PitchBendTrackEvent(
     ModelDuration timeSinceLastEvent, double signedNormalizedValue)
-    : PitchBendTrackEvent(timeSinceLastEvent, AsymmetricCentredInt::fromSignedNormalizedDouble(signedNormalizedValue)) {}
+    : PitchBendTrackEvent(timeSinceLastEvent, AsymmetricCentredInt::assertFromSignedNormalizedDouble(signedNormalizedValue)) {}
 
 inline bw_music::AsymmetricCentredInt bw_music::PitchBendTrackEvent::getAsymmetricCentredInt() const { return m_value; }
 
