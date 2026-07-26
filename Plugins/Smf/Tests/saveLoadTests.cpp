@@ -9,6 +9,7 @@
 #include <MusicLib/Types/Track/TrackEvents/channelVoiceEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/tempoTrackEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/panTrackEvent.hpp>
 #include <MusicLib/Utilities/filteredTrackIterator.hpp>
 #include <MusicLib/Types/Track/trackBuilder.hpp>
 #include <MusicLib/libRegistration.hpp>

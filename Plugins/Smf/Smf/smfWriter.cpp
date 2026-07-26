@@ -14,6 +14,7 @@
 #include <Smf/smfCommon.hpp>
 
 #include <MusicLib/Types/Track/TrackEvents/channelVoiceEvents.hpp>
+#include <MusicLib/Types/Track/TrackEvents/panTrackEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/percussionEvents.hpp>
 #include <MusicLib/Utilities/filteredTrackIterator.hpp>
 #include <MusicLib/Utilities/musicUtilities.hpp>

@@ -16,24 +16,6 @@ namespace {
     constexpr std::int16_t c_maxPitchBend = 8191;
 }
 
-bw_music::PanTrackEvent::PanTrackEvent(ModelDuration timeSinceLastEvent, std::uint32_t highResValue)
-    : TrackEvent(timeSinceLastEvent)
-    , m_value(highResValue) {
-}
-
-std::uint32_t bw_music::PanTrackEvent::getValue32() const {
-    return m_value;
-}
-
-std::size_t bw_music::PanTrackEvent::getHash() const {
-    return babelwires::hash::mixtureOf(static_cast<const char*>("Pan"), m_timeSinceLastEvent, m_value);
-}
-
-bool bw_music::PanTrackEvent::doIsEqualTo(const TrackEvent& other) const {
-    const auto& otherPan = static_cast<const PanTrackEvent&>(other);
-    return TrackEvent::doIsEqualTo(other) && (m_value == otherPan.m_value);
-}
-
 std::size_t bw_music::VolumeTrackEvent::getHash() const {
     return babelwires::hash::mixtureOf(static_cast<const char*>("Volume"), m_timeSinceLastEvent, m_value);
 }

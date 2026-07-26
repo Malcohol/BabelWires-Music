@@ -13,6 +13,7 @@
 
 #include <MusicLib/Percussion/builtInPercussionInstruments.hpp>
 #include <MusicLib/Types/Track/TrackEvents/channelVoiceEvents.hpp>
+#include <MusicLib/Types/Track/TrackEvents/panTrackEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/percussionEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/tempoTrackEvent.hpp>
