@@ -9,11 +9,6 @@
 
 #include <BaseLib/Hash/hash.hpp>
 
-bw_music::PitchBendTrackEvent::PitchBendTrackEvent(ModelDuration timeSinceLastEvent, std::uint32_t highResValue)
-    : TrackEvent(timeSinceLastEvent)
-    , m_value(highResValue) {
-}
-
 std::size_t bw_music::PitchBendTrackEvent::getHash() const {
     return babelwires::hash::mixtureOf(static_cast<const char*>("PitchBend"), m_timeSinceLastEvent, m_value);
 }

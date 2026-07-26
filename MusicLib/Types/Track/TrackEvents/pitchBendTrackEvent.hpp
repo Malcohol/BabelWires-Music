@@ -10,7 +10,7 @@
 #include <MusicLib/musicLibExport.hpp>
 
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
-#include <MusicLib/Utilities/valueResolutionConversion.hpp>
+#include <MusicLib/Utilities/asymmetricCentredInt.hpp>
 
 #include <cstdint>
 
@@ -21,37 +21,26 @@ namespace bw_music {
         DOWNCASTABLE(PitchBendTrackEvent, TrackEvent);
         STREAM_EVENT(PitchBendTrackEvent);
 
-        /// Construct from a value in the range [0,.. 0x80000000,.. 0xFFFFFFFF].
-        static PitchBendTrackEvent fromUnsigned32(ModelDuration timeSinceLastEvent, std::uint32_t highResValue);
+        /// Construct from an AsymmetricCentredInt value (e.g. as used by MIDI).
+        PitchBendTrackEvent(ModelDuration timeSinceLastEvent, AsymmetricCentredInt aci);
 
-        /// Construct from a value in the range [0,.. 2^(numSourceBits - 1),.. (2^numSourceBits) - 1].
-        template<std::uint8_t numSourceBits>
-        static PitchBendTrackEvent fromUnsigned(ModelDuration timeSinceLastEvent, std::uint32_t value);
+        /// Construct from a value in the range [-1.0, 1.0].
+        PitchBendTrackEvent(ModelDuration timeSinceLastEvent, double signedNormalizedValue);
 
-        /// Construct from a value in the range [-1.0,.. 0.0,.. 1.0].
-        static PitchBendTrackEvent fromSignedNormalizedDouble(ModelDuration timeSinceLastEvent,
-                                                              double signedNormalizedValue);
+        /// Get the contents as an AsymmetricCentredInt value (e.g. for use by MIDI).
+        AsymmetricCentredInt getAsymmetricCentredInt() const;
 
-        /// Get a value in the range [0,.. 0x80000000,.. 0xFFFFFFFF].
-        std::uint32_t getUnsigned32() const;
-
-        /// Get a value in the range [0,.. 2^(numSourceBits - 1),.. (2^numSourceBits) - 1].
-        template<std::uint8_t numSourceBits>
-        std::uint32_t getUnsigned() const;
-
-        /// Get a value in the range [-1.0,.. 0.0,.. 1.0].
+        /// Get a value in the range [-1.0, 1.0].
         double getSignedNormalizedValue() const;
 
         std::size_t getHash() const override;
 
       protected:
-        /// Construct from a value in the range [0,.. 0x80000000,.. 0xFFFFFFFF].
-        PitchBendTrackEvent(ModelDuration timeSinceLastEvent, std::uint32_t highResValue);
 
         bool doIsEqualTo(const TrackEvent& other) const override;
 
       private:
-        std::uint32_t m_value;
+        AsymmetricCentredInt m_value;
     };
 } // namespace bw_music
 

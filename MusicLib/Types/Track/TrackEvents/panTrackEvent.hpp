@@ -10,47 +10,36 @@
 #include <MusicLib/musicLibExport.hpp>
 
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
-#include <MusicLib/Utilities/valueResolutionConversion.hpp>
+#include <MusicLib/Utilities/asymmetricCentredInt.hpp>
 
 #include <cstdint>
 
 namespace bw_music {
-
     /// Channel-voice event controlling the pan of a channel.
     struct MUSICLIB_API PanTrackEvent : public TrackEvent {
         DOWNCASTABLE(PanTrackEvent, TrackEvent);
         STREAM_EVENT(PanTrackEvent);
 
-        /// Construct from a value in the range [0,.. 0x80000000,.. 0xFFFFFFFF].
-        static PanTrackEvent fromUnsigned32(ModelDuration timeSinceLastEvent, std::uint32_t highResValue);
+        /// Construct from an AsymmetricCentredInt value (e.g. as used by MIDI).
+        PanTrackEvent(ModelDuration timeSinceLastEvent, AsymmetricCentredInt value);
 
-        /// Construct from a value in the range [0,.. 2^(numSourceBits - 1),.. (2^numSourceBits) - 1].
-        template<std::uint8_t numSourceBits>
-        static PanTrackEvent fromUnsigned(ModelDuration timeSinceLastEvent, std::uint32_t value);
+        /// Construct from a signed normalized double value in the range [-1.0, 1.0].
+        PanTrackEvent(ModelDuration timeSinceLastEvent, double signedNormalizedValue);
 
-        /// Construct from a value in the range [-1.0,.. 0.0,.. 1.0].
-        static PanTrackEvent fromSignedNormalizedDouble(ModelDuration timeSinceLastEvent, double signedNormalizedValue);
+        /// Get the contents as an AsymmetricCentredInt value (e.g. for use by MIDI).
+        AsymmetricCentredInt getAsymmetricCentredInt() const;
 
-        /// Get a value in the range [0,.. 0x80000000,.. 0xFFFFFFFF].
-        std::uint32_t getUnsigned32() const;
-
-        /// Construct from a value in the range [0,.. 2^(numSourceBits - 1),.. (2^numSourceBits) - 1].
-        template<std::uint8_t numSourceBits>
-        std::uint32_t getUnsigned() const;
-
-        /// Get a value in the range [-1.0,.. 0.0,.. 1.0].
+        /// Get a value in the range [-1.0, 1.0].
         double getSignedNormalizedValue() const;
 
         std::size_t getHash() const override;
 
       protected:
-        /// Construct from a value in the range [0,.. 0x80000000,.. 0xFFFFFFFF].
-        PanTrackEvent(ModelDuration timeSinceLastEvent, std::uint32_t highResValue);
 
         bool doIsEqualTo(const TrackEvent& other) const override;
 
       private:
-        std::uint32_t m_value;
+        AsymmetricCentredInt m_value;
     };
 }
 

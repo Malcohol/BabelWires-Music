@@ -11,11 +11,6 @@
 
 #include <cassert>
 
-bw_music::PanTrackEvent::PanTrackEvent(ModelDuration timeSinceLastEvent, std::uint32_t highResValue)
-    : TrackEvent(timeSinceLastEvent)
-    , m_value(highResValue) {
-}
-
 std::size_t bw_music::PanTrackEvent::getHash() const {
     return babelwires::hash::mixtureOf(static_cast<const char*>("Pan"), m_timeSinceLastEvent, m_value);
 }

@@ -5,17 +5,10 @@
  *
  * Licensed under the GPLv3.0. See LICENSE file.
  **/
-#include <MusicLib/Utilities/valueResolutionConversion.hpp>
+#include <MusicLib/Utilities/asymmetricCentredInt.hpp>
 
 #include <BaseLib/Result/error.hpp>
-
-std::uint32_t bw_music::minCentreMaxScale7to32(std::uint8_t sevenBitValue) {
-    return minCentreMaxScaleUp<7, 32>(sevenBitValue);
-}
-
-std::uint8_t bw_music::minCentreMaxScale32to7(std::uint32_t highResValue) {
-    return static_cast<std::uint8_t>(minCentreMaxScaleDown<32, 7>(highResValue));
-}
+#include <BaseLib/Hash/hash.hpp>
 
 std::uint32_t bw_music::assertScaleSignedNormalizedDoubleto32(double normalizedValue) {
     assert((normalizedValue >= -1.0) && (normalizedValue <= 1.0) && "Normalized value must be in [-1.0, 1.0]");
@@ -53,4 +46,8 @@ double bw_music::scale32toSignedNormalizedDouble(std::uint32_t highResValue) {
     } else {
         return (static_cast<double>(highResValue - centre) / (centre - 1));
     }
+}
+
+std::size_t bw_music::AsymmetricCentredInt::getHash() const {
+    return babelwires::hash::mixtureOf(static_cast<const char*>("ACI"), m_value);
 }

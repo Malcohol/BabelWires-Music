@@ -19,7 +19,7 @@
 #include <MusicLib/Types/Track/TrackEvents/percussionEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/tempoTrackEvent.hpp>
 #include <MusicLib/Types/Track/trackBuilder.hpp>
-#include <MusicLib/Utilities/valueResolutionConversion.hpp>
+#include <MusicLib/Utilities/asymmetricCentredInt.hpp>
 
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/File/fileTypeT.hpp>
@@ -607,7 +607,7 @@ babelwires::ResultT<bool> smf::SmfParser::readControlChange(TrackSplitter& track
             tracks.addEvent<bw_music::VolumeTrackEvent>(channelNumber, timeSinceLastTrackEvent, value);
             return true;
         case c_panController:
-            tracks.addEvent(channelNumber, bw_music::PanTrackEvent::fromUnsigned<7>(timeSinceLastTrackEvent, value));
+            tracks.addEvent<bw_music::PanTrackEvent>(channelNumber, timeSinceLastTrackEvent, bw_music::AsymmetricCentredInt::fromUnsigned<7>(value));
             return true;
         case c_expressionController:
             tracks.addEvent<bw_music::ExpressionTrackEvent>(channelNumber, timeSinceLastTrackEvent, value);
@@ -629,7 +629,7 @@ babelwires::ResultT<bool> smf::SmfParser::readPitchBend(TrackSplitter& tracks, u
     ASSIGN_OR_ERROR(const babelwires::Byte lsb, getNext());
     ASSIGN_OR_ERROR(const babelwires::Byte msb, getNext());
     const std::uint16_t pitchBendValue = static_cast<std::uint16_t>((static_cast<std::uint16_t>(msb) << 7) | lsb);
-    tracks.addEvent(channelNumber, bw_music::PitchBendTrackEvent::fromUnsigned<14>(timeSinceLastTrackEvent, pitchBendValue));
+    tracks.addEvent<bw_music::PitchBendTrackEvent>(channelNumber, timeSinceLastTrackEvent, bw_music::AsymmetricCentredInt::fromUnsigned<14>(pitchBendValue));
     return true;
 }
 
