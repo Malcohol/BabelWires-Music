@@ -13,6 +13,7 @@ SET( SEQUENCELIB_TESTS_SRCS
       mergeProcessorTest.cpp
       monophonicNoteIteratorTest.cpp
       monophonicSubtracksProcessorTest.cpp
+      asymmetricCentredIntTest.cpp
       musicTypesTest.cpp
       musicUtilitiesTest.cpp
       percussionMapProcessorTest.cpp
