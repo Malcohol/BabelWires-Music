@@ -1,7 +1,7 @@
 /**
- * Some utility functions useful for scaling between values of different resolutions, such as MIDI 1.0 and MIDI 2.0.
+ * Represents a value in the asymmetric range [0,... 0x80000000,.. 0xFFFFFFFF].
  *
- * (C) 2021 Malcolm Tyrrell
+ * (C) 2026 Malcolm Tyrrell
  *
  * Licensed under the GPLv3.0. See LICENSE file.
  **/

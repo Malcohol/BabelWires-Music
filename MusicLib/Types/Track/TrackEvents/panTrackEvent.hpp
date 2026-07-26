@@ -24,6 +24,7 @@ namespace bw_music {
         PanTrackEvent(ModelDuration timeSinceLastEvent, AsymmetricCentredInt value);
 
         /// Construct from a signed normalized double value in the range [-1.0, 1.0].
+        /// Asserts that the value is in range.
         PanTrackEvent(ModelDuration timeSinceLastEvent, double signedNormalizedValue);
 
         /// Get the contents as an AsymmetricCentredInt value (e.g. for use by MIDI).

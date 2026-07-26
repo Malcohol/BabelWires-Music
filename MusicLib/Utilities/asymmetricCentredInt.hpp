@@ -1,7 +1,7 @@
 /**
- * Some utility functions useful for scaling between values of different resolutions, such as MIDI 1.0 and MIDI 2.0.
+ * Represents a value in the asymmetric range [0,... 0x80000000,.. 0xFFFFFFFF].
  *
- * (C) 2021 Malcolm Tyrrell
+ * (C) 2026 Malcolm Tyrrell
  *
  * Licensed under the GPLv3.0. See LICENSE file.
  **/
@@ -17,7 +17,7 @@ namespace bw_music {
     /// Represents a value in the asymmetric range [0,... 0x80000000,.. 0xFFFFFFFF].
     /// Semantically the lowest and highest values should be considered the same distance from the centre value, even
     /// though the lower half of the range can represent one additional intermediate value.
-    /// Calculations should not use this stored representation but should use the signed normalized double methods.
+    /// Calculations should not use this representation but should use the signed normalized double methods.
     /// This representation is used by some MIDI data, such as Pan or Pitch Bend.
     struct MUSICLIB_API AsymmetricCentredInt {
         /// Construct from a value in the asymmetric range [0,... 0x80000000,.. 0xFFFFFFFF].

@@ -25,6 +25,7 @@ namespace bw_music {
         PitchBendTrackEvent(ModelDuration timeSinceLastEvent, AsymmetricCentredInt aci);
 
         /// Construct from a value in the range [-1.0, 1.0].
+        /// Asserts that the value is in range.
         PitchBendTrackEvent(ModelDuration timeSinceLastEvent, double signedNormalizedValue);
 
         /// Get the contents as an AsymmetricCentredInt value (e.g. for use by MIDI).
