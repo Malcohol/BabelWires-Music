@@ -607,7 +607,7 @@ babelwires::ResultT<bool> smf::SmfParser::readControlChange(TrackSplitter& track
             tracks.addEvent<bw_music::VolumeTrackEvent>(channelNumber, timeSinceLastTrackEvent, value);
             return true;
         case c_panController:
-            tracks.addEvent(channelNumber, bw_music::PanTrackEvent::fromValue<7>(timeSinceLastTrackEvent, value));
+            tracks.addEvent(channelNumber, bw_music::PanTrackEvent::fromUnsigned<7>(timeSinceLastTrackEvent, value));
             return true;
         case c_expressionController:
             tracks.addEvent<bw_music::ExpressionTrackEvent>(channelNumber, timeSinceLastTrackEvent, value);
@@ -629,7 +629,7 @@ babelwires::ResultT<bool> smf::SmfParser::readPitchBend(TrackSplitter& tracks, u
     ASSIGN_OR_ERROR(const babelwires::Byte lsb, getNext());
     ASSIGN_OR_ERROR(const babelwires::Byte msb, getNext());
     const std::uint16_t pitchBendValue = static_cast<std::uint16_t>((static_cast<std::uint16_t>(msb) << 7) | lsb);
-    tracks.addEvent(channelNumber, bw_music::PitchBendTrackEvent::fromValue<14>(timeSinceLastTrackEvent, pitchBendValue));
+    tracks.addEvent(channelNumber, bw_music::PitchBendTrackEvent::fromUnsigned<14>(timeSinceLastTrackEvent, pitchBendValue));
     return true;
 }
 

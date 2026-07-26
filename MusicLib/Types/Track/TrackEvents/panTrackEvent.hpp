@@ -22,21 +22,21 @@ namespace bw_music {
         STREAM_EVENT(PanTrackEvent);
 
         /// Construct from a value in the range [0,.. 0x80000000,.. 0xFFFFFFFF].
-        static PanTrackEvent fromValue32(ModelDuration timeSinceLastEvent, std::uint32_t highResValue);
+        static PanTrackEvent fromUnsigned32(ModelDuration timeSinceLastEvent, std::uint32_t highResValue);
 
         /// Construct from a value in the range [0,.. 2^(numSourceBits - 1),.. (2^numSourceBits) - 1].
         template<std::uint8_t numSourceBits>
-        static PanTrackEvent fromValue(ModelDuration timeSinceLastEvent, std::uint32_t value);
+        static PanTrackEvent fromUnsigned(ModelDuration timeSinceLastEvent, std::uint32_t value);
 
         /// Construct from a value in the range [-1.0,.. 0.0,.. 1.0].
         static PanTrackEvent fromSignedNormalizedDouble(ModelDuration timeSinceLastEvent, double signedNormalizedValue);
 
         /// Get a value in the range [0,.. 0x80000000,.. 0xFFFFFFFF].
-        std::uint32_t getValue32() const;
+        std::uint32_t getUnsigned32() const;
 
         /// Construct from a value in the range [0,.. 2^(numSourceBits - 1),.. (2^numSourceBits) - 1].
         template<std::uint8_t numSourceBits>
-        std::uint32_t getValue() const;
+        std::uint32_t getUnsigned() const;
 
         /// Get a value in the range [-1.0,.. 0.0,.. 1.0].
         double getSignedNormalizedValue() const;

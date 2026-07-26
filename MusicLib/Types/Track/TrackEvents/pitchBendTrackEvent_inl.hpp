@@ -5,13 +5,13 @@
  *
  * Licensed under the GPLv3.0. See LICENSE file.
  **/
-inline bw_music::PitchBendTrackEvent bw_music::PitchBendTrackEvent::fromValue32(ModelDuration timeSinceLastEvent,
+inline bw_music::PitchBendTrackEvent bw_music::PitchBendTrackEvent::fromUnsigned32(ModelDuration timeSinceLastEvent,
                                                                                  std::uint32_t highResValue) {
     return PitchBendTrackEvent(timeSinceLastEvent, highResValue);
 }
 
 template<std::uint8_t numSourceBits>
-bw_music::PitchBendTrackEvent bw_music::PitchBendTrackEvent::fromValue(ModelDuration timeSinceLastEvent,
+bw_music::PitchBendTrackEvent bw_music::PitchBendTrackEvent::fromUnsigned(ModelDuration timeSinceLastEvent,
                                                                         std::uint32_t value) {
     return PitchBendTrackEvent(timeSinceLastEvent, bw_music::minCentreMaxScaleUp<numSourceBits, 32>(value));
 }
@@ -21,10 +21,10 @@ inline bw_music::PitchBendTrackEvent bw_music::PitchBendTrackEvent::fromSignedNo
     return PitchBendTrackEvent(timeSinceLastEvent, bw_music::assertScaleSignedNormalizedDoubleto32(signedNormalizedValue));
 }
 
-inline std::uint32_t bw_music::PitchBendTrackEvent::getValue32() const { return m_value; }
+inline std::uint32_t bw_music::PitchBendTrackEvent::getUnsigned32() const { return m_value; }
 
 template<std::uint8_t numSourceBits>
-std::uint32_t bw_music::PitchBendTrackEvent::getValue() const {
+std::uint32_t bw_music::PitchBendTrackEvent::getUnsigned() const {
     return bw_music::minCentreMaxScaleDown<32, numSourceBits>(m_value);
 }
 
