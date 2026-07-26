@@ -10,7 +10,6 @@
 #include <MusicLib/musicLibExport.hpp>
 
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
-#include <MusicLib/Utilities/valueResolutionConversion.hpp>
 
 #include <cstdint>
 
@@ -79,27 +78,6 @@ namespace bw_music {
         Velocity m_value;
     };
 
-    struct MUSICLIB_API PitchBendTrackEvent : public TrackEvent {
-        DOWNCASTABLE(PitchBendTrackEvent, TrackEvent);
-        STREAM_EVENT(PitchBendTrackEvent);
-
-        PitchBendTrackEvent(ModelDuration timeSinceLastEvent, std::int16_t bend)
-            : TrackEvent(timeSinceLastEvent)
-            , m_bend(bend) {}
-
-        std::int16_t getBend() const { return m_bend; }
-
-        double getNormalizedBend() const;
-
-        std::size_t getHash() const override;
-
-      protected:
-        bool doIsEqualTo(const TrackEvent& other) const override;
-
-      private:
-        std::int16_t m_bend;
-    };
-
     struct MUSICLIB_API ChannelPressureEvent : public TrackEvent {
         DOWNCASTABLE(ChannelPressureEvent, TrackEvent);
         STREAM_EVENT(ChannelPressureEvent);
@@ -148,3 +126,5 @@ namespace bw_music {
     };
 
 } // namespace bw_music
+
+#include <MusicLib/Types/Track/TrackEvents/pitchBendTrackEvent.hpp>

@@ -8,8 +8,9 @@
 
 #include <MusicLib/Types/Track/TrackEvents/channelVoiceEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
-#include <MusicLib/Types/Track/TrackEvents/tempoTrackEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/panTrackEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/pitchBendTrackEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/tempoTrackEvent.hpp>
 #include <MusicLib/Utilities/filteredTrackIterator.hpp>
 #include <MusicLib/Types/Track/trackBuilder.hpp>
 #include <MusicLib/libRegistration.hpp>
@@ -129,10 +130,10 @@ namespace {
         track.addEvent(bw_music::VolumeTrackEvent(babelwires::Rational(1, 16), 127));
         track.addEvent(bw_music::ExpressionTrackEvent(babelwires::Rational(1, 16), 0));
         track.addEvent(bw_music::SustainTrackEvent(babelwires::Rational(1, 16), 127));
-        track.addEvent(bw_music::PitchBendTrackEvent(babelwires::Rational(1, 16), -8192));
+        track.addEvent(bw_music::PitchBendTrackEvent::fromValue<14>(babelwires::Rational(1, 16), 0));
         track.addEvent(bw_music::ChannelPressureEvent(babelwires::Rational(1, 16), 127));
         track.addEvent(bw_music::SustainTrackEvent(babelwires::Rational(1, 16), 0));
-        track.addEvent(bw_music::PitchBendTrackEvent(babelwires::Rational(1, 16), 8191));
+        track.addEvent(bw_music::PitchBendTrackEvent::fromValue<14>(babelwires::Rational(1, 16), 0x3fff));
         track.addEvent(bw_music::NoteOffEvent(babelwires::Rational(1, 16), 60, 64));
         return track.finishAndGetTrack();
     }

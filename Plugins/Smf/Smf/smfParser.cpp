@@ -13,8 +13,9 @@
 
 #include <MusicLib/Percussion/builtInPercussionInstruments.hpp>
 #include <MusicLib/Types/Track/TrackEvents/channelVoiceEvents.hpp>
-#include <MusicLib/Types/Track/TrackEvents/panTrackEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
+#include <MusicLib/Types/Track/TrackEvents/panTrackEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/pitchBendTrackEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/percussionEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/tempoTrackEvent.hpp>
 #include <MusicLib/Types/Track/trackBuilder.hpp>
@@ -627,8 +628,8 @@ babelwires::ResultT<bool> smf::SmfParser::readPitchBend(TrackSplitter& tracks, u
                                                         bw_music::ModelDuration timeSinceLastTrackEvent) {
     ASSIGN_OR_ERROR(const babelwires::Byte lsb, getNext());
     ASSIGN_OR_ERROR(const babelwires::Byte msb, getNext());
-    const std::int16_t bend = static_cast<std::int16_t>((static_cast<std::uint16_t>(msb) << 7) | lsb) - 8192;
-    tracks.addEvent<bw_music::PitchBendTrackEvent>(channelNumber, timeSinceLastTrackEvent, bend);
+    const std::uint16_t pitchBendValue = static_cast<std::uint16_t>((static_cast<std::uint16_t>(msb) << 7) | lsb);
+    tracks.addEvent(channelNumber, bw_music::PitchBendTrackEvent::fromValue<14>(timeSinceLastTrackEvent, pitchBendValue));
     return true;
 }
 

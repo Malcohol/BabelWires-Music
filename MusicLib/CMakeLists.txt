@@ -35,6 +35,7 @@ SET( MUSICLIB_SRCS
 	Types/Track/TrackEvents/channelVoiceEvents.cpp
 	Types/Track/TrackEvents/noteEvents.cpp
 	Types/Track/TrackEvents/panTrackEvent.cpp
+	Types/Track/TrackEvents/pitchBendTrackEvent.cpp
 	Types/Track/TrackEvents/percussionEvents.cpp
 	Types/Track/TrackEvents/tempoTrackEvent.cpp
 	Types/Track/TrackEvents/trackEvent.cpp

@@ -9,13 +9,6 @@
 
 #include <BaseLib/Hash/hash.hpp>
 
-#include <cassert>
-
-namespace {
-    constexpr std::int16_t c_minPitchBend = -8192;
-    constexpr std::int16_t c_maxPitchBend = 8191;
-}
-
 std::size_t bw_music::VolumeTrackEvent::getHash() const {
     return babelwires::hash::mixtureOf(static_cast<const char*>("Volume"), m_timeSinceLastEvent, m_value);
 }
@@ -41,26 +34,6 @@ std::size_t bw_music::SustainTrackEvent::getHash() const {
 bool bw_music::SustainTrackEvent::doIsEqualTo(const TrackEvent& other) const {
     const auto& otherSustain = static_cast<const SustainTrackEvent&>(other);
     return TrackEvent::doIsEqualTo(other) && (m_value == otherSustain.m_value);
-}
-
-double bw_music::PitchBendTrackEvent::getNormalizedBend() const {
-    assert((c_minPitchBend <= m_bend) && (m_bend <= c_maxPitchBend) && "Pitch bend out of MIDI range");
-    if (m_bend == 0) {
-        return 0.0;
-    }
-    if (m_bend < 0) {
-        return static_cast<double>(m_bend) / -c_minPitchBend;
-    }
-    return static_cast<double>(m_bend) / c_maxPitchBend;
-}
-
-std::size_t bw_music::PitchBendTrackEvent::getHash() const {
-    return babelwires::hash::mixtureOf(static_cast<const char*>("PitchBend"), m_timeSinceLastEvent, m_bend);
-}
-
-bool bw_music::PitchBendTrackEvent::doIsEqualTo(const TrackEvent& other) const {
-    const auto& otherPitchBend = static_cast<const PitchBendTrackEvent&>(other);
-    return TrackEvent::doIsEqualTo(other) && (m_bend == otherPitchBend.m_bend);
 }
 
 std::size_t bw_music::ChannelPressureEvent::getHash() const {
