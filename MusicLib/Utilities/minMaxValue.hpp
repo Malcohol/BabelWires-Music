@@ -1,5 +1,5 @@
 /**
- * A representation of an integer value in the range [0, 0xFFFFFFFF].
+ * Represents a value between a minimum and a maximum, using an integer evenly distributed across the range.
  *
  * (C) 2021 Malcolm Tyrrell
  *
@@ -20,7 +20,7 @@ namespace bw_music {
     concept UnsignedInt32Compatible = std::unsigned_integral<T> && !std::same_as<std::remove_cvref_t<T>, bool> &&
                                       (sizeof(std::remove_cvref_t<T>) <= sizeof(std::uint32_t));
 
-    /// Represents a value in the range [0, 0xFFFFFFFF].
+    /// Represents a value between a minimum and a maximum, using an integer evenly distributed across the range.
     struct MUSICLIB_API MinMaxValue {
         /// Construct from a value in the range [0, 0xFFFFFFFF].
         static MinMaxValue fromUnsigned32(std::uint32_t highResValue);

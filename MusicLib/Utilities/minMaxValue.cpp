@@ -1,5 +1,5 @@
 /**
- * A representation of an integer value in the range [0, 0xFFFFFFFF].
+ * Represents a value between a minimum and a maximum, using an integer evenly distributed across the range.
  *
  * (C) 2021 Malcolm Tyrrell
  *
