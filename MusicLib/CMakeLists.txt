@@ -48,7 +48,7 @@ SET( MUSICLIB_SRCS
 	Percussion/percussionSetWithPitchMap.cpp
 	pitch.cpp
 	Utilities/monophonicNoteIterator.cpp
-	Utilities/asymmetricCentredInt.cpp
+	Utilities/minCentredMaxValue.cpp
 	Utilities/minMaxValue.cpp
 	Types/Track/trackBuilder.cpp
 	Utilities/trackValidator.cpp

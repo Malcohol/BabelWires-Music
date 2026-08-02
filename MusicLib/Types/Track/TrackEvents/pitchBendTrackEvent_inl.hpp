@@ -6,15 +6,15 @@
  * Licensed under the GPLv3.0. See LICENSE file.
  **/
 inline bw_music::PitchBendTrackEvent::PitchBendTrackEvent(ModelDuration timeSinceLastEvent,
-                                                                                 AsymmetricCentredInt aci)
+                                                                                 MinCentredMaxValue aci)
                                                                                  : TrackEvent(timeSinceLastEvent)
                                                                                  , m_value(aci) {}
 
 inline bw_music::PitchBendTrackEvent::PitchBendTrackEvent(
     ModelDuration timeSinceLastEvent, double signedNormalizedValue)
-    : PitchBendTrackEvent(timeSinceLastEvent, AsymmetricCentredInt::assertFromSignedNormalizedDouble(signedNormalizedValue)) {}
+    : PitchBendTrackEvent(timeSinceLastEvent, MinCentredMaxValue::assertFromSignedNormalizedDouble(signedNormalizedValue)) {}
 
-inline bw_music::AsymmetricCentredInt bw_music::PitchBendTrackEvent::getAsymmetricCentredInt() const { return m_value; }
+inline bw_music::MinCentredMaxValue bw_music::PitchBendTrackEvent::getMinCentredMaxValue() const { return m_value; }
 
 inline double bw_music::PitchBendTrackEvent::getSignedNormalizedValue() const {
     return m_value.getSignedNormalizedValue();

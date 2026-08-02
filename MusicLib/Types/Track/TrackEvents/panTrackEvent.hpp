@@ -10,7 +10,7 @@
 #include <MusicLib/musicLibExport.hpp>
 
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
-#include <MusicLib/Utilities/asymmetricCentredInt.hpp>
+#include <MusicLib/Utilities/minCentredMaxValue.hpp>
 
 #include <cstdint>
 
@@ -20,15 +20,15 @@ namespace bw_music {
         DOWNCASTABLE(PanTrackEvent, TrackEvent);
         STREAM_EVENT(PanTrackEvent);
 
-        /// Construct from an AsymmetricCentredInt value (e.g. as used by MIDI).
-        PanTrackEvent(ModelDuration timeSinceLastEvent, AsymmetricCentredInt value);
+        /// Construct from an MinCentredMaxValue value (e.g. as used by MIDI).
+        PanTrackEvent(ModelDuration timeSinceLastEvent, MinCentredMaxValue value);
 
         /// Construct from a signed normalized double value in the range [-1.0, 1.0].
         /// Asserts that the value is in range.
         PanTrackEvent(ModelDuration timeSinceLastEvent, double signedNormalizedValue);
 
-        /// Get the contents as an AsymmetricCentredInt value (e.g. for use by MIDI).
-        AsymmetricCentredInt getAsymmetricCentredInt() const;
+        /// Get the contents as an MinCentredMaxValue value (e.g. for use by MIDI).
+        MinCentredMaxValue getMinCentredMaxValue() const;
 
         /// Get a value in the range [-1.0, 1.0].
         double getSignedNormalizedValue() const;
@@ -40,7 +40,7 @@ namespace bw_music {
         bool doIsEqualTo(const TrackEvent& other) const override;
 
       private:
-        AsymmetricCentredInt m_value;
+        MinCentredMaxValue m_value;
     };
 }
 

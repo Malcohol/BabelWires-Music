@@ -19,32 +19,32 @@ namespace bw_music {
     /// though the lower half of the range can represent one additional intermediate value.
     /// Calculations should not use this representation but should use the signed normalized double methods.
     /// This representation is used by some MIDI data, such as Pan or Pitch Bend.
-    struct MUSICLIB_API AsymmetricCentredInt {
+    struct MUSICLIB_API MinCentredMaxValue {
         /// Construct from a value in the asymmetric range [0,... 0x80000000,.. 0xFFFFFFFF].
-        static AsymmetricCentredInt fromUnsigned32(std::uint32_t highResValue);
+        static MinCentredMaxValue fromUnsigned32(std::uint32_t highResValue);
 
         /// Construct from a value in the asymmetric range [0,... 2^(numSourceBits - 1),.. (2^numSourceBits) - 1].
         /// Fails if the value is out of range.
         /// Note: There's no best effort "try" equivalent to this method: If the value is out of range, this class doesn't have the context to repair the situation.
         template <std::uint8_t numSourceBits>
-        static babelwires::ResultT<AsymmetricCentredInt> fromUnsigned(std::uint32_t value);
+        static babelwires::ResultT<MinCentredMaxValue> fromUnsigned(std::uint32_t value);
 
         /// Construct from a value in the asymmetric range [0,... 2^(numSourceBits - 1),.. (2^numSourceBits) - 1].
         /// Asserts that the value is in range.
         template <std::uint8_t numSourceBits>
-        static AsymmetricCentredInt assertFromUnsigned(std::uint32_t value);
+        static MinCentredMaxValue assertFromUnsigned(std::uint32_t value);
 
         /// Construct from a value in the range [-1.0, 1.0].
         /// Fails if the value is out of range.
-        static babelwires::ResultT<AsymmetricCentredInt> fromSignedNormalizedDouble(double signedNormalizedValue);
+        static babelwires::ResultT<MinCentredMaxValue> fromSignedNormalizedDouble(double signedNormalizedValue);
 
         /// Construct from a value in the range [-1.0, 1.0].
         /// Clamps to the nearest valid value if the input is out of range.
-        static AsymmetricCentredInt tryFromSignedNormalizedDouble(double signedNormalizedValue);
+        static MinCentredMaxValue tryFromSignedNormalizedDouble(double signedNormalizedValue);
 
         /// Construct from a value in the range [-1.0, 1.0].
         /// Asserts that the value is in range.
-        static AsymmetricCentredInt assertFromSignedNormalizedDouble(double signedNormalizedValue);
+        static MinCentredMaxValue assertFromSignedNormalizedDouble(double signedNormalizedValue);
 
         /// Get a value in the asymmetric range [0,... 0x80000000,.. 0xFFFFFFFF].
         std::uint32_t getUnsigned32() const;
@@ -57,11 +57,11 @@ namespace bw_music {
 
         std::size_t getHash() const;
 
-        auto operator<=>(const AsymmetricCentredInt&) const = default;
+        auto operator<=>(const MinCentredMaxValue&) const = default;
 
       protected:
         /// Construct from a value in the asymmetric range [0,... 0x80000000,.. 0xFFFFFFFF].
-        AsymmetricCentredInt(std::uint32_t highResValue);
+        MinCentredMaxValue(std::uint32_t highResValue);
 
       private:
         /// The value in the asymmetric range [0,... 0x80000000,.. 0xFFFFFFFF].
@@ -87,10 +87,10 @@ namespace bw_music {
 } // namespace bw_music
 
 namespace std {
-    template <> struct hash<bw_music::AsymmetricCentredInt> {
-        inline std::size_t operator()(const bw_music::AsymmetricCentredInt& aci) const { return aci.getHash(); }
+    template <> struct hash<bw_music::MinCentredMaxValue> {
+        inline std::size_t operator()(const bw_music::MinCentredMaxValue& aci) const { return aci.getHash(); }
     };
 } // namespace std
 
 
-#include <MusicLib/Utilities/asymmetricCentredInt_inl.hpp>
+#include <MusicLib/Utilities/minCentredMaxValue_inl.hpp>

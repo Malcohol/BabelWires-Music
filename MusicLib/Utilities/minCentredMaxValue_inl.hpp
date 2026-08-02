@@ -48,31 +48,31 @@ constexpr std::uint32_t bw_music::detail::minCentreMaxScaleDown(std::uint32_t so
     return sourceValue >> numScaleBits;
 }
 
-inline bw_music::AsymmetricCentredInt::AsymmetricCentredInt(std::uint32_t highResValue)
+inline bw_music::MinCentredMaxValue::MinCentredMaxValue(std::uint32_t highResValue)
     : m_value(highResValue) {}
 
-inline bw_music::AsymmetricCentredInt bw_music::AsymmetricCentredInt::fromUnsigned32(std::uint32_t highResValue) {
-    return AsymmetricCentredInt(highResValue);
+inline bw_music::MinCentredMaxValue bw_music::MinCentredMaxValue::fromUnsigned32(std::uint32_t highResValue) {
+    return MinCentredMaxValue(highResValue);
 }
 
 template <std::uint8_t numSourceBits>
-babelwires::ResultT<bw_music::AsymmetricCentredInt> bw_music::AsymmetricCentredInt::fromUnsigned(std::uint32_t value) {
+babelwires::ResultT<bw_music::MinCentredMaxValue> bw_music::MinCentredMaxValue::fromUnsigned(std::uint32_t value) {
     if (value >= (1 << numSourceBits)) {
         return babelwires::Error() << "Value is out of range for the specified number of source bits";
     }
-    return AsymmetricCentredInt(bw_music::detail::minCentreMaxScaleUp<numSourceBits, 32>(value));
+    return MinCentredMaxValue(bw_music::detail::minCentreMaxScaleUp<numSourceBits, 32>(value));
 }
 
 template <std::uint8_t numSourceBits>
-bw_music::AsymmetricCentredInt bw_music::AsymmetricCentredInt::assertFromUnsigned(std::uint32_t value) {
-    return AsymmetricCentredInt(bw_music::detail::minCentreMaxScaleUp<numSourceBits, 32>(value));
+bw_music::MinCentredMaxValue bw_music::MinCentredMaxValue::assertFromUnsigned(std::uint32_t value) {
+    return MinCentredMaxValue(bw_music::detail::minCentreMaxScaleUp<numSourceBits, 32>(value));
 }
 
-inline std::uint32_t bw_music::AsymmetricCentredInt::getUnsigned32() const {
+inline std::uint32_t bw_music::MinCentredMaxValue::getUnsigned32() const {
     return m_value;
 }
 
 /// Construct from a value in the range [0,.. 2^(numSourceBits - 1),.. (2^numSourceBits) - 1].
-template <std::uint8_t numSourceBits> std::uint32_t bw_music::AsymmetricCentredInt::getUnsigned() const {
+template <std::uint8_t numSourceBits> std::uint32_t bw_music::MinCentredMaxValue::getUnsigned() const {
     return bw_music::detail::minCentreMaxScaleDown<32, numSourceBits>(m_value);
 }

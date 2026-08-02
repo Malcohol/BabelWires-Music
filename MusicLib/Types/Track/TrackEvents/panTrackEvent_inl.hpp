@@ -7,16 +7,16 @@
  **/
 
 
-inline bw_music::PanTrackEvent::PanTrackEvent(ModelDuration timeSinceLastEvent, bw_music::AsymmetricCentredInt value)
+inline bw_music::PanTrackEvent::PanTrackEvent(ModelDuration timeSinceLastEvent, bw_music::MinCentredMaxValue value)
     : TrackEvent(timeSinceLastEvent)
     , m_value(value) {
 }
 
 inline bw_music::PanTrackEvent::PanTrackEvent(ModelDuration timeSinceLastEvent, double signedNormalizedValue)
-    : PanTrackEvent(timeSinceLastEvent, bw_music::AsymmetricCentredInt::assertFromSignedNormalizedDouble(signedNormalizedValue)) {
+    : PanTrackEvent(timeSinceLastEvent, bw_music::MinCentredMaxValue::assertFromSignedNormalizedDouble(signedNormalizedValue)) {
 }
 
-inline bw_music::AsymmetricCentredInt bw_music::PanTrackEvent::getAsymmetricCentredInt() const { return m_value; }
+inline bw_music::MinCentredMaxValue bw_music::PanTrackEvent::getMinCentredMaxValue() const { return m_value; }
 
 inline double bw_music::PanTrackEvent::getSignedNormalizedValue() const {
     return m_value.getSignedNormalizedValue();
