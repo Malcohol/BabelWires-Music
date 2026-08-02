@@ -49,6 +49,7 @@ SET( MUSICLIB_SRCS
 	pitch.cpp
 	Utilities/monophonicNoteIterator.cpp
 	Utilities/asymmetricCentredInt.cpp
+	Utilities/minMaxValue.cpp
 	Types/Track/trackBuilder.cpp
 	Utilities/trackValidator.cpp
 	libRegistration.cpp

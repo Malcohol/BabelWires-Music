@@ -14,6 +14,7 @@ SET( SEQUENCELIB_TESTS_SRCS
       monophonicNoteIteratorTest.cpp
       monophonicSubtracksProcessorTest.cpp
       asymmetricCentredIntTest.cpp
+      minMaxValueTest.cpp
       musicTypesTest.cpp
       musicUtilitiesTest.cpp
       percussionMapProcessorTest.cpp
