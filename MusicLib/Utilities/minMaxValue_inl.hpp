@@ -10,23 +10,26 @@
 #include <BaseLib/Hash/hash.hpp>
 #include <BaseLib/Result/error.hpp>
 
+#include <algorithm>
 #include <limits>
 
-template <std::uint8_t numSourceBits, std::uint8_t numDestBits, bw_music::UInt32Compatible DestInt>
-constexpr DestInt bw_music::detail::uintScale(std::uint32_t sourceValue) {
+template <std::uint8_t numSourceBits, std::uint8_t numDestBits, bw_music::UInt64Compatible DestInt>
+constexpr DestInt bw_music::detail::uintScale(std::uint64_t sourceValue) {
     static_assert(numSourceBits > 0, "numSourceBits must be greater than 0");
-    static_assert(numSourceBits <= 32, "numSourceBits must be less than or equal to 32");
+    static_assert(numSourceBits <= 64, "numSourceBits must be less than or equal to 64");
     static_assert(numDestBits > 0, "numDestBits must be greater than 0");
-    static_assert(numDestBits <= 32, "numDestBits must be less than or equal to 32");
-    assert((sourceValue < (static_cast<std::uint64_t>(1) << numSourceBits)) && "sourceValue is out of range");
+    static_assert(numDestBits <= 64, "numDestBits must be less than or equal to 64");
+    if constexpr (numSourceBits < 64) {
+        assert((sourceValue < (static_cast<std::uint64_t>(1) << numSourceBits)) && "sourceValue is out of range");
+    }
 
     if constexpr (numSourceBits == numDestBits) {
         return static_cast<DestInt>(sourceValue);
     } else if constexpr (numSourceBits < numDestBits) {
         const std::uint8_t numScaleBits = (numDestBits - numSourceBits);
-        std::uint32_t result = sourceValue << numScaleBits;
+        std::uint64_t result = sourceValue << numScaleBits;
 
-        std::uint32_t bitsToRepeat = sourceValue;
+        std::uint64_t bitsToRepeat = sourceValue;
         if (numScaleBits > numSourceBits) {
             bitsToRepeat <<= (numScaleBits - numSourceBits);
         } else {
@@ -43,10 +46,10 @@ constexpr DestInt bw_music::detail::uintScale(std::uint32_t sourceValue) {
     }
 }
 
-template <bw_music::UInt32Compatible SourceInt, bw_music::UInt32Compatible DestInt>
+template <bw_music::UInt64Compatible SourceInt, bw_music::UInt64Compatible DestInt>
 constexpr DestInt bw_music::detail::uintScale(SourceInt sourceValue) {
-    return uintScale<static_cast<std::uint8_t>(sizeof(SourceInt) * 8u), static_cast<std::uint8_t>(sizeof(DestInt) * 8u), DestInt>(
-        static_cast<std::uint32_t>(sourceValue));
+    return uintScale<static_cast<std::uint8_t>(sizeof(SourceInt) * 8u),
+                     static_cast<std::uint8_t>(sizeof(DestInt) * 8u), DestInt>(static_cast<std::uint64_t>(sourceValue));
 }
 
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
@@ -54,33 +57,35 @@ inline bw_music::MinMaxValue<STORAGE_TYPE>::MinMaxValue(STORAGE_TYPE value)
     : m_value(value) {}
 
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
-template <std::uint8_t numSourceBits, bw_music::UInt32Compatible UnsignedInt>
+template <std::uint8_t numSourceBits, bw_music::UInt64Compatible UnsignedInt>
 babelwires::ResultT<bw_music::MinMaxValue<STORAGE_TYPE>> bw_music::MinMaxValue<STORAGE_TYPE>::fromUnsigned(UnsignedInt value) {
-    if (value >= (static_cast<std::uint64_t>(1) << numSourceBits)) {
-        return babelwires::Error() << "Value " << value << " is out of range for the specified number of source bits " << static_cast<std::uint32_t>(numSourceBits);
+    static_assert(numSourceBits <= 64, "numSourceBits must be less than or equal to 64");
+    if constexpr (numSourceBits < 64) {
+        if (value >= (static_cast<std::uint64_t>(1) << numSourceBits)) {
+            return babelwires::Error() << "Value " << value << " is out of range for the specified number of source bits "
+                                       << static_cast<std::uint32_t>(numSourceBits);
+        }
     }
-    return MinMaxValue(
-        bw_music::detail::uintScale<numSourceBits, c_storageBits, STORAGE_TYPE>(static_cast<std::uint32_t>(value)));
+    return MinMaxValue(bw_music::detail::uintScale<numSourceBits, c_storageBits, STORAGE_TYPE>(static_cast<std::uint64_t>(value)));
 }
 
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
-template <std::uint8_t numSourceBits, bw_music::UInt32Compatible UnsignedInt>
+template <std::uint8_t numSourceBits, bw_music::UInt64Compatible UnsignedInt>
 bw_music::MinMaxValue<STORAGE_TYPE> bw_music::MinMaxValue<STORAGE_TYPE>::tryFromUnsigned(UnsignedInt value) {
-    std::uint32_t clampedValue = value;
-    if constexpr (numSourceBits < 32) {
-        const std::uint32_t maxValue = static_cast<std::uint32_t>((static_cast<std::uint64_t>(1) << numSourceBits) - 1);
-        if (clampedValue > maxValue) {
-            clampedValue = maxValue;
-        }
+    static_assert(numSourceBits <= 64, "numSourceBits must be less than or equal to 64");
+    std::uint64_t clampedValue = value;
+    if constexpr (numSourceBits < 64) {
+        const std::uint64_t maxValue = (static_cast<std::uint64_t>(1) << numSourceBits) - 1;
+        clampedValue = std::min(clampedValue, maxValue);
     }
     return MinMaxValue(bw_music::detail::uintScale<numSourceBits, c_storageBits, STORAGE_TYPE>(clampedValue));
 }
 
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
-template <std::uint8_t numSourceBits, bw_music::UInt32Compatible UnsignedInt>
+template <std::uint8_t numSourceBits, bw_music::UInt64Compatible UnsignedInt>
 bw_music::MinMaxValue<STORAGE_TYPE> bw_music::MinMaxValue<STORAGE_TYPE>::assertFromUnsigned(UnsignedInt value) {
-    return MinMaxValue(
-        bw_music::detail::uintScale<numSourceBits, c_storageBits, STORAGE_TYPE>(static_cast<std::uint32_t>(value)));
+    static_assert(numSourceBits <= 64, "numSourceBits must be less than or equal to 64");
+    return MinMaxValue(bw_music::detail::uintScale<numSourceBits, c_storageBits, STORAGE_TYPE>(static_cast<std::uint64_t>(value)));
 }
 
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
@@ -99,8 +104,14 @@ inline std::uint32_t bw_music::MinMaxValue<STORAGE_TYPE>::getUnsigned32() const 
 }
 
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
+inline std::uint64_t bw_music::MinMaxValue<STORAGE_TYPE>::getUnsigned64() const {
+    return bw_music::detail::uintScale<STORAGE_TYPE, std::uint64_t>(m_value);
+}
+
+template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
 template <std::uint8_t numSourceBits>
-std::uint32_t bw_music::MinMaxValue<STORAGE_TYPE>::getUnsigned() const {
+std::uint64_t bw_music::MinMaxValue<STORAGE_TYPE>::getUnsigned() const {
+    static_assert(numSourceBits <= 64, "numSourceBits must be less than or equal to 64");
     return bw_music::detail::uintScale<c_storageBits, numSourceBits>(m_value);
 }
 
@@ -123,9 +134,9 @@ babelwires::ResultT<bw_music::MinMaxValue<STORAGE_TYPE>> bw_music::MinMaxValue<S
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
 bw_music::MinMaxValue<STORAGE_TYPE> bw_music::MinMaxValue<STORAGE_TYPE>::tryFromNormalizedDouble(double normalizedValue) {
     if (normalizedValue < 0.0) {
-        return assertFromUnsigned<32>(0u);
+        return assertFromUnsigned<64>(0u);
     } else if (normalizedValue > 1.0) {
-        return assertFromUnsigned<32>(std::numeric_limits<std::uint32_t>::max());
+        return assertFromUnsigned<64>(std::numeric_limits<std::uint64_t>::max());
     } else {
         return assertFromNormalizedDouble(normalizedValue);
     }

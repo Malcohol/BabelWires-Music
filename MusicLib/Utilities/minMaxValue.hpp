@@ -17,13 +17,13 @@
 
 namespace bw_music {
     template <typename T>
-    concept UInt32Compatible = std::unsigned_integral<T> && !std::same_as<std::remove_cvref_t<T>, bool> &&
-                                      (sizeof(std::remove_cvref_t<T>) <= sizeof(std::uint32_t));
+    concept UInt64Compatible = std::unsigned_integral<T> && !std::same_as<std::remove_cvref_t<T>, bool> &&
+                               (sizeof(std::remove_cvref_t<T>) <= sizeof(std::uint64_t));
 
     template <typename T>
     concept MinMaxValueStorageType =
         std::same_as<std::remove_cvref_t<T>, std::uint8_t> || std::same_as<std::remove_cvref_t<T>, std::uint16_t> ||
-        std::same_as<std::remove_cvref_t<T>, std::uint32_t>;
+        std::same_as<std::remove_cvref_t<T>, std::uint32_t> || std::same_as<std::remove_cvref_t<T>, std::uint64_t>;
 
     /// Represents a value between a minimum and a maximum, using an integer evenly distributed across the range.
     /// The API is strict by design, to avoid situations where C++ type conversion would be ambiguous or
@@ -34,17 +34,17 @@ namespace bw_music {
 
         /// Construct from a value in the range [0, (2^numSourceBits) - 1].
         /// Fails if the value is out of range.
-        template <std::uint8_t numSourceBits, UInt32Compatible UnsignedInt>
+        template <std::uint8_t numSourceBits, UInt64Compatible UnsignedInt>
         static babelwires::ResultT<MinMaxValue> fromUnsigned(UnsignedInt value);
 
         /// Construct from a value in the range [0, (2^numSourceBits) - 1].
         /// Clamps to the maximum value if the input is out of range.
-        template <std::uint8_t numSourceBits, UInt32Compatible UnsignedInt>
+        template <std::uint8_t numSourceBits, UInt64Compatible UnsignedInt>
         static MinMaxValue tryFromUnsigned(UnsignedInt value);
 
         /// Construct from a value in the range [0, (2^numSourceBits) - 1].
         /// Asserts that the value is in range.
-        template <std::uint8_t numSourceBits, UInt32Compatible UnsignedInt>
+        template <std::uint8_t numSourceBits, UInt64Compatible UnsignedInt>
         static MinMaxValue assertFromUnsigned(UnsignedInt value);
 
         /// Construct from a value in the range [0, 1.0].
@@ -68,8 +68,11 @@ namespace bw_music {
         /// Get a value in the range [0, 0xFFFFFFFF].
         std::uint32_t getUnsigned32() const;
 
+        /// Get a value in the range [0, 0xFFFFFFFFFFFFFFFF].
+        std::uint64_t getUnsigned64() const;
+
         /// Construct from a value in the range [0, (2^numSourceBits) - 1].
-        template <std::uint8_t numSourceBits> std::uint32_t getUnsigned() const;
+        template <std::uint8_t numSourceBits> std::uint64_t getUnsigned() const;
 
         /// Get a value in the range [0, 1.0].
         double getNormalizedDouble() const;
@@ -102,11 +105,11 @@ namespace bw_music {
         /// Scale the source value between unsigned domains, including upscaling, downscaling, and no-op cases.
         /// Assumes that the source value is in the range [0, (2^numSourceBits) - 1]
         /// and that the destination domain is [0, (2^numDestBits) - 1].
-        template <std::uint8_t numSourceBits, std::uint8_t numDestBits, UInt32Compatible DestInt = std::uint32_t>
-        constexpr DestInt uintScale(std::uint32_t sourceValue);
+        template <std::uint8_t numSourceBits, std::uint8_t numDestBits, UInt64Compatible DestInt = std::uint64_t>
+        constexpr DestInt uintScale(std::uint64_t sourceValue);
 
         /// Scale the source value between full-width unsigned integer types.
-        template <UInt32Compatible SourceInt, UInt32Compatible DestInt>
+        template <UInt64Compatible SourceInt, UInt64Compatible DestInt>
         constexpr DestInt uintScale(SourceInt sourceValue);
 
     } // namespace detail

@@ -10,3 +10,4 @@
 template class bw_music::MinMaxValue<std::uint8_t>;
 template class bw_music::MinMaxValue<std::uint16_t>;
 template class bw_music::MinMaxValue<std::uint32_t>;
+template class bw_music::MinMaxValue<std::uint64_t>;

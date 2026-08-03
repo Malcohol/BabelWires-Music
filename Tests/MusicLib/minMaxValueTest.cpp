@@ -48,3 +48,12 @@ TEST(MinMaxValueTest, NarrowStorageNormalizedDoubleUsesStorageResolution) {
     EXPECT_EQ(value16.getUnsigned16(), 32767u);
     EXPECT_DOUBLE_EQ(value16.getNormalizedDouble(), 32767.0 / 65535.0);
 }
+
+TEST(MinMaxValueTest, SupportsUint64StorageAndUnsignedDomains) {
+    const auto value64 = bw_music::MinMaxValue<std::uint64_t>::assertFromUnsigned<64>(0xFEDCBA9876543210ull);
+    EXPECT_EQ(value64.getUnsigned64(), 0xFEDCBA9876543210ull);
+    EXPECT_EQ(value64.getUnsigned<64>(), 0xFEDCBA9876543210ull);
+
+    const auto expanded8 = bw_music::MinMaxValue<std::uint64_t>::assertFromUnsigned<8>(0x80u);
+    EXPECT_EQ(expanded8.getUnsigned64(), 0x8080808080808080ull);
+}
