@@ -109,7 +109,7 @@ template <bw_music::MinCentredMaxValueStorageType STORAGE_TYPE>
 template <std::uint8_t numSourceBits>
 std::uint64_t bw_music::MinCentredMaxValueT<STORAGE_TYPE>::getUnsigned() const {
     static_assert(numSourceBits <= 64, "numSourceBits must be less than or equal to 64");
-    return bw_music::detail::minCentreMaxScale<c_storageBits, numSourceBits>(m_value);
+    return bw_music::detail::minCentreMaxScale<c_storageBits, numSourceBits, std::uint64_t>(m_value);
 }
 
 template <bw_music::MinCentredMaxValueStorageType STORAGE_TYPE>

@@ -107,7 +107,7 @@ namespace bw_music {
     namespace detail {
         /// Scale the source value between asymmetric min-centre-max unsigned domains, including upscaling,
         /// downscaling, and no-op cases.
-        template <std::uint8_t numSourceBits, std::uint8_t numDestBits, UInt64Compatible DestInt = std::uint64_t>
+        template <std::uint8_t numSourceBits, std::uint8_t numDestBits, UInt64Compatible DestInt>
         constexpr DestInt minCentreMaxScale(std::uint64_t sourceValue);
 
         /// Scale the source value between full-width asymmetric min-centre-max unsigned integer types.
