@@ -8,14 +8,14 @@
 inline bw_music::PitchBendTrackEvent::PitchBendTrackEvent(ModelDuration timeSinceLastEvent,
                                                                                  MinCentreMaxValue32 aci)
                                                                                  : TrackEvent(timeSinceLastEvent)
-                                                                                 , m_value(aci) {}
+                                                                                 , m_pitchBend(aci) {}
 
 inline bw_music::PitchBendTrackEvent::PitchBendTrackEvent(
     ModelDuration timeSinceLastEvent, double signedNormalizedValue)
     : PitchBendTrackEvent(timeSinceLastEvent, MinCentreMaxValue32::assertFromSignedNormalizedDouble(signedNormalizedValue)) {}
 
-inline bw_music::MinCentreMaxValue32 bw_music::PitchBendTrackEvent::getMinCentreMaxValue() const { return m_value; }
+inline bw_music::MinCentreMaxValue32 bw_music::PitchBendTrackEvent::getPitchBendAsMinCentreMaxValue() const { return m_pitchBend; }
 
-inline double bw_music::PitchBendTrackEvent::getSignedNormalizedValue() const {
-    return m_value.getSignedNormalizedValue();
+inline double bw_music::PitchBendTrackEvent::getPitchBendAsSignedNormalizedValue() const {
+    return m_pitchBend.getSignedNormalizedValue();
 }

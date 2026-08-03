@@ -29,10 +29,10 @@ namespace bw_music {
         PitchBendTrackEvent(ModelDuration timeSinceLastEvent, double signedNormalizedValue);
 
         /// Get the contents as an MinCentreMaxValue value (e.g. for use by MIDI).
-        MinCentreMaxValue32 getMinCentreMaxValue() const;
+        MinCentreMaxValue32 getPitchBendAsMinCentreMaxValue() const;
 
         /// Get a value in the range [-1.0, 1.0].
-        double getSignedNormalizedValue() const;
+        double getPitchBendAsSignedNormalizedValue() const;
 
         std::size_t getHash() const override;
 
@@ -41,7 +41,7 @@ namespace bw_music {
         bool doIsEqualTo(const TrackEvent& other) const override;
 
       private:
-        MinCentreMaxValue32 m_value;
+        MinCentreMaxValue32 m_pitchBend;
     };
 } // namespace bw_music
 
