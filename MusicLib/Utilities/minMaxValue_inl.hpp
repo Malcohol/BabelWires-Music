@@ -53,73 +53,73 @@ constexpr DestInt bw_music::detail::uintScale(SourceInt sourceValue) {
 }
 
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
-inline bw_music::MinMaxValue<STORAGE_TYPE>::MinMaxValue(STORAGE_TYPE value)
+inline bw_music::MinMaxValueT<STORAGE_TYPE>::MinMaxValueT(STORAGE_TYPE value)
     : m_value(value) {}
 
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
 template <std::uint8_t numSourceBits, bw_music::UInt64Compatible UnsignedInt>
-babelwires::ResultT<bw_music::MinMaxValue<STORAGE_TYPE>> bw_music::MinMaxValue<STORAGE_TYPE>::fromUnsigned(UnsignedInt value) {
+babelwires::ResultT<bw_music::MinMaxValueT<STORAGE_TYPE>> bw_music::MinMaxValueT<STORAGE_TYPE>::fromUnsigned(UnsignedInt value) {
     if constexpr (numSourceBits < 64) {
         if (value >= (static_cast<std::uint64_t>(1) << numSourceBits)) {
             return babelwires::Error() << "Value " << value << " is out of range for the specified number of source bits "
                                        << static_cast<std::uint32_t>(numSourceBits);
         }
     }
-    return MinMaxValue(bw_music::detail::uintScale<numSourceBits, c_storageBits, STORAGE_TYPE>(static_cast<std::uint64_t>(value)));
+    return MinMaxValueT(bw_music::detail::uintScale<numSourceBits, c_storageBits, STORAGE_TYPE>(static_cast<std::uint64_t>(value)));
 }
 
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
 template <std::uint8_t numSourceBits, bw_music::UInt64Compatible UnsignedInt>
-bw_music::MinMaxValue<STORAGE_TYPE> bw_music::MinMaxValue<STORAGE_TYPE>::tryFromUnsigned(UnsignedInt value) {
+bw_music::MinMaxValueT<STORAGE_TYPE> bw_music::MinMaxValueT<STORAGE_TYPE>::tryFromUnsigned(UnsignedInt value) {
     std::uint64_t clampedValue = value;
     if constexpr (numSourceBits < 64) {
         const std::uint64_t maxValue = (static_cast<std::uint64_t>(1) << numSourceBits) - 1;
         clampedValue = std::min(clampedValue, maxValue);
     }
-    return MinMaxValue(bw_music::detail::uintScale<numSourceBits, c_storageBits, STORAGE_TYPE>(clampedValue));
+    return MinMaxValueT(bw_music::detail::uintScale<numSourceBits, c_storageBits, STORAGE_TYPE>(clampedValue));
 }
 
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
 template <std::uint8_t numSourceBits, bw_music::UInt64Compatible UnsignedInt>
-bw_music::MinMaxValue<STORAGE_TYPE> bw_music::MinMaxValue<STORAGE_TYPE>::assertFromUnsigned(UnsignedInt value) {
-    return MinMaxValue(bw_music::detail::uintScale<numSourceBits, c_storageBits, STORAGE_TYPE>(static_cast<std::uint64_t>(value)));
+bw_music::MinMaxValueT<STORAGE_TYPE> bw_music::MinMaxValueT<STORAGE_TYPE>::assertFromUnsigned(UnsignedInt value) {
+    return MinMaxValueT(bw_music::detail::uintScale<numSourceBits, c_storageBits, STORAGE_TYPE>(static_cast<std::uint64_t>(value)));
 }
 
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
-inline std::uint8_t bw_music::MinMaxValue<STORAGE_TYPE>::getUnsigned8() const {
+inline std::uint8_t bw_music::MinMaxValueT<STORAGE_TYPE>::getUnsigned8() const {
     return bw_music::detail::uintScale<STORAGE_TYPE, std::uint8_t>(m_value);
 }
 
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
-inline std::uint16_t bw_music::MinMaxValue<STORAGE_TYPE>::getUnsigned16() const {
+inline std::uint16_t bw_music::MinMaxValueT<STORAGE_TYPE>::getUnsigned16() const {
     return bw_music::detail::uintScale<STORAGE_TYPE, std::uint16_t>(m_value);
 }
 
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
-inline std::uint32_t bw_music::MinMaxValue<STORAGE_TYPE>::getUnsigned32() const {
+inline std::uint32_t bw_music::MinMaxValueT<STORAGE_TYPE>::getUnsigned32() const {
     return bw_music::detail::uintScale<STORAGE_TYPE, std::uint32_t>(m_value);
 }
 
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
-inline std::uint64_t bw_music::MinMaxValue<STORAGE_TYPE>::getUnsigned64() const {
+inline std::uint64_t bw_music::MinMaxValueT<STORAGE_TYPE>::getUnsigned64() const {
     return bw_music::detail::uintScale<STORAGE_TYPE, std::uint64_t>(m_value);
 }
 
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
 template <std::uint8_t numSourceBits>
-std::uint64_t bw_music::MinMaxValue<STORAGE_TYPE>::getUnsigned() const {
+std::uint64_t bw_music::MinMaxValueT<STORAGE_TYPE>::getUnsigned() const {
     return bw_music::detail::uintScale<c_storageBits, numSourceBits>(m_value);
 }
 
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
-inline bw_music::MinMaxValue<STORAGE_TYPE> bw_music::MinMaxValue<STORAGE_TYPE>::assertFromNormalizedDouble(
+inline bw_music::MinMaxValueT<STORAGE_TYPE> bw_music::MinMaxValueT<STORAGE_TYPE>::assertFromNormalizedDouble(
     double normalizedValue) {
     assert((normalizedValue >= 0.0) && (normalizedValue <= 1.0) && "Normalized value must be in [0.0, 1.0]");
-    return MinMaxValue(static_cast<STORAGE_TYPE>(std::numeric_limits<STORAGE_TYPE>::max() * normalizedValue));
+    return MinMaxValueT(static_cast<STORAGE_TYPE>(std::numeric_limits<STORAGE_TYPE>::max() * normalizedValue));
 }
 
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
-babelwires::ResultT<bw_music::MinMaxValue<STORAGE_TYPE>> bw_music::MinMaxValue<STORAGE_TYPE>::fromNormalizedDouble(
+babelwires::ResultT<bw_music::MinMaxValueT<STORAGE_TYPE>> bw_music::MinMaxValueT<STORAGE_TYPE>::fromNormalizedDouble(
     double normalizedValue) {
     if ((normalizedValue < 0.0) || (normalizedValue > 1.0)) {
         return babelwires::Error() << "Normalized value must be in [0.0, 1.0]";
@@ -128,7 +128,7 @@ babelwires::ResultT<bw_music::MinMaxValue<STORAGE_TYPE>> bw_music::MinMaxValue<S
 }
 
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
-bw_music::MinMaxValue<STORAGE_TYPE> bw_music::MinMaxValue<STORAGE_TYPE>::tryFromNormalizedDouble(double normalizedValue) {
+bw_music::MinMaxValueT<STORAGE_TYPE> bw_music::MinMaxValueT<STORAGE_TYPE>::tryFromNormalizedDouble(double normalizedValue) {
     if (normalizedValue < 0.0) {
         return assertFromUnsigned<64>(0u);
     } else if (normalizedValue > 1.0) {
@@ -139,11 +139,11 @@ bw_music::MinMaxValue<STORAGE_TYPE> bw_music::MinMaxValue<STORAGE_TYPE>::tryFrom
 }
 
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
-double bw_music::MinMaxValue<STORAGE_TYPE>::getNormalizedDouble() const {
+double bw_music::MinMaxValueT<STORAGE_TYPE>::getNormalizedDouble() const {
     return static_cast<double>(m_value) / std::numeric_limits<STORAGE_TYPE>::max();
 }
 
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
-std::size_t bw_music::MinMaxValue<STORAGE_TYPE>::getHash() const {
+std::size_t bw_music::MinMaxValueT<STORAGE_TYPE>::getHash() const {
     return babelwires::hash::mixtureOf(static_cast<const char*>("NNI"), m_value);
 }

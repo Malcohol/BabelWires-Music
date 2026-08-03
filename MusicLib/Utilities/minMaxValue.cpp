@@ -7,7 +7,7 @@
  **/
 #include <MusicLib/Utilities/minMaxValue.hpp>
 
-template class bw_music::MinMaxValue<std::uint8_t>;
-template class bw_music::MinMaxValue<std::uint16_t>;
-template class bw_music::MinMaxValue<std::uint32_t>;
-template class bw_music::MinMaxValue<std::uint64_t>;
+template class bw_music::MinMaxValueT<std::uint8_t>;
+template class bw_music::MinMaxValueT<std::uint16_t>;
+template class bw_music::MinMaxValueT<std::uint32_t>;
+template class bw_music::MinMaxValueT<std::uint64_t>;

@@ -28,36 +28,37 @@ namespace bw_music {
     /// Represents a value between a minimum and a maximum, using an integer evenly distributed across the range.
     /// The API is strict by design, to avoid situations where C++ type conversion would be ambiguous or
     /// incorrect.
-    template <MinMaxValueStorageType STORAGE_TYPE = std::uint32_t> class MUSICLIB_API MinMaxValue {
+    /// Four size-specific specializations are provided: MinMaxValue8, MinMaxValue16, MinMaxValue32, and MinMaxValue64.
+    template <MinMaxValueStorageType STORAGE_TYPE> class MUSICLIB_API MinMaxValueT {
       public:
         using StorageType = STORAGE_TYPE;
 
         /// Construct from a value in the range [0, (2^numSourceBits) - 1].
         /// Fails if the value is out of range.
         template <std::uint8_t numSourceBits, UInt64Compatible UnsignedInt>
-        static babelwires::ResultT<MinMaxValue> fromUnsigned(UnsignedInt value);
+        static babelwires::ResultT<MinMaxValueT> fromUnsigned(UnsignedInt value);
 
         /// Construct from a value in the range [0, (2^numSourceBits) - 1].
         /// Clamps to the maximum value if the input is out of range.
         template <std::uint8_t numSourceBits, UInt64Compatible UnsignedInt>
-        static MinMaxValue tryFromUnsigned(UnsignedInt value);
+        static MinMaxValueT tryFromUnsigned(UnsignedInt value);
 
         /// Construct from a value in the range [0, (2^numSourceBits) - 1].
         /// Asserts that the value is in range.
         template <std::uint8_t numSourceBits, UInt64Compatible UnsignedInt>
-        static MinMaxValue assertFromUnsigned(UnsignedInt value);
+        static MinMaxValueT assertFromUnsigned(UnsignedInt value);
 
         /// Construct from a value in the range [0, 1.0].
         /// Fails if the value is out of range.
-        static babelwires::ResultT<MinMaxValue> fromNormalizedDouble(double normalizedValue);
+        static babelwires::ResultT<MinMaxValueT> fromNormalizedDouble(double normalizedValue);
 
         /// Construct from a value in the range [0, 1.0].
         /// Clamps to the nearest valid value if the input is out of range.
-        static MinMaxValue tryFromNormalizedDouble(double normalizedValue);
+        static MinMaxValueT tryFromNormalizedDouble(double normalizedValue);
 
         /// Construct from a value in the range [0, 1.0].
         /// Asserts that the value is in range.
-        static MinMaxValue assertFromNormalizedDouble(double normalizedValue);
+        static MinMaxValueT assertFromNormalizedDouble(double normalizedValue);
 
         /// Get a value in the range [0, 0xFF].
         std::uint8_t getUnsigned8() const;
@@ -79,20 +80,20 @@ namespace bw_music {
 
         std::size_t getHash() const;
 
-        auto operator<=>(const MinMaxValue&) const = default;
+        auto operator<=>(const MinMaxValueT&) const = default;
 
       public:
         // Delete many alternatives to avoid situations where C++ type conversion would be ambiguous or incorrect.
         template <std::uint8_t numSourceBits, std::signed_integral SignedInt>
-        static babelwires::ResultT<MinMaxValue> fromUnsigned(SignedInt value) = delete;
+        static babelwires::ResultT<MinMaxValueT> fromUnsigned(SignedInt value) = delete;
         template <std::uint8_t numSourceBits, std::signed_integral SignedInt>
-        static MinMaxValue tryFromUnsigned(SignedInt value) = delete;
+        static MinMaxValueT tryFromUnsigned(SignedInt value) = delete;
         template <std::uint8_t numSourceBits, std::signed_integral SignedInt>
-        static MinMaxValue assertFromUnsigned(SignedInt value) = delete;
+        static MinMaxValueT assertFromUnsigned(SignedInt value) = delete;
 
       protected:
         /// Construct from a value in the storage type's full unsigned range.
-        MinMaxValue(STORAGE_TYPE value);
+        MinMaxValueT(STORAGE_TYPE value);
 
       private:
         static constexpr std::uint8_t c_storageBits = static_cast<std::uint8_t>(sizeof(STORAGE_TYPE) * 8u);
@@ -100,6 +101,11 @@ namespace bw_music {
         /// The value scaled into the storage type's full unsigned range.
         STORAGE_TYPE m_value;
     };
+
+    using MinMaxValue8 = MinMaxValueT<std::uint8_t>;
+    using MinMaxValue16 = MinMaxValueT<std::uint16_t>;
+    using MinMaxValue32 = MinMaxValueT<std::uint32_t>;
+    using MinMaxValue64 = MinMaxValueT<std::uint64_t>;
 
     namespace detail {
         /// Scale the source value between unsigned domains, including upscaling, downscaling, and no-op cases.
@@ -116,8 +122,8 @@ namespace bw_music {
 } // namespace bw_music
 
 namespace std {
-    template <bw_music::MinMaxValueStorageType STORAGE_TYPE> struct hash<bw_music::MinMaxValue<STORAGE_TYPE>> {
-        inline std::size_t operator()(const bw_music::MinMaxValue<STORAGE_TYPE>& aci) const { return aci.getHash(); }
+    template <bw_music::MinMaxValueStorageType STORAGE_TYPE> struct hash<bw_music::MinMaxValueT<STORAGE_TYPE>> {
+        inline std::size_t operator()(const bw_music::MinMaxValueT<STORAGE_TYPE>& aci) const { return aci.getHash(); }
     };
 } // namespace std
 
