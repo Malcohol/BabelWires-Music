@@ -16,7 +16,8 @@
 namespace bw_music {
 
     /// Base type for note events.
-    struct MUSICLIB_API NoteEvent : public TrackEvent, public Transposable {
+    class MUSICLIB_API NoteEvent : public TrackEvent, public Transposable {
+      public:
         DOWNCASTABLE(NoteEvent, TrackEvent);
         STREAM_EVENT_ABSTRACT(NoteEvent);
         QUERYABLE_INTERFACE_PROVIDER(TrackEvent, Transposable);
@@ -35,11 +36,12 @@ namespace bw_music {
         void setVelocity(Velocity velocity) { m_velocity = velocity; }
         Velocity getVelocity() const { return m_velocity; }
 
-        Pitch m_pitch;
-        Velocity m_velocity;
-
       protected:
         bool doIsEqualTo(const TrackEvent& other) const override;
+
+      protected:
+        Pitch m_pitch;
+        Velocity m_velocity;
     };
 
     /// The start of a musical note.

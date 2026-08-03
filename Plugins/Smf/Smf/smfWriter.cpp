@@ -232,14 +232,14 @@ smf::SmfWriter::WriteTrackEventResult smf::SmfWriter::writeTrackEvent(int channe
             if (const bw_music::NoteOnEvent* noteOn = e.tryAs<bw_music::NoteOnEvent>()) {
                 writeModelDuration(timeSinceLastEvent);
                 m_os->put(0b10010000 | channelNumber);
-                m_os->put(noteOn->m_pitch);
-                m_os->put(noteOn->m_velocity);
+                m_os->put(noteOn->getPitch());
+                m_os->put(noteOn->getVelocity());
                 return WriteTrackEventResult::Written;
             } else if (const bw_music::NoteOffEvent* noteOff = e.tryAs<bw_music::NoteOffEvent>()) {
                 writeModelDuration(timeSinceLastEvent);
                 m_os->put(0b10000000 | channelNumber);
-                m_os->put(noteOff->m_pitch);
-                m_os->put(noteOff->m_velocity);
+                m_os->put(noteOff->getPitch());
+                m_os->put(noteOff->getVelocity());
                 return WriteTrackEventResult::Written;
             }
         }

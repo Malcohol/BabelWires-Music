@@ -34,16 +34,16 @@ void testUtils::testSimpleNotes(const std::vector<bw_music::Pitch>& expectedPitc
         auto noteOn = noteIterator->tryAs<const bw_music::NoteOnEvent>();
         ASSERT_NE(noteOn, nullptr);
         EXPECT_EQ(noteOn->getTimeSinceLastEvent(), 0);
-        EXPECT_EQ(noteOn->m_pitch, pitch);
-        EXPECT_EQ(noteOn->m_velocity, bw_music::NoteOnEvent::c_defaultVelocity);
+        EXPECT_EQ(noteOn->getPitch(), pitch);
+        EXPECT_EQ(noteOn->getVelocity(), bw_music::NoteOnEvent::c_defaultVelocity);
         ++noteIterator;
 
         ASSERT_NE(noteIterator, endIterator);
-        auto noteOff = noteIterator->tryAs<bw_music::NoteOffEvent>();
+        auto noteOff = noteIterator->tryAs<const bw_music::NoteOffEvent>();
         ASSERT_NE(noteOff, nullptr);
         EXPECT_EQ(noteOff->getTimeSinceLastEvent(), expectedNoteDuration);
-        EXPECT_EQ(noteOff->m_pitch, pitch);
-        EXPECT_EQ(noteOff->m_velocity, bw_music::NoteOffEvent::c_defaultVelocity);
+        EXPECT_EQ(noteOff->getPitch(), pitch);
+        EXPECT_EQ(noteOff->getVelocity(), bw_music::NoteOffEvent::c_defaultVelocity);
         ++noteIterator;
     }
     EXPECT_EQ(noteIterator, endIterator);
@@ -69,18 +69,18 @@ void testUtils::testNotes(const std::vector<NoteInfo>& expectedNotes, const bw_m
         auto noteOn = noteIterator->tryAs<const bw_music::NoteOnEvent>();
         ASSERT_NE(noteOn, nullptr);
         EXPECT_EQ(noteOn->getTimeSinceLastEvent(), note.m_gapBeforeNote);
-        EXPECT_EQ(noteOn->m_pitch, note.m_pitch);
-        EXPECT_EQ(noteOn->m_velocity, bw_music::NoteOnEvent::c_defaultVelocity);
+        EXPECT_EQ(noteOn->getPitch(), note.m_pitch);
+        EXPECT_EQ(noteOn->getVelocity(), bw_music::NoteOnEvent::c_defaultVelocity);
         ++noteIterator;
 
         EXPECT_NE(noteIterator, endIterator);
-        auto noteOff = noteIterator->tryAs<bw_music::NoteOffEvent>();
+        auto noteOff = noteIterator->tryAs<const bw_music::NoteOffEvent>();
         ASSERT_NE(noteOff, nullptr);
         EXPECT_EQ(noteOff->getTimeSinceLastEvent(), note.m_noteDuration);
-        EXPECT_EQ(noteOff->m_pitch, note.m_pitch);
+        EXPECT_EQ(noteOff->getPitch(), note.m_pitch);
         durationSoFar += note.m_gapBeforeNote + note.m_noteDuration;
         // Note: This might be a truncated event, but the velocity in cases we test should still be the default.
-        EXPECT_EQ(noteOff->m_velocity, bw_music::NoteOffEvent::c_defaultVelocity);
+        EXPECT_EQ(noteOff->getVelocity(), bw_music::NoteOffEvent::c_defaultVelocity);
         ++noteIterator;
     }
     EXPECT_EQ(noteIterator, endIterator);
@@ -114,7 +114,7 @@ void testUtils::testChords(const std::vector<ChordInfo>& expectedChords, const b
         ++chordIterator;
 
         EXPECT_NE(chordIterator, endIterator);
-        auto chordOff = chordIterator->tryAs<bw_music::ChordOffEvent>();
+        auto chordOff = chordIterator->tryAs<const bw_music::ChordOffEvent>();
         ASSERT_NE(chordOff, nullptr);
         EXPECT_EQ(chordOff->getTimeSinceLastEvent(), expectedChord.m_chordDuration);
         ++chordIterator;
@@ -133,9 +133,9 @@ void testUtils::testNotesAndChords(const std::vector<bw_music::TrackEventHolder>
         EXPECT_EQ((it->tryAs<bw_music::NoteOffEvent>() == nullptr), (e->tryAs<bw_music::NoteOffEvent>() == nullptr));
         EXPECT_EQ((it->tryAs<bw_music::ChordOnEvent>() == nullptr), (e->tryAs<bw_music::ChordOnEvent>() == nullptr));
         EXPECT_EQ((it->tryAs<bw_music::ChordOffEvent>() == nullptr), (e->tryAs<bw_music::ChordOffEvent>() == nullptr));
-        if (it->tryAs<bw_music::NoteEvent>() != nullptr) {
-            EXPECT_EQ(it->tryAs<bw_music::NoteEvent>()->m_pitch, e->tryAs<bw_music::NoteEvent>()->m_pitch);
-            EXPECT_EQ(it->tryAs<bw_music::NoteEvent>()->m_velocity, e->tryAs<bw_music::NoteEvent>()->m_velocity);
+        if (it->tryAs<const bw_music::NoteEvent>() != nullptr) {
+            EXPECT_EQ(it->tryAs<const bw_music::NoteEvent>()->getPitch(), e->tryAs<const bw_music::NoteEvent>()->getPitch());
+            EXPECT_EQ(it->tryAs<const bw_music::NoteEvent>()->getVelocity(), e->tryAs<const bw_music::NoteEvent>()->getVelocity());
         }
         if (it->tryAs<bw_music::ChordOnEvent>() != nullptr) {
             EXPECT_EQ(it->tryAs<bw_music::ChordOnEvent>()->m_chord, e->tryAs<bw_music::ChordOnEvent>()->m_chord);

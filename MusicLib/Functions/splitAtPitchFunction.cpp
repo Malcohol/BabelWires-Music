@@ -11,8 +11,9 @@ namespace {
             , m_pitch(pitch) {}
 
         virtual bool isEventOfInterest(const bw_music::TrackEvent& event) override {
+            // TODO This should use group info, not tryAs.
             if (const bw_music::NoteEvent* noteEvent = event.tryAs<bw_music::NoteEvent>()) {
-                return noteEvent->m_pitch >= m_pitch;
+                return noteEvent->getPitch() >= m_pitch;
             }
             return false;
         }
@@ -26,8 +27,9 @@ namespace {
             , m_pitch(pitch) {}
 
         virtual bool isEventOfInterest(const bw_music::TrackEvent& event) override {
+            // TODO This should use group info, not tryAs.
             if (const bw_music::NoteEvent* noteEvent = event.tryAs<bw_music::NoteEvent>()) {
-                return noteEvent->m_pitch < m_pitch;
+                return noteEvent->getPitch() < m_pitch;
             }
             return false;
         }
@@ -42,8 +44,6 @@ namespace {
         virtual bool isEventOfInterest(const bw_music::TrackEvent& event) override {
             return event.tryAs<bw_music::NoteEvent>() == nullptr;
         }
-
-        bw_music::Pitch m_pitch;
     };
 } // namespace
 

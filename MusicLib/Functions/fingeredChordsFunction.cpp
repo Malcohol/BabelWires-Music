@@ -233,9 +233,9 @@ babelwires::ResultT<bw_music::Track> bw_music::fingeredChordsFunction(const Trac
         timeSinceLastChordEvent += event.getTimeSinceLastEvent();
 
         if (const auto* noteOnEvent = event.tryAs<NoteOnEvent>()) {
-            activePitches.addPitch(noteOnEvent->m_pitch);
+            activePitches.addPitch(noteOnEvent->getPitch());
         } else if (const auto* noteOffEvent = event.tryAs<NoteOffEvent>()) {
-            activePitches.removePitch(noteOffEvent->m_pitch);
+            activePitches.removePitch(noteOffEvent->getPitch());
         }
     }
     if (currentChord.m_chordType != ChordType::Value::NotAValue) {
