@@ -28,7 +28,7 @@ TEST(MinMaxValueTest, NormalizedDoubleConversionsClampAndRoundTrip) {
 }
 
 TEST(MinMaxValueTest, NarrowStorageUsesWidthSpecificAccessors) {
-    const auto value8 = bw_music::MinMaxValue16::assertFromUnsigned<16>(static_cast<std::uint16_t>(0xABCDu));
+    const auto value8 = bw_music::MinMaxValue8::assertFromUnsigned<16>(static_cast<std::uint16_t>(0xABCDu));
     EXPECT_EQ(value8.getUnsigned16(), 0xABABu);
     EXPECT_EQ(value8.getUnsigned8(), 0xABu);
     EXPECT_EQ(value8.getUnsigned32(), 0xABABABABu);
@@ -40,7 +40,7 @@ TEST(MinMaxValueTest, NarrowStorageUsesWidthSpecificAccessors) {
 }
 
 TEST(MinMaxValueTest, NarrowStorageNormalizedDoubleUsesStorageResolution) {
-    const auto value8 = bw_music::MinMaxValue16::assertFromNormalizedDouble(0.5);
+    const auto value8 = bw_music::MinMaxValue8::assertFromNormalizedDouble(0.5);
     EXPECT_EQ(value8.getUnsigned8(), 127u);
     EXPECT_DOUBLE_EQ(value8.getNormalizedDouble(), 127.0 / 255.0);
 
