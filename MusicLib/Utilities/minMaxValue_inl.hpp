@@ -108,7 +108,7 @@ inline std::uint64_t bw_music::MinMaxValueT<STORAGE_TYPE>::getUnsigned64() const
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
 template <std::uint8_t numSourceBits>
 std::uint64_t bw_music::MinMaxValueT<STORAGE_TYPE>::getUnsigned() const {
-    return bw_music::detail::uintScale<c_storageBits, numSourceBits>(m_value);
+    return bw_music::detail::uintScale<c_storageBits, numSourceBits, std::uint64_t>(m_value);
 }
 
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>

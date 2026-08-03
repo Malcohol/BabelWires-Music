@@ -111,7 +111,7 @@ namespace bw_music {
         /// Scale the source value between unsigned domains, including upscaling, downscaling, and no-op cases.
         /// Assumes that the source value is in the range [0, (2^numSourceBits) - 1]
         /// and that the destination domain is [0, (2^numDestBits) - 1].
-        template <std::uint8_t numSourceBits, std::uint8_t numDestBits, UInt64Compatible DestInt = std::uint64_t>
+        template <std::uint8_t numSourceBits, std::uint8_t numDestBits, UInt64Compatible DestInt>
         constexpr DestInt uintScale(std::uint64_t sourceValue);
 
         /// Scale the source value between full-width unsigned integer types.
