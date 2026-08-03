@@ -12,10 +12,10 @@
 #include <cassert>
 
 std::size_t bw_music::PanTrackEvent::getHash() const {
-    return babelwires::hash::mixtureOf(static_cast<const char*>("Pan"), m_timeSinceLastEvent, m_value);
+    return babelwires::hash::mixtureOf(static_cast<const char*>("Pan"), m_timeSinceLastEvent, m_pan);
 }
 
 bool bw_music::PanTrackEvent::doIsEqualTo(const TrackEvent& other) const {
     const auto& otherPan = static_cast<const PanTrackEvent&>(other);
-    return TrackEvent::doIsEqualTo(other) && (m_value == otherPan.m_value);
+    return TrackEvent::doIsEqualTo(other) && (m_pan == otherPan.m_pan);
 }

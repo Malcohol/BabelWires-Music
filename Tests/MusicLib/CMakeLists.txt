@@ -13,7 +13,7 @@ SET( SEQUENCELIB_TESTS_SRCS
       mergeProcessorTest.cpp
       monophonicNoteIteratorTest.cpp
       monophonicSubtracksProcessorTest.cpp
-      minCentredMaxValueTest.cpp
+      minCentreMaxValueTest.cpp
       minMaxValueTest.cpp
       musicTypesTest.cpp
       musicUtilitiesTest.cpp
