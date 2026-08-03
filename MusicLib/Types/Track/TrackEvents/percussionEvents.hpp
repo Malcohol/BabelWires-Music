@@ -45,7 +45,10 @@ namespace bw_music {
         DOWNCASTABLE(PercussionOnEvent, PercussionEvent);
         STREAM_EVENT(PercussionOnEvent);
         QUERYABLE_INTERFACE_PROVIDER(PercussionEvent, StartEventInterface);
-        PercussionOnEvent(ModelDuration timeSinceLastEvent, babelwires::ShortId instrument, Velocity velocity = 127)
+        static constexpr Velocity c_defaultVelocity = 0xffff_mmv16;
+
+        PercussionOnEvent(ModelDuration timeSinceLastEvent, babelwires::ShortId instrument,
+                          Velocity velocity = c_defaultVelocity)
             : PercussionEvent(timeSinceLastEvent, instrument, velocity) {}
         void createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const override;
         virtual std::size_t getHash() const override;
@@ -56,7 +59,9 @@ namespace bw_music {
     struct MUSICLIB_API PercussionOffEvent : public PercussionEvent {
         DOWNCASTABLE(PercussionOffEvent, PercussionEvent);
         STREAM_EVENT(PercussionOffEvent);
-        PercussionOffEvent(ModelDuration timeSinceLastEvent, babelwires::ShortId instrument, Velocity velocity = 64)
+        static constexpr Velocity c_defaultVelocity = MinMaxValue16::assertFromUnsigned<7>(64u);
+        PercussionOffEvent(ModelDuration timeSinceLastEvent, babelwires::ShortId instrument,
+                           Velocity velocity = c_defaultVelocity)
             : PercussionEvent(timeSinceLastEvent, instrument, velocity) {}
 
         virtual std::size_t getHash() const override;

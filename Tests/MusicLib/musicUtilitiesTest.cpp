@@ -10,9 +10,9 @@ TEST(MusicUtilitiesTest, GetMinimumDenominator) {
     testUtils::TestLog log;
 
     bw_music::TrackBuilder track;
-    track.addEvent(bw_music::NoteOnEvent(babelwires::Rational(1, 4), 60, 100));
+    track.addEvent(bw_music::NoteOnEvent(babelwires::Rational(1, 4), 60));
     track.addEvent(bw_music::NoteOffEvent(babelwires::Rational(1, 8), 60));
-    track.addEvent(bw_music::NoteOnEvent(babelwires::Rational(1, 16), 62, 100));
+    track.addEvent(bw_music::NoteOnEvent(babelwires::Rational(1, 16), 62));
     track.addEvent(bw_music::NoteOffEvent(babelwires::Rational(1, 2), 62));
 
     int minDenom = bw_music::getMinimumDenominator(track.finishAndGetTrack());

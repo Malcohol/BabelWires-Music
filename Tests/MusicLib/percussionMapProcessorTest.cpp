@@ -69,34 +69,38 @@ namespace {
         return percussionMap;
     }
 
+    using bw_music::operator""_mmv16;
+
+    constexpr bw_music::Velocity c_testVelocity = 0x8000_mmv16;
+
     bw_music::Track getTestInputTrack() {
         bw_music::TrackBuilder track;
-        track.addEvent(bw_music::PercussionOnEvent{0, "AcBass", 64});
-        track.addEvent(bw_music::PercussionOffEvent{babelwires::Rational(1, 2), "AcBass", 64});
-        track.addEvent(bw_music::PercussionOnEvent{0, "Clap", 64});
-        track.addEvent(bw_music::PercussionOffEvent{babelwires::Rational(1, 2), "Clap", 64});
-        track.addEvent(bw_music::PercussionOnEvent{0, "LFlTom", 64});
-        track.addEvent(bw_music::PercussionOffEvent{babelwires::Rational(1, 2), "LFlTom", 64});
+        track.addEvent(bw_music::PercussionOnEvent{0, "AcBass", c_testVelocity});
+        track.addEvent(bw_music::PercussionOffEvent{babelwires::Rational(1, 2), "AcBass", c_testVelocity});
+        track.addEvent(bw_music::PercussionOnEvent{0, "Clap", c_testVelocity});
+        track.addEvent(bw_music::PercussionOffEvent{babelwires::Rational(1, 2), "Clap", c_testVelocity});
+        track.addEvent(bw_music::PercussionOnEvent{0, "LFlTom", c_testVelocity});
+        track.addEvent(bw_music::PercussionOffEvent{babelwires::Rational(1, 2), "LFlTom", c_testVelocity});
         // An unrecognized instrument.
-        track.addEvent(bw_music::PercussionOnEvent{0, "Dummy", 64});
-        track.addEvent(bw_music::PercussionOffEvent{babelwires::Rational(1, 2), "Dummy", 64});
-        track.addEvent(bw_music::PercussionOnEvent{0, "Crash1", 64});
-        track.addEvent(bw_music::PercussionOffEvent{babelwires::Rational(1, 2), "Crash1", 64});
+        track.addEvent(bw_music::PercussionOnEvent{0, "Dummy", c_testVelocity});
+        track.addEvent(bw_music::PercussionOffEvent{babelwires::Rational(1, 2), "Dummy", c_testVelocity});
+        track.addEvent(bw_music::PercussionOnEvent{0, "Crash1", c_testVelocity});
+        track.addEvent(bw_music::PercussionOffEvent{babelwires::Rational(1, 2), "Crash1", c_testVelocity});
         return track.finishAndGetTrack();
     }
 
     bw_music::Track getTestOutputTrack() {
         bw_music::TrackBuilder track;
-        track.addEvent(bw_music::PercussionOnEvent{0, "AcBass", 64});
-        track.addEvent(bw_music::PercussionOffEvent{babelwires::Rational(1, 2), "AcBass", 64});
-        track.addEvent(bw_music::PercussionOnEvent{0, "Cowbll", 64});
-        track.addEvent(bw_music::PercussionOffEvent{babelwires::Rational(1, 2), "Cowbll", 64});
+        track.addEvent(bw_music::PercussionOnEvent{0, "AcBass", c_testVelocity});
+        track.addEvent(bw_music::PercussionOffEvent{babelwires::Rational(1, 2), "AcBass", c_testVelocity});
+        track.addEvent(bw_music::PercussionOnEvent{0, "Cowbll", c_testVelocity});
+        track.addEvent(bw_music::PercussionOffEvent{babelwires::Rational(1, 2), "Cowbll", c_testVelocity});
         // LFlTom removed.
         // An unrecognized instrument.
-        track.addEvent(bw_music::PercussionOnEvent{babelwires::Rational(1, 2), "Dummy", 64});
-        track.addEvent(bw_music::PercussionOffEvent{babelwires::Rational(1, 2), "Dummy", 64});
-        track.addEvent(bw_music::PercussionOnEvent{0, "Crash2", 64});
-        track.addEvent(bw_music::PercussionOffEvent{babelwires::Rational(1, 2), "Crash2", 64});
+        track.addEvent(bw_music::PercussionOnEvent{babelwires::Rational(1, 2), "Dummy", c_testVelocity});
+        track.addEvent(bw_music::PercussionOffEvent{babelwires::Rational(1, 2), "Dummy", c_testVelocity});
+        track.addEvent(bw_music::PercussionOnEvent{0, "Crash2", c_testVelocity});
+        track.addEvent(bw_music::PercussionOffEvent{babelwires::Rational(1, 2), "Crash2", c_testVelocity});
         return track.finishAndGetTrack();
     }
 } // namespace

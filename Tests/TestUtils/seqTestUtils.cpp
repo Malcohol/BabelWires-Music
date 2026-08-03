@@ -9,8 +9,8 @@
 
 void testUtils::addSimpleNotes(const std::vector<bw_music::Pitch>& expectedPitches, bw_music::TrackBuilder& track) {
     for (auto pitch : expectedPitches) {
-        track.addEvent(bw_music::NoteOnEvent{ 0, pitch });
-        track.addEvent(bw_music::NoteOffEvent{ babelwires::Rational(1, 4), pitch });
+        track.addEvent(bw_music::NoteOnEvent( 0, pitch ));
+        track.addEvent(bw_music::NoteOffEvent( babelwires::Rational(1, 4), pitch ));
     }
 }
 

@@ -15,15 +15,17 @@
 
 namespace bw_music {
 
+    using VelocityValue = babelwires::Byte;
+
     struct MUSICLIB_API VolumeTrackEvent : public TrackEvent {
         DOWNCASTABLE(VolumeTrackEvent, TrackEvent);
         STREAM_EVENT(VolumeTrackEvent);
 
-        VolumeTrackEvent(ModelDuration timeSinceLastEvent, Velocity value)
+        VolumeTrackEvent(ModelDuration timeSinceLastEvent, VelocityValue value)
             : TrackEvent(timeSinceLastEvent)
             , m_value(value) {}
 
-        Velocity getMidiValue() const { return m_value; }
+        VelocityValue getMidiValue() const { return m_value; }
 
         double getNormalizedLevel() const { return static_cast<double>(m_value) / 127.0; }
 
@@ -33,18 +35,18 @@ namespace bw_music {
         bool doIsEqualTo(const TrackEvent& other) const override;
 
       private:
-        Velocity m_value;
+        VelocityValue m_value;
     };
 
     struct MUSICLIB_API ExpressionTrackEvent : public TrackEvent {
         DOWNCASTABLE(ExpressionTrackEvent, TrackEvent);
         STREAM_EVENT(ExpressionTrackEvent);
 
-        ExpressionTrackEvent(ModelDuration timeSinceLastEvent, Velocity value)
+        ExpressionTrackEvent(ModelDuration timeSinceLastEvent, VelocityValue value)
             : TrackEvent(timeSinceLastEvent)
             , m_value(value) {}
 
-        Velocity getMidiValue() const { return m_value; }
+        VelocityValue getMidiValue() const { return m_value; }
 
         double getNormalizedLevel() const { return static_cast<double>(m_value) / 127.0; }
 
@@ -54,18 +56,18 @@ namespace bw_music {
         bool doIsEqualTo(const TrackEvent& other) const override;
 
       private:
-        Velocity m_value;
+        VelocityValue m_value;
     };
 
     struct MUSICLIB_API SustainTrackEvent : public TrackEvent {
         DOWNCASTABLE(SustainTrackEvent, TrackEvent);
         STREAM_EVENT(SustainTrackEvent);
 
-        SustainTrackEvent(ModelDuration timeSinceLastEvent, Velocity value)
+        SustainTrackEvent(ModelDuration timeSinceLastEvent, VelocityValue value)
             : TrackEvent(timeSinceLastEvent)
             , m_value(value) {}
 
-        Velocity getMidiValue() const { return m_value; }
+        VelocityValue getMidiValue() const { return m_value; }
 
         bool isSustainOn() const { return m_value >= 64; }
 
@@ -75,18 +77,18 @@ namespace bw_music {
         bool doIsEqualTo(const TrackEvent& other) const override;
 
       private:
-        Velocity m_value;
+        VelocityValue m_value;
     };
 
     struct MUSICLIB_API ChannelPressureEvent : public TrackEvent {
         DOWNCASTABLE(ChannelPressureEvent, TrackEvent);
         STREAM_EVENT(ChannelPressureEvent);
 
-        ChannelPressureEvent(ModelDuration timeSinceLastEvent, Velocity value)
+        ChannelPressureEvent(ModelDuration timeSinceLastEvent, VelocityValue value)
             : TrackEvent(timeSinceLastEvent)
             , m_value(value) {}
 
-        Velocity getMidiValue() const { return m_value; }
+        VelocityValue getMidiValue() const { return m_value; }
 
         double getNormalizedPressure() const { return static_cast<double>(m_value) / 127.0; }
 
@@ -96,21 +98,21 @@ namespace bw_music {
         bool doIsEqualTo(const TrackEvent& other) const override;
 
       private:
-        Velocity m_value;
+        VelocityValue m_value;
     };
 
     struct MUSICLIB_API PolyphonicAftertouchEvent : public TrackEvent {
         DOWNCASTABLE(PolyphonicAftertouchEvent, TrackEvent);
         STREAM_EVENT(PolyphonicAftertouchEvent);
 
-        PolyphonicAftertouchEvent(ModelDuration timeSinceLastEvent, Pitch pitch, Velocity value)
+        PolyphonicAftertouchEvent(ModelDuration timeSinceLastEvent, Pitch pitch, VelocityValue value)
             : TrackEvent(timeSinceLastEvent)
           , m_pitch(pitch)
           , m_value(value) {}
 
         Pitch getPitch() const { return m_pitch; }
 
-        Velocity getMidiValue() const { return m_value; }
+        VelocityValue getMidiValue() const { return m_value; }
 
         double getNormalizedPressure() const { return static_cast<double>(m_value) / 127.0; }
 
@@ -122,7 +124,7 @@ namespace bw_music {
 
       private:
         Pitch m_pitch;
-        Velocity m_value;
+        VelocityValue m_value;
     };
 
 } // namespace bw_music

@@ -589,7 +589,7 @@ babelwires::Result smf::SmfParser::readSequencerSpecificEvent(int length) {
 babelwires::ResultT<bool> smf::SmfParser::readPolyphonicAftertouch(TrackSplitter& tracks, unsigned int channelNumber,
                                                                    bw_music::ModelDuration timeSinceLastTrackEvent) {
     ASSIGN_OR_ERROR(const bw_music::Pitch pitch, getNext());
-    ASSIGN_OR_ERROR(const bw_music::Velocity value, getNext());
+    ASSIGN_OR_ERROR(const bw_music::VelocityValue value, getNext());
     tracks.addEvent<bw_music::PolyphonicAftertouchEvent>(channelNumber, timeSinceLastTrackEvent, pitch, value);
     return true;
 }
@@ -644,7 +644,7 @@ babelwires::Result smf::SmfParser::readProgramChange(unsigned int channelNumber)
 
 babelwires::ResultT<bool> smf::SmfParser::readChannelPressure(TrackSplitter& tracks, unsigned int channelNumber,
                                                               bw_music::ModelDuration timeSinceLastTrackEvent) {
-    ASSIGN_OR_ERROR(const bw_music::Velocity value, getNext());
+    ASSIGN_OR_ERROR(const bw_music::VelocityValue value, getNext());
     tracks.addEvent<bw_music::ChannelPressureEvent>(channelNumber, timeSinceLastTrackEvent, value);
     return true;
 }
@@ -867,7 +867,8 @@ babelwires::Result smf::SmfParser::readTrack(int trackIndex, TrackSplitter& trac
             case 0b1000: // Note off.
             {
                 ASSIGN_OR_ERROR(const bw_music::Pitch pitch, getNext());
-                ASSIGN_OR_ERROR(const bw_music::Velocity velocity, getNext());
+                ASSIGN_OR_ERROR(const babelwires::Byte velocityByte, getNext());
+                ASSIGN_OR_ERROR(const bw_music::Velocity velocity, bw_music::MinMaxValue16::fromUnsigned<7>(velocityByte));
                 // TODO If a NoteOn was skipped, we would need to skip the corresponding note off.
                 if (tracks.addNoteOff(statusLo, timeSinceLastTrackEvent, pitch, velocity)) {
                     timeSinceLastTrackEvent = 0;
@@ -877,8 +878,9 @@ babelwires::Result smf::SmfParser::readTrack(int trackIndex, TrackSplitter& trac
             case 0b1001: // Note on.
             {
                 ASSIGN_OR_ERROR(const bw_music::Pitch pitch, getNext());
-                ASSIGN_OR_ERROR(const bw_music::Velocity velocity, getNext());
-                if (velocity != 0) {
+                ASSIGN_OR_ERROR(const babelwires::Byte velocityByte, getNext());
+                ASSIGN_OR_ERROR(const bw_music::Velocity velocity, bw_music::MinMaxValue16::fromUnsigned<7>(velocityByte));
+                if (velocityByte != 0) {
                     if (tracks.addNoteOn(statusLo, timeSinceLastTrackEvent, pitch, velocity)) {
                         timeSinceLastTrackEvent = 0;
                     }

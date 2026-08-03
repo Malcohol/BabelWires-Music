@@ -67,10 +67,6 @@
 
 namespace bw_music {
 
-    typedef babelwires::Rational ModelDuration;
-    typedef babelwires::Byte Pitch;
-    typedef babelwires::Byte Velocity;
-
     /// Carries the enum of chord types.
     class MUSICLIB_API ChordType : public babelwires::EnumType {
       public:

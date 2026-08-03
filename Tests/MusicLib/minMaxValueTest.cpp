@@ -2,6 +2,12 @@
 
 #include <MusicLib/Utilities/minMaxValue.hpp>
 
+using bw_music::operator""_mmv16;
+using bw_music::operator""_mmv32;
+
+static_assert((0xffff_mmv16).getUnsigned16() == 0xFFFFu);
+static_assert((0x12345678_mmv32).getUnsigned32() == 0x12345678u);
+
 TEST(MinMaxValueTest, UnsignedBitScalingPreservesEndpoints) {
     ASSERT_EQ((bw_music::MinMaxValue32::assertFromUnsigned<8>(0u).getUnsigned32()), 0u);
     ASSERT_EQ((bw_music::MinMaxValue32::assertFromUnsigned<8>(0xFFu).getUnsigned32()), 0xFFFFFFFFu);
@@ -56,4 +62,9 @@ TEST(MinMaxValueTest, SupportsUint64StorageAndUnsignedDomains) {
 
     const auto expanded8 = bw_music::MinMaxValue64::assertFromUnsigned<8>(0x80u);
     EXPECT_EQ(expanded8.getUnsigned64(), 0x8080808080808080ull);
+}
+
+TEST(MinMaxValueTest, UserDefinedLiteralsCreateExactWidthValues) {
+    EXPECT_EQ((0xffff_mmv16).getUnsigned16(), 0xFFFFu);
+    EXPECT_EQ((0x12345678_mmv32).getUnsigned32(), 0x12345678u);
 }

@@ -27,6 +27,8 @@
 
 #include <Tests/TestUtils/tempFilePath.hpp>
 
+using bw_music::operator""_mmv16;
+
 TEST(SmfSaveLoadTest, cMajorScale) {
     testUtils::TestEnvironment testEnvironment;
     bw_music::registerLib(testEnvironment.m_projectContext);
@@ -124,7 +126,7 @@ namespace {
 namespace {
     bw_music::Track makeChannelVoiceCoverageTrack() {
         bw_music::TrackBuilder track;
-        track.addEvent(bw_music::NoteOnEvent(0, 60, 100));
+        track.addEvent(bw_music::NoteOnEvent(0, 60, bw_music::MinMaxValue16::assertFromUnsigned<7>(100u)));
         track.addEvent(bw_music::PolyphonicAftertouchEvent(babelwires::Rational(1, 16), 60, 96));
         track.addEvent(bw_music::PanTrackEvent(babelwires::Rational(1, 16), bw_music::MinCentreMaxValue32::assertFromUnsigned<32>(0u)));
         track.addEvent(bw_music::VolumeTrackEvent(babelwires::Rational(1, 16), 127));
@@ -134,7 +136,7 @@ namespace {
         track.addEvent(bw_music::ChannelPressureEvent(babelwires::Rational(1, 16), 127));
         track.addEvent(bw_music::SustainTrackEvent(babelwires::Rational(1, 16), 0));
         track.addEvent(bw_music::PitchBendTrackEvent(babelwires::Rational(1, 16), bw_music::MinCentreMaxValue32::assertFromUnsigned<14>(0x3fffu)));
-        track.addEvent(bw_music::NoteOffEvent(babelwires::Rational(1, 16), 60, 64));
+        track.addEvent(bw_music::NoteOffEvent(babelwires::Rational(1, 16), 60, bw_music::MinMaxValue16::assertFromUnsigned<7>(60u)));
         return track.finishAndGetTrack();
     }
 } // namespace

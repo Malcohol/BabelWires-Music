@@ -8,6 +8,7 @@
 #pragma once
 
 #include <MusicLib/pitch.hpp>
+#include <MusicLib/Utilities/minMaxValue.hpp>
 
 #include <BaseLib/Math/rational.hpp>
 #include <BaseLib/common.hpp>
@@ -17,7 +18,8 @@
 
 namespace bw_music {
 
-    typedef babelwires::Rational ModelDuration;
-    typedef babelwires::Byte Velocity;
+    using ModelDuration = babelwires::Rational ;
+    
+    using Velocity = MinMaxValue16;
 
 } // namespace bw_music

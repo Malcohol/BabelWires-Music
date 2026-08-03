@@ -50,7 +50,7 @@ namespace bw_music {
         DOWNCASTABLE(NoteOnEvent, NoteEvent);
         STREAM_EVENT(NoteOnEvent);
         QUERYABLE_INTERFACE_PROVIDER(NoteEvent, StartEventInterface);
-        static constexpr const Velocity c_defaultVelocity = 127;
+        static constexpr Velocity c_defaultVelocity = 0xffff_mmv16;
         NoteOnEvent(ModelDuration timeSinceLastEvent, Pitch pitch, Velocity velocity = c_defaultVelocity)
             : NoteEvent(timeSinceLastEvent, pitch, velocity) {}
 
@@ -64,7 +64,7 @@ namespace bw_music {
       public:
         DOWNCASTABLE(NoteOffEvent, NoteEvent);
         STREAM_EVENT(NoteOffEvent);
-        static constexpr const Velocity c_defaultVelocity = 64;
+        static constexpr Velocity c_defaultVelocity = MinMaxValue16::assertFromUnsigned<7>(64u);
         NoteOffEvent(ModelDuration timeSinceLastEvent, Pitch pitch, Velocity velocity = c_defaultVelocity)
             : NoteEvent(timeSinceLastEvent, pitch, velocity) {}
 
