@@ -1,5 +1,5 @@
 /**
- * Represents a value in the asymmetric range [0,... 0x80000000,.. 0xFFFFFFFF].
+ * Represents a value between a minimum and maximum, with a distinguished centred value, using an integer.
  *
  * (C) 2026 Malcolm Tyrrell
  *
@@ -25,9 +25,11 @@ namespace bw_music {
         std::same_as<std::remove_cvref_t<T>, std::uint8_t> || std::same_as<std::remove_cvref_t<T>, std::uint16_t> ||
         std::same_as<std::remove_cvref_t<T>, std::uint32_t> || std::same_as<std::remove_cvref_t<T>, std::uint64_t>;
 
-    /// Represents a value in the asymmetric range [0,... 0x80000000,.. 0xFFFFFFFF].
+    /// Represents a value between a minimum and maximum, with a distinguished centred value, using an integer distributed across the range
+    /// in a slightly asymmetric manner. 
     /// Semantically the lowest and highest values should be considered the same distance from the centre value, even
     /// though the lower half of the range can represent one additional intermediate value.
+    /// The API is strict by design, to avoid situations where C++ type conversion would be ambiguous or incorrect.
     /// Calculations should not use this representation but should use the signed normalized double methods.
     /// This representation is used by some MIDI data, such as Pan or Pitch Bend.
     /// Four size-specific specializations are provided: MinCentredMaxValue8, MinCentredMaxValue16,

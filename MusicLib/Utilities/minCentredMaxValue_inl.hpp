@@ -1,5 +1,5 @@
 /**
- * Represents a value in the asymmetric range [0,... 0x80000000,.. 0xFFFFFFFF].
+ * Represents a value between a minimum and maximum, with a distinguished centred value, using an integer.
  *
  * (C) 2026 Malcolm Tyrrell
  *
