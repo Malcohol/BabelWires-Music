@@ -53,7 +53,7 @@ constexpr DestInt bw_music::detail::uintScale(SourceInt sourceValue) {
 }
 
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
-inline bw_music::MinMaxValueT<STORAGE_TYPE>::MinMaxValueT(STORAGE_TYPE value)
+constexpr bw_music::MinMaxValueT<STORAGE_TYPE>::MinMaxValueT(STORAGE_TYPE value)
     : m_value(value) {}
 
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
@@ -70,7 +70,7 @@ babelwires::ResultT<bw_music::MinMaxValueT<STORAGE_TYPE>> bw_music::MinMaxValueT
 
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
 template <std::uint8_t numSourceBits, bw_music::UInt64Compatible UnsignedInt>
-bw_music::MinMaxValueT<STORAGE_TYPE> bw_music::MinMaxValueT<STORAGE_TYPE>::tryFromUnsigned(UnsignedInt value) {
+constexpr bw_music::MinMaxValueT<STORAGE_TYPE> bw_music::MinMaxValueT<STORAGE_TYPE>::tryFromUnsigned(UnsignedInt value) {
     std::uint64_t clampedValue = value;
     if constexpr (numSourceBits < 64) {
         const std::uint64_t maxValue = (static_cast<std::uint64_t>(1) << numSourceBits) - 1;
@@ -81,34 +81,50 @@ bw_music::MinMaxValueT<STORAGE_TYPE> bw_music::MinMaxValueT<STORAGE_TYPE>::tryFr
 
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
 template <std::uint8_t numSourceBits, bw_music::UInt64Compatible UnsignedInt>
-bw_music::MinMaxValueT<STORAGE_TYPE> bw_music::MinMaxValueT<STORAGE_TYPE>::assertFromUnsigned(UnsignedInt value) {
+constexpr bw_music::MinMaxValueT<STORAGE_TYPE> bw_music::MinMaxValueT<STORAGE_TYPE>::assertFromUnsigned(UnsignedInt value) {
     return MinMaxValueT(bw_music::detail::uintScale<numSourceBits, c_storageBits, STORAGE_TYPE>(static_cast<std::uint64_t>(value)));
 }
 
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
-inline std::uint8_t bw_music::MinMaxValueT<STORAGE_TYPE>::getUnsigned8() const {
+constexpr std::uint8_t bw_music::MinMaxValueT<STORAGE_TYPE>::getUnsigned8() const {
     return bw_music::detail::uintScale<STORAGE_TYPE, std::uint8_t>(m_value);
 }
 
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
-inline std::uint16_t bw_music::MinMaxValueT<STORAGE_TYPE>::getUnsigned16() const {
+constexpr std::uint16_t bw_music::MinMaxValueT<STORAGE_TYPE>::getUnsigned16() const {
     return bw_music::detail::uintScale<STORAGE_TYPE, std::uint16_t>(m_value);
 }
 
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
-inline std::uint32_t bw_music::MinMaxValueT<STORAGE_TYPE>::getUnsigned32() const {
+constexpr std::uint32_t bw_music::MinMaxValueT<STORAGE_TYPE>::getUnsigned32() const {
     return bw_music::detail::uintScale<STORAGE_TYPE, std::uint32_t>(m_value);
 }
 
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
-inline std::uint64_t bw_music::MinMaxValueT<STORAGE_TYPE>::getUnsigned64() const {
+constexpr std::uint64_t bw_music::MinMaxValueT<STORAGE_TYPE>::getUnsigned64() const {
     return bw_music::detail::uintScale<STORAGE_TYPE, std::uint64_t>(m_value);
 }
 
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
 template <std::uint8_t numSourceBits>
-std::uint64_t bw_music::MinMaxValueT<STORAGE_TYPE>::getUnsigned() const {
+constexpr std::uint64_t bw_music::MinMaxValueT<STORAGE_TYPE>::getUnsigned() const {
     return bw_music::detail::uintScale<c_storageBits, numSourceBits, std::uint64_t>(m_value);
+}
+
+constexpr bw_music::MinMaxValue8 bw_music::operator""_mmv8(unsigned long long value) {
+    return MinMaxValue8::assertFromUnsigned<8>(value);
+}
+
+constexpr bw_music::MinMaxValue16 bw_music::operator""_mmv16(unsigned long long value) {
+    return MinMaxValue16::assertFromUnsigned<16>(value);
+}
+
+constexpr bw_music::MinMaxValue32 bw_music::operator""_mmv32(unsigned long long value) {
+    return MinMaxValue32::assertFromUnsigned<32>(value);
+}
+
+constexpr bw_music::MinMaxValue64 bw_music::operator""_mmv64(unsigned long long value) {
+    return MinMaxValue64::assertFromUnsigned<64>(value);
 }
 
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>

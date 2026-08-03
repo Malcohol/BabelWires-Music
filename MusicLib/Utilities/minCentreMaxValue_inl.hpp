@@ -13,7 +13,7 @@
 #include <limits>
 
 // See M2-115-U MIDI 2.0 Bit Scaling and Resolution Conversion.
-template <std::uint8_t numSourceBits, std::uint8_t numDestBits, bw_music::UInt64Compatible DestInt>
+template <std::uint8_t numSourceBits, std::uint8_t numDestBits, bw_music::MinCentreMaxUInt64Compatible DestInt>
 constexpr DestInt bw_music::detail::minCentreMaxScale(std::uint64_t sourceValue) {
     static_assert(numSourceBits > 1, "numSourceBits must be greater than 1");
     static_assert(numSourceBits <= 64, "numSourceBits must be less than or equal to 64");
@@ -51,7 +51,7 @@ constexpr DestInt bw_music::detail::minCentreMaxScale(std::uint64_t sourceValue)
     }
 }
 
-template <bw_music::UInt64Compatible SourceInt, bw_music::UInt64Compatible DestInt>
+template <bw_music::MinCentreMaxUInt64Compatible SourceInt, bw_music::MinCentreMaxUInt64Compatible DestInt>
 constexpr DestInt bw_music::detail::minCentreMaxScale(SourceInt sourceValue) {
     return minCentreMaxScale<static_cast<std::uint8_t>(sizeof(SourceInt) * 8u),
                              static_cast<std::uint8_t>(sizeof(DestInt) * 8u), DestInt>(
@@ -63,7 +63,7 @@ inline bw_music::MinCentreMaxValueT<STORAGE_TYPE>::MinCentreMaxValueT(STORAGE_TY
     : m_value(value) {}
 
 template <bw_music::MinCentreMaxValueStorageType STORAGE_TYPE>
-template <std::uint8_t numSourceBits, bw_music::UInt64Compatible UnsignedInt>
+template <std::uint8_t numSourceBits, bw_music::MinCentreMaxUInt64Compatible UnsignedInt>
 babelwires::ResultT<bw_music::MinCentreMaxValueT<STORAGE_TYPE>>
 bw_music::MinCentreMaxValueT<STORAGE_TYPE>::fromUnsigned(UnsignedInt value) {
     static_assert(numSourceBits <= 64, "numSourceBits must be less than or equal to 64");
@@ -77,7 +77,7 @@ bw_music::MinCentreMaxValueT<STORAGE_TYPE>::fromUnsigned(UnsignedInt value) {
 }
 
 template <bw_music::MinCentreMaxValueStorageType STORAGE_TYPE>
-template <std::uint8_t numSourceBits, bw_music::UInt64Compatible UnsignedInt>
+template <std::uint8_t numSourceBits, bw_music::MinCentreMaxUInt64Compatible UnsignedInt>
 bw_music::MinCentreMaxValueT<STORAGE_TYPE>
 bw_music::MinCentreMaxValueT<STORAGE_TYPE>::tryFromUnsigned(UnsignedInt value) {
     static_assert(numSourceBits <= 64, "numSourceBits must be less than or equal to 64");
@@ -91,7 +91,7 @@ bw_music::MinCentreMaxValueT<STORAGE_TYPE>::tryFromUnsigned(UnsignedInt value) {
 }
 
 template <bw_music::MinCentreMaxValueStorageType STORAGE_TYPE>
-template <std::uint8_t numSourceBits, bw_music::UInt64Compatible UnsignedInt>
+template <std::uint8_t numSourceBits, bw_music::MinCentreMaxUInt64Compatible UnsignedInt>
 bw_music::MinCentreMaxValueT<STORAGE_TYPE>
 bw_music::MinCentreMaxValueT<STORAGE_TYPE>::assertFromUnsigned(UnsignedInt value) {
     static_assert(numSourceBits <= 64, "numSourceBits must be less than or equal to 64");

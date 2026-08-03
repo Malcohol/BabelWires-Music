@@ -41,12 +41,12 @@ namespace bw_music {
         /// Construct from a value in the range [0, (2^numSourceBits) - 1].
         /// Clamps to the maximum value if the input is out of range.
         template <std::uint8_t numSourceBits, UInt64Compatible UnsignedInt>
-        static MinMaxValueT tryFromUnsigned(UnsignedInt value);
+        static constexpr MinMaxValueT tryFromUnsigned(UnsignedInt value);
 
         /// Construct from a value in the range [0, (2^numSourceBits) - 1].
         /// Asserts that the value is in range.
         template <std::uint8_t numSourceBits, UInt64Compatible UnsignedInt>
-        static MinMaxValueT assertFromUnsigned(UnsignedInt value);
+        static constexpr MinMaxValueT assertFromUnsigned(UnsignedInt value);
 
         /// Construct from a value in the range [0, 1.0].
         /// Fails if the value is out of range.
@@ -61,7 +61,7 @@ namespace bw_music {
         static MinMaxValueT assertFromNormalizedDouble(double normalizedValue);
 
         /// Construct from a value in the range [0, (2^numSourceBits) - 1].
-        template <std::uint8_t numSourceBits> std::uint64_t getUnsigned() const;
+        template <std::uint8_t numSourceBits> constexpr std::uint64_t getUnsigned() const;
 
         /// Get a value in the range [0, 1.0].
         double getNormalizedDouble() const;
@@ -73,29 +73,29 @@ namespace bw_music {
         // Convenience methods
 
         /// Get a value in the range [0, 0xFF].
-        std::uint8_t getUnsigned8() const;
+        constexpr std::uint8_t getUnsigned8() const;
 
         /// Get a value in the range [0, 0xFFFF].
-        std::uint16_t getUnsigned16() const;
+        constexpr std::uint16_t getUnsigned16() const;
 
         /// Get a value in the range [0, 0xFFFFFFFF].
-        std::uint32_t getUnsigned32() const;
+        constexpr std::uint32_t getUnsigned32() const;
 
         /// Get a value in the range [0, 0xFFFFFFFFFFFFFFFF].
-        std::uint64_t getUnsigned64() const;
+        constexpr std::uint64_t getUnsigned64() const;
 
       public:
         // Delete many alternatives to avoid situations where C++ type conversion would be ambiguous or incorrect.
         template <std::uint8_t numSourceBits, std::signed_integral SignedInt>
         static babelwires::ResultT<MinMaxValueT> fromUnsigned(SignedInt value) = delete;
         template <std::uint8_t numSourceBits, std::signed_integral SignedInt>
-        static MinMaxValueT tryFromUnsigned(SignedInt value) = delete;
+        static constexpr MinMaxValueT tryFromUnsigned(SignedInt value) = delete;
         template <std::uint8_t numSourceBits, std::signed_integral SignedInt>
-        static MinMaxValueT assertFromUnsigned(SignedInt value) = delete;
+        static constexpr MinMaxValueT assertFromUnsigned(SignedInt value) = delete;
 
       protected:
         /// Construct from a value in the storage type's full unsigned range.
-        MinMaxValueT(STORAGE_TYPE value);
+        constexpr MinMaxValueT(STORAGE_TYPE value);
 
       private:
         static constexpr std::uint8_t c_storageBits = static_cast<std::uint8_t>(sizeof(STORAGE_TYPE) * 8u);
@@ -108,6 +108,14 @@ namespace bw_music {
     using MinMaxValue16 = MinMaxValueT<std::uint16_t>;
     using MinMaxValue32 = MinMaxValueT<std::uint32_t>;
     using MinMaxValue64 = MinMaxValueT<std::uint64_t>;
+
+    // User-defined literals for MinMaxValue types.
+    // Use `using bw_music::operator""_mmv8;`, `using bw_music::operator""_mmv16;`, etc. to bring them into scope.
+
+    constexpr MinMaxValue8 operator""_mmv8(unsigned long long value);
+    constexpr MinMaxValue16 operator""_mmv16(unsigned long long value);
+    constexpr MinMaxValue32 operator""_mmv32(unsigned long long value);
+    constexpr MinMaxValue64 operator""_mmv64(unsigned long long value);
 
     namespace detail {
         /// Scale the source value between unsigned domains, including upscaling, downscaling, and no-op cases.

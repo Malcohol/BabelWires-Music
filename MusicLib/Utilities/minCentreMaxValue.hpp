@@ -17,8 +17,9 @@
 
 namespace bw_music {
     template <typename T>
-    concept UInt64Compatible = std::unsigned_integral<T> && !std::same_as<std::remove_cvref_t<T>, bool> &&
-                               (sizeof(std::remove_cvref_t<T>) <= sizeof(std::uint64_t));
+  concept MinCentreMaxUInt64Compatible =
+    std::unsigned_integral<T> && !std::same_as<std::remove_cvref_t<T>, bool> &&
+    (sizeof(std::remove_cvref_t<T>) <= sizeof(std::uint64_t));
 
     template <typename T>
     concept MinCentreMaxValueStorageType =
@@ -40,17 +41,17 @@ namespace bw_music {
 
         /// Construct from a value in the asymmetric range [0,... 2^(numSourceBits - 1),.. (2^numSourceBits) - 1].
         /// Fails if the value is out of range.
-        template <std::uint8_t numSourceBits, UInt64Compatible UnsignedInt>
+        template <std::uint8_t numSourceBits, MinCentreMaxUInt64Compatible UnsignedInt>
         static babelwires::ResultT<MinCentreMaxValueT> fromUnsigned(UnsignedInt value);
 
         /// Construct from a value in the asymmetric range [0,... 2^(numSourceBits - 1),.. (2^numSourceBits) - 1].
         /// Clamps to the nearest valid value if the input is out of range.
-        template <std::uint8_t numSourceBits, UInt64Compatible UnsignedInt>
+        template <std::uint8_t numSourceBits, MinCentreMaxUInt64Compatible UnsignedInt>
         static MinCentreMaxValueT tryFromUnsigned(UnsignedInt value);
 
         /// Construct from a value in the asymmetric range [0,... 2^(numSourceBits - 1),.. (2^numSourceBits) - 1].
         /// Asserts that the value is in range.
-        template <std::uint8_t numSourceBits, UInt64Compatible UnsignedInt>
+        template <std::uint8_t numSourceBits, MinCentreMaxUInt64Compatible UnsignedInt>
         static MinCentreMaxValueT assertFromUnsigned(UnsignedInt value);
 
         /// Construct from a value in the range [-1.0, 1.0].
@@ -114,11 +115,11 @@ namespace bw_music {
     namespace detail {
         /// Scale the source value between asymmetric min-centre-max unsigned domains, including upscaling,
         /// downscaling, and no-op cases.
-        template <std::uint8_t numSourceBits, std::uint8_t numDestBits, UInt64Compatible DestInt>
+        template <std::uint8_t numSourceBits, std::uint8_t numDestBits, MinCentreMaxUInt64Compatible DestInt>
         constexpr DestInt minCentreMaxScale(std::uint64_t sourceValue);
 
         /// Scale the source value between full-width asymmetric min-centre-max unsigned integer types.
-        template <UInt64Compatible SourceInt, UInt64Compatible DestInt>
+        template <MinCentreMaxUInt64Compatible SourceInt, MinCentreMaxUInt64Compatible DestInt>
         constexpr DestInt minCentreMaxScale(SourceInt sourceValue);
 
     } // namespace detail
