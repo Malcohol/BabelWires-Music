@@ -45,7 +45,8 @@ namespace bw_music {
     };
 
     /// The start of a musical note.
-    struct MUSICLIB_API NoteOnEvent : public NoteEvent, public StartEventInterface {
+    class MUSICLIB_API NoteOnEvent : public NoteEvent, public StartEventInterface {
+      public:
         DOWNCASTABLE(NoteOnEvent, NoteEvent);
         STREAM_EVENT(NoteOnEvent);
         QUERYABLE_INTERFACE_PROVIDER(NoteEvent, StartEventInterface);
@@ -59,7 +60,8 @@ namespace bw_music {
     };
 
     /// The end of a musical note.
-    struct MUSICLIB_API NoteOffEvent : public NoteEvent {
+    class MUSICLIB_API NoteOffEvent : public NoteEvent {
+      public:
         DOWNCASTABLE(NoteOffEvent, NoteEvent);
         STREAM_EVENT(NoteOffEvent);
         static constexpr const Velocity c_defaultVelocity = 64;
