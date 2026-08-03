@@ -130,9 +130,9 @@ babelwires::ResultT<bw_music::MinMaxValueT<STORAGE_TYPE>> bw_music::MinMaxValueT
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
 bw_music::MinMaxValueT<STORAGE_TYPE> bw_music::MinMaxValueT<STORAGE_TYPE>::tryFromNormalizedDouble(double normalizedValue) {
     if (normalizedValue < 0.0) {
-        return assertFromUnsigned<64>(0u);
+        return MinMaxValueT(0u);
     } else if (normalizedValue > 1.0) {
-        return assertFromUnsigned<64>(std::numeric_limits<std::uint64_t>::max());
+        return MinMaxValueT(std::numeric_limits<STORAGE_TYPE>::max());
     } else {
         return assertFromNormalizedDouble(normalizedValue);
     }

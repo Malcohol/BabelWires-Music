@@ -79,6 +79,20 @@ bw_music::MinCentredMaxValueT<STORAGE_TYPE>::fromUnsigned(UnsignedInt value) {
 template <bw_music::MinCentredMaxValueStorageType STORAGE_TYPE>
 template <std::uint8_t numSourceBits, bw_music::UInt64Compatible UnsignedInt>
 bw_music::MinCentredMaxValueT<STORAGE_TYPE>
+bw_music::MinCentredMaxValueT<STORAGE_TYPE>::tryFromUnsigned(UnsignedInt value) {
+    static_assert(numSourceBits <= 64, "numSourceBits must be less than or equal to 64");
+    if constexpr (numSourceBits < 64) {
+        if (value >= (static_cast<std::uint64_t>(1) << numSourceBits)) {
+            return MinCentredMaxValueT(std::numeric_limits<STORAGE_TYPE>::max());
+        }
+    }
+    return MinCentredMaxValueT(
+        bw_music::detail::minCentreMaxScale<numSourceBits, c_storageBits, STORAGE_TYPE>(static_cast<std::uint64_t>(value)));
+}
+
+template <bw_music::MinCentredMaxValueStorageType STORAGE_TYPE>
+template <std::uint8_t numSourceBits, bw_music::UInt64Compatible UnsignedInt>
+bw_music::MinCentredMaxValueT<STORAGE_TYPE>
 bw_music::MinCentredMaxValueT<STORAGE_TYPE>::assertFromUnsigned(UnsignedInt value) {
     static_assert(numSourceBits <= 64, "numSourceBits must be less than or equal to 64");
     return MinCentredMaxValueT(
@@ -140,9 +154,9 @@ template <bw_music::MinCentredMaxValueStorageType STORAGE_TYPE>
 bw_music::MinCentredMaxValueT<STORAGE_TYPE>
 bw_music::MinCentredMaxValueT<STORAGE_TYPE>::tryFromSignedNormalizedDouble(double signedNormalizedValue) {
     if (signedNormalizedValue < -1.0) {
-        return assertFromUnsigned<32>(0u);
+        return MinCentredMaxValueT(0u);
     } else if (signedNormalizedValue > 1.0) {
-        return assertFromUnsigned<32>(std::numeric_limits<std::uint32_t>::max());
+        return MinCentredMaxValueT(std::numeric_limits<STORAGE_TYPE>::max());
     } else {
         return assertFromSignedNormalizedDouble(signedNormalizedValue);
     }

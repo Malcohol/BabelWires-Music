@@ -38,10 +38,13 @@ namespace bw_music {
 
         /// Construct from a value in the asymmetric range [0,... 2^(numSourceBits - 1),.. (2^numSourceBits) - 1].
         /// Fails if the value is out of range.
-        /// Note: There's no best effort "try" equivalent to this method: If the value is out of range, this class
-        /// doesn't have the context to repair the situation.
         template <std::uint8_t numSourceBits, UInt64Compatible UnsignedInt>
         static babelwires::ResultT<MinCentredMaxValueT> fromUnsigned(UnsignedInt value);
+
+        /// Construct from a value in the asymmetric range [0,... 2^(numSourceBits - 1),.. (2^numSourceBits) - 1].
+        /// Clamps to the nearest valid value if the input is out of range.
+        template <std::uint8_t numSourceBits, UInt64Compatible UnsignedInt>
+        static MinCentredMaxValueT tryFromUnsigned(UnsignedInt value);
 
         /// Construct from a value in the asymmetric range [0,... 2^(numSourceBits - 1),.. (2^numSourceBits) - 1].
         /// Asserts that the value is in range.

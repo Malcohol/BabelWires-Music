@@ -64,6 +64,11 @@ TEST(MinCentredMaxValueTest, SignedNormalizedTryClampsToNearestValidValue) {
     EXPECT_EQ(bw_music::MinCentredMaxValue32::tryFromSignedNormalizedDouble(1.01).getUnsigned32(), 0xFFFFFFFFu);
 }
 
+TEST(MinCentredMaxValueTest, TryFromUnsignedClampsToNearestValidValue) {
+    EXPECT_EQ(bw_music::MinCentredMaxValue32::tryFromUnsigned<7>(128u).getUnsigned32(), 0xFFFFFFFFu);
+    EXPECT_EQ(bw_music::MinCentredMaxValue16::tryFromUnsigned<14>(16384u).getUnsigned16(), 0xFFFFu);
+}
+
 TEST(MinCentredMaxValueTest, RejectsOutOfRangeInputs) {
     EXPECT_FALSE(bw_music::MinCentredMaxValue32::fromUnsigned<7>(128u).has_value());
     EXPECT_FALSE(bw_music::MinCentredMaxValue32::fromUnsigned<14>(16384u).has_value());
