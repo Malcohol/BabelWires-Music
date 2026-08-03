@@ -60,6 +60,18 @@ namespace bw_music {
         /// Asserts that the value is in range.
         static MinMaxValueT assertFromNormalizedDouble(double normalizedValue);
 
+        /// Construct from a value in the range [0, (2^numSourceBits) - 1].
+        template <std::uint8_t numSourceBits> std::uint64_t getUnsigned() const;
+
+        /// Get a value in the range [0, 1.0].
+        double getNormalizedDouble() const;
+
+        std::size_t getHash() const;
+
+        auto operator<=>(const MinMaxValueT&) const = default;
+
+        // Convenience methods
+
         /// Get a value in the range [0, 0xFF].
         std::uint8_t getUnsigned8() const;
 
@@ -71,16 +83,6 @@ namespace bw_music {
 
         /// Get a value in the range [0, 0xFFFFFFFFFFFFFFFF].
         std::uint64_t getUnsigned64() const;
-
-        /// Construct from a value in the range [0, (2^numSourceBits) - 1].
-        template <std::uint8_t numSourceBits> std::uint64_t getUnsigned() const;
-
-        /// Get a value in the range [0, 1.0].
-        double getNormalizedDouble() const;
-
-        std::size_t getHash() const;
-
-        auto operator<=>(const MinMaxValueT&) const = default;
 
       public:
         // Delete many alternatives to avoid situations where C++ type conversion would be ambiguous or incorrect.

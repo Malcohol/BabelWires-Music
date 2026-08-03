@@ -60,18 +60,6 @@ namespace bw_music {
         /// Asserts that the value is in range.
         static MinCentredMaxValueT assertFromSignedNormalizedDouble(double signedNormalizedValue);
 
-        /// Get a value in the asymmetric range [0,... 0x80,.. 0xFF].
-        std::uint8_t getUnsigned8() const;
-
-        /// Get a value in the asymmetric range [0,... 0x8000,.. 0xFFFF].
-        std::uint16_t getUnsigned16() const;
-
-        /// Get a value in the asymmetric range [0,... 0x80000000,.. 0xFFFFFFFF].
-        std::uint32_t getUnsigned32() const;
-
-        /// Get a value in the asymmetric range [0,... 2^63,.. 0xFFFFFFFFFFFFFFFF].
-        std::uint64_t getUnsigned64() const;
-
         /// Construct from a value in the asymmetric range [0,... 2^(numSourceBits - 1),.. (2^numSourceBits) - 1].
         template <std::uint8_t numSourceBits> std::uint64_t getUnsigned() const;
 
@@ -81,6 +69,20 @@ namespace bw_music {
         std::size_t getHash() const;
 
         auto operator<=>(const MinCentredMaxValueT&) const = default;
+
+        // Convenience methods
+
+        /// Get a value in the asymmetric range [0,... 0x80,.. 0xFF].
+        std::uint8_t getUnsigned8() const;
+
+        /// Get a value in the asymmetric range [0,... 0x8000,.. 0xFFFF].
+        std::uint16_t getUnsigned16() const;
+
+        /// Get a value in the asymmetric range [0,... 0x80000000,.. 0xFFFFFFFF].
+        std::uint32_t getUnsigned32() const;
+
+        /// Get a value in the asymmetric range [0,... 0x8000000000000000,.. 0xFFFFFFFFFFFFFFFF].
+        std::uint64_t getUnsigned64() const;
 
       public:
         template <std::uint8_t numSourceBits, std::signed_integral SignedInt>
