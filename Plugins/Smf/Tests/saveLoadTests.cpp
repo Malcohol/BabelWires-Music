@@ -126,14 +126,14 @@ namespace {
         bw_music::TrackBuilder track;
         track.addEvent(bw_music::NoteOnEvent(0, 60, 100));
         track.addEvent(bw_music::PolyphonicAftertouchEvent(babelwires::Rational(1, 16), 60, 96));
-        track.addEvent(bw_music::PanTrackEvent(babelwires::Rational(1, 16), bw_music::MinCentredMaxValue::fromUnsigned32(0)));
+        track.addEvent(bw_music::PanTrackEvent(babelwires::Rational(1, 16), bw_music::MinCentredMaxValue32::assertFromUnsigned<32>(0u)));
         track.addEvent(bw_music::VolumeTrackEvent(babelwires::Rational(1, 16), 127));
         track.addEvent(bw_music::ExpressionTrackEvent(babelwires::Rational(1, 16), 0));
         track.addEvent(bw_music::SustainTrackEvent(babelwires::Rational(1, 16), 127));
-        track.addEvent(bw_music::PitchBendTrackEvent(babelwires::Rational(1, 16), bw_music::MinCentredMaxValue::assertFromUnsigned<14>(0)));
+        track.addEvent(bw_music::PitchBendTrackEvent(babelwires::Rational(1, 16), bw_music::MinCentredMaxValue32::assertFromUnsigned<14>(0u)));
         track.addEvent(bw_music::ChannelPressureEvent(babelwires::Rational(1, 16), 127));
         track.addEvent(bw_music::SustainTrackEvent(babelwires::Rational(1, 16), 0));
-        track.addEvent(bw_music::PitchBendTrackEvent(babelwires::Rational(1, 16), bw_music::MinCentredMaxValue::assertFromUnsigned<14>(0x3fff)));
+        track.addEvent(bw_music::PitchBendTrackEvent(babelwires::Rational(1, 16), bw_music::MinCentredMaxValue32::assertFromUnsigned<14>(0x3fffu)));
         track.addEvent(bw_music::NoteOffEvent(babelwires::Rational(1, 16), 60, 64));
         return track.finishAndGetTrack();
     }

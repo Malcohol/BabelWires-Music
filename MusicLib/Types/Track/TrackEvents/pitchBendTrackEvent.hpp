@@ -22,14 +22,14 @@ namespace bw_music {
         STREAM_EVENT(PitchBendTrackEvent);
 
         /// Construct from an MinCentredMaxValue value (e.g. as used by MIDI).
-        PitchBendTrackEvent(ModelDuration timeSinceLastEvent, MinCentredMaxValue aci);
+        PitchBendTrackEvent(ModelDuration timeSinceLastEvent, MinCentredMaxValue32 aci);
 
         /// Construct from a value in the range [-1.0, 1.0].
         /// Asserts that the value is in range.
         PitchBendTrackEvent(ModelDuration timeSinceLastEvent, double signedNormalizedValue);
 
         /// Get the contents as an MinCentredMaxValue value (e.g. for use by MIDI).
-        MinCentredMaxValue getMinCentredMaxValue() const;
+        MinCentredMaxValue32 getMinCentredMaxValue() const;
 
         /// Get a value in the range [-1.0, 1.0].
         double getSignedNormalizedValue() const;
@@ -41,7 +41,7 @@ namespace bw_music {
         bool doIsEqualTo(const TrackEvent& other) const override;
 
       private:
-        MinCentredMaxValue m_value;
+        MinCentredMaxValue32 m_value;
     };
 } // namespace bw_music
 
