@@ -19,8 +19,8 @@ TEST(MinMaxValueTest, TryFromUnsignedClampsToMaximum) {
 }
 
 TEST(MinMaxValueTest, NormalizedDoubleConversionsClampAndRoundTrip) {
-    EXPECT_DOUBLE_EQ(bw_music::MinMaxValue<>::fromUnsigned32(0u).getNormalizedDouble(), 0.0);
-    EXPECT_DOUBLE_EQ(bw_music::MinMaxValue<>::fromUnsigned32(0xFFFFFFFFu).getNormalizedDouble(), 1.0);
+    EXPECT_DOUBLE_EQ((bw_music::MinMaxValue<>::assertFromUnsigned<32>(0u).getNormalizedDouble()), 0.0);
+    EXPECT_DOUBLE_EQ((bw_music::MinMaxValue<>::assertFromUnsigned<32>(0xFFFFFFFFu).getNormalizedDouble()), 1.0);
 
     ASSERT_TRUE((bw_music::MinMaxValue<>::fromNormalizedDouble(0.5).has_value()));
     EXPECT_EQ((bw_music::MinMaxValue<>::tryFromNormalizedDouble(-0.5).getUnsigned32()), 0u);
@@ -28,12 +28,12 @@ TEST(MinMaxValueTest, NormalizedDoubleConversionsClampAndRoundTrip) {
 }
 
 TEST(MinMaxValueTest, NarrowStorageUsesWidthSpecificAccessors) {
-    const auto value8 = bw_music::MinMaxValue<std::uint8_t>::fromUnsigned16(static_cast<std::uint16_t>(0xABCDu));
+    const auto value8 = bw_music::MinMaxValue<std::uint8_t>::assertFromUnsigned<16>(static_cast<std::uint16_t>(0xABCDu));
     EXPECT_EQ(value8.getUnsigned16(), 0xABABu);
     EXPECT_EQ(value8.getUnsigned8(), 0xABu);
     EXPECT_EQ(value8.getUnsigned32(), 0xABABABABu);
 
-    const auto value16 = bw_music::MinMaxValue<std::uint16_t>::fromUnsigned8(static_cast<std::uint8_t>(0x12u));
+    const auto value16 = bw_music::MinMaxValue<std::uint16_t>::assertFromUnsigned<8>(static_cast<std::uint8_t>(0x12u));
     EXPECT_EQ(value16.getUnsigned8(), 0x12u);
     EXPECT_EQ(value16.getUnsigned16(), 0x1212u);
     EXPECT_EQ(value16.getUnsigned32(), 0x12121212u);

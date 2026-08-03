@@ -32,18 +32,6 @@ namespace bw_music {
       public:
         using StorageType = STORAGE_TYPE;
 
-        /// Construct from a value in the range [0, 0xFF].
-        static MinMaxValue fromUnsigned8(std::uint8_t value);
-
-        /// Construct from a value in the range [0, 0xFFFF].
-        static MinMaxValue fromUnsigned16(std::uint16_t value);
-
-        /// Construct from a value in the range [0, 0xFFFFFFFF].
-        static MinMaxValue fromUnsigned32(std::uint32_t highResValue);
-
-        /// Construct from a value in the range [0, 0xFFFFFFFF].
-        template <UInt32Compatible UnsignedInt> static MinMaxValue fromUnsigned32(UnsignedInt highResValue);
-
         /// Construct from a value in the range [0, (2^numSourceBits) - 1].
         /// Fails if the value is out of range.
         template <std::uint8_t numSourceBits, UInt32Compatible UnsignedInt>
@@ -92,15 +80,6 @@ namespace bw_music {
 
       public:
         // Delete many alternatives to avoid situations where C++ type conversion would be ambiguous or incorrect.
-        template <std::signed_integral SignedInt> static MinMaxValue fromUnsigned8(SignedInt value) = delete;
-        template <UInt32Compatible UnsignedInt>
-            requires(!std::same_as<std::remove_cvref_t<UnsignedInt>, std::uint8_t>)
-        static MinMaxValue fromUnsigned8(UnsignedInt value) = delete;
-        template <std::signed_integral SignedInt> static MinMaxValue fromUnsigned16(SignedInt value) = delete;
-        template <std::signed_integral SignedInt> static MinMaxValue fromUnsigned32(SignedInt highResValue) = delete;
-        template <UInt32Compatible UnsignedInt>
-            requires(!std::same_as<std::remove_cvref_t<UnsignedInt>, std::uint16_t>)
-        static MinMaxValue fromUnsigned16(UnsignedInt value) = delete;
         template <std::uint8_t numSourceBits, std::signed_integral SignedInt>
         static babelwires::ResultT<MinMaxValue> fromUnsigned(SignedInt value) = delete;
         template <std::uint8_t numSourceBits, std::signed_integral SignedInt>

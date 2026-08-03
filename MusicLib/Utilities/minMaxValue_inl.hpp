@@ -54,27 +54,6 @@ inline bw_music::MinMaxValue<STORAGE_TYPE>::MinMaxValue(STORAGE_TYPE value)
     : m_value(value) {}
 
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
-inline bw_music::MinMaxValue<STORAGE_TYPE> bw_music::MinMaxValue<STORAGE_TYPE>::fromUnsigned32(std::uint32_t highResValue) {
-    return MinMaxValue(bw_music::detail::uintScale<std::uint32_t, STORAGE_TYPE>(highResValue));
-}
-
-template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
-template <bw_music::UInt32Compatible UnsignedInt>
-inline bw_music::MinMaxValue<STORAGE_TYPE> bw_music::MinMaxValue<STORAGE_TYPE>::fromUnsigned32(UnsignedInt highResValue) {
-    return fromUnsigned32(static_cast<std::uint32_t>(highResValue));
-}
-
-template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
-inline bw_music::MinMaxValue<STORAGE_TYPE> bw_music::MinMaxValue<STORAGE_TYPE>::fromUnsigned8(std::uint8_t value) {
-    return MinMaxValue(bw_music::detail::uintScale<std::uint8_t, STORAGE_TYPE>(value));
-}
-
-template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
-inline bw_music::MinMaxValue<STORAGE_TYPE> bw_music::MinMaxValue<STORAGE_TYPE>::fromUnsigned16(std::uint16_t value) {
-    return MinMaxValue(bw_music::detail::uintScale<std::uint16_t, STORAGE_TYPE>(value));
-}
-
-template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
 template <std::uint8_t numSourceBits, bw_music::UInt32Compatible UnsignedInt>
 babelwires::ResultT<bw_music::MinMaxValue<STORAGE_TYPE>> bw_music::MinMaxValue<STORAGE_TYPE>::fromUnsigned(UnsignedInt value) {
     if (value >= (static_cast<std::uint64_t>(1) << numSourceBits)) {
@@ -144,9 +123,9 @@ babelwires::ResultT<bw_music::MinMaxValue<STORAGE_TYPE>> bw_music::MinMaxValue<S
 template <bw_music::MinMaxValueStorageType STORAGE_TYPE>
 bw_music::MinMaxValue<STORAGE_TYPE> bw_music::MinMaxValue<STORAGE_TYPE>::tryFromNormalizedDouble(double normalizedValue) {
     if (normalizedValue < 0.0) {
-        return fromUnsigned32(0u);
+        return assertFromUnsigned<32>(0u);
     } else if (normalizedValue > 1.0) {
-        return fromUnsigned32(std::numeric_limits<STORAGE_TYPE>::max());
+        return assertFromUnsigned<32>(std::numeric_limits<std::uint32_t>::max());
     } else {
         return assertFromNormalizedDouble(normalizedValue);
     }
