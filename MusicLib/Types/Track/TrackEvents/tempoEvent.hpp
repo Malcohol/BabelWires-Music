@@ -13,11 +13,11 @@
 
 namespace bw_music {
 
-    struct MUSICLIB_API TempoTrackEvent : public TrackEvent {
-        DOWNCASTABLE(TempoTrackEvent, TrackEvent);
-        STREAM_EVENT(TempoTrackEvent);
+    struct MUSICLIB_API TempoEvent : public TrackEvent {
+        DOWNCASTABLE(TempoEvent, TrackEvent);
+        STREAM_EVENT(TempoEvent);
 
-        TempoTrackEvent(ModelDuration timeSinceLastEvent, int bpm)
+        TempoEvent(ModelDuration timeSinceLastEvent, int bpm)
             : TrackEvent(timeSinceLastEvent)
             , m_bpm(bpm) {}
 

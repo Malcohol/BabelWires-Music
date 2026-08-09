@@ -33,15 +33,15 @@ SET( MUSICLIB_SRCS
 	Types/genericAccompaniment.cpp
 	Types/Track/TrackEvents/chordEvents.cpp
 	Types/Track/TrackEvents/channelVoiceEvents.cpp
-	Types/Track/TrackEvents/expressionTrackEvent.cpp
+	Types/Track/TrackEvents/expressionEvent.cpp
 	Types/Track/TrackEvents/noteEvents.cpp
-	Types/Track/TrackEvents/panTrackEvent.cpp
-	Types/Track/TrackEvents/pitchBendTrackEvent.cpp
+	Types/Track/TrackEvents/panEvent.cpp
+	Types/Track/TrackEvents/pitchBendEvent.cpp
 	Types/Track/TrackEvents/percussionEvents.cpp
-	Types/Track/TrackEvents/sustainTrackEvent.cpp
-	Types/Track/TrackEvents/tempoTrackEvent.cpp
+	Types/Track/TrackEvents/sustainEvent.cpp
+	Types/Track/TrackEvents/tempoEvent.cpp
 	Types/Track/TrackEvents/trackEvent.cpp
-	Types/Track/TrackEvents/volumeTrackEvent.cpp
+	Types/Track/TrackEvents/volumeEvent.cpp
 	Types/Track/track.cpp
 	Types/Track/trackType.cpp
 	Types/Track/trackTypeConstructor.cpp

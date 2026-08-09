@@ -5,15 +5,15 @@
  *
  * Licensed under the GPLv3.0. See LICENSE file.
  **/
-#include <MusicLib/Types/Track/TrackEvents/expressionTrackEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/expressionEvent.hpp>
 
 #include <BaseLib/Hash/hash.hpp>
 
-std::size_t bw_music::ExpressionTrackEvent::getHash() const {
+std::size_t bw_music::ExpressionEvent::getHash() const {
     return babelwires::hash::mixtureOf(static_cast<const char*>("Expression"), m_timeSinceLastEvent, m_value);
 }
 
-bool bw_music::ExpressionTrackEvent::doIsEqualTo(const TrackEvent& other) const {
-    const auto& otherExpression = static_cast<const ExpressionTrackEvent&>(other);
+bool bw_music::ExpressionEvent::doIsEqualTo(const TrackEvent& other) const {
+    const auto& otherExpression = static_cast<const ExpressionEvent&>(other);
     return TrackEvent::doIsEqualTo(other) && (m_value == otherExpression.m_value);
 }

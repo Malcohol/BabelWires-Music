@@ -8,9 +8,9 @@
 
 #include <MusicLib/Types/Track/TrackEvents/channelVoiceEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
-#include <MusicLib/Types/Track/TrackEvents/panTrackEvent.hpp>
-#include <MusicLib/Types/Track/TrackEvents/pitchBendTrackEvent.hpp>
-#include <MusicLib/Types/Track/TrackEvents/tempoTrackEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/panEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/pitchBendEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/tempoEvent.hpp>
 #include <MusicLib/Utilities/filteredTrackIterator.hpp>
 #include <MusicLib/Types/Track/trackBuilder.hpp>
 #include <MusicLib/libRegistration.hpp>
@@ -93,7 +93,7 @@ namespace {
         }
         if (flags & HAS_TEMPO) {
             bw_music::TrackBuilder globalTrack;
-            globalTrack.addEvent(bw_music::TempoTrackEvent(0, 100));
+            globalTrack.addEvent(bw_music::TempoEvent(0, 100));
             smfType.getGlobal().set(globalTrack.finishAndGetTrack());
         }
     }
@@ -114,7 +114,7 @@ namespace {
             EXPECT_EQ(metadata.tryGetITempo()->get(), 100);
 
             const auto& globalTrack = smfType.getGlobal().get();
-            auto [tempoBegin, tempoEnd] = bw_music::iterateOver<bw_music::TempoTrackEvent>(globalTrack);
+            auto [tempoBegin, tempoEnd] = bw_music::iterateOver<bw_music::TempoEvent>(globalTrack);
             ASSERT_NE(tempoBegin, tempoEnd);
             EXPECT_EQ(tempoBegin->getBpm(), 100);
             ++tempoBegin;
@@ -128,14 +128,14 @@ namespace {
         bw_music::TrackBuilder track;
         track.addEvent(bw_music::NoteOnEvent(0, 60, bw_music::MinMaxValue16::assertFromUnsigned<7>(100u)));
         track.addEvent(bw_music::PolyphonicAftertouchEvent(babelwires::Rational(1, 16), 60, 96));
-        track.addEvent(bw_music::PanTrackEvent(babelwires::Rational(1, 16), bw_music::MinCentreMaxValue32::assertFromUnsigned<32>(0u)));
-        track.addEvent(bw_music::VolumeTrackEvent(babelwires::Rational(1, 16), bw_music::ControllerStorage::assertFromUnsigned<7>(127u)));
-        track.addEvent(bw_music::ExpressionTrackEvent(babelwires::Rational(1, 16), bw_music::ControllerStorage::assertFromUnsigned<7>(0u)));
-        track.addEvent(bw_music::SustainTrackEvent(babelwires::Rational(1, 16), bw_music::ControllerStorage::assertFromUnsigned<7>(127u)));
-        track.addEvent(bw_music::PitchBendTrackEvent(babelwires::Rational(1, 16), bw_music::MinCentreMaxValue32::assertFromUnsigned<14>(0u)));
+        track.addEvent(bw_music::PanEvent(babelwires::Rational(1, 16), bw_music::MinCentreMaxValue32::assertFromUnsigned<32>(0u)));
+        track.addEvent(bw_music::VolumeEvent(babelwires::Rational(1, 16), bw_music::ControllerStorage::assertFromUnsigned<7>(127u)));
+        track.addEvent(bw_music::ExpressionEvent(babelwires::Rational(1, 16), bw_music::ControllerStorage::assertFromUnsigned<7>(0u)));
+        track.addEvent(bw_music::SustainEvent(babelwires::Rational(1, 16), bw_music::ControllerStorage::assertFromUnsigned<7>(127u)));
+        track.addEvent(bw_music::PitchBendEvent(babelwires::Rational(1, 16), bw_music::MinCentreMaxValue32::assertFromUnsigned<14>(0u)));
         track.addEvent(bw_music::ChannelPressureEvent(babelwires::Rational(1, 16), 127));
-        track.addEvent(bw_music::SustainTrackEvent(babelwires::Rational(1, 16), bw_music::ControllerStorage::assertFromUnsigned<7>(0u)));
-        track.addEvent(bw_music::PitchBendTrackEvent(babelwires::Rational(1, 16), bw_music::MinCentreMaxValue32::assertFromUnsigned<14>(0x3fffu)));
+        track.addEvent(bw_music::SustainEvent(babelwires::Rational(1, 16), bw_music::ControllerStorage::assertFromUnsigned<7>(0u)));
+        track.addEvent(bw_music::PitchBendEvent(babelwires::Rational(1, 16), bw_music::MinCentreMaxValue32::assertFromUnsigned<14>(0x3fffu)));
         track.addEvent(bw_music::NoteOffEvent(babelwires::Rational(1, 16), 60, bw_music::MinMaxValue16::assertFromUnsigned<7>(60u)));
         return track.finishAndGetTrack();
     }
@@ -325,7 +325,7 @@ TEST(SmfSaveLoadTest, format1TempoGlobalTrack) {
         smfType.selectTag("SMF1");
 
         bw_music::TrackBuilder globalTrack;
-        globalTrack.addEvent(bw_music::TempoTrackEvent(0, 100));
+        globalTrack.addEvent(bw_music::TempoEvent(0, 100));
         smfType.getGlobal().set(globalTrack.finishAndGetTrack());
 
         auto tracks = smfType.getTrcks1();
@@ -358,7 +358,7 @@ TEST(SmfSaveLoadTest, format1TempoGlobalTrack) {
     testUtils::testSimpleNotes(chordPitches[0], tracks.getEntry(0).getTrack().get());
 
     const auto& globalTrack = smfSequence.getGlobal().get();
-    auto [tempoBegin, tempoEnd] = bw_music::iterateOver<bw_music::TempoTrackEvent>(globalTrack);
+    auto [tempoBegin, tempoEnd] = bw_music::iterateOver<bw_music::TempoEvent>(globalTrack);
     ASSERT_NE(tempoBegin, tempoEnd);
     EXPECT_EQ(tempoBegin->getBpm(), 100);
     ++tempoBegin;

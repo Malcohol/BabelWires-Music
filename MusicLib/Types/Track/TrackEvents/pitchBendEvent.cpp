@@ -5,15 +5,15 @@
  *
  * Licensed under the GPLv3.0. See LICENSE file.
  **/
-#include <MusicLib/Types/Track/TrackEvents/pitchBendTrackEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/pitchBendEvent.hpp>
 
 #include <BaseLib/Hash/hash.hpp>
 
-std::size_t bw_music::PitchBendTrackEvent::getHash() const {
+std::size_t bw_music::PitchBendEvent::getHash() const {
     return babelwires::hash::mixtureOf(static_cast<const char*>("PitchBend"), m_timeSinceLastEvent, m_pitchBend);
 }
 
-bool bw_music::PitchBendTrackEvent::doIsEqualTo(const TrackEvent& other) const {
-    const auto& otherPitchBend = static_cast<const PitchBendTrackEvent&>(other);
+bool bw_music::PitchBendEvent::doIsEqualTo(const TrackEvent& other) const {
+    const auto& otherPitchBend = static_cast<const PitchBendEvent&>(other);
     return TrackEvent::doIsEqualTo(other) && (m_pitchBend == otherPitchBend.m_pitchBend);
 }

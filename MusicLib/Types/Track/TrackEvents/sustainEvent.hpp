@@ -1,5 +1,5 @@
 /**
- * Channel-voice event controlling the expression of a channel.
+ * Channel-voice event controlling the sustain pedal state of a channel.
  *
  * (C) 2026 Malcolm Tyrrell
  *
@@ -13,25 +13,27 @@
 #include <MusicLib/Types/Track/TrackEvents/trackEventCommon.hpp>
 
 namespace bw_music {
-    /// Channel-voice event controlling the expression of a channel.
-    struct MUSICLIB_API ExpressionTrackEvent : public TrackEvent {
-        DOWNCASTABLE(ExpressionTrackEvent, TrackEvent);
-        STREAM_EVENT(ExpressionTrackEvent);
+    /// Channel-voice event controlling the sustain pedal state of a channel.
+    struct MUSICLIB_API SustainEvent : public TrackEvent {
+        DOWNCASTABLE(SustainEvent, TrackEvent);
+        STREAM_EVENT(SustainEvent);
 
         /// Construct from a normalized level in the range [0.0, 1.0].
         /// Asserts that the value is in range.
-        ExpressionTrackEvent(ModelDuration timeSinceLastEvent, double normalizedLevel);
+        SustainEvent(ModelDuration timeSinceLastEvent, double normalizedLevel);
 
         /// Construct from a ControllerStorage value.
-        ExpressionTrackEvent(ModelDuration timeSinceLastEvent, ControllerStorage value);
+        SustainEvent(ModelDuration timeSinceLastEvent, ControllerStorage value);
 
-        /// Get a value in the range [0.0, 1.0].4
-        /// This is the preferred way to obtain the value for calculation.
-        double getExpressionAsNormalizedValue() const;
+        /// Get a value in the range [0.0, 1.0].
+        double getLevelAsNormalizedValue() const;
 
         /// Get the contents as a ControllerStorage value (e.g. for use by MIDI).
         /// This is the preferred way to obtain the value during serialization.
-        ControllerStorage getExpressionStorage() const;
+        ControllerStorage getSustainStorage() const;
+
+        /// Return whether the sustain pedal is logically engaged according to the MIDI threshold.
+        bool isSustainOn() const;
 
         std::size_t getHash() const override;
 
@@ -43,4 +45,4 @@ namespace bw_music {
     };
 }
 
-#include <MusicLib/Types/Track/TrackEvents/expressionTrackEvent_inl.hpp>
+#include <MusicLib/Types/Track/TrackEvents/sustainEvent_inl.hpp>

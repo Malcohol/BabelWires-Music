@@ -14,10 +14,10 @@
 #include <MusicLib/Percussion/builtInPercussionInstruments.hpp>
 #include <MusicLib/Types/Track/TrackEvents/channelVoiceEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
-#include <MusicLib/Types/Track/TrackEvents/panTrackEvent.hpp>
-#include <MusicLib/Types/Track/TrackEvents/pitchBendTrackEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/panEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/pitchBendEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/percussionEvents.hpp>
-#include <MusicLib/Types/Track/TrackEvents/tempoTrackEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/tempoEvent.hpp>
 #include <MusicLib/Types/Track/trackBuilder.hpp>
 #include <MusicLib/Utilities/minCentreMaxValue.hpp>
 
@@ -259,7 +259,7 @@ void smf::SmfParser::finalizeGlobalTempoTrack() {
     bw_music::TrackBuilder globalTrack;
     bw_music::ModelDuration timeOfLastEvent = 0;
     for (const auto& [absoluteTime, tempo] : m_globalTempoEvents) {
-        globalTrack.addEvent(bw_music::TempoTrackEvent{absoluteTime - timeOfLastEvent, tempo.m_bpm});
+        globalTrack.addEvent(bw_music::TempoEvent{absoluteTime - timeOfLastEvent, tempo.m_bpm});
         timeOfLastEvent = absoluteTime;
     }
     getSmfSequence().getGlobal().set(globalTrack.finishAndGetTrack());
@@ -606,18 +606,18 @@ babelwires::ResultT<bool> smf::SmfParser::readControlChange(TrackSplitter& track
         case c_volumeController: {
             ASSIGN_OR_ERROR(const bw_music::ControllerStorage volume,
                             bw_music::ControllerStorage::fromUnsigned<7>(value));
-            tracks.addEvent<bw_music::VolumeTrackEvent>(channelNumber, timeSinceLastTrackEvent, volume);
+            tracks.addEvent<bw_music::VolumeEvent>(channelNumber, timeSinceLastTrackEvent, volume);
             return true;
         }
         case c_panController: {
             ASSIGN_OR_ERROR(bw_music::CentredControllerStorage pan, bw_music::MinCentreMaxValue32::fromUnsigned<7>(value));
-            tracks.addEvent<bw_music::PanTrackEvent>(channelNumber, timeSinceLastTrackEvent, std::move(pan));
+            tracks.addEvent<bw_music::PanEvent>(channelNumber, timeSinceLastTrackEvent, std::move(pan));
             return true;
         }
         case c_expressionController: {
             ASSIGN_OR_ERROR(const bw_music::ControllerStorage expression,
                             bw_music::ControllerStorage::fromUnsigned<7>(value));
-            tracks.addEvent<bw_music::ExpressionTrackEvent>(channelNumber, timeSinceLastTrackEvent, expression);
+            tracks.addEvent<bw_music::ExpressionEvent>(channelNumber, timeSinceLastTrackEvent, expression);
             return true;
         }
         case c_bankSelectLsbController:
@@ -627,7 +627,7 @@ babelwires::ResultT<bool> smf::SmfParser::readControlChange(TrackSplitter& track
         case c_sustainController: {
             ASSIGN_OR_ERROR(const bw_music::ControllerStorage sustain,
                             bw_music::ControllerStorage::fromUnsigned<7>(value));
-            tracks.addEvent<bw_music::SustainTrackEvent>(channelNumber, timeSinceLastTrackEvent, sustain);
+            tracks.addEvent<bw_music::SustainEvent>(channelNumber, timeSinceLastTrackEvent, sustain);
             return true;
         }
         default:
@@ -641,7 +641,7 @@ babelwires::ResultT<bool> smf::SmfParser::readPitchBend(TrackSplitter& tracks, u
     ASSIGN_OR_ERROR(const babelwires::Byte msb, getNext());
     const std::uint16_t pitchBendValue = static_cast<std::uint16_t>((static_cast<std::uint16_t>(msb) << 7) | lsb);
     ASSIGN_OR_ERROR(bw_music::CentredControllerStorage pitchBend, bw_music::CentredControllerStorage::fromUnsigned<14>(pitchBendValue));
-    tracks.addEvent<bw_music::PitchBendTrackEvent>(channelNumber, timeSinceLastTrackEvent, std::move(pitchBend));
+    tracks.addEvent<bw_music::PitchBendEvent>(channelNumber, timeSinceLastTrackEvent, std::move(pitchBend));
     return true;
 }
 

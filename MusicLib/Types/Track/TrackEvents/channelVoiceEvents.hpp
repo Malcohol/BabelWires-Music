@@ -9,10 +9,10 @@
 
 #include <MusicLib/musicLibExport.hpp>
 
-#include <MusicLib/Types/Track/TrackEvents/expressionTrackEvent.hpp>
-#include <MusicLib/Types/Track/TrackEvents/sustainTrackEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/expressionEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/sustainEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/trackEvent.hpp>
-#include <MusicLib/Types/Track/TrackEvents/volumeTrackEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/volumeEvent.hpp>
 
 namespace bw_music {
 

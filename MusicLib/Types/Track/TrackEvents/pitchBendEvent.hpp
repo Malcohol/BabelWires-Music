@@ -17,16 +17,16 @@
 namespace bw_music {
 
     /// Channel-voice event controlling the pitch bend of a channel.
-    struct MUSICLIB_API PitchBendTrackEvent : public TrackEvent {
-        DOWNCASTABLE(PitchBendTrackEvent, TrackEvent);
-        STREAM_EVENT(PitchBendTrackEvent);
+    struct MUSICLIB_API PitchBendEvent : public TrackEvent {
+        DOWNCASTABLE(PitchBendEvent, TrackEvent);
+        STREAM_EVENT(PitchBendEvent);
 
         /// Construct from a value in the range [-1.0, 1.0].
         /// Asserts that the value is in range.
-        PitchBendTrackEvent(ModelDuration timeSinceLastEvent, double signedNormalizedValue);
+        PitchBendEvent(ModelDuration timeSinceLastEvent, double signedNormalizedValue);
 
         /// Construct from CentredControllerStorage value (e.g. as used by MIDI).
-        PitchBendTrackEvent(ModelDuration timeSinceLastEvent, CentredControllerStorage pitchBend);
+        PitchBendEvent(ModelDuration timeSinceLastEvent, CentredControllerStorage pitchBend);
 
         /// Get a value in the range [-1.0, 1.0].
         double getPitchBendAsSignedNormalizedValue() const;
@@ -46,4 +46,4 @@ namespace bw_music {
     };
 } // namespace bw_music
 
-#include <MusicLib/Types/Track/TrackEvents/pitchBendTrackEvent_inl.hpp>
+#include <MusicLib/Types/Track/TrackEvents/pitchBendEvent_inl.hpp>

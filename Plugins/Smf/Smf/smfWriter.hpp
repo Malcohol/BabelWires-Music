@@ -10,7 +10,7 @@
 #include <Smf/Percussion/standardPercussionSets.hpp>
 #include <Smf/smfSequence.hpp>
 
-#include <MusicLib/Types/Track/TrackEvents/tempoTrackEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/tempoEvent.hpp>
 #include <MusicLib/musicTypes.hpp>
 
 #include <cstdint>

@@ -14,8 +14,8 @@
 #include <Smf/smfCommon.hpp>
 
 #include <MusicLib/Types/Track/TrackEvents/channelVoiceEvents.hpp>
-#include <MusicLib/Types/Track/TrackEvents/panTrackEvent.hpp>
-#include <MusicLib/Types/Track/TrackEvents/pitchBendTrackEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/panEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/pitchBendEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/percussionEvents.hpp>
 #include <MusicLib/Utilities/filteredTrackIterator.hpp>
 #include <MusicLib/Utilities/musicUtilities.hpp>
@@ -149,41 +149,41 @@ smf::SmfWriter::WriteTrackEventResult smf::SmfWriter::writeTrackEvent(int channe
     assert(channelNumber <= 15);
 
     if (channelNumber == -1) {
-        if (const auto* tempo = e.tryAs<bw_music::TempoTrackEvent>()) {
+        if (const auto* tempo = e.tryAs<bw_music::TempoEvent>()) {
             writeModelDuration(timeSinceLastEvent);
             writeTempoEvent(tempo->getBpm());
             return WriteTrackEventResult::Written;
         }
     } else {
-        if (const auto* pan = e.tryAs<bw_music::PanTrackEvent>()) {
+        if (const auto* pan = e.tryAs<bw_music::PanEvent>()) {
             writeModelDuration(timeSinceLastEvent);
             m_os->put(0b10110000 | channelNumber);
             m_os->put(c_panController);
             m_os->put(pan->getPanStorage().getUnsigned<7>());
             return WriteTrackEventResult::Written;
         }
-        if (const auto* volume = e.tryAs<bw_music::VolumeTrackEvent>()) {
+        if (const auto* volume = e.tryAs<bw_music::VolumeEvent>()) {
             writeModelDuration(timeSinceLastEvent);
             m_os->put(0b10110000 | channelNumber);
             m_os->put(c_volumeController);
             m_os->put(volume->getVolumeStorage().getUnsigned<7>());
             return WriteTrackEventResult::Written;
         }
-        if (const auto* expression = e.tryAs<bw_music::ExpressionTrackEvent>()) {
+        if (const auto* expression = e.tryAs<bw_music::ExpressionEvent>()) {
             writeModelDuration(timeSinceLastEvent);
             m_os->put(0b10110000 | channelNumber);
             m_os->put(c_expressionController);
             m_os->put(expression->getExpressionStorage().getUnsigned<7>());
             return WriteTrackEventResult::Written;
         }
-        if (const auto* sustain = e.tryAs<bw_music::SustainTrackEvent>()) {
+        if (const auto* sustain = e.tryAs<bw_music::SustainEvent>()) {
             writeModelDuration(timeSinceLastEvent);
             m_os->put(0b10110000 | channelNumber);
             m_os->put(c_sustainController);
             m_os->put(sustain->getSustainStorage().getUnsigned<7>());
             return WriteTrackEventResult::Written;
         }
-        if (const auto* pitchBend = e.tryAs<bw_music::PitchBendTrackEvent>()) {
+        if (const auto* pitchBend = e.tryAs<bw_music::PitchBendEvent>()) {
             writeModelDuration(timeSinceLastEvent);
             const std::uint16_t encodedPitchBend = static_cast<std::uint16_t>(pitchBend->getPitchBendStorage().getUnsigned<14>());
             m_os->put(0b11100000 | channelNumber);
@@ -309,7 +309,7 @@ namespace {
         for (const auto& event : track) {
             if (event.getTimeSinceLastEvent() > 0) {
                 return {};
-            } else if (const auto* tempoEvent = event.tryAs<bw_music::TempoTrackEvent>()) {
+            } else if (const auto* tempoEvent = event.tryAs<bw_music::TempoEvent>()) {
                 return tempoEvent->getBpm();
             }
         }

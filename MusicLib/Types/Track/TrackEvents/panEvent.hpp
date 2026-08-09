@@ -16,16 +16,16 @@
 
 namespace bw_music {
     /// Channel-voice event controlling the pan of a channel.
-    struct MUSICLIB_API PanTrackEvent : public TrackEvent {
-        DOWNCASTABLE(PanTrackEvent, TrackEvent);
-        STREAM_EVENT(PanTrackEvent);
+    struct MUSICLIB_API PanEvent : public TrackEvent {
+        DOWNCASTABLE(PanEvent, TrackEvent);
+        STREAM_EVENT(PanEvent);
 
         /// Construct from a signed normalized double value in the range [-1.0, 1.0].
         /// Asserts that the value is in range.
-        PanTrackEvent(ModelDuration timeSinceLastEvent, double signedNormalizedValue);
+        PanEvent(ModelDuration timeSinceLastEvent, double signedNormalizedValue);
 
         /// Construct from a CentredControllerStorage value.
-        PanTrackEvent(ModelDuration timeSinceLastEvent, CentredControllerStorage value);
+        PanEvent(ModelDuration timeSinceLastEvent, CentredControllerStorage value);
 
         /// Get a value in the range [-1.0, 1.0].
         double getPanAsSignedNormalizedValue() const;
@@ -45,4 +45,4 @@ namespace bw_music {
     };
 }
 
-#include <MusicLib/Types/Track/TrackEvents/panTrackEvent_inl.hpp>
+#include <MusicLib/Types/Track/TrackEvents/panEvent_inl.hpp>

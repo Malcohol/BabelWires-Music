@@ -1,5 +1,5 @@
 /**
- * Channel-voice event controlling the sustain pedal state of a channel.
+ * Channel-voice event controlling the volume of a channel.
  *
  * (C) 2026 Malcolm Tyrrell
  *
@@ -13,27 +13,24 @@
 #include <MusicLib/Types/Track/TrackEvents/trackEventCommon.hpp>
 
 namespace bw_music {
-    /// Channel-voice event controlling the sustain pedal state of a channel.
-    struct MUSICLIB_API SustainTrackEvent : public TrackEvent {
-        DOWNCASTABLE(SustainTrackEvent, TrackEvent);
-        STREAM_EVENT(SustainTrackEvent);
+    /// Channel-voice event controlling the volume of a channel.
+    struct MUSICLIB_API VolumeEvent : public TrackEvent {
+        DOWNCASTABLE(VolumeEvent, TrackEvent);
+        STREAM_EVENT(VolumeEvent);
 
         /// Construct from a normalized level in the range [0.0, 1.0].
         /// Asserts that the value is in range.
-        SustainTrackEvent(ModelDuration timeSinceLastEvent, double normalizedLevel);
+        VolumeEvent(ModelDuration timeSinceLastEvent, double normalizedLevel);
 
         /// Construct from a ControllerStorage value.
-        SustainTrackEvent(ModelDuration timeSinceLastEvent, ControllerStorage value);
+        VolumeEvent(ModelDuration timeSinceLastEvent, ControllerStorage value);
 
         /// Get a value in the range [0.0, 1.0].
         double getLevelAsNormalizedValue() const;
 
         /// Get the contents as a ControllerStorage value (e.g. for use by MIDI).
         /// This is the preferred way to obtain the value during serialization.
-        ControllerStorage getSustainStorage() const;
-
-        /// Return whether the sustain pedal is logically engaged according to the MIDI threshold.
-        bool isSustainOn() const;
+        ControllerStorage getVolumeStorage() const;
 
         std::size_t getHash() const override;
 
@@ -45,4 +42,4 @@ namespace bw_music {
     };
 }
 
-#include <MusicLib/Types/Track/TrackEvents/sustainTrackEvent_inl.hpp>
+#include <MusicLib/Types/Track/TrackEvents/volumeEvent_inl.hpp>

@@ -6,7 +6,7 @@
 
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/percussionEvents.hpp>
-#include <MusicLib/Types/Track/TrackEvents/tempoTrackEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/tempoEvent.hpp>
 #include <MusicLib/Utilities/filteredTrackIterator.hpp>
 #include <MusicLib/libRegistration.hpp>
 
@@ -296,7 +296,7 @@ TEST(SmfTestSuiteTest, tempoTest) {
         EXPECT_EQ(metadata.tryGetITempo()->get(), 100);
 
         const auto& globalTrack = smfSequence.getGlobal().get();
-        auto [tempoBegin, tempoEnd] = bw_music::iterateOver<bw_music::TempoTrackEvent>(globalTrack);
+        auto [tempoBegin, tempoEnd] = bw_music::iterateOver<bw_music::TempoEvent>(globalTrack);
 
         for (int i = 0; i < 4; ++i) {
             ASSERT_NE(tempoBegin, tempoEnd);
