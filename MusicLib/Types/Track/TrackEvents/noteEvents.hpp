@@ -30,6 +30,21 @@ namespace bw_music {
         Pitch getPitch() const;
         void setPitch(Pitch pitch);
 
+      protected:
+        NoteEvent(ModelDuration timeSinceLastEvent, Pitch pitch);
+
+        bool doIsEqualTo(const TrackEvent& other) const override;
+
+      protected:
+        Pitch m_pitch;
+    };
+
+    /// Adds a velocity value to a NoteEvent, used by NoteOnEvent and NoteOffEvent.
+    class MUSICLIB_API NoteEventWithVelocity : public NoteEvent {
+      public:
+        DOWNCASTABLE(NoteEventWithVelocity, NoteEvent);
+        STREAM_EVENT_ABSTRACT(NoteEventWithVelocity);
+
         /// Get the contents as a normalized double value in the range [0, 1.0].
         /// This is the preferred way to obtain the value for calculation.
         double getVelocityAsNormalizedValue() const;
@@ -47,24 +62,22 @@ namespace bw_music {
         void setVelocityStorage(VelocityStorage velocity);
 
       protected:
-        /// Construct a note event with the given pitch and velocity (in range [0, 1.0]).
-        NoteEvent(ModelDuration timeSinceLastEvent, Pitch pitch, double velocity);
+        NoteEventWithVelocity(ModelDuration timeSinceLastEvent, Pitch pitch, double velocity);
 
-        NoteEvent(ModelDuration timeSinceLastEvent, Pitch pitch, VelocityStorage velocity);
+        NoteEventWithVelocity(ModelDuration timeSinceLastEvent, Pitch pitch, VelocityStorage velocity);
 
         bool doIsEqualTo(const TrackEvent& other) const override;
 
       protected:
-        Pitch m_pitch;
         VelocityStorage m_velocity;
     };
 
     /// The start of a musical note.
-    class MUSICLIB_API NoteOnEvent : public NoteEvent, public StartEventInterface {
+    class MUSICLIB_API NoteOnEvent : public NoteEventWithVelocity, public StartEventInterface {
       public:
-        DOWNCASTABLE(NoteOnEvent, NoteEvent);
+        DOWNCASTABLE(NoteOnEvent, NoteEventWithVelocity);
         STREAM_EVENT(NoteOnEvent);
-        QUERYABLE_INTERFACE_PROVIDER(NoteEvent, StartEventInterface);
+        QUERYABLE_INTERFACE_PROVIDER(NoteEventWithVelocity, StartEventInterface);
 
         static constexpr VelocityStorage c_defaultVelocity = 0xffff_mmv16;
 
@@ -82,9 +95,9 @@ namespace bw_music {
     };
 
     /// The end of a musical note.
-    class MUSICLIB_API NoteOffEvent : public NoteEvent {
+    class MUSICLIB_API NoteOffEvent : public NoteEventWithVelocity {
       public:
-        DOWNCASTABLE(NoteOffEvent, NoteEvent);
+        DOWNCASTABLE(NoteOffEvent, NoteEventWithVelocity);
         STREAM_EVENT(NoteOffEvent);
 
         static constexpr VelocityStorage c_defaultVelocity = MinMaxValue16::assertFromUnsigned<7>(64u);

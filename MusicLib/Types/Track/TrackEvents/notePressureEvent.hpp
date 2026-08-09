@@ -11,13 +11,14 @@
 
 #include <MusicLib/Types/Track/TrackEvents/expressionEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/sustainEvent.hpp>
-#include <MusicLib/Types/Track/TrackEvents/trackEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/volumeEvent.hpp>
 
 namespace bw_music {
 
-    struct MUSICLIB_API NotePressureEvent : public TrackEvent {
-        DOWNCASTABLE(NotePressureEvent, TrackEvent);
+    /// This corresponds to the MIDI polyphonic aftertouch event, which is a pressure value for a specific note.
+    struct MUSICLIB_API NotePressureEvent : public NoteEvent {
+        DOWNCASTABLE(NotePressureEvent, NoteEvent);
         STREAM_EVENT(NotePressureEvent);
 
         /// Construct from a signed normalized double value in the range [-1.0, 1.0].
@@ -26,8 +27,6 @@ namespace bw_music {
 
         /// Construct from a ControllerStorage value.
         NotePressureEvent(ModelDuration timeSinceLastEvent, Pitch pitch, ControllerStorage value);
-
-        Pitch getPitch() const { return m_pitch; }
 
         /// Get a value in the range [0, 1.0].
         /// This is the preferred way to obtain the value for calculation.
@@ -47,7 +46,6 @@ namespace bw_music {
         bool doIsEqualTo(const TrackEvent& other) const override;
 
       private:
-        Pitch m_pitch;
         ControllerStorage m_value;
     };
 

@@ -135,7 +135,9 @@ void testUtils::testNotesAndChords(const std::vector<bw_music::TrackEventHolder>
         EXPECT_EQ((it->tryAs<bw_music::ChordOffEvent>() == nullptr), (e->tryAs<bw_music::ChordOffEvent>() == nullptr));
         if (it->tryAs<const bw_music::NoteEvent>() != nullptr) {
             EXPECT_EQ(it->tryAs<const bw_music::NoteEvent>()->getPitch(), e->tryAs<const bw_music::NoteEvent>()->getPitch());
-            EXPECT_EQ(it->tryAs<const bw_music::NoteEvent>()->getVelocityAsNormalizedValue(), e->tryAs<const bw_music::NoteEvent>()->getVelocityAsNormalizedValue());
+        }
+        if (it->tryAs<const bw_music::NoteEventWithVelocity>() != nullptr) {
+            EXPECT_EQ(it->tryAs<const bw_music::NoteEventWithVelocity>()->getVelocityAsNormalizedValue(), e->tryAs<const bw_music::NoteEventWithVelocity>()->getVelocityAsNormalizedValue());
         }
         if (it->tryAs<bw_music::ChordOnEvent>() != nullptr) {
             EXPECT_EQ(it->tryAs<bw_music::ChordOnEvent>()->m_chord, e->tryAs<bw_music::ChordOnEvent>()->m_chord);

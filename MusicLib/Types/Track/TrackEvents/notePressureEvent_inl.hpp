@@ -7,13 +7,11 @@
  **/
 
 inline bw_music::NotePressureEvent::NotePressureEvent(ModelDuration timeSinceLastEvent, Pitch pitch, ControllerStorage value)
-     : TrackEvent(timeSinceLastEvent)
-     , m_pitch(pitch)
+     : NoteEvent(timeSinceLastEvent, pitch)
      , m_value(value) {}
 
 inline bw_music::NotePressureEvent::NotePressureEvent(ModelDuration timeSinceLastEvent, Pitch pitch, double normalizedPressure)
-     : TrackEvent(timeSinceLastEvent)
-     , m_pitch(pitch)
+     : NoteEvent(timeSinceLastEvent, pitch)
      , m_value(ControllerStorage::assertFromNormalizedDouble(normalizedPressure)) {}
 
 inline double bw_music::NotePressureEvent::getPressureAsNormalizedValue() const {
@@ -23,4 +21,3 @@ inline double bw_music::NotePressureEvent::getPressureAsNormalizedValue() const 
 inline bw_music::ControllerStorage bw_music::NotePressureEvent::getPressureStorage() const {
     return m_value;
 }
-

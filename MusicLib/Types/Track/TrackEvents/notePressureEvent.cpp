@@ -12,13 +12,13 @@
 #include <BaseLib/Hash/hash.hpp>
 
 std::size_t bw_music::NotePressureEvent::getHash() const {
-    return babelwires::hash::mixtureOf(static_cast<const char*>("PolyAftertouch"), m_timeSinceLastEvent, m_pitch,
+    return babelwires::hash::mixtureOf(static_cast<const char*>("NotePressure"), m_timeSinceLastEvent, m_pitch,
                                        m_value);
 }
 
 bool bw_music::NotePressureEvent::doIsEqualTo(const TrackEvent& other) const {
     const auto& otherAftertouch = static_cast<const NotePressureEvent&>(other);
-    return TrackEvent::doIsEqualTo(other) && (m_pitch == otherAftertouch.m_pitch) && (m_value == otherAftertouch.m_value);
+    return NoteEvent::doIsEqualTo(other) && (m_value == otherAftertouch.m_value);
 }
 
 bw_music::TrackEvent::GroupingInfo bw_music::NotePressureEvent::getGroupingInfo() const {

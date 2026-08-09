@@ -58,7 +58,7 @@ TEST(MergeProcessorTest, simpleFunction) {
         EXPECT_EQ((it->tryAs<bw_music::NoteOnEvent>() == nullptr), (e->tryAs<bw_music::NoteOnEvent>() == nullptr));
         EXPECT_EQ((it->tryAs<bw_music::NoteOffEvent>() == nullptr), (e->tryAs<bw_music::NoteOffEvent>() == nullptr));
         EXPECT_EQ(it->tryAs<bw_music::NoteEvent>()->getPitch(), e->tryAs<bw_music::NoteEvent>()->getPitch());
-        EXPECT_EQ(it->tryAs<bw_music::NoteEvent>()->getVelocityAsNormalizedValue(), e->tryAs<bw_music::NoteEvent>()->getVelocityAsNormalizedValue());
+        EXPECT_EQ(it->tryAs<bw_music::NoteEventWithVelocity>()->getVelocityAsNormalizedValue(), e->tryAs<bw_music::NoteEventWithVelocity>()->getVelocityAsNormalizedValue());
         ++it;
     }
     EXPECT_EQ(it, end);
@@ -106,7 +106,7 @@ TEST(MergeProcessorTest, functionOverlaps) {
         EXPECT_EQ((it->tryAs<bw_music::NoteOnEvent>() == nullptr), (e->tryAs<bw_music::NoteOnEvent>() == nullptr));
         EXPECT_EQ((it->tryAs<bw_music::NoteOffEvent>() == nullptr), (e->tryAs<bw_music::NoteOffEvent>() == nullptr));
         EXPECT_EQ(it->tryAs<bw_music::NoteEvent>()->getPitch(), e->tryAs<bw_music::NoteEvent>()->getPitch());
-        EXPECT_EQ(it->tryAs<bw_music::NoteEvent>()->getVelocityAsNormalizedValue(), e->tryAs<bw_music::NoteEvent>()->getVelocityAsNormalizedValue());
+        EXPECT_EQ(it->tryAs<bw_music::NoteEventWithVelocity>()->getVelocityAsNormalizedValue(), e->tryAs<bw_music::NoteEventWithVelocity>()->getVelocityAsNormalizedValue());
         ++it;
     }
     EXPECT_EQ(it, end);
@@ -171,7 +171,7 @@ TEST(MergeProcessorTest, processor) {
             EXPECT_EQ((it->tryAs<bw_music::NoteOnEvent>() == nullptr), (e->tryAs<bw_music::NoteOnEvent>() == nullptr));
             EXPECT_EQ((it->tryAs<bw_music::NoteOffEvent>() == nullptr), (e->tryAs<bw_music::NoteOffEvent>() == nullptr));
             EXPECT_EQ(it->tryAs<bw_music::NoteEvent>()->getPitch(), e->tryAs<bw_music::NoteEvent>()->getPitch());
-            EXPECT_EQ(it->tryAs<bw_music::NoteEvent>()->getVelocityAsNormalizedValue(), e->tryAs<bw_music::NoteEvent>()->getVelocityAsNormalizedValue());
+            EXPECT_EQ(it->tryAs<bw_music::NoteEventWithVelocity>()->getVelocityAsNormalizedValue(), e->tryAs<bw_music::NoteEventWithVelocity>()->getVelocityAsNormalizedValue());
             ++it;
         }
         EXPECT_EQ(it, end);
@@ -209,7 +209,7 @@ TEST(MergeProcessorTest, processor) {
             EXPECT_EQ((it->tryAs<bw_music::NoteOnEvent>() == nullptr), (e->tryAs<bw_music::NoteOnEvent>() == nullptr));
             EXPECT_EQ((it->tryAs<bw_music::NoteOffEvent>() == nullptr), (e->tryAs<bw_music::NoteOffEvent>() == nullptr));
             EXPECT_EQ(it->tryAs<bw_music::NoteEvent>()->getPitch(), e->tryAs<bw_music::NoteEvent>()->getPitch());
-            EXPECT_EQ(it->tryAs<bw_music::NoteEvent>()->getVelocityAsNormalizedValue(), e->tryAs<bw_music::NoteEvent>()->getVelocityAsNormalizedValue());
+            EXPECT_EQ(it->tryAs<bw_music::NoteEventWithVelocity>()->getVelocityAsNormalizedValue(), e->tryAs<bw_music::NoteEventWithVelocity>()->getVelocityAsNormalizedValue());
             ++it;
         }
         EXPECT_EQ(it, end);

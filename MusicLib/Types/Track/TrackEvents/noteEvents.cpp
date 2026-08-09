@@ -29,7 +29,12 @@ bool bw_music::NoteEvent::transpose(int pitchOffset, TransposeOutOfRangePolicy o
 
 bool bw_music::NoteEvent::doIsEqualTo(const TrackEvent& other) const {
     auto& otherNote = static_cast<const NoteEvent&>(other);
-    return TrackEvent::doIsEqualTo(other) && (m_pitch == otherNote.m_pitch) && (m_velocity == otherNote.m_velocity);
+    return TrackEvent::doIsEqualTo(other) && (m_pitch == otherNote.m_pitch);
+}
+
+bool bw_music::NoteEventWithVelocity::doIsEqualTo(const TrackEvent& other) const {
+    auto& otherNote = static_cast<const NoteEventWithVelocity&>(other);
+    return NoteEvent::doIsEqualTo(other) && (m_velocity == otherNote.m_velocity);
 }
 
 void bw_music::NoteOnEvent::createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const {
