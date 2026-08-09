@@ -36,13 +36,15 @@ namespace bw_music {
 
         std::size_t getHash() const override;
 
-      protected:
+      public:
+        template <std::integral Integral> PanEvent(ModelDuration, Integral) = delete;
 
+      protected:
         bool doIsEqualTo(const TrackEvent& other) const override;
 
       private:
         CentredControllerStorage m_pan;
     };
-}
+} // namespace bw_music
 
 #include <MusicLib/Types/Track/TrackEvents/panEvent_inl.hpp>

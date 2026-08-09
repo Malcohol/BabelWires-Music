@@ -37,6 +37,9 @@ namespace bw_music {
 
         std::size_t getHash() const override;
 
+      public:
+        template <std::integral Integral> SustainEvent(ModelDuration, Integral) = delete;
+
       protected:
         bool doIsEqualTo(const TrackEvent& other) const override;
 

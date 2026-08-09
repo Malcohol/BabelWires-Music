@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#include <concepts>
+
 #include <MusicLib/musicLibExport.hpp>
 
 #include <MusicLib/Types/Track/TrackEvents/trackEvent.hpp>
@@ -28,12 +30,15 @@ namespace bw_music {
 
         std::size_t getHash() const override;
 
+      public:
+        template <std::integral Integral> PressureEvent(ModelDuration timeSinceLastEvent, Integral) = delete;
+
       protected:
         bool doIsEqualTo(const TrackEvent& other) const override;
 
       private:
         ControllerStorage m_value;
     };
-}
+} // namespace bw_music
 
 #include <MusicLib/Types/Track/TrackEvents/pressureEvent_inl.hpp>

@@ -10,9 +10,9 @@
 #include <MusicLib/musicLibExport.hpp>
 
 #include <MusicLib/Types/Track/TrackEvents/Interfaces/startEventInterface.hpp>
+#include <MusicLib/Types/Track/TrackEvents/Interfaces/transposable.hpp>
 #include <MusicLib/Types/Track/TrackEvents/trackEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/trackEventCommon.hpp>
-#include <MusicLib/Types/Track/TrackEvents/Interfaces/transposable.hpp>
 
 namespace bw_music {
 
@@ -38,7 +38,7 @@ namespace bw_music {
         /// This is the preferred way to set the value from a calculation.
         void setVelocityFromNormalizedValue(double velocity);
 
-        /// Get the contents as a VelocityStorage value. 
+        /// Get the contents as a VelocityStorage value.
         /// This is the preferred way to obtain the value during serialization.
         VelocityStorage getVelocityStorage() const;
 
@@ -76,6 +76,9 @@ namespace bw_music {
         void createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const override;
         virtual std::size_t getHash() const override;
         virtual GroupingInfo getGroupingInfo() const override;
+
+      public:
+        template <std::integral Integral> NoteOnEvent(ModelDuration, Pitch, Integral) = delete;
     };
 
     /// The end of a musical note.
@@ -93,6 +96,9 @@ namespace bw_music {
 
         virtual std::size_t getHash() const override;
         virtual GroupingInfo getGroupingInfo() const override;
+
+      public:
+        template <std::integral Integral> NoteOffEvent(ModelDuration, Pitch, Integral) = delete;
     };
 
 } // namespace bw_music

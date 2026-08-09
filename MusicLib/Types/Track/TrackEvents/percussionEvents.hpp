@@ -67,6 +67,9 @@ namespace bw_music {
         void createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const override;
         virtual std::size_t getHash() const override;
         virtual GroupingInfo getGroupingInfo() const override;
+
+      public:
+        template <std::integral Integral> PercussionOnEvent(ModelDuration, babelwires::ShortId, Integral) = delete;
     };
 
     /// The end of a percussion event.
@@ -82,6 +85,9 @@ namespace bw_music {
 
         virtual std::size_t getHash() const override;
         virtual GroupingInfo getGroupingInfo() const override;
+
+      public:
+        template <std::integral Integral> PercussionOffEvent(ModelDuration, babelwires::ShortId, Integral) = delete;
     };
 
 } // namespace bw_music
