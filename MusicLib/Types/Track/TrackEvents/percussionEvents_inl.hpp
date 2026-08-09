@@ -22,11 +22,11 @@ inline void bw_music::PercussionEvent::setInstrument(babelwires::ShortId instrum
 
 inline babelwires::ShortId bw_music::PercussionEvent::getInstrument() const { return m_instrument; }
 
-inline void bw_music::PercussionEvent::setVelocity(double velocity) {
+inline void bw_music::PercussionEvent::setVelocityFromNormalizedValue(double velocity) {
     m_velocity = VelocityStorage::assertFromNormalizedDouble(velocity);
 }
 
-inline double bw_music::PercussionEvent::getVelocity() const { return m_velocity.getNormalizedDouble(); }
+inline double bw_music::PercussionEvent::getVelocityAsNormalizedValue() const { return m_velocity.getNormalizedDouble(); }
 
 inline void bw_music::PercussionEvent::setVelocityStorage(VelocityStorage velocity) { m_velocity = velocity; }
 

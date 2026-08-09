@@ -6,9 +6,9 @@
  * Licensed under the GPLv3.0. See LICENSE file.
  **/
 inline bw_music::PitchBendTrackEvent::PitchBendTrackEvent(ModelDuration timeSinceLastEvent,
-                                                                                 CentredControllerStorage aci)
+                                                                                 CentredControllerStorage pitchBend)
                                                                                  : TrackEvent(timeSinceLastEvent)
-                                                                                 , m_pitchBend(aci) {}
+                                                                                 , m_pitchBend(pitchBend) {}
 
 inline bw_music::PitchBendTrackEvent::PitchBendTrackEvent(
     ModelDuration timeSinceLastEvent, double signedNormalizedValue)

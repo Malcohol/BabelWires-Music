@@ -20,11 +20,11 @@ inline void bw_music::NoteEvent::setPitch(Pitch pitch) { m_pitch = pitch; }
 
 inline bw_music::Pitch bw_music::NoteEvent::getPitch() const { return m_pitch; }
 
-inline void bw_music::NoteEvent::setVelocity(double velocity) {
+inline void bw_music::NoteEvent::setVelocityFromNormalizedValue(double velocity) {
     m_velocity = VelocityStorage::assertFromNormalizedDouble(velocity);
 }
 
-inline double bw_music::NoteEvent::getVelocity() const { return m_velocity.getNormalizedDouble(); }
+inline double bw_music::NoteEvent::getVelocityAsNormalizedValue() const { return m_velocity.getNormalizedDouble(); }
 
 inline void bw_music::NoteEvent::setVelocityStorage(VelocityStorage velocity) { m_velocity = velocity; }
 

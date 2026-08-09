@@ -27,11 +27,11 @@ namespace bw_music {
 
         /// Get the contents as a normalized double value in the range [0, 1.0].
         /// This is the preferred way to obtain the value for calculation.
-        double getVelocity() const;
+        double getVelocityAsNormalizedValue() const;
 
         /// Set the contents as a normalized double value in the range [0, 1.0].
         /// This is the preferred way to set the value from a calculation.
-        void setVelocity(double velocity);
+        void setVelocityFromNormalizedValue(double velocity);
 
         /// Get the contents as a VelocityStorage value.
         /// This is the preferred way to obtain the value during serialization.

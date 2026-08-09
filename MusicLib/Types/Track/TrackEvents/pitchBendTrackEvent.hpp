@@ -26,7 +26,7 @@ namespace bw_music {
         PitchBendTrackEvent(ModelDuration timeSinceLastEvent, double signedNormalizedValue);
 
         /// Construct from CentredControllerStorage value (e.g. as used by MIDI).
-        PitchBendTrackEvent(ModelDuration timeSinceLastEvent, CentredControllerStorage aci);
+        PitchBendTrackEvent(ModelDuration timeSinceLastEvent, CentredControllerStorage pitchBend);
 
         /// Get a value in the range [-1.0, 1.0].
         double getPitchBendAsSignedNormalizedValue() const;

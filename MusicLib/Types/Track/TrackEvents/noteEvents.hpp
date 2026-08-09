@@ -32,11 +32,11 @@ namespace bw_music {
 
         /// Get the contents as a normalized double value in the range [0, 1.0].
         /// This is the preferred way to obtain the value for calculation.
-        double getVelocity() const;
+        double getVelocityAsNormalizedValue() const;
 
         /// Set the contents as a normalized double value in the range [0, 1.0].
         /// This is the preferred way to set the value from a calculation.
-        void setVelocity(double velocity);
+        void setVelocityFromNormalizedValue(double velocity);
 
         /// Get the contents as a VelocityStorage value. 
         /// This is the preferred way to obtain the value during serialization.
@@ -47,6 +47,7 @@ namespace bw_music {
         void setVelocityStorage(VelocityStorage velocity);
 
       protected:
+        /// Construct a note event with the given pitch and velocity (in range [0, 1.0]).
         NoteEvent(ModelDuration timeSinceLastEvent, Pitch pitch, double velocity);
 
         NoteEvent(ModelDuration timeSinceLastEvent, Pitch pitch, VelocityStorage velocity);
@@ -67,6 +68,7 @@ namespace bw_music {
 
         static constexpr VelocityStorage c_defaultVelocity = 0xffff_mmv16;
 
+        /// Construct a note event with the given pitch and velocity (in range [0, 1.0]).
         NoteOnEvent(ModelDuration timeSinceLastEvent, Pitch pitch, double velocity);
 
         NoteOnEvent(ModelDuration timeSinceLastEvent, Pitch pitch, VelocityStorage velocity = c_defaultVelocity);
@@ -84,6 +86,7 @@ namespace bw_music {
 
         static constexpr VelocityStorage c_defaultVelocity = MinMaxValue16::assertFromUnsigned<7>(64u);
 
+        /// Construct a note event with the given pitch and velocity (in range [0, 1.0]).
         NoteOffEvent(ModelDuration timeSinceLastEvent, Pitch pitch, double velocity);
 
         NoteOffEvent(ModelDuration timeSinceLastEvent, Pitch pitch, VelocityStorage velocity = c_defaultVelocity);
