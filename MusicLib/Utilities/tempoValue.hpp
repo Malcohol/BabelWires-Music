@@ -31,15 +31,15 @@ namespace bw_music {
         /// Asserts that the value can be represented (ignoring loss of precision within the accepted range).
         static TempoValue assertFromBpm(double bpm);
 
-        /// Construct a TempoValue from an integer in the range [1, 16777215] representing the number of microseconds per quarter note.
+        /// Construct a TempoValue from an integer in the range [0x000001, 0xFFFFFF] representing the number of microseconds per quarter note.
         /// Returns an error if the value is out of range.
         static babelwires::ResultT<TempoValue> fromMicrosecondsPerQuaternote(std::uint32_t microsecondsPerQuaternote);
 
-        /// Construct a TempoValue from an integer in the range [1, 16777215] representing the number of microseconds per quarter note.
+        /// Construct a TempoValue from an integer in the range [0x000001, 0xFFFFFF] representing the number of microseconds per quarter note.
         /// Clamps the value if it is out of range.
         static TempoValue tryFromMicrosecondsPerQuaternote(std::uint32_t microsecondsPerQuaternote);
 
-        /// Construct a TempoValue from an integer in the range [1, 16777215] representing the number of microseconds per quarter note.
+        /// Construct a TempoValue from an integer in the range [0x000001, 0xFFFFFF] representing the number of microseconds per quarter note.
         /// Asserts that the value is in range.
         static TempoValue assertFromMicrosecondsPerQuaternote(std::uint32_t microsecondsPerQuaternote);
 
@@ -49,7 +49,7 @@ namespace bw_music {
         /// Get the tempo in beats per minute, rounded to the specified number of decimal places.
         double getBpmRounded(int decimalPlaces) const;
 
-        /// Get the contents as an integer in the range [1, 16777215] representing the number of microseconds per quarter note.
+        /// Get the contents as an integer in the range [0x000001, 0xFFFFFF] representing the number of microseconds per quarter note.
         std::uint32_t getMicrosecondsPerQuaternote() const;
 
         auto operator<=>(const TempoValue&) const = default;
