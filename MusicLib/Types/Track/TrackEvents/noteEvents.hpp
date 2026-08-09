@@ -11,6 +11,7 @@
 
 #include <MusicLib/Types/Track/TrackEvents/startEventInterface.hpp>
 #include <MusicLib/Types/Track/TrackEvents/trackEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/trackEventCommon.hpp>
 #include <MusicLib/Types/Track/TrackEvents/transposable.hpp>
 
 namespace bw_music {
