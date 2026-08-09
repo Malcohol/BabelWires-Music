@@ -20,12 +20,19 @@ namespace bw_music {
         DOWNCASTABLE(PressureEvent, TrackEvent);
         STREAM_EVENT(PressureEvent);
 
+        /// Construct from a signed normalized double value in the range [-1.0, 1.0].
+        /// Asserts that the value is in range.
         PressureEvent(ModelDuration timeSinceLastEvent, double pressure);
 
+        /// Construct from a ControllerStorage value.
         PressureEvent(ModelDuration timeSinceLastEvent, ControllerStorage value);
 
+        /// Get the contents as a CentredControllerStorage value (e.g. for use by MIDI).
+        /// This is the preferred way to obtain the value during serialization.
         ControllerStorage getPressureStorage() const;
 
+        /// Get a value in the range [0, 1.0].
+        /// This is the preferred way to obtain the value for calculation.
         double getPressureAsNormalizedValue() const;
 
         std::size_t getHash() const override;
