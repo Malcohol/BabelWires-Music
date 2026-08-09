@@ -71,7 +71,7 @@ namespace {
 
     using bw_music::operator""_mmv16;
 
-    constexpr bw_music::Velocity c_testVelocity = 0x8000_mmv16;
+    constexpr bw_music::VelocityStorage c_testVelocity = 0x8000_mmv16;
 
     bw_music::Track getTestInputTrack() {
         bw_music::TrackBuilder track;

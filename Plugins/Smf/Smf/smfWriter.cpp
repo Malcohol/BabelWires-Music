@@ -212,7 +212,7 @@ smf::SmfWriter::WriteTrackEventResult smf::SmfWriter::writeTrackEvent(int channe
                     writeModelDuration(timeSinceLastEvent);
                     m_os->put(0b10010000 | channelNumber);
                     m_os->put(*maybePitch);
-                    m_os->put(percussionOn->getVelocity().getUnsigned<7>());
+                    m_os->put(percussionOn->getVelocityStorage().getUnsigned<7>());
                     return WriteTrackEventResult::Written;
                 } else {
                     return WriteTrackEventResult::NotInPercussionSet;
@@ -222,7 +222,7 @@ smf::SmfWriter::WriteTrackEventResult smf::SmfWriter::writeTrackEvent(int channe
                     writeModelDuration(timeSinceLastEvent);
                     m_os->put(0b10000000 | channelNumber);
                     m_os->put(*maybePitch);
-                    m_os->put(percussionOff->getVelocity().getUnsigned<7>());
+                    m_os->put(percussionOff->getVelocityStorage().getUnsigned<7>());
                     return WriteTrackEventResult::Written;
                 } else {
                     return WriteTrackEventResult::NotInPercussionSet;
@@ -233,13 +233,13 @@ smf::SmfWriter::WriteTrackEventResult smf::SmfWriter::writeTrackEvent(int channe
                 writeModelDuration(timeSinceLastEvent);
                 m_os->put(0b10010000 | channelNumber);
                 m_os->put(noteOn->getPitch());
-                m_os->put(noteOn->getVelocity().getUnsigned<7>());
+                m_os->put(noteOn->getVelocityStorage().getUnsigned<7>());
                 return WriteTrackEventResult::Written;
             } else if (const bw_music::NoteOffEvent* noteOff = e.tryAs<bw_music::NoteOffEvent>()) {
                 writeModelDuration(timeSinceLastEvent);
                 m_os->put(0b10000000 | channelNumber);
                 m_os->put(noteOff->getPitch());
-                m_os->put(noteOff->getVelocity().getUnsigned<7>());
+                m_os->put(noteOff->getVelocityStorage().getUnsigned<7>());
                 return WriteTrackEventResult::Written;
             }
         }

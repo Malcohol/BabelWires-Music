@@ -272,7 +272,7 @@ class smf::SmfParser::TrackSplitter {
         , m_channelSetup(channelSetup) {}
 
     bool addNoteOn(unsigned int channelNumber, bw_music::ModelDuration timeSinceLastTrackEvent, bw_music::Pitch pitch,
-                   bw_music::Velocity velocity) {
+                   bw_music::VelocityStorage velocity) {
         if (const bw_music::PercussionSetWithPitchMap* const percussionSet =
                 m_channelSetup[channelNumber].m_kitIfPercussion) {
             if (auto instrument = percussionSet->tryGetInstrumentFromPitch(pitch)) {
@@ -288,7 +288,7 @@ class smf::SmfParser::TrackSplitter {
     }
 
     bool addNoteOff(unsigned int channelNumber, bw_music::ModelDuration timeSinceLastTrackEvent, bw_music::Pitch pitch,
-                    bw_music::Velocity velocity) {
+                    bw_music::VelocityStorage velocity) {
         if (const bw_music::PercussionSetWithPitchMap* const percussionSet =
                 m_channelSetup[channelNumber].m_kitIfPercussion) {
             if (auto instrument = percussionSet->tryGetInstrumentFromPitch(pitch)) {
@@ -868,7 +868,7 @@ babelwires::Result smf::SmfParser::readTrack(int trackIndex, TrackSplitter& trac
             {
                 ASSIGN_OR_ERROR(const bw_music::Pitch pitch, getNext());
                 ASSIGN_OR_ERROR(const babelwires::Byte velocityByte, getNext());
-                ASSIGN_OR_ERROR(const bw_music::Velocity velocity, bw_music::MinMaxValue16::fromUnsigned<7>(velocityByte));
+                ASSIGN_OR_ERROR(const bw_music::VelocityStorage velocity, bw_music::MinMaxValue16::fromUnsigned<7>(velocityByte));
                 // TODO If a NoteOn was skipped, we would need to skip the corresponding note off.
                 if (tracks.addNoteOff(statusLo, timeSinceLastTrackEvent, pitch, velocity)) {
                     timeSinceLastTrackEvent = 0;
@@ -879,7 +879,7 @@ babelwires::Result smf::SmfParser::readTrack(int trackIndex, TrackSplitter& trac
             {
                 ASSIGN_OR_ERROR(const bw_music::Pitch pitch, getNext());
                 ASSIGN_OR_ERROR(const babelwires::Byte velocityByte, getNext());
-                ASSIGN_OR_ERROR(const bw_music::Velocity velocity, bw_music::MinMaxValue16::fromUnsigned<7>(velocityByte));
+                ASSIGN_OR_ERROR(const bw_music::VelocityStorage velocity, bw_music::MinMaxValue16::fromUnsigned<7>(velocityByte));
                 if (velocityByte != 0) {
                     if (tracks.addNoteOn(statusLo, timeSinceLastTrackEvent, pitch, velocity)) {
                         timeSinceLastTrackEvent = 0;

@@ -35,7 +35,7 @@ void testUtils::testSimpleNotes(const std::vector<bw_music::Pitch>& expectedPitc
         ASSERT_NE(noteOn, nullptr);
         EXPECT_EQ(noteOn->getTimeSinceLastEvent(), 0);
         EXPECT_EQ(noteOn->getPitch(), pitch);
-        EXPECT_EQ(noteOn->getVelocity(), bw_music::NoteOnEvent::c_defaultVelocity);
+        EXPECT_EQ(noteOn->getVelocityStorage(), bw_music::NoteOnEvent::c_defaultVelocity);
         ++noteIterator;
 
         ASSERT_NE(noteIterator, endIterator);
@@ -43,7 +43,7 @@ void testUtils::testSimpleNotes(const std::vector<bw_music::Pitch>& expectedPitc
         ASSERT_NE(noteOff, nullptr);
         EXPECT_EQ(noteOff->getTimeSinceLastEvent(), expectedNoteDuration);
         EXPECT_EQ(noteOff->getPitch(), pitch);
-        EXPECT_EQ(noteOff->getVelocity(), bw_music::NoteOffEvent::c_defaultVelocity);
+        EXPECT_EQ(noteOff->getVelocityStorage(), bw_music::NoteOffEvent::c_defaultVelocity);
         ++noteIterator;
     }
     EXPECT_EQ(noteIterator, endIterator);
@@ -70,7 +70,7 @@ void testUtils::testNotes(const std::vector<NoteInfo>& expectedNotes, const bw_m
         ASSERT_NE(noteOn, nullptr);
         EXPECT_EQ(noteOn->getTimeSinceLastEvent(), note.m_gapBeforeNote);
         EXPECT_EQ(noteOn->getPitch(), note.m_pitch);
-        EXPECT_EQ(noteOn->getVelocity(), bw_music::NoteOnEvent::c_defaultVelocity);
+        EXPECT_EQ(noteOn->getVelocityStorage(), bw_music::NoteOnEvent::c_defaultVelocity);
         ++noteIterator;
 
         EXPECT_NE(noteIterator, endIterator);
@@ -80,7 +80,7 @@ void testUtils::testNotes(const std::vector<NoteInfo>& expectedNotes, const bw_m
         EXPECT_EQ(noteOff->getPitch(), note.m_pitch);
         durationSoFar += note.m_gapBeforeNote + note.m_noteDuration;
         // Note: This might be a truncated event, but the velocity in cases we test should still be the default.
-        EXPECT_EQ(noteOff->getVelocity(), bw_music::NoteOffEvent::c_defaultVelocity);
+        EXPECT_EQ(noteOff->getVelocityStorage(), bw_music::NoteOffEvent::c_defaultVelocity);
         ++noteIterator;
     }
     EXPECT_EQ(noteIterator, endIterator);

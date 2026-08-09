@@ -36,7 +36,7 @@ void bw_music::NoteOnEvent::createEndEvent(TrackEventHolder& dest, ModelDuration
     // Create a NoteOffEvent with the same pitch.
     // Use the default NoteOffEvent velocity unless the NoteOnEvent's velocity is lower.
     dest = NoteOffEvent(timeSinceLastEvent, m_pitch,
-                        std::min(m_velocity, static_cast<Velocity>(NoteOffEvent::c_defaultVelocity)));
+                        std::min(m_velocity, static_cast<VelocityStorage>(NoteOffEvent::c_defaultVelocity)));
 }
 
 std::size_t bw_music::NoteOnEvent::getHash() const {
