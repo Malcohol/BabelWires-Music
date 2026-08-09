@@ -7,16 +7,16 @@
  **/
 
 
-inline bw_music::PanTrackEvent::PanTrackEvent(ModelDuration timeSinceLastEvent, bw_music::MinCentreMaxValue32 value)
+inline bw_music::PanTrackEvent::PanTrackEvent(ModelDuration timeSinceLastEvent, bw_music::CentredControllerStorage value)
     : TrackEvent(timeSinceLastEvent)
     , m_pan(value) {
 }
 
 inline bw_music::PanTrackEvent::PanTrackEvent(ModelDuration timeSinceLastEvent, double signedNormalizedValue)
-    : PanTrackEvent(timeSinceLastEvent, bw_music::MinCentreMaxValue32::assertFromSignedNormalizedDouble(signedNormalizedValue)) {
+    : PanTrackEvent(timeSinceLastEvent, bw_music::CentredControllerStorage::assertFromSignedNormalizedDouble(signedNormalizedValue)) {
 }
 
-inline bw_music::MinCentreMaxValue32 bw_music::PanTrackEvent::getPanAsMinCentreMaxValue() const { return m_pan; }
+inline bw_music::CentredControllerStorage bw_music::PanTrackEvent::getPanStorage() const { return m_pan; }
 
 inline double bw_music::PanTrackEvent::getPanAsSignedNormalizedValue() const {
     return m_pan.getSignedNormalizedValue();

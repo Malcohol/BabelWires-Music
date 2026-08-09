@@ -159,7 +159,7 @@ smf::SmfWriter::WriteTrackEventResult smf::SmfWriter::writeTrackEvent(int channe
             writeModelDuration(timeSinceLastEvent);
             m_os->put(0b10110000 | channelNumber);
             m_os->put(c_panController);
-            m_os->put(pan->getPanAsMinCentreMaxValue().getUnsigned<7>());
+            m_os->put(pan->getPanStorage().getUnsigned<7>());
             return WriteTrackEventResult::Written;
         }
         if (const auto* volume = e.tryAs<bw_music::VolumeTrackEvent>()) {
@@ -185,7 +185,7 @@ smf::SmfWriter::WriteTrackEventResult smf::SmfWriter::writeTrackEvent(int channe
         }
         if (const auto* pitchBend = e.tryAs<bw_music::PitchBendTrackEvent>()) {
             writeModelDuration(timeSinceLastEvent);
-            const std::uint16_t encodedPitchBend = static_cast<std::uint16_t>(pitchBend->getPitchBendAsMinCentreMaxValue().getUnsigned<14>());
+            const std::uint16_t encodedPitchBend = static_cast<std::uint16_t>(pitchBend->getPitchBendStorage().getUnsigned<14>());
             m_os->put(0b11100000 | channelNumber);
             m_os->put(encodedPitchBend & 0x7f);
             m_os->put((encodedPitchBend >> 7) & 0x7f);

@@ -24,14 +24,15 @@ namespace bw_music {
         /// Asserts that the value is in range.
         PanTrackEvent(ModelDuration timeSinceLastEvent, double signedNormalizedValue);
 
-        /// Construct from an MinCentreMaxValue value (e.g. as used by MIDI).
-        PanTrackEvent(ModelDuration timeSinceLastEvent, MinCentreMaxValue32 value);
+        /// Construct from a CentredControllerStorage value.
+        PanTrackEvent(ModelDuration timeSinceLastEvent, CentredControllerStorage value);
 
         /// Get a value in the range [-1.0, 1.0].
         double getPanAsSignedNormalizedValue() const;
 
-        /// Get the contents as an MinCentreMaxValue value (e.g. for use by MIDI).
-        MinCentreMaxValue32 getPanAsMinCentreMaxValue() const;
+        /// Get the contents as a CentredControllerStorage value (e.g. for use by MIDI).
+        /// This is the preferred way to obtain the value during serialization.
+        CentredControllerStorage getPanStorage() const;
 
         std::size_t getHash() const override;
 
@@ -40,7 +41,7 @@ namespace bw_music {
         bool doIsEqualTo(const TrackEvent& other) const override;
 
       private:
-        MinCentreMaxValue32 m_pan;
+        CentredControllerStorage m_pan;
     };
 }
 

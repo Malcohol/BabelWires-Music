@@ -25,14 +25,15 @@ namespace bw_music {
         /// Asserts that the value is in range.
         PitchBendTrackEvent(ModelDuration timeSinceLastEvent, double signedNormalizedValue);
 
-        /// Construct from an MinCentreMaxValue value (e.g. as used by MIDI).
-        PitchBendTrackEvent(ModelDuration timeSinceLastEvent, MinCentreMaxValue32 aci);
+        /// Construct from CentredControllerStorage value (e.g. as used by MIDI).
+        PitchBendTrackEvent(ModelDuration timeSinceLastEvent, CentredControllerStorage aci);
 
         /// Get a value in the range [-1.0, 1.0].
         double getPitchBendAsSignedNormalizedValue() const;
 
-        /// Get the contents as an MinCentreMaxValue value (e.g. for use by MIDI).
-        MinCentreMaxValue32 getPitchBendAsMinCentreMaxValue() const;
+        /// Get the contents as a CentredControllerStorage value (e.g. for use by MIDI).
+        /// This is the preferred way to obtain the value during serialization.
+        CentredControllerStorage getPitchBendStorage() const;
 
         std::size_t getHash() const override;
 
@@ -41,7 +42,7 @@ namespace bw_music {
         bool doIsEqualTo(const TrackEvent& other) const override;
 
       private:
-        MinCentreMaxValue32 m_pitchBend;
+        CentredControllerStorage m_pitchBend;
     };
 } // namespace bw_music
 
