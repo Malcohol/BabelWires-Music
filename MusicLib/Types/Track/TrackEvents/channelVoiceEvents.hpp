@@ -18,27 +18,6 @@ namespace bw_music {
 
     using VelocityValue = babelwires::Byte;
 
-    struct MUSICLIB_API ChannelPressureEvent : public TrackEvent {
-        DOWNCASTABLE(ChannelPressureEvent, TrackEvent);
-        STREAM_EVENT(ChannelPressureEvent);
-
-        ChannelPressureEvent(ModelDuration timeSinceLastEvent, VelocityValue value)
-            : TrackEvent(timeSinceLastEvent)
-            , m_value(value) {}
-
-        VelocityValue getMidiValue() const { return m_value; }
-
-        double getNormalizedPressure() const { return static_cast<double>(m_value) / 127.0; }
-
-        std::size_t getHash() const override;
-
-      protected:
-        bool doIsEqualTo(const TrackEvent& other) const override;
-
-      private:
-        VelocityValue m_value;
-    };
-
     struct MUSICLIB_API PolyphonicAftertouchEvent : public TrackEvent {
         DOWNCASTABLE(PolyphonicAftertouchEvent, TrackEvent);
         STREAM_EVENT(PolyphonicAftertouchEvent);

@@ -17,6 +17,7 @@
 #include <MusicLib/Types/Track/TrackEvents/panEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/pitchBendEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/percussionEvents.hpp>
+#include <MusicLib/Types/Track/TrackEvents/pressureEvent.hpp>
 #include <MusicLib/Utilities/filteredTrackIterator.hpp>
 #include <MusicLib/Utilities/musicUtilities.hpp>
 #include <MusicLib/Utilities/trackTraverser.hpp>
@@ -191,10 +192,10 @@ smf::SmfWriter::WriteTrackEventResult smf::SmfWriter::writeTrackEvent(int channe
             m_os->put((encodedPitchBend >> 7) & 0x7f);
             return WriteTrackEventResult::Written;
         }
-        if (const auto* channelPressure = e.tryAs<bw_music::ChannelPressureEvent>()) {
+        if (const auto* channelPressure = e.tryAs<bw_music::PressureEvent>()) {
             writeModelDuration(timeSinceLastEvent);
             m_os->put(0b11010000 | channelNumber);
-            m_os->put(channelPressure->getMidiValue());
+            m_os->put(channelPressure->getPressureStorage().getUnsigned<7>());
             return WriteTrackEventResult::Written;
         }
         if (const auto* polyphonicAftertouch = e.tryAs<bw_music::PolyphonicAftertouchEvent>()) {

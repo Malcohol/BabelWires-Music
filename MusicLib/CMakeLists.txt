@@ -38,6 +38,7 @@ SET( MUSICLIB_SRCS
 	Types/Track/TrackEvents/panEvent.cpp
 	Types/Track/TrackEvents/pitchBendEvent.cpp
 	Types/Track/TrackEvents/percussionEvents.cpp
+	Types/Track/TrackEvents/pressureEvent.cpp
 	Types/Track/TrackEvents/sustainEvent.cpp
 	Types/Track/TrackEvents/tempoEvent.cpp
 	Types/Track/TrackEvents/trackEvent.cpp

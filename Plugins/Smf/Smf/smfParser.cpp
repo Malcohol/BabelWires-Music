@@ -15,8 +15,9 @@
 #include <MusicLib/Types/Track/TrackEvents/channelVoiceEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/panEvent.hpp>
-#include <MusicLib/Types/Track/TrackEvents/pitchBendEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/percussionEvents.hpp>
+#include <MusicLib/Types/Track/TrackEvents/pitchBendEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/pressureEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/tempoEvent.hpp>
 #include <MusicLib/Types/Track/trackBuilder.hpp>
 #include <MusicLib/Utilities/minCentreMaxValue.hpp>
@@ -276,8 +277,7 @@ class smf::SmfParser::TrackSplitter {
         if (const bw_music::PercussionSetWithPitchMap* const percussionSet =
                 m_channelSetup[channelNumber].m_kitIfPercussion) {
             if (auto instrument = percussionSet->tryGetInstrumentFromPitch(pitch)) {
-                addEvent<bw_music::PercussionOnEvent>(channelNumber, timeSinceLastTrackEvent, *instrument,
-                                                          velocity);
+                addEvent<bw_music::PercussionOnEvent>(channelNumber, timeSinceLastTrackEvent, *instrument, velocity);
                 return true;
             }
             return false;
@@ -292,8 +292,7 @@ class smf::SmfParser::TrackSplitter {
         if (const bw_music::PercussionSetWithPitchMap* const percussionSet =
                 m_channelSetup[channelNumber].m_kitIfPercussion) {
             if (auto instrument = percussionSet->tryGetInstrumentFromPitch(pitch)) {
-                addEvent<bw_music::PercussionOffEvent>(channelNumber, timeSinceLastTrackEvent, *instrument,
-                                                           velocity);
+                addEvent<bw_music::PercussionOffEvent>(channelNumber, timeSinceLastTrackEvent, *instrument, velocity);
                 return true;
             }
             return false;
@@ -610,7 +609,8 @@ babelwires::ResultT<bool> smf::SmfParser::readControlChange(TrackSplitter& track
             return true;
         }
         case c_panController: {
-            ASSIGN_OR_ERROR(bw_music::CentredControllerStorage pan, bw_music::MinCentreMaxValue32::fromUnsigned<7>(value));
+            ASSIGN_OR_ERROR(bw_music::CentredControllerStorage pan,
+                            bw_music::MinCentreMaxValue32::fromUnsigned<7>(value));
             tracks.addEvent<bw_music::PanEvent>(channelNumber, timeSinceLastTrackEvent, std::move(pan));
             return true;
         }
@@ -640,7 +640,8 @@ babelwires::ResultT<bool> smf::SmfParser::readPitchBend(TrackSplitter& tracks, u
     ASSIGN_OR_ERROR(const babelwires::Byte lsb, getNext());
     ASSIGN_OR_ERROR(const babelwires::Byte msb, getNext());
     const std::uint16_t pitchBendValue = static_cast<std::uint16_t>((static_cast<std::uint16_t>(msb) << 7) | lsb);
-    ASSIGN_OR_ERROR(bw_music::CentredControllerStorage pitchBend, bw_music::CentredControllerStorage::fromUnsigned<14>(pitchBendValue));
+    ASSIGN_OR_ERROR(bw_music::CentredControllerStorage pitchBend,
+                    bw_music::CentredControllerStorage::fromUnsigned<14>(pitchBendValue));
     tracks.addEvent<bw_music::PitchBendEvent>(channelNumber, timeSinceLastTrackEvent, std::move(pitchBend));
     return true;
 }
@@ -653,8 +654,9 @@ babelwires::Result smf::SmfParser::readProgramChange(unsigned int channelNumber)
 
 babelwires::ResultT<bool> smf::SmfParser::readChannelPressure(TrackSplitter& tracks, unsigned int channelNumber,
                                                               bw_music::ModelDuration timeSinceLastTrackEvent) {
-    ASSIGN_OR_ERROR(const bw_music::VelocityValue value, getNext());
-    tracks.addEvent<bw_music::ChannelPressureEvent>(channelNumber, timeSinceLastTrackEvent, value);
+    ASSIGN_OR_ERROR(const babelwires::Byte value, getNext());
+    ASSIGN_OR_ERROR(const bw_music::ControllerStorage pressure, bw_music::ControllerStorage::fromUnsigned<7>(value));
+    tracks.addEvent<bw_music::PressureEvent>(channelNumber, timeSinceLastTrackEvent, pressure);
     return true;
 }
 
@@ -877,7 +879,8 @@ babelwires::Result smf::SmfParser::readTrack(int trackIndex, TrackSplitter& trac
             {
                 ASSIGN_OR_ERROR(const bw_music::Pitch pitch, getNext());
                 ASSIGN_OR_ERROR(const babelwires::Byte velocityByte, getNext());
-                ASSIGN_OR_ERROR(const bw_music::VelocityStorage velocity, bw_music::MinMaxValue16::fromUnsigned<7>(velocityByte));
+                ASSIGN_OR_ERROR(const bw_music::VelocityStorage velocity,
+                                bw_music::MinMaxValue16::fromUnsigned<7>(velocityByte));
                 // TODO If a NoteOn was skipped, we would need to skip the corresponding note off.
                 if (tracks.addNoteOff(statusLo, timeSinceLastTrackEvent, pitch, velocity)) {
                     timeSinceLastTrackEvent = 0;
@@ -888,7 +891,8 @@ babelwires::Result smf::SmfParser::readTrack(int trackIndex, TrackSplitter& trac
             {
                 ASSIGN_OR_ERROR(const bw_music::Pitch pitch, getNext());
                 ASSIGN_OR_ERROR(const babelwires::Byte velocityByte, getNext());
-                ASSIGN_OR_ERROR(const bw_music::VelocityStorage velocity, bw_music::MinMaxValue16::fromUnsigned<7>(velocityByte));
+                ASSIGN_OR_ERROR(const bw_music::VelocityStorage velocity,
+                                bw_music::MinMaxValue16::fromUnsigned<7>(velocityByte));
                 if (velocityByte != 0) {
                     if (tracks.addNoteOn(statusLo, timeSinceLastTrackEvent, pitch, velocity)) {
                         timeSinceLastTrackEvent = 0;

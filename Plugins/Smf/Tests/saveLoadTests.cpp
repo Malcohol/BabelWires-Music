@@ -10,6 +10,7 @@
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/panEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/pitchBendEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/pressureEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/tempoEvent.hpp>
 #include <MusicLib/Utilities/filteredTrackIterator.hpp>
 #include <MusicLib/Types/Track/trackBuilder.hpp>
@@ -128,14 +129,14 @@ namespace {
         bw_music::TrackBuilder track;
         track.addEvent(bw_music::NoteOnEvent(0, 60, bw_music::MinMaxValue16::assertFromUnsigned<7>(100u)));
         track.addEvent(bw_music::PolyphonicAftertouchEvent(babelwires::Rational(1, 16), 60, 96));
-        track.addEvent(bw_music::PanEvent(babelwires::Rational(1, 16), bw_music::MinCentreMaxValue32::assertFromUnsigned<32>(0u)));
+        track.addEvent(bw_music::PanEvent(babelwires::Rational(1, 16), bw_music::CentredControllerStorage::assertFromUnsigned<32>(0u)));
         track.addEvent(bw_music::VolumeEvent(babelwires::Rational(1, 16), bw_music::ControllerStorage::assertFromUnsigned<7>(127u)));
         track.addEvent(bw_music::ExpressionEvent(babelwires::Rational(1, 16), bw_music::ControllerStorage::assertFromUnsigned<7>(0u)));
         track.addEvent(bw_music::SustainEvent(babelwires::Rational(1, 16), bw_music::ControllerStorage::assertFromUnsigned<7>(127u)));
-        track.addEvent(bw_music::PitchBendEvent(babelwires::Rational(1, 16), bw_music::MinCentreMaxValue32::assertFromUnsigned<14>(0u)));
-        track.addEvent(bw_music::ChannelPressureEvent(babelwires::Rational(1, 16), 127));
+        track.addEvent(bw_music::PitchBendEvent(babelwires::Rational(1, 16), bw_music::CentredControllerStorage::assertFromUnsigned<14>(0u)));
+        track.addEvent(bw_music::PressureEvent(babelwires::Rational(1, 16), bw_music::ControllerStorage::assertFromUnsigned<7>(127u)));
         track.addEvent(bw_music::SustainEvent(babelwires::Rational(1, 16), bw_music::ControllerStorage::assertFromUnsigned<7>(0u)));
-        track.addEvent(bw_music::PitchBendEvent(babelwires::Rational(1, 16), bw_music::MinCentreMaxValue32::assertFromUnsigned<14>(0x3fffu)));
+        track.addEvent(bw_music::PitchBendEvent(babelwires::Rational(1, 16), bw_music::CentredControllerStorage::assertFromUnsigned<14>(0x3fffu)));
         track.addEvent(bw_music::NoteOffEvent(babelwires::Rational(1, 16), 60, bw_music::MinMaxValue16::assertFromUnsigned<7>(60u)));
         return track.finishAndGetTrack();
     }

@@ -11,15 +11,6 @@
 
 #include <BaseLib/Hash/hash.hpp>
 
-std::size_t bw_music::ChannelPressureEvent::getHash() const {
-    return babelwires::hash::mixtureOf(static_cast<const char*>("ChannelPressure"), m_timeSinceLastEvent, m_value);
-}
-
-bool bw_music::ChannelPressureEvent::doIsEqualTo(const TrackEvent& other) const {
-    const auto& otherChannelPressure = static_cast<const ChannelPressureEvent&>(other);
-    return TrackEvent::doIsEqualTo(other) && (m_value == otherChannelPressure.m_value);
-}
-
 std::size_t bw_music::PolyphonicAftertouchEvent::getHash() const {
     return babelwires::hash::mixtureOf(static_cast<const char*>("PolyAftertouch"), m_timeSinceLastEvent, m_pitch,
                                        m_value);

@@ -29,6 +29,7 @@ namespace bw_music {
         bool doIsEqualTo(const TrackEvent& other) const override;
 
       private:
+        // TODO - Need more precision here.
         int m_bpm;
     };
 } // namespace bw_music
