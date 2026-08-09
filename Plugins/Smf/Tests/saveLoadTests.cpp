@@ -6,14 +6,14 @@
 #include <Smf/smfParser.hpp>
 #include <Smf/smfWriter.hpp>
 
-#include <MusicLib/Types/Track/TrackEvents/channelVoiceEvents.hpp>
+#include <MusicLib/Types/Track/TrackEvents/notePressureEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/panEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/pitchBendEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/pressureEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/tempoEvent.hpp>
-#include <MusicLib/Utilities/filteredTrackIterator.hpp>
 #include <MusicLib/Types/Track/trackBuilder.hpp>
+#include <MusicLib/Utilities/filteredTrackIterator.hpp>
 #include <MusicLib/libRegistration.hpp>
 
 #include <BabelWiresLib/Instance/arrayTypeInstance.hpp>
@@ -39,9 +39,9 @@ TEST(SmfSaveLoadTest, cMajorScale) {
 
     const std::vector<bw_music::Pitch> pitches{60, 62, 64, 65, 67, 69, 71, 72};
     {
-        babelwires::ValueTreeRoot smfFeature(
-            testEnvironment.m_projectContext.get<babelwires::TypeSystem>(),
-            babelwires::FileTypeT<smf::SmfSequence>::getType(testEnvironment.m_projectContext.get<babelwires::TypeSystem>()));
+        babelwires::ValueTreeRoot smfFeature(testEnvironment.m_projectContext.get<babelwires::TypeSystem>(),
+                                             babelwires::FileTypeT<smf::SmfSequence>::getType(
+                                                 testEnvironment.m_projectContext.get<babelwires::TypeSystem>()));
         smfFeature.setToDefault();
 
         babelwires::FileTypeT<smf::SmfSequence>::Instance smfSequence{smfFeature};
@@ -128,16 +128,25 @@ namespace {
     bw_music::Track makeChannelVoiceCoverageTrack() {
         bw_music::TrackBuilder track;
         track.addEvent(bw_music::NoteOnEvent(0, 60, bw_music::MinMaxValue16::assertFromUnsigned<7>(100u)));
-        track.addEvent(bw_music::PolyphonicAftertouchEvent(babelwires::Rational(1, 16), 60, 96));
-        track.addEvent(bw_music::PanEvent(babelwires::Rational(1, 16), bw_music::CentredControllerStorage::assertFromUnsigned<32>(0u)));
-        track.addEvent(bw_music::VolumeEvent(babelwires::Rational(1, 16), bw_music::ControllerStorage::assertFromUnsigned<7>(127u)));
-        track.addEvent(bw_music::ExpressionEvent(babelwires::Rational(1, 16), bw_music::ControllerStorage::assertFromUnsigned<7>(0u)));
-        track.addEvent(bw_music::SustainEvent(babelwires::Rational(1, 16), bw_music::ControllerStorage::assertFromUnsigned<7>(127u)));
-        track.addEvent(bw_music::PitchBendEvent(babelwires::Rational(1, 16), bw_music::CentredControllerStorage::assertFromUnsigned<14>(0u)));
-        track.addEvent(bw_music::PressureEvent(babelwires::Rational(1, 16), bw_music::ControllerStorage::assertFromUnsigned<7>(127u)));
-        track.addEvent(bw_music::SustainEvent(babelwires::Rational(1, 16), bw_music::ControllerStorage::assertFromUnsigned<7>(0u)));
-        track.addEvent(bw_music::PitchBendEvent(babelwires::Rational(1, 16), bw_music::CentredControllerStorage::assertFromUnsigned<14>(0x3fffu)));
-        track.addEvent(bw_music::NoteOffEvent(babelwires::Rational(1, 16), 60, bw_music::MinMaxValue16::assertFromUnsigned<7>(60u)));
+        track.addEvent(bw_music::NotePressureEvent(babelwires::Rational(1, 16), 60, bw_music::ControllerStorage::assertFromUnsigned<7>(96u)));
+        track.addEvent(bw_music::PanEvent(babelwires::Rational(1, 16),
+                                          bw_music::CentredControllerStorage::assertFromUnsigned<32>(0u)));
+        track.addEvent(bw_music::VolumeEvent(babelwires::Rational(1, 16),
+                                             bw_music::ControllerStorage::assertFromUnsigned<7>(127u)));
+        track.addEvent(bw_music::ExpressionEvent(babelwires::Rational(1, 16),
+                                                 bw_music::ControllerStorage::assertFromUnsigned<7>(0u)));
+        track.addEvent(bw_music::SustainEvent(babelwires::Rational(1, 16),
+                                              bw_music::ControllerStorage::assertFromUnsigned<7>(127u)));
+        track.addEvent(bw_music::PitchBendEvent(babelwires::Rational(1, 16),
+                                                bw_music::CentredControllerStorage::assertFromUnsigned<14>(0u)));
+        track.addEvent(bw_music::PressureEvent(babelwires::Rational(1, 16),
+                                               bw_music::ControllerStorage::assertFromUnsigned<7>(127u)));
+        track.addEvent(bw_music::SustainEvent(babelwires::Rational(1, 16),
+                                              bw_music::ControllerStorage::assertFromUnsigned<7>(0u)));
+        track.addEvent(bw_music::PitchBendEvent(babelwires::Rational(1, 16),
+                                                bw_music::CentredControllerStorage::assertFromUnsigned<14>(0x3fffu)));
+        track.addEvent(bw_music::NoteOffEvent(babelwires::Rational(1, 16), 60,
+                                              bw_music::MinMaxValue16::assertFromUnsigned<7>(60u)));
         return track.finishAndGetTrack();
     }
 } // namespace
@@ -152,10 +161,9 @@ TEST(SmfSaveLoadTest, cMajorScaleWithMetadata) {
     for (std::uint8_t metadata = 0; metadata < 8; ++metadata) {
         testUtils::TempFilePath tempFile("cMajorWithMetadata.mid", metadata);
         {
-            babelwires::ValueTreeRoot smfFeature(
-                testEnvironment.m_projectContext.get<babelwires::TypeSystem>(),
-                babelwires::FileTypeT<smf::SmfSequence>::getType(
-                    testEnvironment.m_projectContext.get<babelwires::TypeSystem>()));
+            babelwires::ValueTreeRoot smfFeature(testEnvironment.m_projectContext.get<babelwires::TypeSystem>(),
+                                                 babelwires::FileTypeT<smf::SmfSequence>::getType(
+                                                     testEnvironment.m_projectContext.get<babelwires::TypeSystem>()));
             smfFeature.setToDefault();
 
             smf::SmfSequence::Instance smfType{smfFeature.getChild(0)->as<babelwires::ValueTreeNode>()};

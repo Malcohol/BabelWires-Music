@@ -32,7 +32,7 @@ SET( MUSICLIB_SRCS
 	Types/chordTypeSet.cpp
 	Types/genericAccompaniment.cpp
 	Types/Track/TrackEvents/chordEvents.cpp
-	Types/Track/TrackEvents/channelVoiceEvents.cpp
+	Types/Track/TrackEvents/notePressureEvent.cpp
 	Types/Track/TrackEvents/expressionEvent.cpp
 	Types/Track/TrackEvents/noteEvents.cpp
 	Types/Track/TrackEvents/panEvent.cpp

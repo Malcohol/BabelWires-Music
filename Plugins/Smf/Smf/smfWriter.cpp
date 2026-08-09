@@ -13,15 +13,15 @@
 #include <Smf/midiTrackAndChannel.hpp>
 #include <Smf/smfCommon.hpp>
 
-#include <MusicLib/Types/Track/TrackEvents/channelVoiceEvents.hpp>
+#include <MusicLib/Types/Track/TrackEvents/notePressureEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/panEvent.hpp>
-#include <MusicLib/Types/Track/TrackEvents/pitchBendEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/percussionEvents.hpp>
+#include <MusicLib/Types/Track/TrackEvents/pitchBendEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/pressureEvent.hpp>
 #include <MusicLib/Utilities/filteredTrackIterator.hpp>
+#include <MusicLib/Utilities/minCentreMaxValue.hpp>
 #include <MusicLib/Utilities/musicUtilities.hpp>
 #include <MusicLib/Utilities/trackTraverser.hpp>
-#include <MusicLib/Utilities/minCentreMaxValue.hpp>
 
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/File/fileTypeT.hpp>
@@ -186,7 +186,8 @@ smf::SmfWriter::WriteTrackEventResult smf::SmfWriter::writeTrackEvent(int channe
         }
         if (const auto* pitchBend = e.tryAs<bw_music::PitchBendEvent>()) {
             writeModelDuration(timeSinceLastEvent);
-            const std::uint16_t encodedPitchBend = static_cast<std::uint16_t>(pitchBend->getPitchBendStorage().getUnsigned<14>());
+            const std::uint16_t encodedPitchBend =
+                static_cast<std::uint16_t>(pitchBend->getPitchBendStorage().getUnsigned<14>());
             m_os->put(0b11100000 | channelNumber);
             m_os->put(encodedPitchBend & 0x7f);
             m_os->put((encodedPitchBend >> 7) & 0x7f);
@@ -198,11 +199,11 @@ smf::SmfWriter::WriteTrackEventResult smf::SmfWriter::writeTrackEvent(int channe
             m_os->put(channelPressure->getPressureStorage().getUnsigned<7>());
             return WriteTrackEventResult::Written;
         }
-        if (const auto* polyphonicAftertouch = e.tryAs<bw_music::PolyphonicAftertouchEvent>()) {
+        if (const auto* notePressure = e.tryAs<bw_music::NotePressureEvent>()) {
             writeModelDuration(timeSinceLastEvent);
             m_os->put(0b10100000 | channelNumber);
-            m_os->put(polyphonicAftertouch->getPitch());
-            m_os->put(polyphonicAftertouch->getMidiValue());
+            m_os->put(notePressure->getPitch());
+            m_os->put(notePressure->getPressureStorage().getUnsigned<7>());
             return WriteTrackEventResult::Written;
         }
 

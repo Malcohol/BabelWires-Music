@@ -12,8 +12,8 @@
 #include <Smf/smfCommon.hpp>
 
 #include <MusicLib/Percussion/builtInPercussionInstruments.hpp>
-#include <MusicLib/Types/Track/TrackEvents/channelVoiceEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
+#include <MusicLib/Types/Track/TrackEvents/notePressureEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/panEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/percussionEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/pitchBendEvent.hpp>
@@ -588,8 +588,9 @@ babelwires::Result smf::SmfParser::readSequencerSpecificEvent(int length) {
 babelwires::ResultT<bool> smf::SmfParser::readPolyphonicAftertouch(TrackSplitter& tracks, unsigned int channelNumber,
                                                                    bw_music::ModelDuration timeSinceLastTrackEvent) {
     ASSIGN_OR_ERROR(const bw_music::Pitch pitch, getNext());
-    ASSIGN_OR_ERROR(const bw_music::VelocityValue value, getNext());
-    tracks.addEvent<bw_music::PolyphonicAftertouchEvent>(channelNumber, timeSinceLastTrackEvent, pitch, value);
+    ASSIGN_OR_ERROR(const babelwires::Byte value, getNext());
+    ASSIGN_OR_ERROR(const bw_music::ControllerStorage pressure, bw_music::ControllerStorage::fromUnsigned<7>(value));
+    tracks.addEvent<bw_music::NotePressureEvent>(channelNumber, timeSinceLastTrackEvent, pitch, pressure);
     return true;
 }
 
