@@ -640,8 +640,8 @@ babelwires::ResultT<bool> smf::SmfParser::readPitchBend(TrackSplitter& tracks, u
     ASSIGN_OR_ERROR(const babelwires::Byte lsb, getNext());
     ASSIGN_OR_ERROR(const babelwires::Byte msb, getNext());
     const std::uint16_t pitchBendValue = static_cast<std::uint16_t>((static_cast<std::uint16_t>(msb) << 7) | lsb);
-    ASSIGN_OR_ERROR(bw_music::MinCentreMaxValue32 aci, bw_music::MinCentreMaxValue32::fromUnsigned<14>(pitchBendValue));
-    tracks.addEvent<bw_music::PitchBendTrackEvent>(channelNumber, timeSinceLastTrackEvent, std::move(aci));
+    ASSIGN_OR_ERROR(bw_music::CentredControllerStorage pitchBend, bw_music::CentredControllerStorage::fromUnsigned<14>(pitchBendValue));
+    tracks.addEvent<bw_music::PitchBendTrackEvent>(channelNumber, timeSinceLastTrackEvent, std::move(pitchBend));
     return true;
 }
 
