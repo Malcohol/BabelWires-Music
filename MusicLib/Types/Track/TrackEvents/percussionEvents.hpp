@@ -25,11 +25,21 @@ namespace bw_music {
         void setInstrument(babelwires::ShortId instrument);
         babelwires::ShortId getInstrument() const;
 
-        void setVelocity(double velocity);
+        /// Get the contents as a normalized double value in the range [0, 1.0].
+        /// This is the preferred way to obtain the value for calculation.
         double getVelocity() const;
 
-        void setVelocityStorage(VelocityStorage velocity);
+        /// Set the contents as a normalized double value in the range [0, 1.0].
+        /// This is the preferred way to set the value from a calculation.
+        void setVelocity(double velocity);
+
+        /// Get the contents as a VelocityStorage value.
+        /// This is the preferred way to obtain the value during serialization.
         VelocityStorage getVelocityStorage() const;
+
+        /// Set the contents as a VelocityStorage value.
+        /// This is the preferred way to set the value during deserialization.
+        void setVelocityStorage(VelocityStorage velocity);
 
       protected:
         PercussionEvent(ModelDuration timeSinceLastEvent, babelwires::ShortId instrument, double velocity);

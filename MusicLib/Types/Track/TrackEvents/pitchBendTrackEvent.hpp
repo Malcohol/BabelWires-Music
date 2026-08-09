@@ -21,18 +21,18 @@ namespace bw_music {
         DOWNCASTABLE(PitchBendTrackEvent, TrackEvent);
         STREAM_EVENT(PitchBendTrackEvent);
 
-        /// Construct from an MinCentreMaxValue value (e.g. as used by MIDI).
-        PitchBendTrackEvent(ModelDuration timeSinceLastEvent, MinCentreMaxValue32 aci);
-
         /// Construct from a value in the range [-1.0, 1.0].
         /// Asserts that the value is in range.
         PitchBendTrackEvent(ModelDuration timeSinceLastEvent, double signedNormalizedValue);
 
-        /// Get the contents as an MinCentreMaxValue value (e.g. for use by MIDI).
-        MinCentreMaxValue32 getPitchBendAsMinCentreMaxValue() const;
+        /// Construct from an MinCentreMaxValue value (e.g. as used by MIDI).
+        PitchBendTrackEvent(ModelDuration timeSinceLastEvent, MinCentreMaxValue32 aci);
 
         /// Get a value in the range [-1.0, 1.0].
         double getPitchBendAsSignedNormalizedValue() const;
+
+        /// Get the contents as an MinCentreMaxValue value (e.g. for use by MIDI).
+        MinCentreMaxValue32 getPitchBendAsMinCentreMaxValue() const;
 
         std::size_t getHash() const override;
 

@@ -17,7 +17,7 @@
 
 namespace bw_music {
 
-    using ModelDuration = babelwires::Rational ;
+    using ModelDuration = babelwires::Rational;
 
 
 } // namespace bw_music

@@ -27,14 +27,24 @@ namespace bw_music {
 
         static GroupKey::Category getNoteEventCategory();
 
-        void setPitch(Pitch pitch);
         Pitch getPitch() const;
+        void setPitch(Pitch pitch);
 
-        void setVelocity(double velocity);
+        /// Get the contents as a normalized double value in the range [0, 1.0].
+        /// This is the preferred way to obtain the value for calculation.
         double getVelocity() const;
 
-        void setVelocityStorage(VelocityStorage velocity);
+        /// Set the contents as a normalized double value in the range [0, 1.0].
+        /// This is the preferred way to set the value from a calculation.
+        void setVelocity(double velocity);
+
+        /// Get the contents as a VelocityStorage value. 
+        /// This is the preferred way to obtain the value during serialization.
         VelocityStorage getVelocityStorage() const;
+
+        /// Set the contents as a VelocityStorage value.
+        /// This is the preferred way to set the value during deserialization.
+        void setVelocityStorage(VelocityStorage velocity);
 
       protected:
         NoteEvent(ModelDuration timeSinceLastEvent, Pitch pitch, double velocity);
