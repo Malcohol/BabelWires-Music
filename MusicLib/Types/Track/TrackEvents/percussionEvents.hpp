@@ -21,25 +21,19 @@ namespace bw_music {
 
         static GroupKey::Category getPercussionEventCategory();
 
-        void setInstrument(babelwires::ShortId instrument) { m_instrument = instrument; }
-        babelwires::ShortId getInstrument() const { return m_instrument; }
+        void setInstrument(babelwires::ShortId instrument);
+        babelwires::ShortId getInstrument() const;
 
-        void setVelocity(double velocity) { m_velocity = VelocityStorage::assertFromNormalizedDouble(velocity); }
-        double getVelocity() const { return m_velocity.getNormalizedDouble(); }
+        void setVelocity(double velocity);
+        double getVelocity() const;
 
-        void setVelocityStorage(VelocityStorage velocity) { m_velocity = velocity; }
-        VelocityStorage getVelocityStorage() const { return m_velocity; }
+        void setVelocityStorage(VelocityStorage velocity);
+        VelocityStorage getVelocityStorage() const;
 
       protected:
-        PercussionEvent(ModelDuration timeSinceLastEvent, babelwires::ShortId instrument, double velocity)
-            : TrackEvent(timeSinceLastEvent)
-            , m_instrument(instrument)
-            , m_velocity(VelocityStorage::assertFromNormalizedDouble(velocity)) {}
+        PercussionEvent(ModelDuration timeSinceLastEvent, babelwires::ShortId instrument, double velocity);
 
-        PercussionEvent(ModelDuration timeSinceLastEvent, babelwires::ShortId instrument, VelocityStorage velocity)
-            : TrackEvent(timeSinceLastEvent)
-            , m_instrument(instrument)
-            , m_velocity(velocity) {}
+        PercussionEvent(ModelDuration timeSinceLastEvent, babelwires::ShortId instrument, VelocityStorage velocity);
 
         bool doIsEqualTo(const TrackEvent& other) const override;
 
@@ -55,13 +49,10 @@ namespace bw_music {
         QUERYABLE_INTERFACE_PROVIDER(PercussionEvent, StartEventInterface);
         static constexpr VelocityStorage c_defaultVelocity = 0xffff_mmv16;
 
-        PercussionOnEvent(ModelDuration timeSinceLastEvent, babelwires::ShortId instrument, double velocity)
-            : PercussionEvent(timeSinceLastEvent, instrument, velocity) {}
+        PercussionOnEvent(ModelDuration timeSinceLastEvent, babelwires::ShortId instrument, double velocity);
 
         PercussionOnEvent(ModelDuration timeSinceLastEvent, babelwires::ShortId instrument,
-                          VelocityStorage velocity = c_defaultVelocity)
-
-            : PercussionEvent(timeSinceLastEvent, instrument, velocity) {}
+                          VelocityStorage velocity = c_defaultVelocity);
         void createEndEvent(TrackEventHolder& dest, ModelDuration timeSinceLastEvent) const override;
         virtual std::size_t getHash() const override;
         virtual GroupingInfo getGroupingInfo() const override;
@@ -73,15 +64,15 @@ namespace bw_music {
         STREAM_EVENT(PercussionOffEvent);
         static constexpr VelocityStorage c_defaultVelocity = MinMaxValue16::assertFromUnsigned<7>(64u);
 
-        PercussionOffEvent(ModelDuration timeSinceLastEvent, babelwires::ShortId instrument, double velocity)
-            : PercussionEvent(timeSinceLastEvent, instrument, velocity) {}
+        PercussionOffEvent(ModelDuration timeSinceLastEvent, babelwires::ShortId instrument, double velocity);
 
         PercussionOffEvent(ModelDuration timeSinceLastEvent, babelwires::ShortId instrument,
-                           VelocityStorage velocity = c_defaultVelocity)
-            : PercussionEvent(timeSinceLastEvent, instrument, velocity) {}
+                           VelocityStorage velocity = c_defaultVelocity);
 
         virtual std::size_t getHash() const override;
         virtual GroupingInfo getGroupingInfo() const override;
     };
 
 } // namespace bw_music
+
+#include <MusicLib/Types/Track/TrackEvents/percussionEvents_inl.hpp>
