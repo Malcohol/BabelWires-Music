@@ -603,24 +603,33 @@ babelwires::ResultT<bool> smf::SmfParser::readControlChange(TrackSplitter& track
             // bank select MSB
             setBankMSB(channelNumber, value);
             return false;
-        case c_volumeController:
-            tracks.addEvent<bw_music::VolumeTrackEvent>(channelNumber, timeSinceLastTrackEvent, value);
-            return true;
-        case c_panController: {
-            ASSIGN_OR_ERROR(bw_music::MinCentreMaxValue32 aci, bw_music::MinCentreMaxValue32::fromUnsigned<7>(value));
-            tracks.addEvent<bw_music::PanTrackEvent>(channelNumber, timeSinceLastTrackEvent, std::move(aci));
+        case c_volumeController: {
+            ASSIGN_OR_ERROR(const bw_music::ControllerStorage volume,
+                            bw_music::ControllerStorage::fromUnsigned<7>(value));
+            tracks.addEvent<bw_music::VolumeTrackEvent>(channelNumber, timeSinceLastTrackEvent, volume);
             return true;
         }
-        case c_expressionController:
-            tracks.addEvent<bw_music::ExpressionTrackEvent>(channelNumber, timeSinceLastTrackEvent, value);
+        case c_panController: {
+            ASSIGN_OR_ERROR(bw_music::CentredControllerStorage pan, bw_music::MinCentreMaxValue32::fromUnsigned<7>(value));
+            tracks.addEvent<bw_music::PanTrackEvent>(channelNumber, timeSinceLastTrackEvent, std::move(pan));
             return true;
+        }
+        case c_expressionController: {
+            ASSIGN_OR_ERROR(const bw_music::ControllerStorage expression,
+                            bw_music::ControllerStorage::fromUnsigned<7>(value));
+            tracks.addEvent<bw_music::ExpressionTrackEvent>(channelNumber, timeSinceLastTrackEvent, expression);
+            return true;
+        }
         case c_bankSelectLsbController:
             // bank select LSB
             setBankLSB(channelNumber, value);
             return false;
-        case c_sustainController:
-            tracks.addEvent<bw_music::SustainTrackEvent>(channelNumber, timeSinceLastTrackEvent, value);
+        case c_sustainController: {
+            ASSIGN_OR_ERROR(const bw_music::ControllerStorage sustain,
+                            bw_music::ControllerStorage::fromUnsigned<7>(value));
+            tracks.addEvent<bw_music::SustainTrackEvent>(channelNumber, timeSinceLastTrackEvent, sustain);
             return true;
+        }
         default:
             return false;
     }

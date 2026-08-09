@@ -166,21 +166,21 @@ smf::SmfWriter::WriteTrackEventResult smf::SmfWriter::writeTrackEvent(int channe
             writeModelDuration(timeSinceLastEvent);
             m_os->put(0b10110000 | channelNumber);
             m_os->put(c_volumeController);
-            m_os->put(volume->getMidiValue());
+            m_os->put(volume->getVolumeStorage().getUnsigned<7>());
             return WriteTrackEventResult::Written;
         }
         if (const auto* expression = e.tryAs<bw_music::ExpressionTrackEvent>()) {
             writeModelDuration(timeSinceLastEvent);
             m_os->put(0b10110000 | channelNumber);
             m_os->put(c_expressionController);
-            m_os->put(expression->getMidiValue());
+            m_os->put(expression->getExpressionStorage().getUnsigned<7>());
             return WriteTrackEventResult::Written;
         }
         if (const auto* sustain = e.tryAs<bw_music::SustainTrackEvent>()) {
             writeModelDuration(timeSinceLastEvent);
             m_os->put(0b10110000 | channelNumber);
             m_os->put(c_sustainController);
-            m_os->put(sustain->getMidiValue());
+            m_os->put(sustain->getSustainStorage().getUnsigned<7>());
             return WriteTrackEventResult::Written;
         }
         if (const auto* pitchBend = e.tryAs<bw_music::PitchBendTrackEvent>()) {

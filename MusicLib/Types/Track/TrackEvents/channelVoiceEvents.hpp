@@ -9,76 +9,14 @@
 
 #include <MusicLib/musicLibExport.hpp>
 
-#include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
-
-#include <cstdint>
+#include <MusicLib/Types/Track/TrackEvents/expressionTrackEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/sustainTrackEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/trackEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/volumeTrackEvent.hpp>
 
 namespace bw_music {
 
     using VelocityValue = babelwires::Byte;
-
-    struct MUSICLIB_API VolumeTrackEvent : public TrackEvent {
-        DOWNCASTABLE(VolumeTrackEvent, TrackEvent);
-        STREAM_EVENT(VolumeTrackEvent);
-
-        VolumeTrackEvent(ModelDuration timeSinceLastEvent, VelocityValue value)
-            : TrackEvent(timeSinceLastEvent)
-            , m_value(value) {}
-
-        VelocityValue getMidiValue() const { return m_value; }
-
-        double getNormalizedLevel() const { return static_cast<double>(m_value) / 127.0; }
-
-        std::size_t getHash() const override;
-
-      protected:
-        bool doIsEqualTo(const TrackEvent& other) const override;
-
-      private:
-        VelocityValue m_value;
-    };
-
-    struct MUSICLIB_API ExpressionTrackEvent : public TrackEvent {
-        DOWNCASTABLE(ExpressionTrackEvent, TrackEvent);
-        STREAM_EVENT(ExpressionTrackEvent);
-
-        ExpressionTrackEvent(ModelDuration timeSinceLastEvent, VelocityValue value)
-            : TrackEvent(timeSinceLastEvent)
-            , m_value(value) {}
-
-        VelocityValue getMidiValue() const { return m_value; }
-
-        double getNormalizedLevel() const { return static_cast<double>(m_value) / 127.0; }
-
-        std::size_t getHash() const override;
-
-      protected:
-        bool doIsEqualTo(const TrackEvent& other) const override;
-
-      private:
-        VelocityValue m_value;
-    };
-
-    struct MUSICLIB_API SustainTrackEvent : public TrackEvent {
-        DOWNCASTABLE(SustainTrackEvent, TrackEvent);
-        STREAM_EVENT(SustainTrackEvent);
-
-        SustainTrackEvent(ModelDuration timeSinceLastEvent, VelocityValue value)
-            : TrackEvent(timeSinceLastEvent)
-            , m_value(value) {}
-
-        VelocityValue getMidiValue() const { return m_value; }
-
-        bool isSustainOn() const { return m_value >= 64; }
-
-        std::size_t getHash() const override;
-
-      protected:
-        bool doIsEqualTo(const TrackEvent& other) const override;
-
-      private:
-        VelocityValue m_value;
-    };
 
     struct MUSICLIB_API ChannelPressureEvent : public TrackEvent {
         DOWNCASTABLE(ChannelPressureEvent, TrackEvent);
@@ -107,8 +45,8 @@ namespace bw_music {
 
         PolyphonicAftertouchEvent(ModelDuration timeSinceLastEvent, Pitch pitch, VelocityValue value)
             : TrackEvent(timeSinceLastEvent)
-          , m_pitch(pitch)
-          , m_value(value) {}
+            , m_pitch(pitch)
+            , m_value(value) {}
 
         Pitch getPitch() const { return m_pitch; }
 
@@ -128,4 +66,3 @@ namespace bw_music {
     };
 
 } // namespace bw_music
-
