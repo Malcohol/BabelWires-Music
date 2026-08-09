@@ -19,16 +19,28 @@ namespace bw_music {
     /// A representation of tempo that allows safe round-tripping to and from MIDI tempo storage.
     class MUSICLIB_API TempoValue {
       public:
+        /// Construct a TempoValue from a tempo in beats per minute.
+        /// Returns an error if the value cannot be represented (ignoring loss of precision within the accepted range).
         static babelwires::ResultT<TempoValue> fromBpm(double bpm);
 
+        /// Construct a TempoValue from a tempo in beats per minute.
+        /// Clamps the value to the representable range if it cannot be represented (ignoring loss of precision within the accepted range).
         static TempoValue tryFromBpm(double bpm);
 
+        /// Construct a TempoValue from a tempo in beats per minute.
+        /// Asserts that the value can be represented (ignoring loss of precision within the accepted range).
         static TempoValue assertFromBpm(double bpm);
 
+        /// Construct a TempoValue from an integer in the range [1, 16777215] representing the number of microseconds per quarter note.
+        /// Returns an error if the value is out of range.
         static babelwires::ResultT<TempoValue> fromMicrosecondsPerQuaternote(std::uint32_t microsecondsPerQuaternote);
 
+        /// Construct a TempoValue from an integer in the range [1, 16777215] representing the number of microseconds per quarter note.
+        /// Clamps the value if it is out of range.
         static TempoValue tryFromMicrosecondsPerQuaternote(std::uint32_t microsecondsPerQuaternote);
 
+        /// Construct a TempoValue from an integer in the range [1, 16777215] representing the number of microseconds per quarter note.
+        /// Asserts that the value is in range.
         static TempoValue assertFromMicrosecondsPerQuaternote(std::uint32_t microsecondsPerQuaternote);
 
         /// Get the tempo in beats per minute.
@@ -37,13 +49,8 @@ namespace bw_music {
         /// Get the tempo in beats per minute, rounded to the specified number of decimal places.
         double getBpmRounded(int decimalPlaces) const;
 
-        void setBpm(double bpm);
-
-        /// Get the contents as a TempoStorage value (e.g. for use by MIDI).
-        /// This is the preferred way to obtain the value during serialization.
+        /// Get the contents as an integer in the range [1, 16777215] representing the number of microseconds per quarter note.
         std::uint32_t getMicrosecondsPerQuaternote() const;
-
-        void setMicrosecondsPerQuaternote(std::uint32_t microsecondsPerQuaternote);
 
         auto operator<=>(const TempoValue&) const = default;
 
