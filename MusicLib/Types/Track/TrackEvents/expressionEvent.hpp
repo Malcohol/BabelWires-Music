@@ -39,7 +39,7 @@ namespace bw_music {
         bool doIsEqualTo(const TrackEvent& other) const override;
 
       private:
-        ControllerStorage m_value;
+        ControllerStorage m_expression;
     };
 }
 

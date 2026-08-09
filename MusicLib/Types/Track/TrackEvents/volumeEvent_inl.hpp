@@ -8,13 +8,13 @@
 
 inline bw_music::VolumeEvent::VolumeEvent(ModelDuration timeSinceLastEvent, bw_music::ControllerStorage value)
     : TrackEvent(timeSinceLastEvent)
-    , m_value(value) {
+    , m_volume(value) {
 }
 
 inline bw_music::VolumeEvent::VolumeEvent(ModelDuration timeSinceLastEvent, double normalizedLevel)
     : VolumeEvent(timeSinceLastEvent, bw_music::ControllerStorage::assertFromNormalizedDouble(normalizedLevel)) {
 }
 
-inline double bw_music::VolumeEvent::getLevelAsNormalizedValue() const { return m_value.getNormalizedDouble(); }
+inline double bw_music::VolumeEvent::getLevelAsNormalizedValue() const { return m_volume.getNormalizedDouble(); }
 
-inline bw_music::ControllerStorage bw_music::VolumeEvent::getVolumeStorage() const { return m_value; }
+inline bw_music::ControllerStorage bw_music::VolumeEvent::getVolumeStorage() const { return m_volume; }

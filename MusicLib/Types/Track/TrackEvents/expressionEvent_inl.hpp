@@ -9,13 +9,13 @@
 inline bw_music::ExpressionEvent::ExpressionEvent(ModelDuration timeSinceLastEvent,
                                                             bw_music::ControllerStorage value)
     : TrackEvent(timeSinceLastEvent)
-    , m_value(value) {
+    , m_expression(value) {
 }
 
 inline bw_music::ExpressionEvent::ExpressionEvent(ModelDuration timeSinceLastEvent, double normalizedLevel)
     : ExpressionEvent(timeSinceLastEvent, bw_music::ControllerStorage::assertFromNormalizedDouble(normalizedLevel)) {
 }
 
-inline double bw_music::ExpressionEvent::getExpressionAsNormalizedValue() const { return m_value.getNormalizedDouble(); }
+inline double bw_music::ExpressionEvent::getExpressionAsNormalizedValue() const { return m_expression.getNormalizedDouble(); }
 
-inline bw_music::ControllerStorage bw_music::ExpressionEvent::getExpressionStorage() const { return m_value; }
+inline bw_music::ControllerStorage bw_music::ExpressionEvent::getExpressionStorage() const { return m_expression; }

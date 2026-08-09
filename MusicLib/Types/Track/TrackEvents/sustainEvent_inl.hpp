@@ -8,15 +8,15 @@
 
 inline bw_music::SustainEvent::SustainEvent(ModelDuration timeSinceLastEvent, bw_music::ControllerStorage value)
     : TrackEvent(timeSinceLastEvent)
-    , m_value(value) {
+    , m_sustain(value) {
 }
 
 inline bw_music::SustainEvent::SustainEvent(ModelDuration timeSinceLastEvent, double normalizedLevel)
     : SustainEvent(timeSinceLastEvent, bw_music::ControllerStorage::assertFromNormalizedDouble(normalizedLevel)) {
 }
 
-inline double bw_music::SustainEvent::getLevelAsNormalizedValue() const { return m_value.getNormalizedDouble(); }
+inline double bw_music::SustainEvent::getLevelAsNormalizedValue() const { return m_sustain.getNormalizedDouble(); }
 
-inline bw_music::ControllerStorage bw_music::SustainEvent::getSustainStorage() const { return m_value; }
+inline bw_music::ControllerStorage bw_music::SustainEvent::getSustainStorage() const { return m_sustain; }
 
-inline bool bw_music::SustainEvent::isSustainOn() const { return m_value.getUnsigned<7>() >= 64u; }
+inline bool bw_music::SustainEvent::isSustainOn() const { return m_sustain.getUnsigned<7>() >= 64u; }

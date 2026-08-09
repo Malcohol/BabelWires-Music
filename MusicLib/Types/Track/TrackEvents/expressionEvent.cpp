@@ -10,10 +10,10 @@
 #include <BaseLib/Hash/hash.hpp>
 
 std::size_t bw_music::ExpressionEvent::getHash() const {
-    return babelwires::hash::mixtureOf(static_cast<const char*>("Expression"), m_timeSinceLastEvent, m_value);
+    return babelwires::hash::mixtureOf(static_cast<const char*>("Expression"), m_timeSinceLastEvent, m_expression);
 }
 
 bool bw_music::ExpressionEvent::doIsEqualTo(const TrackEvent& other) const {
     const auto& otherExpression = static_cast<const ExpressionEvent&>(other);
-    return TrackEvent::doIsEqualTo(other) && (m_value == otherExpression.m_value);
+    return TrackEvent::doIsEqualTo(other) && (m_expression == otherExpression.m_expression);
 }

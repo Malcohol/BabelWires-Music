@@ -8,16 +8,16 @@
 
 inline bw_music::PressureEvent::PressureEvent(ModelDuration timeSinceLastEvent, double value)
     : TrackEvent(timeSinceLastEvent)
-    , m_value(ControllerStorage::assertFromNormalizedDouble(value)) {}
+    , m_pressure(ControllerStorage::assertFromNormalizedDouble(value)) {}
 
 inline bw_music::PressureEvent::PressureEvent(ModelDuration timeSinceLastEvent, ControllerStorage value)
     : TrackEvent(timeSinceLastEvent)
-    , m_value(value) {}
+    , m_pressure(value) {}
 
 inline bw_music::ControllerStorage bw_music::PressureEvent::getPressureStorage() const {
-    return m_value;
+    return m_pressure;
 }
 
 inline double bw_music::PressureEvent::getPressureAsNormalizedValue() const {
-    return m_value.getNormalizedDouble();
+    return m_pressure.getNormalizedDouble();
 }
