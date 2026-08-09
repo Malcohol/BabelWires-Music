@@ -7,7 +7,7 @@
  **/
 #include <MusicLib/Functions/transposeFunction.hpp>
 
-#include <MusicLib/Types/Track/TrackEvents/transposable.hpp>
+#include <MusicLib/Types/Track/TrackEvents/Interfaces/transposable.hpp>
 #include <MusicLib/Types/Track/trackBuilder.hpp>
 
 babelwires::ResultT<bw_music::Track> bw_music::transposeTrack(const Track& trackIn, int pitchOffset, TransposeOutOfRangePolicy outOfRangePolicy) {

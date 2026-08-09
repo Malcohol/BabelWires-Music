@@ -9,7 +9,7 @@
 
 #include <MusicLib/musicLibExport.hpp>
 
-#include <MusicLib/Types/Track/TrackEvents/startEventInterface.hpp>
+#include <MusicLib/Types/Track/TrackEvents/Interfaces/startEventInterface.hpp>
 #include <MusicLib/Types/Track/TrackEvents/trackEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/trackEventCommon.hpp>
 

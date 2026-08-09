@@ -7,7 +7,7 @@
  **/
 #include <MusicLib/Types/Track/trackBuilder.hpp>
 
-#include <MusicLib/Types/Track/TrackEvents/startEventInterface.hpp>
+#include <MusicLib/Types/Track/TrackEvents/Interfaces/startEventInterface.hpp>
 
 bw_music::TrackBuilder::TrackBuilder() {}
 
