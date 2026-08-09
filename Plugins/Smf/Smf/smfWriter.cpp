@@ -91,14 +91,12 @@ void smf::SmfWriter::writeModelDuration(const bw_music::ModelDuration& d) {
     writeVariableLengthQuantity(numDivisions);
 }
 
-void smf::SmfWriter::writeTempoEvent(int bpm) {
+void smf::SmfWriter::writeTempoEvent(bw_music::TempoValue tempo) {
     m_os->put(0xffu);
     m_os->put(0x51u);
     m_os->put(0x03u);
 
-    const int d = 60'000'000 / bpm;
-
-    writeUint24(d);
+    writeUint24(tempo.getMicrosecondsPerQuaternote());
 }
 
 void smf::SmfWriter::writeTextMetaEvent(int type, const babelwires::Text& text) {
@@ -152,7 +150,7 @@ smf::SmfWriter::WriteTrackEventResult smf::SmfWriter::writeTrackEvent(int channe
     if (channelNumber == -1) {
         if (const auto* tempo = e.tryAs<bw_music::TempoEvent>()) {
             writeModelDuration(timeSinceLastEvent);
-            writeTempoEvent(tempo->getBpm());
+            writeTempoEvent(tempo->getTempoValue());
             return WriteTrackEventResult::Written;
         }
     } else {
@@ -307,15 +305,15 @@ template <std::size_t N> void smf::SmfWriter::writeMessage(const std::array<std:
 }
 
 namespace {
-    std::optional<int> tryGetTempoEventAtTimeZero(const bw_music::Track& track) {
+    bool hasTempoEventAtTimeZero(const bw_music::Track& track) {
         for (const auto& event : track) {
             if (event.getTimeSinceLastEvent() > 0) {
-                return {};
+                return false;
             } else if (const auto* tempoEvent = event.tryAs<bw_music::TempoEvent>()) {
-                return tempoEvent->getBpm();
+                return true;
             }
         }
-        return {};
+        return false;
     }
 } // namespace
 
@@ -358,14 +356,14 @@ void smf::SmfWriter::writeGlobalSetup(const bw_music::Track* globalTrack) {
         }
     }
     if (const auto& initialTempo = metadata.tryGetITempo()) {
-        if (globalTrack && tryGetTempoEventAtTimeZero(*globalTrack)) {
+        if (globalTrack && hasTempoEventAtTimeZero(*globalTrack)) {
             // The logic for preferring the global track's initial tempo is that that the tempo events in the global
             // track might have subtle relationships not accounted for by the explicitly set initial tempo.
             m_userLogger.logWarning()
                 << "The global track has a tempo event at time 0, so the explicitly set initial tempo will be ignored.";
         } else {
             writeModelDuration(0);
-            writeTempoEvent(initialTempo->get());
+            writeTempoEvent(bw_music::TempoEvent(0, static_cast<double>(initialTempo->get())).getTempoValue());
         }
         // MAYBEDO If neither then write a 120 bpm tempo event, since that is the MIDI default.
     }

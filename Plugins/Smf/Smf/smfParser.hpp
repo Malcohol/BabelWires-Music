@@ -12,6 +12,7 @@
 #include <Smf/smfSequence.hpp>
 
 #include <MusicLib/musicTypes.hpp>
+#include <MusicLib/Utilities/tempoValue.hpp>
 
 #include <BaseLib/IO/dataSource.hpp>
 #include <BaseLib/Log/userLogger.hpp>
@@ -136,7 +137,7 @@ namespace smf {
 
         struct NormalizedTempoEvent {
           int m_trackIndex;
-          int m_bpm;
+          bw_music::TempoValue m_tempo;
         };
 
         std::map<bw_music::ModelDuration, NormalizedTempoEvent> m_globalTempoEvents;

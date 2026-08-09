@@ -223,15 +223,18 @@ babelwires::Result smf::SmfParser::parse() {
 }
 
 void smf::SmfParser::readTempoEvent(int trackIndex, bw_music::ModelDuration absoluteTime, std::uint32_t tempoValue) {
-    const double d = tempoValue;
-    const double bpm = 60'000'000 / d;
-    const int roundedBpm = std::round(bpm);
+    if (tempoValue == 0u) {
+        m_userLogger.logWarning() << "Skipping Tempo meta-event with invalid zero tempo value";
+        return;
+    }
+
+    const auto tempo = bw_music::TempoValue::fromMicrosecondsPerQuaternote(tempoValue);
 
     if (auto existing = m_globalTempoEvents.find(absoluteTime); existing != m_globalTempoEvents.end()) {
         if (existing->second.m_trackIndex == trackIndex) {
             m_userLogger.logWarning() << "Multiple tempo events at the same tick in SMF track " << trackIndex
                                       << "; using the last event in stream order";
-            existing->second.m_bpm = roundedBpm;
+            existing->second.m_tempo = tempo;
         } else {
             // It isn't specified how to handle this, but higher-numbered tracks are often processed after
             // lower-numbered tracks, so this policy seems pragmatic.
@@ -240,14 +243,16 @@ void smf::SmfParser::readTempoEvent(int trackIndex, bw_music::ModelDuration abso
             if (existing->second.m_trackIndex > trackIndex) {
                 return;
             }
-            existing->second = {trackIndex, roundedBpm};
+            existing->second = {trackIndex, tempo};
         }
     } else {
-        m_globalTempoEvents.emplace(absoluteTime, NormalizedTempoEvent{trackIndex, roundedBpm});
+        m_globalTempoEvents.emplace(absoluteTime, NormalizedTempoEvent{trackIndex, tempo});
     }
 
     // TODO: Always activate the ITempo field, since 120 bpm should be assumed if no other tempo event is present.
     if (absoluteTime == 0) {
+        const int roundedBpm = std::round(60'000'000.0 / static_cast<double>(tempoValue));
+
         getMidiMetadata().activateAndGetITempo().set(roundedBpm);
     }
 }
@@ -260,7 +265,7 @@ void smf::SmfParser::finalizeGlobalTempoTrack() {
     bw_music::TrackBuilder globalTrack;
     bw_music::ModelDuration timeOfLastEvent = 0;
     for (const auto& [absoluteTime, tempo] : m_globalTempoEvents) {
-        globalTrack.addEvent(bw_music::TempoEvent{absoluteTime - timeOfLastEvent, tempo.m_bpm});
+        globalTrack.addEvent(bw_music::TempoEvent{absoluteTime - timeOfLastEvent, tempo.m_tempo});
         timeOfLastEvent = absoluteTime;
     }
     getSmfSequence().getGlobal().set(globalTrack.finishAndGetTrack());

@@ -54,6 +54,7 @@ SET( MUSICLIB_SRCS
 	Utilities/monophonicNoteIterator.cpp
 	Utilities/minCentreMaxValue.cpp
 	Utilities/minMaxValue.cpp
+	Utilities/tempoValue.cpp
 	Types/Track/trackBuilder.cpp
 	Utilities/trackValidator.cpp
 	libRegistration.cpp

@@ -300,7 +300,8 @@ TEST(SmfTestSuiteTest, tempoTest) {
 
         for (int i = 0; i < 4; ++i) {
             ASSERT_NE(tempoBegin, tempoEnd);
-            EXPECT_EQ(tempoBegin->getBpm(), expectedBpms[i]);
+            // Not all of the tempo values are perfectly represented in MIDI tempo storage.
+            EXPECT_EQ(tempoBegin->getTempoValue().getBpmRounded(2), expectedBpms[i]);
             EXPECT_EQ(tempoBegin->getTimeSinceLastEvent(), expectedDeltaTimes[i]);
             ++tempoBegin;
         }

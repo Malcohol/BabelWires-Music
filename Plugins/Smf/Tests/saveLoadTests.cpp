@@ -94,7 +94,7 @@ namespace {
         }
         if (flags & HAS_TEMPO) {
             bw_music::TrackBuilder globalTrack;
-            globalTrack.addEvent(bw_music::TempoEvent(0, 100));
+            globalTrack.addEvent(bw_music::TempoEvent(0, 100.0));
             smfType.getGlobal().set(globalTrack.finishAndGetTrack());
         }
     }
@@ -117,7 +117,7 @@ namespace {
             const auto& globalTrack = smfType.getGlobal().get();
             auto [tempoBegin, tempoEnd] = bw_music::iterateOver<bw_music::TempoEvent>(globalTrack);
             ASSERT_NE(tempoBegin, tempoEnd);
-            EXPECT_EQ(tempoBegin->getBpm(), 100);
+            EXPECT_DOUBLE_EQ(tempoBegin->getBpm(), 100.0);
             ++tempoBegin;
             EXPECT_EQ(tempoBegin, tempoEnd);
         }
@@ -334,7 +334,7 @@ TEST(SmfSaveLoadTest, format1TempoGlobalTrack) {
         smfType.selectTag("SMF1");
 
         bw_music::TrackBuilder globalTrack;
-        globalTrack.addEvent(bw_music::TempoEvent(0, 100));
+        globalTrack.addEvent(bw_music::TempoEvent(0, 100.0));
         smfType.getGlobal().set(globalTrack.finishAndGetTrack());
 
         auto tracks = smfType.getTrcks1();
@@ -369,7 +369,61 @@ TEST(SmfSaveLoadTest, format1TempoGlobalTrack) {
     const auto& globalTrack = smfSequence.getGlobal().get();
     auto [tempoBegin, tempoEnd] = bw_music::iterateOver<bw_music::TempoEvent>(globalTrack);
     ASSERT_NE(tempoBegin, tempoEnd);
-    EXPECT_EQ(tempoBegin->getBpm(), 100);
+    EXPECT_DOUBLE_EQ(tempoBegin->getBpm(), 100.0);
+    ++tempoBegin;
+    EXPECT_EQ(tempoBegin, tempoEnd);
+}
+
+TEST(SmfSaveLoadTest, format1TempoGlobalTrackPreservesMidiTempoStorage) {
+    testUtils::TestEnvironment testEnvironment;
+    bw_music::registerLib(testEnvironment.m_projectContext);
+    ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
+    testUtils::TempFilePath tempFile("format1TempoGlobalTrackPreservesMidiTempoStorage.mid");
+
+    const auto expectedTempoStorage = bw_music::TempoValue::fromMicrosecondsPerQuaternote(500001u);
+
+    {
+        babelwires::ValueTreeRoot smfFeature(testEnvironment.m_projectContext.get<babelwires::TypeSystem>(),
+                                             babelwires::FileTypeT<smf::SmfSequence>::getType(
+                                                 testEnvironment.m_projectContext.get<babelwires::TypeSystem>()));
+        smfFeature.setToDefault();
+
+        smf::SmfSequence::Instance smfType{smfFeature.getChild(0)->as<babelwires::ValueTreeNode>()};
+        smfType.selectTag("SMF1");
+
+        bw_music::TrackBuilder globalTrack;
+        globalTrack.addEvent(bw_music::TempoEvent(0, expectedTempoStorage));
+        smfType.getGlobal().set(globalTrack.finishAndGetTrack());
+
+        auto tracks = smfType.getTrcks1();
+        tracks.setSize(1);
+        auto trackAndChan = tracks.getEntry(0);
+        trackAndChan.getChan().set(0);
+
+        bw_music::TrackBuilder track;
+        testUtils::addSimpleNotes(chordPitches[0], track);
+        trackAndChan.getTrack().set(track.finishAndGetTrack());
+
+        std::ofstream os = tempFile.openForWriting(std::ios_base::binary);
+        smf::writeToSmf(testEnvironment.m_projectContext, testEnvironment.m_log, smfFeature, os);
+    }
+
+    auto midiFileResult = babelwires::FileDataSource::open(tempFile);
+    ASSERT_TRUE(midiFileResult.has_value());
+    auto midiFile = std::move(*midiFileResult);
+
+    auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+    ASSERT_TRUE(midiFile.close().has_value());
+    ASSERT_TRUE(result.has_value());
+    const auto& feature = *result;
+
+    smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
+    const auto& globalTrack = smfSequence.getGlobal().get();
+    auto [tempoBegin, tempoEnd] = bw_music::iterateOver<bw_music::TempoEvent>(globalTrack);
+
+    ASSERT_NE(tempoBegin, tempoEnd);
+    EXPECT_EQ(tempoBegin->getTempoValue(), expectedTempoStorage);
+    EXPECT_DOUBLE_EQ(tempoBegin->getBpm(), 60'000'000.0 / 500001.0);
     ++tempoBegin;
     EXPECT_EQ(tempoBegin, tempoEnd);
 }

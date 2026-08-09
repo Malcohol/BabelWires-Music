@@ -50,7 +50,7 @@ namespace smf {
 
         bool writeGlobalTrackEvent(bw_music::ModelDuration timeSinceLastEvent, const bw_music::TrackEvent& e);
 
-        void writeTempoEvent(int bpm);
+        void writeTempoEvent(bw_music::TempoValue tempo);
 
         /// type is the integer 0..15 which defines which type of text meta-event should be issued.
         void writeTextMetaEvent(int type, const babelwires::Text& text);
