@@ -7,17 +7,65 @@
  **/
 #include <MusicLib/Utilities/tempoValue.hpp>
 
-bw_music::TempoValue bw_music::TempoValue::fromBpm(double bpm) {
+babelwires::ResultT<bw_music::TempoValue> bw_music::TempoValue::fromBpm(double bpm) {
+    if (!std::isfinite(bpm)) {
+        return babelwires::ResultT<TempoValue>(babelwires::ErrorStorage("Invalid BPM value"));
+    }
+    if (bpm <= 0.0) {
+        return babelwires::ResultT<TempoValue>(babelwires::ErrorStorage("Negative BPM value"));
+    }
+    const std::uint32_t midiTempoValue = std::llround(60'000'000.0 / bpm);
+    if (midiTempoValue < 1) {
+        return babelwires::ResultT<TempoValue>(babelwires::ErrorStorage("BPM value too small to represent"));
+    }
+    if (midiTempoValue > 0xFFFFFFu) {
+        return babelwires::ResultT<TempoValue>(babelwires::ErrorStorage("BPM value too large to represent"));
+    }
+    
+    return TempoValue(midiTempoValue);
+}
+
+bw_music::TempoValue bw_music::TempoValue::tryFromBpm(double bpm) {
+    if (!std::isfinite(bpm) || (bpm <= 0.0)) {
+        return TempoValue(500000); // Use default (120 bpm).
+    }
+    const std::uint32_t midiTempoValue = std::llround(60'000'000.0 / bpm);
+    if (midiTempoValue < 1) {
+        return TempoValue(1);
+    } else if (midiTempoValue > 0xFFFFFFu) {
+        return TempoValue(0xFFFFFFu);
+    }
+
+    return TempoValue(midiTempoValue);
+}
+
+bw_music::TempoValue bw_music::TempoValue::assertFromBpm(double bpm) {
     assert(std::isfinite(bpm));
     assert(bpm > 0.0);
 
-    const double midiTempoValue = 60'000'000.0 / bpm;
-    assert((1.0 <= midiTempoValue) && (midiTempoValue <= static_cast<double>(0xFFFFFFu)));
+    const std::uint32_t midiTempoValue = std::llround(60'000'000.0 / bpm);
+    assert((1 <= midiTempoValue) && (midiTempoValue <= 0xFFFFFFu));
 
-    return TempoValue(static_cast<std::uint32_t>(std::llround(midiTempoValue)));
+    return TempoValue(midiTempoValue);
 }
 
-bw_music::TempoValue bw_music::TempoValue::fromMicrosecondsPerQuaternote(std::uint32_t microsecondsPerQuaternote) {
+babelwires::ResultT<bw_music::TempoValue> bw_music::TempoValue::fromMicrosecondsPerQuaternote(std::uint32_t microsecondsPerQuaternote) {
+    if ((microsecondsPerQuaternote < 1) || (microsecondsPerQuaternote > 0xFFFFFFu)) {
+        return babelwires::ResultT<TempoValue>(babelwires::ErrorStorage("MIDI tempo storage value out of range"));
+    }
+    return TempoValue(microsecondsPerQuaternote);
+}
+
+bw_music::TempoValue bw_music::TempoValue::tryFromMicrosecondsPerQuaternote(std::uint32_t microsecondsPerQuaternote) {
+    if (microsecondsPerQuaternote < 1) {
+        return TempoValue(1);
+    } else if (microsecondsPerQuaternote > 0xFFFFFFu) {
+        return TempoValue(0xFFFFFFu);
+    }
+    return TempoValue(microsecondsPerQuaternote);
+}
+
+bw_music::TempoValue bw_music::TempoValue::assertFromMicrosecondsPerQuaternote(std::uint32_t microsecondsPerQuaternote) {
     assert((1 <= microsecondsPerQuaternote) && (microsecondsPerQuaternote <= 0xFFFFFFu));
     return TempoValue(microsecondsPerQuaternote);
 }

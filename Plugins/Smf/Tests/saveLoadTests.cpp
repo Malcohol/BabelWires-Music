@@ -380,7 +380,7 @@ TEST(SmfSaveLoadTest, format1TempoGlobalTrackPreservesMidiTempoStorage) {
     ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
     testUtils::TempFilePath tempFile("format1TempoGlobalTrackPreservesMidiTempoStorage.mid");
 
-    const auto expectedTempoStorage = bw_music::TempoValue::fromMicrosecondsPerQuaternote(500001u);
+    const auto expectedTempoStorage = bw_music::TempoValue::assertFromMicrosecondsPerQuaternote(500001u);
 
     {
         babelwires::ValueTreeRoot smfFeature(testEnvironment.m_projectContext.get<babelwires::TypeSystem>(),

@@ -11,7 +11,7 @@
 #include <cmath>
 
 inline bw_music::TempoEvent::TempoEvent(ModelDuration timeSinceLastEvent, double bpm)
-    : TempoEvent(timeSinceLastEvent, bw_music::TempoValue::fromBpm(bpm)) {
+    : TempoEvent(timeSinceLastEvent, bw_music::TempoValue::assertFromBpm(bpm)) {
 }
 
 inline bw_music::TempoEvent::TempoEvent(ModelDuration timeSinceLastEvent, bw_music::TempoValue value)

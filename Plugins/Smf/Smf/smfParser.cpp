@@ -222,13 +222,8 @@ babelwires::Result smf::SmfParser::parse() {
     return {};
 }
 
-void smf::SmfParser::readTempoEvent(int trackIndex, bw_music::ModelDuration absoluteTime, std::uint32_t tempoValue) {
-    if (tempoValue == 0u) {
-        m_userLogger.logWarning() << "Skipping Tempo meta-event with invalid zero tempo value";
-        return;
-    }
-
-    const auto tempo = bw_music::TempoValue::fromMicrosecondsPerQuaternote(tempoValue);
+babelwires::Result smf::SmfParser::readTempoEvent(int trackIndex, bw_music::ModelDuration absoluteTime, std::uint32_t tempoValue) {
+    ASSIGN_OR_ERROR(const auto tempo, bw_music::TempoValue::fromMicrosecondsPerQuaternote(tempoValue));
 
     if (auto existing = m_globalTempoEvents.find(absoluteTime); existing != m_globalTempoEvents.end()) {
         if (existing->second.m_trackIndex == trackIndex) {
@@ -241,7 +236,7 @@ void smf::SmfParser::readTempoEvent(int trackIndex, bw_music::ModelDuration abso
             m_userLogger.logWarning()
                 << "Conflicting simultaneous tempo events in multiple SMF1 tracks; using the higher-numbered track";
             if (existing->second.m_trackIndex > trackIndex) {
-                return;
+                return {};
             }
             existing->second = {trackIndex, tempo};
         }
@@ -255,6 +250,7 @@ void smf::SmfParser::readTempoEvent(int trackIndex, bw_music::ModelDuration abso
 
         getMidiMetadata().activateAndGetITempo().set(roundedBpm);
     }
+    return {};
 }
 
 void smf::SmfParser::finalizeGlobalTempoTrack() {
@@ -818,7 +814,7 @@ babelwires::Result smf::SmfParser::readTrack(int trackIndex, TrackSplitter& trac
                                                             length));
                             } else {
                                 ASSIGN_OR_ERROR(const std::uint32_t tempoValue, readU24());
-                                readTempoEvent(trackIndex, timeSinceTrackStart, tempoValue);
+                                DO_OR_ERROR(readTempoEvent(trackIndex, timeSinceTrackStart, tempoValue));
                             }
                             break;
                         }

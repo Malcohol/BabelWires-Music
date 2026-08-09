@@ -12,14 +12,24 @@
 #include <MusicLib/Types/Track/TrackEvents/trackEvent.hpp>
 #include <MusicLib/Utilities/tempoValue.hpp>
 
+#include <BaseLib/Result/result.hpp>
+
 namespace bw_music {
 
     /// A representation of tempo that allows safe round-tripping to and from MIDI tempo storage.
     class MUSICLIB_API TempoValue {
       public:
-        static TempoValue fromBpm(double bpm);
+        static babelwires::ResultT<TempoValue> fromBpm(double bpm);
 
-        static TempoValue fromMicrosecondsPerQuaternote(std::uint32_t microsecondsPerQuaternote);
+        static TempoValue tryFromBpm(double bpm);
+
+        static TempoValue assertFromBpm(double bpm);
+
+        static babelwires::ResultT<TempoValue> fromMicrosecondsPerQuaternote(std::uint32_t microsecondsPerQuaternote);
+
+        static TempoValue tryFromMicrosecondsPerQuaternote(std::uint32_t microsecondsPerQuaternote);
+
+        static TempoValue assertFromMicrosecondsPerQuaternote(std::uint32_t microsecondsPerQuaternote);
 
         /// Get the tempo in beats per minute.
         double getBpm() const;

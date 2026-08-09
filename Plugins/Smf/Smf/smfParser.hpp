@@ -75,7 +75,8 @@ namespace smf {
 
         babelwires::ResultT<bw_music::ModelDuration> readModelDuration();
 
-        void readTempoEvent(int trackIndex, bw_music::ModelDuration absoluteTime, std::uint32_t tempoValue);
+        /// This can fail if the tempo is 0.
+        babelwires::Result readTempoEvent(int trackIndex, bw_music::ModelDuration absoluteTime, std::uint32_t tempoValue);
         void finalizeGlobalTempoTrack();
 
         babelwires::ResultT<babelwires::Text> readTextMetaEvent(int length);
