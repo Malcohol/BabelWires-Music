@@ -7,6 +7,13 @@
  **/
 #include <MusicLib/Utilities/tempoValue.hpp>
 
+#include <BaseLib/Utilities/rounding.hpp>
+
+bw_music::TempoValue::TempoValue(std::uint32_t microsecondsPerQuaternote)
+    : m_microsecondsPerQuaternote(microsecondsPerQuaternote) {
+    assert((1 <= microsecondsPerQuaternote) && (microsecondsPerQuaternote <= 0xFFFFFFu));
+}
+
 babelwires::ResultT<bw_music::TempoValue> bw_music::TempoValue::fromBpm(double bpm) {
     if (!std::isfinite(bpm)) {
         return babelwires::ResultT<TempoValue>(babelwires::ErrorStorage("Invalid BPM value"));
@@ -79,12 +86,25 @@ double bw_music::TempoValue::getBpm() const {
 
 double bw_music::TempoValue::getBpmRounded(int decimalPlaces) const {
     assert(decimalPlaces >= 0);
+    assert(decimalPlaces <= c_maxPrecisionDecimalPlaces);
     const double bpm = getBpm();
-    const double factor = std::pow(10.0, static_cast<double>(decimalPlaces));
-    return std::round(bpm * factor) / factor;
+    return babelwires::roundTo(bpm, decimalPlaces);
 }
 
-bw_music::TempoValue::TempoValue(std::uint32_t microsecondsPerQuaternote)
-    : m_microsecondsPerQuaternote(microsecondsPerQuaternote) {
-    assert((1 <= microsecondsPerQuaternote) && (microsecondsPerQuaternote <= 0xFFFFFFu));
+babelwires::Range<double> bw_music::TempoValue::getBpmRangeRounded(int decimalPlaces) {
+    assert(decimalPlaces >= 0);
+    assert(decimalPlaces <= c_maxPrecisionDecimalPlaces);
+    constexpr double maxBpm = 60'000'000.0;
+    constexpr double minBpm = 60'000'000.0 / 0xFFFFFFu;
+    const double factor = std::pow(10.0, decimalPlaces);
+    return {std::ceil(minBpm * factor) / factor, std::floor(maxBpm * factor) / factor};
+}
+
+babelwires::Range<double> bw_music::TempoValue::getBpmStableRangeRounded(int lowDecimalPlaces) {
+    assert(lowDecimalPlaces >= 0);
+    assert(lowDecimalPlaces <= c_maxStableDecimalPlaces);
+    // Verified by the TempoValueTest.ReasonableBpmValuesRoundTripUpToTwoDecimalPlaces test.
+    const double lowerRanges[] = { 4.0, 3.6, 3.58, 3.577 };
+    const double upperRanges[] = { 7811.0, 2462.6, 775.72, 245.316 };
+    return {lowerRanges[lowDecimalPlaces], upperRanges[lowDecimalPlaces]};
 }

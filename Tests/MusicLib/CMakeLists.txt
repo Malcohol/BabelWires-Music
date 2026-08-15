@@ -17,6 +17,7 @@ SET( SEQUENCELIB_TESTS_SRCS
       minMaxValueTest.cpp
       musicTypesTest.cpp
       musicUtilitiesTest.cpp
+      tempoValueTest.cpp
       percussionMapProcessorTest.cpp
       percussionSetWithPitchMapTest.cpp
       quantizeProcessorTest.cpp
