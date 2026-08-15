@@ -100,3 +100,45 @@ TEST(TempoValueTest, BpmStableRangeIsStableAndMaximal) {
         EXPECT_FALSE(isStableBpm(aboveUpperRange, decimalPlaces)) << "BPM: " << aboveUpperRange;
     }
 }
+
+TEST(TempoValueTest, SerializationRoundTrips) {
+    const std::array<bw_music::TempoValue, 4> testValues = {
+        bw_music::TempoValue(),
+        bw_music::TempoValue::assertFromMicrosecondsPerQuaternote(0x000001u),
+        bw_music::TempoValue::assertFromMicrosecondsPerQuaternote(0x0F0F0Fu),
+        bw_music::TempoValue::assertFromMicrosecondsPerQuaternote(0xFFFFFFu)
+    };
+    for (const auto& tempoValue : testValues) {
+        const auto serialized = tempoValue.serializeToString();
+        const auto deserializedResult = bw_music::TempoValue::deserializeFromString(serialized);
+        ASSERT_TRUE(deserializedResult.has_value());
+        EXPECT_EQ(deserializedResult->getMicrosecondsPerQuaternote(), tempoValue.getMicrosecondsPerQuaternote());
+    }
+}
+
+TEST(TempoValueTest, DeserializationAcceptsValidStrings) {
+    const std::array<std::string, 4> invalidStrings = {
+        "0x1",
+        "0x000001",
+        "0xFFFFFF",
+        "0xffffff"
+    };
+    for (const auto& str : invalidStrings) {
+        const auto deserializedResult = bw_music::TempoValue::deserializeFromString(str);
+        EXPECT_TRUE(deserializedResult.has_value()) << "Failure: " << str;
+    }
+}
+
+TEST(TempoValueTest, DeserializationRejectsInvalidStrings) {
+    const std::array<std::string, 5> invalidStrings = {
+        "",
+        "not a number",
+        "0",
+        "0x0", // Valid Hex, but not a tempo value.
+        "0x1000000", // Valid Hex, but not a tempo value.
+    };
+    for (const auto& str : invalidStrings) {
+        const auto deserializedResult = bw_music::TempoValue::deserializeFromString(str);
+        EXPECT_FALSE(deserializedResult.has_value()) << "Failure: " << str;
+    }
+}

@@ -82,6 +82,10 @@ namespace bw_music {
 
         auto operator<=>(const TempoValue&) const = default;
 
+        /// Serialization
+        std::string serializeToString() const;
+        static babelwires::ResultT<TempoValue> deserializeFromString(std::string_view str);
+
       private:
         /// Construct from a TempoStorage value.
         TempoValue(std::uint32_t microsecondsPerQuaternote);

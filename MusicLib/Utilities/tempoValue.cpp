@@ -108,3 +108,22 @@ babelwires::Range<double> bw_music::TempoValue::getBpmStableRangeRounded(int low
     const double upperRanges[] = { 7811.0, 2462.6, 775.72, 245.316 };
     return {lowerRanges[lowDecimalPlaces], upperRanges[lowDecimalPlaces]};
 }
+
+std::string bw_music::TempoValue::serializeToString() const {
+    std::ostringstream oss;
+    oss << "0x" << std::hex << std::uppercase << m_microsecondsPerQuaternote;
+    return oss.str();
+}
+
+babelwires::ResultT<bw_music::TempoValue> bw_music::TempoValue::deserializeFromString(std::string_view str) {
+    if (str.size() >= 3 && str.size() <= 8) {
+        if ((str[0] == '0') && (str[1] == 'x')) {
+            std::uint32_t value = 0;
+            if (std::from_chars(str.data() + 2, str.data() + str.size(), value, 16).ec == std::errc()) {
+                return fromMicrosecondsPerQuaternote(value);
+            }
+        }
+        // Don't allow decimal values, since they may be confused for BPM.
+    }
+    return babelwires::ResultT<TempoValue>(babelwires::ErrorStorage("Invalid tempo value string"));
+}
