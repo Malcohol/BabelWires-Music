@@ -28,7 +28,7 @@
 #include <MusicLib/Processors/transposeProcessor.hpp>
 #include <MusicLib/Types/chordTypeSet.hpp>
 #include <MusicLib/Types/Track/trackTypeConstructor.hpp>
-#include <MusicLib/Types/tempo.hpp>
+#include <MusicLib/Types/Tempo/tempo.hpp>
 #include <MusicLib/Types/duration.hpp>
 #include <MusicLib/chord.hpp>
 #include <MusicLib/pitch.hpp>

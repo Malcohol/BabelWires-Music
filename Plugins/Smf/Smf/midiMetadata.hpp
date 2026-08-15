@@ -9,7 +9,7 @@
 
 #include <Smf/gmSpec.hpp>
 
-#include <MusicLib/Types/tempo.hpp>
+#include <MusicLib/Types/Tempo/tempo.hpp>
 
 #include <BabelWiresLib/Types/Record/recordType.hpp>
 #include <BabelWiresLib/Instance/instance.hpp>

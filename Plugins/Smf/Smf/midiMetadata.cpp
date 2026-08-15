@@ -9,7 +9,7 @@
 
 #include <Smf/smfFormat.hpp>
 
-#include <MusicLib/Types/tempo.hpp>
+#include <MusicLib/Types/Tempo/tempo.hpp>
 
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/Text/textType.hpp>
