@@ -84,11 +84,17 @@ double bw_music::TempoValue::getBpm() const {
     return 60'000'000.0 / static_cast<double>(m_microsecondsPerQuaternote);
 }
 
+babelwires::Range<bw_music::TempoValue> bw_music::TempoValue::getRange() {
+    return {TempoValue(0xFFFFFFu), TempoValue(1)};
+}
+
 double bw_music::TempoValue::getBpmRounded(int decimalPlaces) const {
     assert(decimalPlaces >= 0);
     assert(decimalPlaces <= c_maxPrecisionDecimalPlaces);
     const double bpm = getBpm();
-    return babelwires::roundTo(bpm, decimalPlaces);
+    const double roundedBpm = babelwires::roundTo(bpm, decimalPlaces);
+    // This is not very efficient, but it guarantees validity.
+    return getBpmRangeRounded(decimalPlaces).clamp(roundedBpm);
 }
 
 babelwires::Range<double> bw_music::TempoValue::getBpmRangeRounded(int decimalPlaces) {
@@ -97,6 +103,7 @@ babelwires::Range<double> bw_music::TempoValue::getBpmRangeRounded(int decimalPl
     constexpr double maxBpm = 60'000'000.0;
     constexpr double minBpm = 60'000'000.0 / 0xFFFFFFu;
     const double factor = std::pow(10.0, decimalPlaces);
+    // This is not a general algorithm, but works for the range of decimalPlaces we support.
     return {std::ceil(minBpm * factor) / factor, std::floor(maxBpm * factor) / factor};
 }
 

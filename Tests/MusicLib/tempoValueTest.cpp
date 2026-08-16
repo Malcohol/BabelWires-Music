@@ -41,10 +41,12 @@ TEST(TempoValueTest, FromBpmRejectsInvalidAndOutOfRangeValues) {
 }
 
 TEST(TempoValueTest, TryFromBpmClampsToRepresentableRange) {
-    EXPECT_EQ(bw_music::TempoValue::tryFromBpm(std::numeric_limits<double>::quiet_NaN()).getMicrosecondsPerQuaternote(), 500000u);
+    EXPECT_EQ(bw_music::TempoValue::tryFromBpm(std::numeric_limits<double>::quiet_NaN()).getMicrosecondsPerQuaternote(),
+              500000u);
     EXPECT_EQ(bw_music::TempoValue::tryFromBpm(-1.0).getMicrosecondsPerQuaternote(), 500000u);
     EXPECT_EQ(bw_music::TempoValue::tryFromBpm(120'000'001.0).getMicrosecondsPerQuaternote(), 1u);
-    EXPECT_EQ(bw_music::TempoValue::tryFromBpm(60'000'000.0 / (0xFFFFFFu + 0.5)).getMicrosecondsPerQuaternote(), 0xFFFFFFu);
+    EXPECT_EQ(bw_music::TempoValue::tryFromBpm(60'000'000.0 / (0xFFFFFFu + 0.5)).getMicrosecondsPerQuaternote(),
+              0xFFFFFFu);
 }
 
 TEST(TempoValueTest, FromMicrosecondsPerQuaternoteAndGettersRoundTripValues) {
@@ -61,7 +63,17 @@ TEST(TempoValueTest, FromMicrosecondsPerQuaternoteRejectsOutOfRangeValues) {
 
 TEST(TempoValueTest, TryFromMicrosecondsPerQuaternoteClampsToRange) {
     EXPECT_EQ(bw_music::TempoValue::tryFromMicrosecondsPerQuaternote(0u).getMicrosecondsPerQuaternote(), 1u);
-    EXPECT_EQ(bw_music::TempoValue::tryFromMicrosecondsPerQuaternote(0x1000000u).getMicrosecondsPerQuaternote(), 0xFFFFFFu);
+    EXPECT_EQ(bw_music::TempoValue::tryFromMicrosecondsPerQuaternote(0x1000000u).getMicrosecondsPerQuaternote(),
+              0xFFFFFFu);
+}
+
+TEST(TempoValueTest, comparison) {
+    const auto tempoValue1 = bw_music::TempoValue::assertFromBpm(120);
+    const auto tempoValue2 = bw_music::TempoValue::assertFromBpm(140);
+    EXPECT_LT(tempoValue1, tempoValue2);
+    EXPECT_GT(tempoValue2, tempoValue1);
+    EXPECT_EQ(tempoValue1, tempoValue1);
+    EXPECT_NE(tempoValue1, tempoValue2);
 }
 
 TEST(TempoValueTest, DefaultValueIsStable) {
@@ -85,13 +97,41 @@ TEST(TempoValueTest, BpmRangeEndpointsAreStable) {
     }
 }
 
+TEST(TempoValueTest, RoundedBpmOfRangeAreNotAllValid) {
+    // This test shows that rounding the bpm of the actual range does not give a usable bpm range, since some of
+    // the rounded values are not representable. For example, the BPM of the range min at 3 decimal places rounds
+    // to 3.576, which is not valid.
+    const auto actualRange = bw_music::TempoValue::getRange();
+    int invalidRoundedEndPoints = 0;
+    for (int decimalPlaces = 0; decimalPlaces <= bw_music::TempoValue::c_maxPrecisionDecimalPlaces; ++decimalPlaces) {
+        const auto bpmRange = bw_music::TempoValue::getBpmRangeRounded(decimalPlaces);
+        // getBpmRounded has a built in clamp, so this test won't fail.
+        const auto actualRangeBpmRounded =
+            babelwires::Range<double>(babelwires::roundTo(actualRange.m_min.getBpm(), decimalPlaces),
+                                      babelwires::roundTo(actualRange.m_max.getBpm(), decimalPlaces));
+
+        if (bw_music::TempoValue::fromBpm(actualRangeBpmRounded.m_min).has_value()) {
+            EXPECT_EQ(actualRangeBpmRounded.m_min, bpmRange.m_min);
+        } else {
+            ++invalidRoundedEndPoints;
+        }
+        if (bw_music::TempoValue::fromBpm(actualRangeBpmRounded.m_max).has_value()) {
+            EXPECT_EQ(actualRangeBpmRounded.m_max, bpmRange.m_max);
+        } else {
+            ++invalidRoundedEndPoints;
+        }
+    }
+    EXPECT_GT(invalidRoundedEndPoints, 0);
+}
+
 TEST(TempoValueTest, BpmStableRangeIsStableAndMaximal) {
     for (int decimalPlaces = 0; decimalPlaces <= bw_music::TempoValue::c_maxStableDecimalPlaces; ++decimalPlaces) {
         const auto bpmRange = bw_music::TempoValue::getBpmStableRangeRounded(decimalPlaces);
         const double step = std::pow(10.0, -decimalPlaces);
         for (double bpm = bpmRange.m_min; bpm <= bpmRange.m_max; bpm += step) {
             const double roundedBpm = babelwires::roundTo(bpm, decimalPlaces);
-            // Assert to prevent excessive test output in case of failure, since the range is large and the step is small.
+            // Assert to prevent excessive test output in case of failure, since the range is large and the step is
+            // small.
             ASSERT_TRUE(isStableBpm(roundedBpm, decimalPlaces)) << "BPM: " << roundedBpm;
         }
         const double belowLowerRange = babelwires::roundTo(bpmRange.m_min - step, decimalPlaces);
@@ -103,11 +143,9 @@ TEST(TempoValueTest, BpmStableRangeIsStableAndMaximal) {
 
 TEST(TempoValueTest, SerializationRoundTrips) {
     const std::array<bw_music::TempoValue, 4> testValues = {
-        bw_music::TempoValue(),
-        bw_music::TempoValue::assertFromMicrosecondsPerQuaternote(0x000001u),
+        bw_music::TempoValue(), bw_music::TempoValue::assertFromMicrosecondsPerQuaternote(0x000001u),
         bw_music::TempoValue::assertFromMicrosecondsPerQuaternote(0x0F0F0Fu),
-        bw_music::TempoValue::assertFromMicrosecondsPerQuaternote(0xFFFFFFu)
-    };
+        bw_music::TempoValue::assertFromMicrosecondsPerQuaternote(0xFFFFFFu)};
     for (const auto& tempoValue : testValues) {
         const auto serialized = tempoValue.serializeToString();
         const auto deserializedResult = bw_music::TempoValue::deserializeFromString(serialized);
@@ -117,12 +155,7 @@ TEST(TempoValueTest, SerializationRoundTrips) {
 }
 
 TEST(TempoValueTest, DeserializationAcceptsValidStrings) {
-    const std::array<std::string, 4> invalidStrings = {
-        "0x1",
-        "0x000001",
-        "0xFFFFFF",
-        "0xffffff"
-    };
+    const std::array<std::string, 4> invalidStrings = {"0x1", "0x000001", "0xFFFFFF", "0xffffff"};
     for (const auto& str : invalidStrings) {
         const auto deserializedResult = bw_music::TempoValue::deserializeFromString(str);
         EXPECT_TRUE(deserializedResult.has_value()) << "Failure: " << str;
@@ -131,10 +164,8 @@ TEST(TempoValueTest, DeserializationAcceptsValidStrings) {
 
 TEST(TempoValueTest, DeserializationRejectsInvalidStrings) {
     const std::array<std::string, 5> invalidStrings = {
-        "",
-        "not a number",
-        "0",
-        "0x0", // Valid Hex, but not a tempo value.
+        "",          "not a number", "0",
+        "0x0",       // Valid Hex, but not a tempo value.
         "0x1000000", // Valid Hex, but not a tempo value.
     };
     for (const auto& str : invalidStrings) {

@@ -46,6 +46,10 @@ namespace bw_music {
         /// microseconds per quarter note. Asserts that the value is in range.
         static TempoValue assertFromMicrosecondsPerQuaternote(std::uint32_t microsecondsPerQuaternote);
 
+        /// Get the range of representable TempoValue values.
+        /// Note: Use getBpmRangeRounded rather than e.g. getRange.m_min.getRoundedBpm.
+        static babelwires::Range<TempoValue> getRange();
+
         /// Get the tempo in beats per minute.
         double getBpm() const;
 
@@ -57,17 +61,17 @@ namespace bw_music {
         static constexpr int c_maxPrecisionDecimalPlaces = 8;
 
         /// Get the tempo in beats per minute, rounded to the specified number of decimal places.
-        /// Decimal places must be between 0 and c_maxPrecisionDecimalPlaces inclusive.
-        /// Note: It is not guaranteed that the rounded value can be converted back to the same TempoValue.
+        /// Use this instead of roundTo(tempo.getBpm(), decimalPlaces), since the latter isn't guaranteed to be valid
+        /// for all TempoValues. Decimal places must be between 0 and c_maxPrecisionDecimalPlaces inclusive.
+        /// If the returned value is converted back to a TempoValue, that value is not guaranteed to be the same as
+        /// this.
         double getBpmRounded(int decimalPlaces) const;
 
-        /// Get the range of representable BPM values whose endpoints round-trip unchanged at the given precision.
+        /// Get the range of representable BPM values whose endpoints are valid and stable at the given precision.
         /// Decimal places must be between 0 and c_maxPrecisionDecimalPlaces inclusive.
         /// Note: While the endpoints of the range are guaranteed to round-trip unchanged, there is no guarantee
         /// that other values within the range will round-trip unchanged.
         /// This is intended for UI use, where the user should be able to select value within the representable range.
-        /// Although values in this range may not be stable, it does not make sense to provide min and max values that
-        /// are not stable.
         static babelwires::Range<double> getBpmRangeRounded(int decimalPlaces);
 
         /// The maximum number of decimal places that can be used for rounding BPM values where every value at the
@@ -80,7 +84,10 @@ namespace bw_music {
         /// desirable. The returned ranges are: [4, 7811], [3.6, 2462.6], [3.58, 775.72] and [3.577, 245.316]
         static babelwires::Range<double> getBpmStableRangeRounded(int lowDecimalPlaces);
 
-        auto operator<=>(const TempoValue&) const = default;
+        bool operator==(const TempoValue& other) const = default;
+        auto operator<=>(const TempoValue& other) const {
+            return other.m_microsecondsPerQuaternote <=> m_microsecondsPerQuaternote;
+        }
 
         /// Serialization
         std::string serializeToString() const;
