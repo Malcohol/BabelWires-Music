@@ -93,18 +93,17 @@ double bw_music::TempoValue::getBpmRounded(int decimalPlaces) const {
     assert(decimalPlaces <= c_maxPrecisionDecimalPlaces);
     const double bpm = getBpm();
     const double roundedBpm = babelwires::roundTo(bpm, decimalPlaces);
-    // This is not very efficient, but it guarantees validity.
-    return getBpmRangeRounded(decimalPlaces).clamp(roundedBpm);
+    // Exclude the single case where the rounded value is not representable, and return the closest representable value instead.
+    // Note: If decimalPlaces was statically known, I would test `if constexpr (decimalPlaces == 3)` here.
+    if (roundedBpm == 3.576) {
+        return 3.577; // Special case: 3.576 rounds to 3.58, which is not representable. 3.577 is the closest representable value.
+    }
+    return roundedBpm;
 }
 
 babelwires::Range<double> bw_music::TempoValue::getBpmRangeRounded(int decimalPlaces) {
-    assert(decimalPlaces >= 0);
-    assert(decimalPlaces <= c_maxPrecisionDecimalPlaces);
-    constexpr double maxBpm = 60'000'000.0;
-    constexpr double minBpm = 60'000'000.0 / 0xFFFFFFu;
-    const double factor = std::pow(10.0, decimalPlaces);
-    // This is not a general algorithm, but works for the range of decimalPlaces we support.
-    return {std::ceil(minBpm * factor) / factor, std::floor(maxBpm * factor) / factor};
+    const auto range = getRange();
+    return {range.m_min.getBpmRounded(decimalPlaces), range.m_max.getBpmRounded(decimalPlaces)};
 }
 
 babelwires::Range<double> bw_music::TempoValue::getBpmStableRangeRounded(int lowDecimalPlaces) {

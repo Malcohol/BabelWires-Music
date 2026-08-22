@@ -83,6 +83,19 @@ TEST(TempoValueTest, DefaultValueIsStable) {
     }
 }
 
+TEST(TempoValueTest, roundedValuesAreValid) {
+    // Limit the test to the edge cases of the range. Everything between those values can be assumed to be valid.
+    const auto bpmRange = bw_music::TempoValue::getRange();
+    for (int decimalPlaces = 0; decimalPlaces <= bw_music::TempoValue::c_maxPrecisionDecimalPlaces; ++decimalPlaces) {
+        const double step = std::pow(10.0, -decimalPlaces);
+        const double roundedMinBpm = bpmRange.m_min.getBpmRounded(decimalPlaces);
+        const double roundedMaxBpm = bpmRange.m_max.getBpmRounded(decimalPlaces);
+        // 
+        EXPECT_TRUE(isStableBpm(roundedMinBpm, decimalPlaces));
+        EXPECT_TRUE(isStableBpm(roundedMaxBpm, decimalPlaces));
+    }
+}
+
 TEST(TempoValueTest, BpmRangeEndpointsAreStable) {
     for (int decimalPlaces = 0; decimalPlaces <= bw_music::TempoValue::c_maxPrecisionDecimalPlaces; ++decimalPlaces) {
         const auto bpmRange = bw_music::TempoValue::getBpmRangeRounded(decimalPlaces);
