@@ -293,8 +293,7 @@ TEST(SmfTestSuiteTest, tempoTest) {
 
         const auto& metadata = smfSequence.getMeta();
         ASSERT_TRUE(metadata.tryGetITempo().has_value());
-        EXPECT_EQ(metadata.tryGetITempo()->get().getNumerator(), 10000);
-        EXPECT_EQ(metadata.tryGetITempo()->get().getPrecision(), 2);
+        EXPECT_EQ(metadata.tryGetITempo()->get(), babelwires::Fixed(10000, 2));
 
         const auto& globalTrack = smfSequence.getGlobal().get();
         auto [tempoBegin, tempoEnd] = bw_music::iterateOver<bw_music::TempoEvent>(globalTrack);
