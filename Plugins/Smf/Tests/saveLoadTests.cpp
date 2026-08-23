@@ -112,7 +112,8 @@ namespace {
         }
         if (flags & HAS_TEMPO) {
             ASSERT_TRUE(metadata.tryGetITempo());
-            EXPECT_EQ(metadata.tryGetITempo()->get(), 100);
+            EXPECT_EQ(metadata.tryGetITempo()->get().getNumerator(), 10000);
+            EXPECT_EQ(metadata.tryGetITempo()->get().getPrecision(), 2);
 
             const auto& globalTrack = smfType.getGlobal().get();
             auto [tempoBegin, tempoEnd] = bw_music::iterateOver<bw_music::TempoEvent>(globalTrack);

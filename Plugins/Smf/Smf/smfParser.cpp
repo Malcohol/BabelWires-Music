@@ -24,6 +24,7 @@
 
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/File/fileTypeT.hpp>
+#include <BaseLib/Math/fixed.hpp>
 #include <BaseLib/Context/context.hpp>
 
 #include <BaseLib/Log/debugLogger.hpp>
@@ -246,9 +247,8 @@ babelwires::Result smf::SmfParser::readTempoEvent(int trackIndex, bw_music::Mode
 
     // TODO: Always activate the ITempo field, since 120 bpm should be assumed if no other tempo event is present.
     if (absoluteTime == 0) {
-        const int roundedBpm = std::round(60'000'000.0 / static_cast<double>(tempoValue));
-
-        getMidiMetadata().activateAndGetITempo().set(roundedBpm);
+        const double roundedBpm = tempo.getBpmRounded(2);
+        getMidiMetadata().activateAndGetITempo().set(babelwires::Fixed::assertFromDouble(roundedBpm, 2));
     }
     return {};
 }

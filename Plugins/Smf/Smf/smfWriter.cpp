@@ -363,7 +363,7 @@ void smf::SmfWriter::writeGlobalSetup(const bw_music::Track* globalTrack) {
                 << "The global track has a tempo event at time 0, so the explicitly set initial tempo will be ignored.";
         } else {
             writeModelDuration(0);
-            writeTempoEvent(bw_music::TempoEvent(0, static_cast<double>(initialTempo->get())).getTempoValue());
+            writeTempoEvent(bw_music::TempoEvent(0, initialTempo->get().toDouble()).getTempoValue());
         }
         // MAYBEDO If neither then write a 120 bpm tempo event, since that is the MIDI default.
     }
