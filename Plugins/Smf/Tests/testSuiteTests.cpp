@@ -6,6 +6,8 @@
 
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/percussionEvents.hpp>
+#include <MusicLib/Types/Track/TrackEvents/pitchBendEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/sustainEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/tempoEvent.hpp>
 #include <MusicLib/Utilities/filteredTrackIterator.hpp>
 #include <MusicLib/libRegistration.hpp>
@@ -331,6 +333,89 @@ TEST(SmfTestSuiteTest, corruptFiles) {
         midiFile.closeOnError();
         EXPECT_FALSE(result.has_value());
     }
+}
+
+TEST(SmfTestSuiteTest, sustainEvents) {
+    testUtils::TestEnvironment testEnvironment;
+    bw_music::registerLib(testEnvironment.m_projectContext);
+    ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
+
+    auto midiFileResult = babelwires::FileDataSource::open("test-control-40-damper.mid");
+    ASSERT_TRUE(midiFileResult.has_value());
+    auto midiFile = std::move(*midiFileResult);
+
+    auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+    ASSERT_TRUE(midiFile.close().has_value());
+    ASSERT_TRUE(result.has_value());
+    const auto& feature = *result;
+
+    smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
+    ASSERT_EQ(smfSequence.getInstanceType().getIndexOfTag(smfSequence.getSelectedTag()), 0);
+
+    auto tracks = smfSequence.getTrcks0();
+    auto track0 = tracks.tryGetTrack(0);
+    ASSERT_TRUE(track0.has_value());
+
+    const bw_music::Track& track = track0->get();
+    auto [sustainBegin, sustainEnd] = bw_music::iterateOver<bw_music::SustainEvent>(track);
+
+    // From test-control-40-damper.js at division 96:
+    // first sustain: 4 * tick(96) + tick(480) = 864 ticks = 9/4;
+    // second sustain delta: 4 * tick(96) + tick(192) = 576 ticks = 3/2.
+
+    ASSERT_NE(sustainBegin, sustainEnd);
+    EXPECT_TRUE(sustainBegin->isSustainOn());
+    EXPECT_EQ(sustainBegin->getSustainStorage().getUnsigned<7>(), 127);
+    EXPECT_EQ(sustainBegin->getTimeSinceLastEvent(), babelwires::Rational(9, 4));
+    ++sustainBegin;
+
+    ASSERT_NE(sustainBegin, sustainEnd);
+    EXPECT_FALSE(sustainBegin->isSustainOn());
+    EXPECT_EQ(sustainBegin->getSustainStorage().getUnsigned<7>(), 0);
+    EXPECT_EQ(sustainBegin->getTimeSinceLastEvent(), babelwires::Rational(3, 2));
+    ++sustainBegin;
+
+    EXPECT_EQ(sustainBegin, sustainEnd);
+}
+
+TEST(SmfTestSuiteTest, pitchBend) {
+    testUtils::TestEnvironment testEnvironment;
+    bw_music::registerLib(testEnvironment.m_projectContext);
+    ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
+
+    auto midiFileResult = babelwires::FileDataSource::open("test-rpn-00-00-pitch-bend-range.mid");
+    ASSERT_TRUE(midiFileResult.has_value());
+    auto midiFile = std::move(*midiFileResult);
+
+    auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+    ASSERT_TRUE(midiFile.close().has_value());
+    ASSERT_TRUE(result.has_value());
+    const auto& feature = *result;
+
+    smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
+    ASSERT_EQ(smfSequence.getInstanceType().getIndexOfTag(smfSequence.getSelectedTag()), 0);
+
+    auto tracks = smfSequence.getTrcks0();
+    auto track0 = tracks.tryGetTrack(0);
+    ASSERT_TRUE(track0.has_value());
+
+    const bw_music::Track& track = track0->get();
+    auto [pitchBendBegin, pitchBendEnd] = bw_music::iterateOver<bw_music::PitchBendEvent>(track);
+
+    int numPitchBendEvents = 0;
+    std::uint16_t minPitchBendValue = 0x3fffu;
+    std::uint16_t maxPitchBendValue = 0;
+    for (auto it = pitchBendBegin; it != pitchBendEnd; ++it) {
+        const auto value = static_cast<std::uint16_t>(it->getPitchBendStorage().getUnsigned<14>());
+        minPitchBendValue = std::min(minPitchBendValue, value);
+        maxPitchBendValue = std::max(maxPitchBendValue, value);
+        ++numPitchBendEvents;
+    }
+
+    // The JS generator emits five bend() sections with 192 + 384 + 192 bends each.
+    EXPECT_EQ(numPitchBendEvents, 5 * (192 + 384 + 192));
+    EXPECT_EQ(minPitchBendValue, 0);
+    EXPECT_EQ(maxPitchBendValue, 0x3fffu);
 }
 
 TEST(SmfTestSuiteTest, testAllGMPercussion) {
