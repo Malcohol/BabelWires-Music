@@ -7,10 +7,12 @@
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/percussionEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/pitchBendEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/volumeEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/sustainEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/tempoEvent.hpp>
 #include <MusicLib/Utilities/filteredTrackIterator.hpp>
 #include <MusicLib/libRegistration.hpp>
+#include <MusicLib/Types/Track/TrackEvents/expressionEvent.hpp>
 
 #include <BaseLib/IO/fileDataSource.hpp>
 
@@ -298,16 +300,16 @@ TEST(SmfTestSuiteTest, tempoTest) {
         EXPECT_EQ(metadata.tryGetITempo()->get(), babelwires::Fixed(10000, 2));
 
         const auto& globalTrack = smfSequence.getGlobal().get();
-        auto [tempoBegin, tempoEnd] = bw_music::iterateOver<bw_music::TempoEvent>(globalTrack);
+        auto [tempoIt, tempoEnd] = bw_music::iterateOver<bw_music::TempoEvent>(globalTrack);
 
         for (int i = 0; i < 4; ++i) {
-            ASSERT_NE(tempoBegin, tempoEnd);
+            ASSERT_NE(tempoIt, tempoEnd);
             // Not all of the tempo values are perfectly represented in MIDI tempo storage.
-            EXPECT_EQ(tempoBegin->getTempoValue().getBpmRounded(2), expectedBpms[i]);
-            EXPECT_EQ(tempoBegin->getTimeSinceLastEvent(), expectedDeltaTimes[i]);
-            ++tempoBegin;
+            EXPECT_EQ(tempoIt->getTempoValue().getBpmRounded(2), expectedBpms[i]);
+            EXPECT_EQ(tempoIt->getTimeSinceLastEvent(), expectedDeltaTimes[i]);
+            ++tempoIt;
         }
-        EXPECT_EQ(tempoBegin, tempoEnd);
+        EXPECT_EQ(tempoIt, tempoEnd);
     }
 }
 
@@ -357,25 +359,120 @@ TEST(SmfTestSuiteTest, sustainEvents) {
     ASSERT_TRUE(track0.has_value());
 
     const bw_music::Track& track = track0->get();
-    auto [sustainBegin, sustainEnd] = bw_music::iterateOver<bw_music::SustainEvent>(track);
+    auto [sustainIt, sustainEnd] = bw_music::iterateOver<bw_music::SustainEvent>(track);
 
     // From test-control-40-damper.js at division 96:
     // first sustain: 4 * tick(96) + tick(480) = 864 ticks = 9/4;
     // second sustain delta: 4 * tick(96) + tick(192) = 576 ticks = 3/2.
 
-    ASSERT_NE(sustainBegin, sustainEnd);
-    EXPECT_TRUE(sustainBegin->isSustainOn());
-    EXPECT_EQ(sustainBegin->getSustainStorage().getUnsigned<7>(), 127);
-    EXPECT_EQ(sustainBegin->getTimeSinceLastEvent(), babelwires::Rational(9, 4));
-    ++sustainBegin;
+    ASSERT_NE(sustainIt, sustainEnd);
+    EXPECT_TRUE(sustainIt->isSustainOn());
+    EXPECT_EQ(sustainIt->getSustainStorage().getUnsigned<7>(), 127);
+    EXPECT_EQ(sustainIt->getTimeSinceLastEvent(), babelwires::Rational(9, 4));
+    ++sustainIt;
 
-    ASSERT_NE(sustainBegin, sustainEnd);
-    EXPECT_FALSE(sustainBegin->isSustainOn());
-    EXPECT_EQ(sustainBegin->getSustainStorage().getUnsigned<7>(), 0);
-    EXPECT_EQ(sustainBegin->getTimeSinceLastEvent(), babelwires::Rational(3, 2));
-    ++sustainBegin;
+    ASSERT_NE(sustainIt, sustainEnd);
+    EXPECT_FALSE(sustainIt->isSustainOn());
+    EXPECT_EQ(sustainIt->getSustainStorage().getUnsigned<7>(), 0);
+    EXPECT_EQ(sustainIt->getTimeSinceLastEvent(), babelwires::Rational(3, 2));
+    ++sustainIt;
 
-    EXPECT_EQ(sustainBegin, sustainEnd);
+    EXPECT_EQ(sustainIt, sustainEnd);
+}
+
+TEST(SmfTestSuiteTest, volumeEvents) {
+    testUtils::TestEnvironment testEnvironment;
+    bw_music::registerLib(testEnvironment.m_projectContext);
+    ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
+
+    auto midiFileResult = babelwires::FileDataSource::open("test-control-07-volume.mid");
+    ASSERT_TRUE(midiFileResult.has_value());
+    auto midiFile = std::move(*midiFileResult);
+
+    auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+    ASSERT_TRUE(midiFile.close().has_value());
+    ASSERT_TRUE(result.has_value());
+    const auto& feature = *result;
+
+    smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
+    ASSERT_EQ(smfSequence.getInstanceType().getIndexOfTag(smfSequence.getSelectedTag()), 0);
+
+    const auto& metadata = smfSequence.getMeta();
+    ASSERT_TRUE(metadata.tryGetName().has_value());
+    EXPECT_EQ(metadata.tryGetName()->get(), u8"Control 0x07 Volume Test");
+
+    auto tracks = smfSequence.getTrcks0();
+    auto track0 = tracks.tryGetTrack(0);
+    ASSERT_TRUE(track0.has_value());
+
+    const bw_music::Track& track = track0->get();
+    auto [volumeIt, volumeEnd] = bw_music::iterateOver<bw_music::VolumeEvent>(track);
+
+    ASSERT_NE(volumeIt, volumeEnd);
+    EXPECT_EQ(volumeIt->getVolumeStorage().getUnsigned<7>(), 64);
+    EXPECT_EQ(volumeIt->getTimeSinceLastEvent(), babelwires::Rational(1, 2));
+    ++volumeIt;
+
+    ASSERT_NE(volumeIt, volumeEnd);
+    EXPECT_EQ(volumeIt->getVolumeStorage().getUnsigned<7>(), 127);
+    EXPECT_EQ(volumeIt->getTimeSinceLastEvent(), babelwires::Rational(1, 2));
+    ++volumeIt;
+
+    EXPECT_EQ(volumeIt, volumeEnd);
+}
+
+TEST(SmfTestSuiteTest, expressionSwellEvents) {
+    testUtils::TestEnvironment testEnvironment;
+    bw_music::registerLib(testEnvironment.m_projectContext);
+    ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
+
+    auto midiFileResult = babelwires::FileDataSource::open("test-control-0b-expression-swell.mid");
+    ASSERT_TRUE(midiFileResult.has_value());
+    auto midiFile = std::move(*midiFileResult);
+
+    auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+    ASSERT_TRUE(midiFile.close().has_value());
+    ASSERT_TRUE(result.has_value());
+    const auto& feature = *result;
+
+    smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
+    ASSERT_EQ(smfSequence.getInstanceType().getIndexOfTag(smfSequence.getSelectedTag()), 0);
+
+    const auto& metadata = smfSequence.getMeta();
+    ASSERT_TRUE(metadata.tryGetName().has_value());
+    EXPECT_EQ(metadata.tryGetName()->get(), u8"Control 0x0B Expression Swell Test");
+
+    auto tracks = smfSequence.getTrcks0();
+    auto track0 = tracks.tryGetTrack(0);
+    ASSERT_TRUE(track0.has_value());
+
+    const bw_music::Track& track = track0->get();
+    auto [expressionBegin, expressionEnd] = bw_music::iterateOver<bw_music::ExpressionEvent>(track);
+
+    int numExpressionEvents = 0;
+    int numFineResolutionEvents = 0;
+    int numZeroDeltaEvents = 0;
+    int numStaggeredDeltaEvents = 0;
+    for (auto it = expressionBegin; it != expressionEnd; ++it) {
+        const std::uint64_t value14 = it->getExpressionStorage().getUnsigned<14>();
+        if ((value14 % 129) != 0) {
+            ++numFineResolutionEvents;
+        }
+        if (it->getTimeSinceLastEvent() == babelwires::Rational(0, 1)) {
+            ++numZeroDeltaEvents;
+        }
+        if (it->getTimeSinceLastEvent() == babelwires::Rational(1, 128)) {
+            ++numStaggeredDeltaEvents;
+        }
+        ++numExpressionEvents;
+    }
+
+    // The JS fixture emits 32 coarse MSB-only updates, 32 paired MSB+LSB updates,
+    // and 32 staggered MSB/LSB updates.
+    EXPECT_EQ(numExpressionEvents, 32 + 64 + 64);
+    EXPECT_GT(numFineResolutionEvents, 0);
+    EXPECT_GT(numZeroDeltaEvents, 0);
+    EXPECT_GT(numStaggeredDeltaEvents, 0);
 }
 
 TEST(SmfTestSuiteTest, pitchBend) {
