@@ -31,6 +31,7 @@ SET( MUSICLIB_SRCS
 	Functions/transposeFunction.cpp
 	Types/chordTypeSet.cpp
 	Types/genericAccompaniment.cpp
+	Types/Tempo/tempo.cpp
 	Types/Track/TrackEvents/chordEvents.cpp
 	Types/Track/TrackEvents/notePressureEvent.cpp
 	Types/Track/TrackEvents/expressionEvent.cpp
