@@ -77,6 +77,9 @@ namespace smf {
 
         template <std::size_t N> void writeMessage(const std::array<std::uint8_t, N>& message);
 
+        /// Assumes timeSinceLastEvent has already been written
+        void write14bitControllerEventContents(int channelNumber, babelwires::Byte controllerMsb, babelwires::Byte controllerLsb, std::uint32_t value);
+
       private:
         const babelwires::Context& m_projectContext;
         babelwires::UserLogger& m_userLogger;

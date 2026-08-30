@@ -600,12 +600,12 @@ babelwires::ResultT<bool> smf::SmfParser::readControlChange(TrackSplitter& track
             // bank select MSB
             setBankMSB(channelNumber, value);
             return false;
-        case c_volumeController: {
+        case c_volumeMsbController: {
             ASSIGN_OR_ERROR(const bw_music::ControllerStorage volume,
                             bw_music::ControllerStorage::fromUnsigned<7>(value));
             return tracks.addEvent<bw_music::VolumeEvent>(channelNumber, timeSinceLastTrackEvent, volume);
         }
-        case c_panController: {
+        case c_panMsbController: {
             ASSIGN_OR_ERROR(bw_music::CentredControllerStorage pan,
                             bw_music::MinCentreMaxValue32::fromUnsigned<7>(value));
             return tracks.addEvent<bw_music::PanEvent>(channelNumber, timeSinceLastTrackEvent, std::move(pan));

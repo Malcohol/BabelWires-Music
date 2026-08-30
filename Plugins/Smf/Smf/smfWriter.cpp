@@ -140,6 +140,26 @@ void smf::SmfWriter::writeHeaderChunk(unsigned int numTracks) {
     writeUint16(m_division);
 }
 
+void smf::SmfWriter::write14bitControllerEventContents(int channelNumber, babelwires::Byte controllerMsb,
+                                                       babelwires::Byte controllerLsb, std::uint32_t value) {
+    assert((channelNumber >= 0) && (channelNumber <= 15) && "Channel number is out-of-range.");
+    assert(value <= 0x3fff && "Value is out-of-range.");
+    assert(controllerMsb <= 0x7F && "Controller MSB is out-of-range.");
+    assert(controllerLsb <= 0x7F && "Controller LSB is out-of-range.");
+    const std::uint8_t msb = (value >> 7) & 0x7F;
+    const std::uint8_t lsb = value & 0x7F;
+    m_os->put(0b10110000 | channelNumber);
+    m_os->put(controllerMsb);
+    m_os->put(msb);
+    // Note: We cannot optimize away the LSB event even if the LSB is zero: The parser interprets an MSB with no LSB as
+    // a 7-bit value which will get scaled. This is not the same as writing an MSB with a zero LSB explicitly.
+    // TODO It would be possible to maintain the running state and skip either the MSB or LSB if it hasn't changed.
+    writeModelDuration(0);
+    m_os->put(0b10110000 | channelNumber);
+    m_os->put(controllerLsb);
+    m_os->put(lsb);
+}
+
 smf::SmfWriter::WriteTrackEventResult smf::SmfWriter::writeTrackEvent(int channelNumber,
                                                                       bw_music::ModelDuration timeSinceLastEvent,
                                                                       const bw_music::TrackEvent& e) {
@@ -157,22 +177,21 @@ smf::SmfWriter::WriteTrackEventResult smf::SmfWriter::writeTrackEvent(int channe
         if (const auto* pan = e.tryAs<bw_music::PanEvent>()) {
             writeModelDuration(timeSinceLastEvent);
             m_os->put(0b10110000 | channelNumber);
-            m_os->put(c_panController);
+            m_os->put(c_panMsbController);
             m_os->put(pan->getPanStorage().getUnsigned<7>());
             return WriteTrackEventResult::Written;
         }
         if (const auto* volume = e.tryAs<bw_music::VolumeEvent>()) {
             writeModelDuration(timeSinceLastEvent);
             m_os->put(0b10110000 | channelNumber);
-            m_os->put(c_volumeController);
+            m_os->put(c_volumeMsbController);
             m_os->put(volume->getVolumeStorage().getUnsigned<7>());
             return WriteTrackEventResult::Written;
         }
         if (const auto* expression = e.tryAs<bw_music::ExpressionEvent>()) {
             writeModelDuration(timeSinceLastEvent);
-            m_os->put(0b10110000 | channelNumber);
-            m_os->put(c_expressionMsbController);
-            m_os->put(expression->getExpressionStorage().getUnsigned<7>());
+            write14bitControllerEventContents(channelNumber, c_expressionMsbController, c_expressionLsbController,
+                                              expression->getExpressionStorage().getUnsigned<14>());
             return WriteTrackEventResult::Written;
         }
         if (const auto* sustain = e.tryAs<bw_music::SustainEvent>()) {

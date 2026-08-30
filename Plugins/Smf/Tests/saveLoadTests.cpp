@@ -133,8 +133,12 @@ namespace {
                                           bw_music::CentredControllerStorage::assertFromUnsigned<32>(0u)));
         track.addEvent(bw_music::VolumeEvent(babelwires::Rational(1, 16),
                                              bw_music::ControllerStorage::assertFromUnsigned<7>(127u)));
+        //track.addEvent(bw_music::ExpressionEvent(babelwires::Rational(1, 16),
+        //                                         bw_music::ControllerStorage::assertFromUnsigned<7>(0u)));
         track.addEvent(bw_music::ExpressionEvent(babelwires::Rational(1, 16),
-                                                 bw_music::ControllerStorage::assertFromUnsigned<7>(0u)));
+                                                bw_music::ControllerStorage::assertFromUnsigned<14>(0x2000u)));
+        //track.addEvent(bw_music::ExpressionEvent(babelwires::Rational(1, 16),
+        //                                         bw_music::ControllerStorage::assertFromUnsigned<14>(0x0f0fu)));
         track.addEvent(bw_music::SustainEvent(babelwires::Rational(1, 16),
                                               bw_music::ControllerStorage::assertFromUnsigned<7>(127u)));
         track.addEvent(bw_music::PitchBendEvent(babelwires::Rational(1, 16),

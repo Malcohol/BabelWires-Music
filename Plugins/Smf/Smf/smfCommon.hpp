@@ -13,8 +13,8 @@ namespace smf {
     using TypeOfTracks = bw_music::DefaultTrackType;
 
     constexpr babelwires::Byte c_bankSelectMsbController = 0x00;
-    constexpr babelwires::Byte c_volumeController = 0x07;
-    constexpr babelwires::Byte c_panController = 0x0A;
+    constexpr babelwires::Byte c_volumeMsbController = 0x07;
+    constexpr babelwires::Byte c_panMsbController = 0x0A;
     constexpr babelwires::Byte c_expressionMsbController = 0x0B;
     constexpr babelwires::Byte c_expressionLsbController = 0x2B;
     constexpr babelwires::Byte c_bankSelectLsbController = 0x20;
