@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include <MusicLib/Types/Track/TrackEvents/expressionEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/Types/Track/trackBuilder.hpp>
 #include <MusicLib/Utilities/trackValidator.hpp>
@@ -147,6 +148,28 @@ TEST(TrackBuilderTest, builder_validSimple) {
     EXPECT_EQ(track.getTotalEventDuration(), builtTrack.getDuration());
     EXPECT_EQ(track.getTotalEventDuration(), builtTrack.getTotalEventDuration());
     EXPECT_EQ(track.getNumEvents(), builtTrack.getNumEvents());
+}
+
+TEST(TrackBuilderTest, builder_sameTimeLaterExpressionSubsumesEarlierExpression) {
+    testUtils::TestLog log;
+
+    bw_music::TrackBuilder trackBuilder;
+
+    trackBuilder.addEvent(bw_music::ExpressionEvent(babelwires::Rational(1, 4), 0.25));
+    trackBuilder.addEvent(bw_music::ExpressionEvent(0, 0.75));
+
+    auto builtTrack = trackBuilder.finishAndGetTrack();
+
+    EXPECT_TRUE(bw_music::isTrackValid(builtTrack));
+    EXPECT_EQ(builtTrack.getDuration(), babelwires::Rational(1, 4));
+    EXPECT_EQ(builtTrack.getTotalEventDuration(), babelwires::Rational(1, 4));
+    EXPECT_EQ(builtTrack.getNumEvents(), 1);
+
+    auto it = builtTrack.begin();
+    ASSERT_NE(it, builtTrack.end());
+    ASSERT_NE(it->tryAs<bw_music::ExpressionEvent>(), nullptr);
+    EXPECT_EQ(it->tryAs<bw_music::ExpressionEvent>()->getExpressionStorage(),
+              bw_music::ControllerStorage::assertFromNormalizedDouble(0.75));
 }
 
 TEST(TrackBuilderTest, builder_InvalidSimpleZeroLengthNote) {

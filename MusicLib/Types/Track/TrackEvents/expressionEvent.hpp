@@ -9,14 +9,16 @@
 
 #include <MusicLib/musicLibExport.hpp>
 
+#include <MusicLib/Types/Track/TrackEvents/Interfaces/simultaneousEventSubsumptionInterface.hpp>
 #include <MusicLib/Types/Track/TrackEvents/trackEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/trackEventCommon.hpp>
 
 namespace bw_music {
     /// Channel-voice event controlling the expression of a channel.
-    struct MUSICLIB_API ExpressionEvent : public TrackEvent {
+  struct MUSICLIB_API ExpressionEvent : public TrackEvent, public SimultaneousEventSubsumptionInterface {
         DOWNCASTABLE(ExpressionEvent, TrackEvent);
         STREAM_EVENT(ExpressionEvent);
+        QUERYABLE_INTERFACE_PROVIDER(TrackEvent, SimultaneousEventSubsumptionInterface);
 
         /// Construct from a normalized level in the range [0.0, 1.0].
         /// Asserts that the value is in range.
@@ -34,6 +36,7 @@ namespace bw_music {
         ControllerStorage getExpressionStorage() const;
 
         std::size_t getHash() const override;
+        std::unique_ptr<SimultaneousEventSession> createSimultaneousEventSession() override;
 
       protected:
         bool doIsEqualTo(const TrackEvent& other) const override;

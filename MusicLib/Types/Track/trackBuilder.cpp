@@ -7,6 +7,7 @@
  **/
 #include <MusicLib/Types/Track/trackBuilder.hpp>
 
+#include <MusicLib/Types/Track/TrackEvents/Interfaces/simultaneousEventSubsumptionInterface.hpp>
 #include <MusicLib/Types/Track/TrackEvents/Interfaces/startEventInterface.hpp>
 
 bw_music::TrackBuilder::TrackBuilder() {}
@@ -14,39 +15,46 @@ bw_music::TrackBuilder::TrackBuilder() {}
 bw_music::TrackBuilder::TrackBuilder(Track startState)
     : m_track(std::move(startState)) {}
 
-bool bw_music::TrackBuilder::onNewEvent(const TrackEvent& event) {
-    const TrackEvent::GroupingInfo groupInfo = event.getGroupingInfo();
-    if (groupInfo.m_groupRole == TrackEvent::GroupRole::NotInGroup) {
-        return true;
-    }
-    if (!m_eventsAtCurrentTime.empty()) {
-        m_eventsAtCurrentTime.emplace_back(event);
-        return false;
-    }
-    const auto it = m_activeGroups.find(groupInfo.m_groupKey);
-    if (it == m_activeGroups.end()) {
-        if (groupInfo.m_groupRole == TrackEvent::GroupRole::StartOfGroup) {
-            m_eventsAtCurrentTime.emplace_back(event);
-            // This is the necessarily the first event that will end up in m_eventsAtCurrentTime,
-            // so the only one that could be carrying any time.
-            m_eventsAtCurrentTime.back()->setTimeSinceLastEvent(0);
-            return false;
+void bw_music::TrackBuilder::bufferEvent(const TrackEvent& event) {
+    m_timeSinceLastEvent += event.getTimeSinceLastEvent();
+    m_eventsAtCurrentTime.emplace_back(event);
+    m_eventsAtCurrentTime.back()->setTimeSinceLastEvent(0);
+}
+
+void bw_music::TrackBuilder::bufferEvent(TrackEvent&& event) {
+    m_timeSinceLastEvent += event.getTimeSinceLastEvent();
+    event.setTimeSinceLastEvent(0);
+    m_eventsAtCurrentTime.emplace_back(std::move(event));
+}
+
+void bw_music::TrackBuilder::coalesceEventsAtCurrentTime() {
+    for (std::size_t i = m_eventsAtCurrentTime.size(); i-- > 1;) {
+        if (auto& laterEvent = m_eventsAtCurrentTime[i]) {
+            auto* subsumingEvent = laterEvent->tryInterface<SimultaneousEventSubsumptionInterface>();
+            if (!subsumingEvent) {
+                continue;
+            }
+            auto session = subsumingEvent->createSimultaneousEventSession();
+            for (std::size_t j = i; j-- > 0;) {
+                if (auto& earlierEvent = m_eventsAtCurrentTime[j]) {
+                    switch (session->onEarlierEvent(*earlierEvent)) {
+                        case SimultaneousEventSession::EventAndTraversalAction::KeepAndContinue:
+                            break;
+                        case SimultaneousEventSession::EventAndTraversalAction::RemoveAndContinue:
+                            earlierEvent.reset();
+                            break;
+                        case SimultaneousEventSession::EventAndTraversalAction::KeepAndStop:
+                            j = 0;
+                            break;
+                        case SimultaneousEventSession::EventAndTraversalAction::RemoveAndStop:
+                            earlierEvent.reset();
+                            j = 0;
+                            break;
+                    }
+                }
+            }
         }
-    } else {
-        if (groupInfo.m_groupRole == TrackEvent::GroupRole::EndOfGroup) {
-            m_activeGroups.erase(it);
-            return true;
-        } else if (groupInfo.m_groupRole == TrackEvent::GroupRole::EnclosedInGroup) {
-            return true;
-        } else if (groupInfo.m_groupRole == TrackEvent::GroupRole::StartOfGroup) {
-            m_eventsAtCurrentTime.emplace_back(event);
-            // This is the necessarily the first event that will end up in m_eventsAtCurrentTime,
-            // so the only one that could be carrying any time.
-            m_eventsAtCurrentTime.back()->setTimeSinceLastEvent(0);
-            return false;
-        }
     }
-    return false;
 }
 
 void bw_music::TrackBuilder::addEvent(const TrackEvent& event) {
@@ -54,11 +62,7 @@ void bw_music::TrackBuilder::addEvent(const TrackEvent& event) {
     if (event.getTimeSinceLastEvent() > 0) {
         processEventsAtCurrentTime(false);
     }
-    if (onNewEvent(event)) {
-        issueEvent(event);
-    } else {
-        m_timeSinceLastEvent += event.getTimeSinceLastEvent();
-    }
+    bufferEvent(event);
 }
 
 void bw_music::TrackBuilder::addEvent(TrackEvent&& event) {
@@ -66,11 +70,7 @@ void bw_music::TrackBuilder::addEvent(TrackEvent&& event) {
     if (event.getTimeSinceLastEvent() > 0) {
         processEventsAtCurrentTime(false);
     }
-    if (onNewEvent(event)) {
-        issueEvent(std::move(event));
-    } else {
-        m_timeSinceLastEvent += event.getTimeSinceLastEvent();
-    }
+    bufferEvent(std::move(event));
 }
 
 void bw_music::TrackBuilder::issueEvent(const TrackEvent& event) {
@@ -94,12 +94,16 @@ void bw_music::TrackBuilder::issueEvent(TrackEvent&& event) {
 
 void bw_music::TrackBuilder::processEventsAtCurrentTime(bool atEndOfTrack) {
     // Note: In general, the number of events being processed by this algorithm will be very small.
+    coalesceEventsAtCurrentTime();
+
     unsigned int i = 0;
     while (i < m_eventsAtCurrentTime.size()) {
         if (auto& event = m_eventsAtCurrentTime[i]) {
             const TrackEvent::GroupingInfo groupInfo = event->getGroupingInfo();
             const auto activeGroupIt = m_activeGroups.find(groupInfo.m_groupKey);
-            if (groupInfo.m_groupRole == TrackEvent::GroupRole::StartOfGroup) {
+            if (groupInfo.m_groupRole == TrackEvent::GroupRole::NotInGroup) {
+                issueEvent(event.release());
+            } else if (groupInfo.m_groupRole == TrackEvent::GroupRole::StartOfGroup) {
                 // See whether there's a matching end at the same time as the start.
                 unsigned int j = m_eventsAtCurrentTime.size() - 1;
                 while (j >= i + 1) {
@@ -205,5 +209,5 @@ bw_music::Track bw_music::TrackBuilder::finishAndGetTrack(ModelDuration d) {
 }
 
 bw_music::Track bw_music::TrackBuilder::finishAndGetTrack() {
-    return finishAndGetTrack(m_track.getTotalEventDuration());    
+    return finishAndGetTrack(m_track.getTotalEventDuration() + m_timeSinceLastEvent);
 }

@@ -36,7 +36,10 @@ namespace bw_music {
         Track finishAndGetTrack();
 
       private:
-        bool onNewEvent(const TrackEvent& event);
+        void bufferEvent(const TrackEvent& event);
+        void bufferEvent(TrackEvent&& event);
+
+        void coalesceEventsAtCurrentTime();
 
         void processEventsAtCurrentTime(bool atEndOfTrack);
 

@@ -469,7 +469,7 @@ TEST(SmfTestSuiteTest, expressionSwellEvents) {
 
     // The JS fixture emits 32 coarse MSB-only updates, 32 paired MSB+LSB updates,
     // and 32 staggered MSB/LSB updates.
-    EXPECT_EQ(numExpressionEvents, 32 + 64 + 64);
+    EXPECT_EQ(numExpressionEvents, 32 + 32 + 64);
     EXPECT_GT(numFineResolutionEvents, 0);
     EXPECT_GT(numZeroDeltaEvents, 0);
     EXPECT_GT(numStaggeredDeltaEvents, 0);
