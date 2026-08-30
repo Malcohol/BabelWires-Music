@@ -278,13 +278,11 @@ class smf::SmfParser::TrackSplitter {
         if (const bw_music::PercussionSetWithPitchMap* const percussionSet =
                 m_channelSetup[channelNumber].m_kitIfPercussion) {
             if (auto instrument = percussionSet->tryGetInstrumentFromPitch(pitch)) {
-                addEvent<bw_music::PercussionOnEvent>(channelNumber, timeSinceLastTrackEvent, *instrument, velocity);
-                return true;
+                return addEvent<bw_music::PercussionOnEvent>(channelNumber, timeSinceLastTrackEvent, *instrument, velocity);
             }
             return false;
         } else {
-            addEvent<bw_music::NoteOnEvent>(channelNumber, timeSinceLastTrackEvent, pitch, velocity);
-            return true;
+            return addEvent<bw_music::NoteOnEvent>(channelNumber, timeSinceLastTrackEvent, pitch, velocity);
         }
     }
 
@@ -293,27 +291,26 @@ class smf::SmfParser::TrackSplitter {
         if (const bw_music::PercussionSetWithPitchMap* const percussionSet =
                 m_channelSetup[channelNumber].m_kitIfPercussion) {
             if (auto instrument = percussionSet->tryGetInstrumentFromPitch(pitch)) {
-                addEvent<bw_music::PercussionOffEvent>(channelNumber, timeSinceLastTrackEvent, *instrument, velocity);
-                return true;
+                return addEvent<bw_music::PercussionOffEvent>(channelNumber, timeSinceLastTrackEvent, *instrument, velocity);
             }
             return false;
         } else {
-            addEvent<bw_music::NoteOffEvent>(channelNumber, timeSinceLastTrackEvent, pitch, velocity);
-            return true;
+            return addEvent<bw_music::NoteOffEvent>(channelNumber, timeSinceLastTrackEvent, pitch, velocity);
         }
     }
 
     template <typename EVENT_TYPE, typename... ARGS>
-    void addEvent(unsigned int channelNumber, bw_music::ModelDuration timeSinceLastTrackEvent, ARGS&&... args) {
-        addEvent(channelNumber, EVENT_TYPE{timeSinceLastTrackEvent, std::forward<ARGS>(args)...});
+    bool addEvent(unsigned int channelNumber, bw_music::ModelDuration timeSinceLastTrackEvent, ARGS&&... args) {
+        return addEvent(channelNumber, EVENT_TYPE{timeSinceLastTrackEvent, std::forward<ARGS>(args)...});
     }
 
-    void addEvent(unsigned int channelNumber, bw_music::TrackEvent&& event) {
+    bool addEvent(unsigned int channelNumber, bw_music::TrackEvent&& event) {
         PerChannelInfo* channel = getChannel(channelNumber);
         m_timeSinceStart += event.getTimeSinceLastEvent();
         event.setTimeSinceLastEvent(m_timeSinceStart - channel->m_timeOfLastEvent);
         channel->m_track.addEvent(std::move(event));
         channel->m_timeOfLastEvent = m_timeSinceStart;
+        return true;
     }
 
     /// All channels share the duration of the MIDI track.
@@ -591,8 +588,7 @@ babelwires::ResultT<bool> smf::SmfParser::readPolyphonicAftertouch(TrackSplitter
     ASSIGN_OR_ERROR(const bw_music::Pitch pitch, getNext());
     ASSIGN_OR_ERROR(const babelwires::Byte value, getNext());
     ASSIGN_OR_ERROR(const bw_music::ControllerStorage pressure, bw_music::ControllerStorage::fromUnsigned<7>(value));
-    tracks.addEvent<bw_music::NotePressureEvent>(channelNumber, timeSinceLastTrackEvent, pitch, pressure);
-    return true;
+    return tracks.addEvent<bw_music::NotePressureEvent>(channelNumber, timeSinceLastTrackEvent, pitch, pressure);
 }
 
 babelwires::ResultT<bool> smf::SmfParser::readControlChange(TrackSplitter& tracks, unsigned int channelNumber,
@@ -607,20 +603,29 @@ babelwires::ResultT<bool> smf::SmfParser::readControlChange(TrackSplitter& track
         case c_volumeController: {
             ASSIGN_OR_ERROR(const bw_music::ControllerStorage volume,
                             bw_music::ControllerStorage::fromUnsigned<7>(value));
-            tracks.addEvent<bw_music::VolumeEvent>(channelNumber, timeSinceLastTrackEvent, volume);
-            return true;
+            return tracks.addEvent<bw_music::VolumeEvent>(channelNumber, timeSinceLastTrackEvent, volume);
         }
         case c_panController: {
             ASSIGN_OR_ERROR(bw_music::CentredControllerStorage pan,
                             bw_music::MinCentreMaxValue32::fromUnsigned<7>(value));
-            tracks.addEvent<bw_music::PanEvent>(channelNumber, timeSinceLastTrackEvent, std::move(pan));
-            return true;
+            return tracks.addEvent<bw_music::PanEvent>(channelNumber, timeSinceLastTrackEvent, std::move(pan));
         }
-        case c_expressionController: {
+        case c_expressionMsbController: {
+            m_expressionMsbByChannel[channelNumber] = value;
             ASSIGN_OR_ERROR(const bw_music::ControllerStorage expression,
                             bw_music::ControllerStorage::fromUnsigned<7>(value));
-            tracks.addEvent<bw_music::ExpressionEvent>(channelNumber, timeSinceLastTrackEvent, expression);
-            return true;
+            return tracks.addEvent<bw_music::ExpressionEvent>(channelNumber, timeSinceLastTrackEvent, expression);
+        }
+        case c_expressionLsbController: {
+            if (!m_expressionMsbByChannel[channelNumber].has_value()) {
+                return false;
+            }
+            const std::uint16_t expressionValue =
+                static_cast<std::uint16_t>((static_cast<std::uint16_t>(*m_expressionMsbByChannel[channelNumber]) << 7) |
+                                           value);
+            ASSIGN_OR_ERROR(const bw_music::ControllerStorage expression,
+                            bw_music::ControllerStorage::fromUnsigned<14>(expressionValue));
+            return tracks.addEvent<bw_music::ExpressionEvent>(channelNumber, timeSinceLastTrackEvent, expression);
         }
         case c_bankSelectLsbController:
             // bank select LSB
@@ -629,8 +634,7 @@ babelwires::ResultT<bool> smf::SmfParser::readControlChange(TrackSplitter& track
         case c_sustainController: {
             ASSIGN_OR_ERROR(const bw_music::ControllerStorage sustain,
                             bw_music::ControllerStorage::fromUnsigned<7>(value));
-            tracks.addEvent<bw_music::SustainEvent>(channelNumber, timeSinceLastTrackEvent, sustain);
-            return true;
+            return tracks.addEvent<bw_music::SustainEvent>(channelNumber, timeSinceLastTrackEvent, sustain);
         }
         default:
             return false;
@@ -644,8 +648,7 @@ babelwires::ResultT<bool> smf::SmfParser::readPitchBend(TrackSplitter& tracks, u
     const std::uint16_t pitchBendValue = static_cast<std::uint16_t>((static_cast<std::uint16_t>(msb) << 7) | lsb);
     ASSIGN_OR_ERROR(bw_music::CentredControllerStorage pitchBend,
                     bw_music::CentredControllerStorage::fromUnsigned<14>(pitchBendValue));
-    tracks.addEvent<bw_music::PitchBendEvent>(channelNumber, timeSinceLastTrackEvent, std::move(pitchBend));
-    return true;
+    return tracks.addEvent<bw_music::PitchBendEvent>(channelNumber, timeSinceLastTrackEvent, std::move(pitchBend));
 }
 
 babelwires::Result smf::SmfParser::readProgramChange(unsigned int channelNumber) {
@@ -658,8 +661,7 @@ babelwires::ResultT<bool> smf::SmfParser::readChannelPressure(TrackSplitter& tra
                                                               bw_music::ModelDuration timeSinceLastTrackEvent) {
     ASSIGN_OR_ERROR(const babelwires::Byte value, getNext());
     ASSIGN_OR_ERROR(const bw_music::ControllerStorage pressure, bw_music::ControllerStorage::fromUnsigned<7>(value));
-    tracks.addEvent<bw_music::PressureEvent>(channelNumber, timeSinceLastTrackEvent, pressure);
-    return true;
+    return tracks.addEvent<bw_music::PressureEvent>(channelNumber, timeSinceLastTrackEvent, pressure);
 }
 
 babelwires::Result smf::SmfParser::readTrack(int trackIndex, TrackSplitter& tracks, bool hasMainMetadata) {

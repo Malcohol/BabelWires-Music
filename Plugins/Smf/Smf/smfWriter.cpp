@@ -171,7 +171,7 @@ smf::SmfWriter::WriteTrackEventResult smf::SmfWriter::writeTrackEvent(int channe
         if (const auto* expression = e.tryAs<bw_music::ExpressionEvent>()) {
             writeModelDuration(timeSinceLastEvent);
             m_os->put(0b10110000 | channelNumber);
-            m_os->put(c_expressionController);
+            m_os->put(c_expressionMsbController);
             m_os->put(expression->getExpressionStorage().getUnsigned<7>());
             return WriteTrackEventResult::Written;
         }

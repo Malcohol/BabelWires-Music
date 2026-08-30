@@ -155,6 +155,7 @@ namespace smf {
         };
 
         std::array<ChannelSetup, 16> m_channelSetup;
+        std::array<std::optional<babelwires::Byte>, 16> m_expressionMsbByChannel;
     };
 
     babelwires::ResultT<std::unique_ptr<babelwires::ValueTreeRoot>> parseSmfSequence(babelwires::DataSource& dataSource,
