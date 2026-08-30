@@ -421,12 +421,12 @@ TEST(SmfTestSuiteTest, volumeEvents) {
     EXPECT_EQ(volumeIt, volumeEnd);
 }
 
-TEST(SmfTestSuiteTest, expressionSwellEvents) {
+TEST(SmfTestSuiteTest, expressionCourseEvents) {
     testUtils::TestEnvironment testEnvironment;
     bw_music::registerLib(testEnvironment.m_projectContext);
     ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
 
-    auto midiFileResult = babelwires::FileDataSource::open("test-control-0b-expression-swell.mid");
+    auto midiFileResult = babelwires::FileDataSource::open("test-control-0b-expression-coarse.mid");
     ASSERT_TRUE(midiFileResult.has_value());
     auto midiFile = std::move(*midiFileResult);
 
@@ -440,7 +440,50 @@ TEST(SmfTestSuiteTest, expressionSwellEvents) {
 
     const auto& metadata = smfSequence.getMeta();
     ASSERT_TRUE(metadata.tryGetName().has_value());
-    EXPECT_EQ(metadata.tryGetName()->get(), u8"Control 0x0B Expression Swell Test");
+    EXPECT_EQ(metadata.tryGetName()->get(), u8"Control 0x0B Expression Coarse Test");
+
+    auto tracks = smfSequence.getTrcks0();
+    auto track0 = tracks.tryGetTrack(0);
+    ASSERT_TRUE(track0.has_value());
+
+    const bw_music::Track& track = track0->get();
+    auto [expressionBegin, expressionEnd] = bw_music::iterateOver<bw_music::ExpressionEvent>(track);
+
+    int numExpressionEvents = 0;
+    std::uint64_t minExpressionValue = 0x3fffu;
+    std::uint64_t maxExpressionValue = 0;
+    for (auto it = expressionBegin; it != expressionEnd; ++it) {
+        const std::uint64_t value14 = it->getExpressionStorage().getUnsigned<14>();
+        minExpressionValue = std::min(minExpressionValue, value14);
+        maxExpressionValue = std::max(maxExpressionValue, value14);
+        ++numExpressionEvents;
+    }
+
+    EXPECT_EQ(numExpressionEvents, 129);
+    EXPECT_EQ(minExpressionValue, 0);
+    EXPECT_EQ(maxExpressionValue, 0x3fffu);
+}
+
+TEST(SmfTestSuiteTest, expressionFineEvents) {
+    testUtils::TestEnvironment testEnvironment;
+    bw_music::registerLib(testEnvironment.m_projectContext);
+    ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
+
+    auto midiFileResult = babelwires::FileDataSource::open("test-control-0b-expression-fine.mid");
+    ASSERT_TRUE(midiFileResult.has_value());
+    auto midiFile = std::move(*midiFileResult);
+
+    auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+    ASSERT_TRUE(midiFile.close().has_value());
+    ASSERT_TRUE(result.has_value());
+    const auto& feature = *result;
+
+    smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
+    ASSERT_EQ(smfSequence.getInstanceType().getIndexOfTag(smfSequence.getSelectedTag()), 0);
+
+    const auto& metadata = smfSequence.getMeta();
+    ASSERT_TRUE(metadata.tryGetName().has_value());
+    EXPECT_EQ(metadata.tryGetName()->get(), u8"Control 0x0B Expression Fine Test");
 
     auto tracks = smfSequence.getTrcks0();
     auto track0 = tracks.tryGetTrack(0);
@@ -451,28 +494,70 @@ TEST(SmfTestSuiteTest, expressionSwellEvents) {
 
     int numExpressionEvents = 0;
     int numFineResolutionEvents = 0;
-    int numZeroDeltaEvents = 0;
-    int numStaggeredDeltaEvents = 0;
+    std::uint64_t minExpressionValue = 0x3fffu;
+    std::uint64_t maxExpressionValue = 0;
     for (auto it = expressionBegin; it != expressionEnd; ++it) {
         const std::uint64_t value14 = it->getExpressionStorage().getUnsigned<14>();
-        if ((value14 % 129) != 0) {
+        if ((value14 % 128) != 0) {
             ++numFineResolutionEvents;
         }
-        if (it->getTimeSinceLastEvent() == babelwires::Rational(0, 1)) {
-            ++numZeroDeltaEvents;
-        }
-        if (it->getTimeSinceLastEvent() == babelwires::Rational(1, 128)) {
-            ++numStaggeredDeltaEvents;
-        }
+        minExpressionValue = std::min(minExpressionValue, value14);
+        maxExpressionValue = std::max(maxExpressionValue, value14);
         ++numExpressionEvents;
     }
 
-    // The JS fixture emits 32 coarse MSB-only updates, 32 paired MSB+LSB updates,
-    // and 32 staggered MSB/LSB updates.
-    EXPECT_EQ(numExpressionEvents, 32 + 32 + 64);
-    EXPECT_GT(numFineResolutionEvents, 0);
-    EXPECT_GT(numZeroDeltaEvents, 0);
-    EXPECT_GT(numStaggeredDeltaEvents, 0);
+    EXPECT_EQ(numExpressionEvents, 257);
+    EXPECT_GT(numFineResolutionEvents, 128);
+    EXPECT_EQ(minExpressionValue, 0);
+    EXPECT_EQ(maxExpressionValue, 0x3fffu);
+}
+
+TEST(SmfTestSuiteTest, expressionStaggeredEvents) {
+    testUtils::TestEnvironment testEnvironment;
+    bw_music::registerLib(testEnvironment.m_projectContext);
+    ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
+
+    auto midiFileResult = babelwires::FileDataSource::open("test-control-0b-expression-staggered.mid");
+    ASSERT_TRUE(midiFileResult.has_value());
+    auto midiFile = std::move(*midiFileResult);
+
+    auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+    ASSERT_TRUE(midiFile.close().has_value());
+    ASSERT_TRUE(result.has_value());
+    const auto& feature = *result;
+
+    smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
+    ASSERT_EQ(smfSequence.getInstanceType().getIndexOfTag(smfSequence.getSelectedTag()), 0);
+
+    const auto& metadata = smfSequence.getMeta();
+    ASSERT_TRUE(metadata.tryGetName().has_value());
+    EXPECT_EQ(metadata.tryGetName()->get(), u8"Control 0x0B Expression Staggered Test");
+
+    auto tracks = smfSequence.getTrcks0();
+    auto track0 = tracks.tryGetTrack(0);
+    ASSERT_TRUE(track0.has_value());
+
+    const bw_music::Track& track = track0->get();
+    auto [expressionBegin, expressionEnd] = bw_music::iterateOver<bw_music::ExpressionEvent>(track);
+
+    int numExpressionEvents = 0;
+    int numFineResolutionEvents = 0;
+    std::uint64_t minExpressionValue = 0x3fffu;
+    std::uint64_t maxExpressionValue = 0;
+    for (auto it = expressionBegin; it != expressionEnd; ++it) {
+        const std::uint64_t value14 = it->getExpressionStorage().getUnsigned<14>();
+        if ((value14 % 128) != 0) {
+            ++numFineResolutionEvents;
+        }
+        minExpressionValue = std::min(minExpressionValue, value14);
+        maxExpressionValue = std::max(maxExpressionValue, value14);
+        ++numExpressionEvents;
+    }
+
+    EXPECT_EQ(numExpressionEvents, 257);
+    EXPECT_GT(numFineResolutionEvents, 128);
+    EXPECT_EQ(minExpressionValue, 0);
+    EXPECT_EQ(maxExpressionValue, 0x3fffu);
 }
 
 TEST(SmfTestSuiteTest, pitchBend) {
