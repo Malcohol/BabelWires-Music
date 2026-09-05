@@ -540,24 +540,26 @@ TEST(SmfTestSuiteTest, expressionStaggeredEvents) {
     const bw_music::Track& track = track0->get();
     auto [expressionBegin, expressionEnd] = bw_music::iterateOver<bw_music::ExpressionEvent>(track);
 
-    int numExpressionEvents = 0;
-    int numFineResolutionEvents = 0;
-    std::uint64_t minExpressionValue = 0x3fffu;
-    std::uint64_t maxExpressionValue = 0;
-    for (auto it = expressionBegin; it != expressionEnd; ++it) {
-        const std::uint64_t value14 = it->getExpressionStorage().getUnsigned<14>();
-        if ((value14 % 128) != 0) {
-            ++numFineResolutionEvents;
-        }
-        minExpressionValue = std::min(minExpressionValue, value14);
-        maxExpressionValue = std::max(maxExpressionValue, value14);
-        ++numExpressionEvents;
-    }
-
-    EXPECT_EQ(numExpressionEvents, 257);
-    EXPECT_GT(numFineResolutionEvents, 128);
-    EXPECT_EQ(minExpressionValue, 0);
-    EXPECT_EQ(maxExpressionValue, 0x3fffu);
+    ASSERT_NE(expressionBegin, expressionEnd);
+    // The opening MSB arrives before any LSB, so can strictly be interpreted as a coarse 7-bit value.
+    EXPECT_EQ(expressionBegin->getExpressionStorage(), bw_music::ControllerStorage::assertFromUnsigned<7>(0x20u));
+    ++expressionBegin;
+    ASSERT_NE(expressionBegin, expressionEnd);
+    EXPECT_EQ(expressionBegin->getExpressionStorage().getUnsigned<14>(), 0x1001u);
+    ++expressionBegin;
+    ASSERT_NE(expressionBegin, expressionEnd);
+    EXPECT_EQ(expressionBegin->getExpressionStorage().getUnsigned<14>(), 0x2001u);
+    ++expressionBegin;
+    ASSERT_NE(expressionBegin, expressionEnd);
+    EXPECT_EQ(expressionBegin->getExpressionStorage().getUnsigned<14>(), 0x2002u);
+    ++expressionBegin;
+    ASSERT_NE(expressionBegin, expressionEnd);
+    EXPECT_EQ(expressionBegin->getExpressionStorage().getUnsigned<14>(), 0x3002u);
+    ++expressionBegin;
+    ASSERT_NE(expressionBegin, expressionEnd);
+    EXPECT_EQ(expressionBegin->getExpressionStorage().getUnsigned<14>(), 0x3003u);
+    ++expressionBegin;
+    EXPECT_EQ(expressionBegin, expressionEnd);
 }
 
 TEST(SmfTestSuiteTest, pitchBend) {

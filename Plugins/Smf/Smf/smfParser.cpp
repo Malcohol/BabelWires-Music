@@ -399,21 +399,32 @@ template <typename STREAMLIKE> void smf::SmfParser::logMessageBuffer(STREAMLIKE 
 
 template <typename STORAGE>
 babelwires::ResultT<std::optional<STORAGE>>
-smf::SmfParser::read14BitControllerStorage(std::optional<babelwires::Byte>& msbByChannel, babelwires::Byte value,
-                                           bool isLsb) {
-    if (!isLsb) {
-        msbByChannel = value;
-        ASSIGN_OR_ERROR(const STORAGE coarseStorage, STORAGE::template fromUnsigned<7>(value));
-        return std::optional<STORAGE>{coarseStorage};
+smf::SmfParser::read14BitControllerStorage(std::optional<babelwires::Byte>& msb, std::optional<babelwires::Byte>& lsb,
+                                           babelwires::Byte value, bool isLsb) {
+    if (isLsb) {
+        lsb = value;
+        if (msb.has_value()) {
+            ASSIGN_OR_ERROR(const STORAGE fineStorage,
+                            STORAGE::template fromUnsigned<14>(combine14BitControllerValue(*msb, *lsb)));
+            return std::optional<STORAGE>{fineStorage};
+        } else {
+            // We don't have a complete 14-bit value yet, so no event is returned.
+            return std::optional<STORAGE>{};
+        }
+    } else {
+        msb = value;
+        if (lsb.has_value()) {
+            ASSIGN_OR_ERROR(const STORAGE fineStorage,
+                            STORAGE::template fromUnsigned<14>(combine14BitControllerValue(*msb, *lsb)));
+            return std::optional<STORAGE>{fineStorage};
+        } else {
+            // Assume a coarse/legacy 7-bit event (so, for example, 0x7f gets treated the same as 0x3fff).
+            // If a corresponding LSB event follows at the same time, this event will be subsumed by the subsequent
+            // 14-bit event when both events are processed by the TrackBuilder.
+            ASSIGN_OR_ERROR(const STORAGE coarseStorage, STORAGE::template fromUnsigned<7>(value));
+            return std::optional<STORAGE>{coarseStorage};
+        }
     }
-
-    if (!msbByChannel.has_value()) {
-        return std::optional<STORAGE>{};
-    }
-
-    ASSIGN_OR_ERROR(const STORAGE fineStorage,
-                    STORAGE::template fromUnsigned<14>(combine14BitControllerValue(*msbByChannel, value)));
-    return std::optional<STORAGE>{fineStorage};
 }
 
 babelwires::Result smf::SmfParser::readSysExEvent() {
@@ -629,12 +640,14 @@ babelwires::ResultT<bool> smf::SmfParser::readControlChange(TrackSplitter& track
             return false;
         case c_volumeMsbController: {
             ASSIGN_OR_ERROR(auto volume, read14BitControllerStorage<bw_music::ControllerStorage>(
-                                             m_channelState[channelNumber].m_volumeMsb, value, false));
+                                             m_channelState[channelNumber].m_volumeMsb,
+                                             m_channelState[channelNumber].m_volumeLsb, value, false));
             return tracks.addEvent<bw_music::VolumeEvent>(channelNumber, timeSinceLastTrackEvent, *volume);
         }
         case c_volumeLsbController: {
             ASSIGN_OR_ERROR(auto volume, read14BitControllerStorage<bw_music::ControllerStorage>(
-                                             m_channelState[channelNumber].m_volumeMsb, value, true));
+                                             m_channelState[channelNumber].m_volumeMsb,
+                                             m_channelState[channelNumber].m_volumeLsb, value, true));
             if (!volume.has_value()) {
                 return false;
             }
@@ -642,12 +655,14 @@ babelwires::ResultT<bool> smf::SmfParser::readControlChange(TrackSplitter& track
         }
         case c_panMsbController: {
             ASSIGN_OR_ERROR(auto pan, read14BitControllerStorage<bw_music::CentredControllerStorage>(
-                                          m_channelState[channelNumber].m_panMsb, value, false));
+                                          m_channelState[channelNumber].m_panMsb,
+                                          m_channelState[channelNumber].m_panLsb, value, false));
             return tracks.addEvent<bw_music::PanEvent>(channelNumber, timeSinceLastTrackEvent, *pan);
         }
         case c_panLsbController: {
             ASSIGN_OR_ERROR(auto pan, read14BitControllerStorage<bw_music::CentredControllerStorage>(
-                                          m_channelState[channelNumber].m_panMsb, value, true));
+                                          m_channelState[channelNumber].m_panMsb,
+                                          m_channelState[channelNumber].m_panLsb, value, true));
             if (!pan.has_value()) {
                 return false;
             }
@@ -655,12 +670,14 @@ babelwires::ResultT<bool> smf::SmfParser::readControlChange(TrackSplitter& track
         }
         case c_expressionMsbController: {
             ASSIGN_OR_ERROR(auto expression, read14BitControllerStorage<bw_music::ControllerStorage>(
-                                                 m_channelState[channelNumber].m_expressionMsb, value, false));
+                                                 m_channelState[channelNumber].m_expressionMsb,
+                                                 m_channelState[channelNumber].m_expressionLsb, value, false));
             return tracks.addEvent<bw_music::ExpressionEvent>(channelNumber, timeSinceLastTrackEvent, *expression);
         }
         case c_expressionLsbController: {
             ASSIGN_OR_ERROR(auto expression, read14BitControllerStorage<bw_music::ControllerStorage>(
-                                                 m_channelState[channelNumber].m_expressionMsb, value, true));
+                                                 m_channelState[channelNumber].m_expressionMsb,
+                                                 m_channelState[channelNumber].m_expressionLsb, value, true));
             if (!expression.has_value()) {
                 return false;
             }
@@ -704,8 +721,11 @@ babelwires::ResultT<bool> smf::SmfParser::readChannelPressure(TrackSplitter& tra
 
 void smf::SmfParser::ChannelState::resetTimeSensitiveChannelState() {
     m_volumeMsb = std::nullopt;
+    m_volumeLsb = std::nullopt;
     m_panMsb = std::nullopt;
+    m_panLsb = std::nullopt;
     m_expressionMsb = std::nullopt;
+    m_expressionLsb = std::nullopt;
 }
 
 babelwires::Result smf::SmfParser::readTrack(int trackIndex, TrackSplitter& tracks, bool hasMainMetadata) {

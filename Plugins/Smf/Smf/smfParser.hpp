@@ -122,8 +122,9 @@ namespace smf {
         void onChangeProgram(unsigned int channelNumber);
 
         template <typename STORAGE>
-        babelwires::ResultT<std::optional<STORAGE>>
-        read14BitControllerStorage(std::optional<babelwires::Byte>& msbByChannel, babelwires::Byte value, bool isLsb);
+        babelwires::ResultT<std::optional<STORAGE>> read14BitControllerStorage(std::optional<babelwires::Byte>& msb,
+                               std::optional<babelwires::Byte>& lsb,
+                               babelwires::Byte value, bool isLsb);
 
         enum KnownPercussionSets { GM_PERCUSSION_KIT, GM2_STANDARD_PERCUSSION_KIT, NUM_KNOWN_PERCUSSION_KITS };
 
@@ -165,8 +166,11 @@ namespace smf {
 
             // Cached MSB (Most Significant Byte) values for various MIDI controllers.
             std::optional<babelwires::Byte> m_volumeMsb;
+            std::optional<babelwires::Byte> m_volumeLsb;
             std::optional<babelwires::Byte> m_panMsb;
+            std::optional<babelwires::Byte> m_panLsb;
             std::optional<babelwires::Byte> m_expressionMsb;
+            std::optional<babelwires::Byte> m_expressionLsb;
         };
 
         std::array<ChannelState, 16> m_channelState;

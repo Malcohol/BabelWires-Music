@@ -6,6 +6,7 @@
 #include <Smf/smfParser.hpp>
 #include <Smf/smfWriter.hpp>
 
+#include <MusicLib/Types/Track/TrackEvents/expressionEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/notePressureEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/Types/Track/TrackEvents/panEvent.hpp>
@@ -514,4 +515,51 @@ TEST(SmfSaveLoadTest, format1ChannelVoiceEvents) {
     const auto track = tracks.getEntry(0);
     EXPECT_EQ(track.getChan().get(), 5);
     EXPECT_TRUE(track.getTrack().get() == expectedTrack);
+}
+
+TEST(SmfSaveLoadTest, expressionMsbUsesCachedLsbAfterFineModeEstablished) {
+    testUtils::TestEnvironment testEnvironment;
+    bw_music::registerLib(testEnvironment.m_projectContext);
+    ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
+    testUtils::TempFilePath tempFile("expressionMsbUsesCachedLsbAfterFineModeEstablished.mid");
+
+    {
+        std::ofstream os = tempFile.openForWriting(std::ios_base::binary);
+        auto writeBytes = [&os](std::initializer_list<unsigned int> bytes) {
+            for (const unsigned int byte : bytes) {
+                os.put(static_cast<char>(byte));
+            }
+        };
+
+        writeBytes({0x4d, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x01, 0x00, 0x60});
+        writeBytes({0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x10,
+                    0x00, 0xb0, 0x0b, 0x20,
+                    0x00, 0xb0, 0x2b, 0x01,
+                    0x60, 0xb0, 0x0b, 0x40,
+                    0x00, 0xff, 0x2f, 0x00});
+    }
+
+    auto midiFileResult = babelwires::FileDataSource::open(tempFile);
+    ASSERT_TRUE(midiFileResult.has_value());
+    auto midiFile = std::move(*midiFileResult);
+
+    auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+    ASSERT_TRUE(midiFile.close().has_value());
+    ASSERT_TRUE(result.has_value());
+    const auto& feature = *result;
+
+    smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
+    ASSERT_EQ(smfSequence.getInstanceType().getIndexOfTag(smfSequence.getSelectedTag()), 0);
+
+    const auto track = smfSequence.getTrcks0().tryGetTrack(0);
+    ASSERT_TRUE(track);
+
+    auto [expressionBegin, expressionEnd] = bw_music::iterateOver<bw_music::ExpressionEvent>(track->get());
+    ASSERT_NE(expressionBegin, expressionEnd);
+    EXPECT_EQ(expressionBegin->getExpressionStorage().getUnsigned<14>(), 0x1001u);
+    ++expressionBegin;
+    ASSERT_NE(expressionBegin, expressionEnd);
+    EXPECT_EQ(expressionBegin->getExpressionStorage().getUnsigned<14>(), 0x2001u);
+    ++expressionBegin;
+    EXPECT_EQ(expressionBegin, expressionEnd);
 }
