@@ -9,8 +9,6 @@
 
 #include <BaseLib/Hash/hash.hpp>
 
-#include <cassert>
-
 std::size_t bw_music::PanEvent::getHash() const {
     return babelwires::hash::mixtureOf(static_cast<const char*>("Pan"), m_timeSinceLastEvent, m_pan);
 }

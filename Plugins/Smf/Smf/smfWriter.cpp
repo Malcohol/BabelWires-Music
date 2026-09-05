@@ -176,16 +176,14 @@ smf::SmfWriter::WriteTrackEventResult smf::SmfWriter::writeTrackEvent(int channe
     } else {
         if (const auto* pan = e.tryAs<bw_music::PanEvent>()) {
             writeModelDuration(timeSinceLastEvent);
-            m_os->put(0b10110000 | channelNumber);
-            m_os->put(c_panMsbController);
-            m_os->put(pan->getPanStorage().getUnsigned<7>());
+            write14bitControllerEventContents(channelNumber, c_panMsbController, c_panLsbController,
+                                              pan->getPanStorage().getUnsigned<14>());
             return WriteTrackEventResult::Written;
         }
         if (const auto* volume = e.tryAs<bw_music::VolumeEvent>()) {
             writeModelDuration(timeSinceLastEvent);
-            m_os->put(0b10110000 | channelNumber);
-            m_os->put(c_volumeMsbController);
-            m_os->put(volume->getVolumeStorage().getUnsigned<7>());
+            write14bitControllerEventContents(channelNumber, c_volumeMsbController, c_volumeLsbController,
+                                              volume->getVolumeStorage().getUnsigned<14>());
             return WriteTrackEventResult::Written;
         }
         if (const auto* expression = e.tryAs<bw_music::ExpressionEvent>()) {

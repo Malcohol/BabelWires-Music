@@ -130,9 +130,9 @@ namespace {
         track.addEvent(bw_music::NoteOnEvent(0, 60, bw_music::MinMaxValue16::assertFromUnsigned<7>(100u)));
         track.addEvent(bw_music::NotePressureEvent(babelwires::Rational(1, 16), 60, bw_music::ControllerStorage::assertFromUnsigned<7>(96u)));
         track.addEvent(bw_music::PanEvent(babelwires::Rational(1, 16),
-                                          bw_music::CentredControllerStorage::assertFromUnsigned<32>(0u)));
+                                          bw_music::CentredControllerStorage::assertFromUnsigned<14>(0x2a55u)));
         track.addEvent(bw_music::VolumeEvent(babelwires::Rational(1, 16),
-                                             bw_music::ControllerStorage::assertFromUnsigned<7>(127u)));
+                                             bw_music::ControllerStorage::assertFromUnsigned<14>(0x3123u)));
         track.addEvent(bw_music::ExpressionEvent(babelwires::Rational(1, 16),
                                                  bw_music::ControllerStorage::assertFromUnsigned<7>(0u)));
         track.addEvent(bw_music::ExpressionEvent(babelwires::Rational(1, 16),

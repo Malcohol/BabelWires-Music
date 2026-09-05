@@ -7,12 +7,13 @@
  **/
 #pragma once
 
-#include <Smf/gmSpec.hpp>
 #include <Smf/Percussion/standardPercussionSets.hpp>
+#include <Smf/gmSpec.hpp>
 #include <Smf/smfSequence.hpp>
 
-#include <MusicLib/musicTypes.hpp>
+#include <MusicLib/Types/Track/TrackEvents/trackEventCommon.hpp>
 #include <MusicLib/Utilities/tempoValue.hpp>
+#include <MusicLib/musicTypes.hpp>
 
 #include <BaseLib/IO/dataSource.hpp>
 #include <BaseLib/Log/userLogger.hpp>
@@ -30,11 +31,9 @@ namespace bw_music {
 }
 
 namespace smf {
-
     class SmfParser {
       public:
-        SmfParser(babelwires::DataSource& dataSource, const babelwires::Context& context,
-                  babelwires::UserLogger& log);
+        SmfParser(babelwires::DataSource& dataSource, const babelwires::Context& context, babelwires::UserLogger& log);
         virtual ~SmfParser();
 
         babelwires::Result parse();
@@ -59,13 +58,13 @@ namespace smf {
         babelwires::Result readFormat1Sequence();
 
         struct Format1TrackData {
-          unsigned int m_channelNumber;
-          bw_music::Track m_track;
-          std::vector<std::pair<unsigned int, bw_music::Track>> m_extraTracks;
+            unsigned int m_channelNumber;
+            bw_music::Track m_track;
+            std::vector<std::pair<unsigned int, bw_music::Track>> m_extraTracks;
         };
 
         babelwires::ResultT<std::optional<Format1TrackData>> readFormat1SequenceTrack(int trackIndex,
-                                                 bool hasMainMetadata = false);
+                                                                                      bool hasMainMetadata = false);
 
         MidiMetadata::Instance getMidiMetadata();
 
@@ -76,7 +75,8 @@ namespace smf {
         babelwires::ResultT<bw_music::ModelDuration> readModelDuration();
 
         /// This can fail if the tempo is 0.
-        babelwires::Result readTempoEvent(int trackIndex, bw_music::ModelDuration absoluteTime, std::uint32_t tempoValue);
+        babelwires::Result readTempoEvent(int trackIndex, bw_music::ModelDuration absoluteTime,
+                                          std::uint32_t tempoValue);
         void finalizeGlobalTempoTrack();
 
         babelwires::ResultT<babelwires::Text> readTextMetaEvent(int length);
@@ -104,22 +104,27 @@ namespace smf {
         template <typename STREAMLIKE> void logMessageBuffer(STREAMLIKE log) const;
 
         babelwires::ResultT<bool> readPolyphonicAftertouch(TrackSplitter& tracks, unsigned int channelNumber,
-                       bw_music::ModelDuration timeSinceLastTrackEvent);
+                                                           bw_music::ModelDuration timeSinceLastTrackEvent);
         babelwires::ResultT<bool> readControlChange(TrackSplitter& tracks, unsigned int channelNumber,
-                      bw_music::ModelDuration timeSinceLastTrackEvent);
+                                                    bw_music::ModelDuration timeSinceLastTrackEvent);
         babelwires::ResultT<bool> readPitchBend(TrackSplitter& tracks, unsigned int channelNumber,
-                  bw_music::ModelDuration timeSinceLastTrackEvent);
+                                                bw_music::ModelDuration timeSinceLastTrackEvent);
         babelwires::Result readProgramChange(unsigned int channelNumber);
         babelwires::ResultT<bool> readChannelPressure(TrackSplitter& tracks, unsigned int channelNumber,
-                        bw_music::ModelDuration timeSinceLastTrackEvent);
+                                                      bw_music::ModelDuration timeSinceLastTrackEvent);
         void setBankMSB(unsigned int channelNumber, const babelwires::Byte msbValue);
         void setBankLSB(unsigned int channelNumber, const babelwires::Byte lsbValue);
         void setProgram(unsigned int channelNumber, const babelwires::Byte value);
 
         // Note: blockNumber is not the same as channel number.
         void setGsPartMode(unsigned int blockNumber, babelwires::Byte value);
-        
+
         void onChangeProgram(unsigned int channelNumber);
+
+        template <typename STORAGE>
+        babelwires::ResultT<std::optional<STORAGE>>
+        read14BitControllerStorage(std::array<std::optional<babelwires::Byte>, 16>& msbByChannel,
+                                   unsigned int channelNumber, babelwires::Byte value, bool isLsb);
 
         enum KnownPercussionSets { GM_PERCUSSION_KIT, GM2_STANDARD_PERCUSSION_KIT, NUM_KNOWN_PERCUSSION_KITS };
 
@@ -131,14 +136,14 @@ namespace smf {
         std::vector<babelwires::Byte> m_messageBuffer;
 
         enum class Format { SMF_FORMAT_0, SMF_FORMAT_1, SMF_FORMAT_2, SMF_UNKNOWN_FORMAT };
-            
+
         Format m_sequenceType;
         int m_numTracks;
         int m_division;
 
         struct NormalizedTempoEvent {
-          int m_trackIndex;
-          bw_music::TempoValue m_tempo;
+            int m_trackIndex;
+            bw_music::TempoValue m_tempo;
         };
 
         std::map<bw_music::ModelDuration, NormalizedTempoEvent> m_globalTempoEvents;
@@ -155,11 +160,15 @@ namespace smf {
         };
 
         std::array<ChannelSetup, 16> m_channelSetup;
+
+        // Cached MSB (Most Significant Byte) values for various MIDI controllers.
+        std::array<std::optional<babelwires::Byte>, 16> m_volumeMsbByChannel;
+        std::array<std::optional<babelwires::Byte>, 16> m_panMsbByChannel;
         std::array<std::optional<babelwires::Byte>, 16> m_expressionMsbByChannel;
     };
 
-    babelwires::ResultT<std::unique_ptr<babelwires::ValueTreeRoot>> parseSmfSequence(babelwires::DataSource& dataSource,
-                                                              const babelwires::Context& context,
-                                                              babelwires::UserLogger& userLogger);
+    babelwires::ResultT<std::unique_ptr<babelwires::ValueTreeRoot>>
+    parseSmfSequence(babelwires::DataSource& dataSource, const babelwires::Context& context,
+                     babelwires::UserLogger& userLogger);
 
 } // namespace smf

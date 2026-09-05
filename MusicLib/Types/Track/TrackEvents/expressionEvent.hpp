@@ -9,13 +9,13 @@
 
 #include <MusicLib/musicLibExport.hpp>
 
-#include <MusicLib/Types/Track/TrackEvents/Interfaces/simultaneousEventSubsumptionInterface.hpp>
+#include <MusicLib/Types/Track/TrackEvents/Interfaces/sameTypeSubsumingEventMixin.hpp>
 #include <MusicLib/Types/Track/TrackEvents/trackEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/trackEventCommon.hpp>
 
 namespace bw_music {
     /// Channel-voice event controlling the expression of a channel.
-  struct MUSICLIB_API ExpressionEvent : public TrackEvent, public SimultaneousEventSubsumptionInterface {
+    struct MUSICLIB_API ExpressionEvent : public TrackEvent, public SameTypeSubsumingEventMixin<ExpressionEvent> {
         DOWNCASTABLE(ExpressionEvent, TrackEvent);
         STREAM_EVENT(ExpressionEvent);
         QUERYABLE_INTERFACE_PROVIDER(TrackEvent, SimultaneousEventSubsumptionInterface);
@@ -36,7 +36,6 @@ namespace bw_music {
         ControllerStorage getExpressionStorage() const;
 
         std::size_t getHash() const override;
-        std::unique_ptr<SimultaneousEventSession> createSimultaneousEventSession() override;
 
       protected:
         bool doIsEqualTo(const TrackEvent& other) const override;
@@ -44,6 +43,6 @@ namespace bw_music {
       private:
         ControllerStorage m_expression;
     };
-}
+} // namespace bw_music
 
 #include <MusicLib/Types/Track/TrackEvents/expressionEvent_inl.hpp>

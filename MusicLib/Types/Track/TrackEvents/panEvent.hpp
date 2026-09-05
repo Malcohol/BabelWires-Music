@@ -9,6 +9,7 @@
 
 #include <MusicLib/musicLibExport.hpp>
 
+#include <MusicLib/Types/Track/TrackEvents/Interfaces/sameTypeSubsumingEventMixin.hpp>
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
 #include <MusicLib/Utilities/minCentreMaxValue.hpp>
 
@@ -16,9 +17,10 @@
 
 namespace bw_music {
     /// Channel-voice event controlling the pan of a channel.
-    struct MUSICLIB_API PanEvent : public TrackEvent {
+    struct MUSICLIB_API PanEvent : public TrackEvent, public SameTypeSubsumingEventMixin<PanEvent> {
         DOWNCASTABLE(PanEvent, TrackEvent);
         STREAM_EVENT(PanEvent);
+        QUERYABLE_INTERFACE_PROVIDER(TrackEvent, SimultaneousEventSubsumptionInterface);
 
         /// Construct from a signed normalized double value in the range [-1.0, 1.0].
         /// Asserts that the value is in range.

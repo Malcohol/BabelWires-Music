@@ -39,6 +39,10 @@ namespace {
 
     // See page 237 of the SC-8850 English manual
     const std::array<unsigned int, 16> s_gsBlockToPartMapping{10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16};
+
+    std::uint16_t combine14BitControllerValue(babelwires::Byte msb, babelwires::Byte lsb) {
+        return static_cast<std::uint16_t>((static_cast<std::uint16_t>(msb) << 7) | lsb);
+    }
 } // namespace
 
 smf::SmfParser::SmfParser(babelwires::DataSource& dataSource, const babelwires::Context& context,
@@ -390,6 +394,25 @@ template <typename STREAMLIKE> void smf::SmfParser::logMessageBuffer(STREAMLIKE 
     }
 }
 
+template <typename STORAGE>
+babelwires::ResultT<std::optional<STORAGE>> smf::SmfParser::read14BitControllerStorage(
+    std::array<std::optional<babelwires::Byte>, 16>& msbByChannel, unsigned int channelNumber,
+    babelwires::Byte value, bool isLsb) {
+    if (!isLsb) {
+        msbByChannel[channelNumber] = value;
+        ASSIGN_OR_ERROR(const STORAGE coarseStorage, STORAGE::template fromUnsigned<7>(value));
+        return std::optional<STORAGE>{coarseStorage};
+    }
+
+    if (!msbByChannel[channelNumber].has_value()) {
+        return std::optional<STORAGE>{};
+    }
+
+    ASSIGN_OR_ERROR(const STORAGE fineStorage,
+                    STORAGE::template fromUnsigned<14>(combine14BitControllerValue(*msbByChannel[channelNumber], value)));
+    return std::optional<STORAGE>{fineStorage};
+}
+
 babelwires::Result smf::SmfParser::readSysExEvent() {
     ASSIGN_OR_ERROR(auto length, readVariableLengthQuantity());
     if (length < 1) {
@@ -595,37 +618,50 @@ babelwires::ResultT<bool> smf::SmfParser::readControlChange(TrackSplitter& track
                                                             bw_music::ModelDuration timeSinceLastTrackEvent) {
     ASSIGN_OR_ERROR(const babelwires::Byte controllerNumber, getNext());
     ASSIGN_OR_ERROR(const babelwires::Byte value, getNext());
+
     switch (controllerNumber) {
         case c_bankSelectMsbController:
             // bank select MSB
             setBankMSB(channelNumber, value);
             return false;
         case c_volumeMsbController: {
-            ASSIGN_OR_ERROR(const bw_music::ControllerStorage volume,
-                            bw_music::ControllerStorage::fromUnsigned<7>(value));
-            return tracks.addEvent<bw_music::VolumeEvent>(channelNumber, timeSinceLastTrackEvent, volume);
+            ASSIGN_OR_ERROR(auto volume, read14BitControllerStorage<bw_music::ControllerStorage>(
+                                             m_volumeMsbByChannel, channelNumber, value, false));
+            return tracks.addEvent<bw_music::VolumeEvent>(channelNumber, timeSinceLastTrackEvent, *volume);
         }
-        case c_panMsbController: {
-            ASSIGN_OR_ERROR(bw_music::CentredControllerStorage pan,
-                            bw_music::MinCentreMaxValue32::fromUnsigned<7>(value));
-            return tracks.addEvent<bw_music::PanEvent>(channelNumber, timeSinceLastTrackEvent, std::move(pan));
-        }
-        case c_expressionMsbController: {
-            m_expressionMsbByChannel[channelNumber] = value;
-            ASSIGN_OR_ERROR(const bw_music::ControllerStorage expression,
-                            bw_music::ControllerStorage::fromUnsigned<7>(value));
-            return tracks.addEvent<bw_music::ExpressionEvent>(channelNumber, timeSinceLastTrackEvent, expression);
-        }
-        case c_expressionLsbController: {
-            if (!m_expressionMsbByChannel[channelNumber].has_value()) {
+        case c_volumeLsbController: {
+            ASSIGN_OR_ERROR(auto volume, read14BitControllerStorage<bw_music::ControllerStorage>(
+                                             m_volumeMsbByChannel, channelNumber, value, true));
+            if (!volume.has_value()) {
                 return false;
             }
-            const std::uint16_t expressionValue =
-                static_cast<std::uint16_t>((static_cast<std::uint16_t>(*m_expressionMsbByChannel[channelNumber]) << 7) |
-                                           value);
-            ASSIGN_OR_ERROR(const bw_music::ControllerStorage expression,
-                            bw_music::ControllerStorage::fromUnsigned<14>(expressionValue));
-            return tracks.addEvent<bw_music::ExpressionEvent>(channelNumber, timeSinceLastTrackEvent, expression);
+            return tracks.addEvent<bw_music::VolumeEvent>(channelNumber, timeSinceLastTrackEvent, *volume);
+        }
+        case c_panMsbController: {
+            ASSIGN_OR_ERROR(auto pan, read14BitControllerStorage<bw_music::CentredControllerStorage>(
+                                          m_panMsbByChannel, channelNumber, value, false));
+            return tracks.addEvent<bw_music::PanEvent>(channelNumber, timeSinceLastTrackEvent, *pan);
+        }
+        case c_panLsbController: {
+            ASSIGN_OR_ERROR(auto pan, read14BitControllerStorage<bw_music::CentredControllerStorage>(
+                                          m_panMsbByChannel, channelNumber, value, true));
+            if (!pan.has_value()) {
+                return false;
+            }
+            return tracks.addEvent<bw_music::PanEvent>(channelNumber, timeSinceLastTrackEvent, *pan);
+        }
+        case c_expressionMsbController: {
+            ASSIGN_OR_ERROR(auto expression, read14BitControllerStorage<bw_music::ControllerStorage>(
+                                                 m_expressionMsbByChannel, channelNumber, value, false));
+            return tracks.addEvent<bw_music::ExpressionEvent>(channelNumber, timeSinceLastTrackEvent, *expression);
+        }
+        case c_expressionLsbController: {
+            ASSIGN_OR_ERROR(auto expression, read14BitControllerStorage<bw_music::ControllerStorage>(
+                                                 m_expressionMsbByChannel, channelNumber, value, true));
+            if (!expression.has_value()) {
+                return false;
+            }
+            return tracks.addEvent<bw_music::ExpressionEvent>(channelNumber, timeSinceLastTrackEvent, *expression);
         }
         case c_bankSelectLsbController:
             // bank select LSB
@@ -645,9 +681,8 @@ babelwires::ResultT<bool> smf::SmfParser::readPitchBend(TrackSplitter& tracks, u
                                                         bw_music::ModelDuration timeSinceLastTrackEvent) {
     ASSIGN_OR_ERROR(const babelwires::Byte lsb, getNext());
     ASSIGN_OR_ERROR(const babelwires::Byte msb, getNext());
-    const std::uint16_t pitchBendValue = static_cast<std::uint16_t>((static_cast<std::uint16_t>(msb) << 7) | lsb);
     ASSIGN_OR_ERROR(bw_music::CentredControllerStorage pitchBend,
-                    bw_music::CentredControllerStorage::fromUnsigned<14>(pitchBendValue));
+                    bw_music::CentredControllerStorage::fromUnsigned<14>(combine14BitControllerValue(msb, lsb)));
     return tracks.addEvent<bw_music::PitchBendEvent>(channelNumber, timeSinceLastTrackEvent, std::move(pitchBend));
 }
 
@@ -668,6 +703,10 @@ babelwires::Result smf::SmfParser::readTrack(int trackIndex, TrackSplitter& trac
     DO_OR_ERROR(readByteSequence("MTrk"));
     ASSIGN_OR_ERROR(const std::uint32_t trackLength, readU32());
     const int currentIndex = m_dataSource.getAbsolutePosition();
+
+    m_volumeMsbByChannel.fill(std::nullopt);
+    m_panMsbByChannel.fill(std::nullopt);
+    m_expressionMsbByChannel.fill(std::nullopt);
 
     bw_music::ModelDuration timeSinceLastTrackEvent = 0;
     bw_music::ModelDuration timeSinceTrackStart = 0;
