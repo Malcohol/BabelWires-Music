@@ -24,8 +24,8 @@
 
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/File/fileTypeT.hpp>
-#include <BaseLib/Math/fixed.hpp>
 #include <BaseLib/Context/context.hpp>
+#include <BaseLib/Math/fixed.hpp>
 
 #include <BaseLib/Log/debugLogger.hpp>
 #include <BaseLib/Result/result.hpp>
@@ -227,7 +227,8 @@ babelwires::Result smf::SmfParser::parse() {
     return {};
 }
 
-babelwires::Result smf::SmfParser::readTempoEvent(int trackIndex, bw_music::ModelDuration absoluteTime, std::uint32_t tempoValue) {
+babelwires::Result smf::SmfParser::readTempoEvent(int trackIndex, bw_music::ModelDuration absoluteTime,
+                                                  std::uint32_t tempoValue) {
     ASSIGN_OR_ERROR(const auto tempo, bw_music::TempoValue::fromMicrosecondsPerQuaternote(tempoValue));
 
     if (auto existing = m_globalTempoEvents.find(absoluteTime); existing != m_globalTempoEvents.end()) {
@@ -273,16 +274,17 @@ void smf::SmfParser::finalizeGlobalTempoTrack() {
 
 class smf::SmfParser::TrackSplitter {
   public:
-    TrackSplitter(const std::array<ChannelSetup, 16>& channelSetup)
+    TrackSplitter(const std::array<ChannelState, 16>& channelSetup)
         : m_channels{}
-        , m_channelSetup(channelSetup) {}
+        , m_channelState(channelSetup) {}
 
     bool addNoteOn(unsigned int channelNumber, bw_music::ModelDuration timeSinceLastTrackEvent, bw_music::Pitch pitch,
                    bw_music::VelocityStorage velocity) {
         if (const bw_music::PercussionSetWithPitchMap* const percussionSet =
-                m_channelSetup[channelNumber].m_kitIfPercussion) {
+                m_channelState[channelNumber].m_kitIfPercussion) {
             if (auto instrument = percussionSet->tryGetInstrumentFromPitch(pitch)) {
-                return addEvent<bw_music::PercussionOnEvent>(channelNumber, timeSinceLastTrackEvent, *instrument, velocity);
+                return addEvent<bw_music::PercussionOnEvent>(channelNumber, timeSinceLastTrackEvent, *instrument,
+                                                             velocity);
             }
             return false;
         } else {
@@ -293,9 +295,10 @@ class smf::SmfParser::TrackSplitter {
     bool addNoteOff(unsigned int channelNumber, bw_music::ModelDuration timeSinceLastTrackEvent, bw_music::Pitch pitch,
                     bw_music::VelocityStorage velocity) {
         if (const bw_music::PercussionSetWithPitchMap* const percussionSet =
-                m_channelSetup[channelNumber].m_kitIfPercussion) {
+                m_channelState[channelNumber].m_kitIfPercussion) {
             if (auto instrument = percussionSet->tryGetInstrumentFromPitch(pitch)) {
-                return addEvent<bw_music::PercussionOffEvent>(channelNumber, timeSinceLastTrackEvent, *instrument, velocity);
+                return addEvent<bw_music::PercussionOffEvent>(channelNumber, timeSinceLastTrackEvent, *instrument,
+                                                              velocity);
             }
             return false;
         } else {
@@ -350,7 +353,7 @@ class smf::SmfParser::TrackSplitter {
 
     std::array<std::unique_ptr<PerChannelInfo>, MAX_CHANNELS> m_channels;
 
-    const std::array<ChannelSetup, 16>& m_channelSetup;
+    const std::array<ChannelState, 16>& m_channelState;
 };
 
 template <typename STREAMLIKE> babelwires::Result smf::SmfParser::logByteSequence(STREAMLIKE log, int length) {
@@ -395,21 +398,21 @@ template <typename STREAMLIKE> void smf::SmfParser::logMessageBuffer(STREAMLIKE 
 }
 
 template <typename STORAGE>
-babelwires::ResultT<std::optional<STORAGE>> smf::SmfParser::read14BitControllerStorage(
-    std::array<std::optional<babelwires::Byte>, 16>& msbByChannel, unsigned int channelNumber,
-    babelwires::Byte value, bool isLsb) {
+babelwires::ResultT<std::optional<STORAGE>>
+smf::SmfParser::read14BitControllerStorage(std::optional<babelwires::Byte>& msbByChannel, babelwires::Byte value,
+                                           bool isLsb) {
     if (!isLsb) {
-        msbByChannel[channelNumber] = value;
+        msbByChannel = value;
         ASSIGN_OR_ERROR(const STORAGE coarseStorage, STORAGE::template fromUnsigned<7>(value));
         return std::optional<STORAGE>{coarseStorage};
     }
 
-    if (!msbByChannel[channelNumber].has_value()) {
+    if (!msbByChannel.has_value()) {
         return std::optional<STORAGE>{};
     }
 
     ASSIGN_OR_ERROR(const STORAGE fineStorage,
-                    STORAGE::template fromUnsigned<14>(combine14BitControllerValue(*msbByChannel[channelNumber], value)));
+                    STORAGE::template fromUnsigned<14>(combine14BitControllerValue(*msbByChannel, value)));
     return std::optional<STORAGE>{fineStorage};
 }
 
@@ -626,12 +629,12 @@ babelwires::ResultT<bool> smf::SmfParser::readControlChange(TrackSplitter& track
             return false;
         case c_volumeMsbController: {
             ASSIGN_OR_ERROR(auto volume, read14BitControllerStorage<bw_music::ControllerStorage>(
-                                             m_volumeMsbByChannel, channelNumber, value, false));
+                                             m_channelState[channelNumber].m_volumeMsb, value, false));
             return tracks.addEvent<bw_music::VolumeEvent>(channelNumber, timeSinceLastTrackEvent, *volume);
         }
         case c_volumeLsbController: {
             ASSIGN_OR_ERROR(auto volume, read14BitControllerStorage<bw_music::ControllerStorage>(
-                                             m_volumeMsbByChannel, channelNumber, value, true));
+                                             m_channelState[channelNumber].m_volumeMsb, value, true));
             if (!volume.has_value()) {
                 return false;
             }
@@ -639,12 +642,12 @@ babelwires::ResultT<bool> smf::SmfParser::readControlChange(TrackSplitter& track
         }
         case c_panMsbController: {
             ASSIGN_OR_ERROR(auto pan, read14BitControllerStorage<bw_music::CentredControllerStorage>(
-                                          m_panMsbByChannel, channelNumber, value, false));
+                                          m_channelState[channelNumber].m_panMsb, value, false));
             return tracks.addEvent<bw_music::PanEvent>(channelNumber, timeSinceLastTrackEvent, *pan);
         }
         case c_panLsbController: {
             ASSIGN_OR_ERROR(auto pan, read14BitControllerStorage<bw_music::CentredControllerStorage>(
-                                          m_panMsbByChannel, channelNumber, value, true));
+                                          m_channelState[channelNumber].m_panMsb, value, true));
             if (!pan.has_value()) {
                 return false;
             }
@@ -652,12 +655,12 @@ babelwires::ResultT<bool> smf::SmfParser::readControlChange(TrackSplitter& track
         }
         case c_expressionMsbController: {
             ASSIGN_OR_ERROR(auto expression, read14BitControllerStorage<bw_music::ControllerStorage>(
-                                                 m_expressionMsbByChannel, channelNumber, value, false));
+                                                 m_channelState[channelNumber].m_expressionMsb, value, false));
             return tracks.addEvent<bw_music::ExpressionEvent>(channelNumber, timeSinceLastTrackEvent, *expression);
         }
         case c_expressionLsbController: {
             ASSIGN_OR_ERROR(auto expression, read14BitControllerStorage<bw_music::ControllerStorage>(
-                                                 m_expressionMsbByChannel, channelNumber, value, true));
+                                                 m_channelState[channelNumber].m_expressionMsb, value, true));
             if (!expression.has_value()) {
                 return false;
             }
@@ -699,14 +702,20 @@ babelwires::ResultT<bool> smf::SmfParser::readChannelPressure(TrackSplitter& tra
     return tracks.addEvent<bw_music::PressureEvent>(channelNumber, timeSinceLastTrackEvent, pressure);
 }
 
+void smf::SmfParser::ChannelState::resetTimeSensitiveChannelState() {
+    m_volumeMsb = std::nullopt;
+    m_panMsb = std::nullopt;
+    m_expressionMsb = std::nullopt;
+}
+
 babelwires::Result smf::SmfParser::readTrack(int trackIndex, TrackSplitter& tracks, bool hasMainMetadata) {
     DO_OR_ERROR(readByteSequence("MTrk"));
     ASSIGN_OR_ERROR(const std::uint32_t trackLength, readU32());
     const int currentIndex = m_dataSource.getAbsolutePosition();
 
-    m_volumeMsbByChannel.fill(std::nullopt);
-    m_panMsbByChannel.fill(std::nullopt);
-    m_expressionMsbByChannel.fill(std::nullopt);
+    for (auto& channelState : m_channelState) {
+        channelState.resetTimeSensitiveChannelState();
+    }
 
     bw_music::ModelDuration timeSinceLastTrackEvent = 0;
     bw_music::ModelDuration timeSinceTrackStart = 0;
@@ -1001,7 +1010,7 @@ babelwires::Result smf::SmfParser::readFormat0Sequence() {
         return babelwires::Error() << "A format 0 Standard MIDI file claims to have " << m_numTracks
                                    << " tracks but it should only have 1";
     }
-    TrackSplitter splitTracks(m_channelSetup);
+    TrackSplitter splitTracks(m_channelState);
     DO_OR_ERROR(readTrack(0, splitTracks, true));
     auto tracks = getSmfSequence().getTrcks0();
     for (int channelNumber = 0; channelNumber < MAX_CHANNELS; ++channelNumber) {
@@ -1016,7 +1025,7 @@ babelwires::Result smf::SmfParser::readFormat0Sequence() {
 
 babelwires::ResultT<std::optional<smf::SmfParser::Format1TrackData>>
 smf::SmfParser::readFormat1SequenceTrack(int trackIndex, bool hasMainMetadata) {
-    TrackSplitter splitTrack(m_channelSetup);
+    TrackSplitter splitTrack(m_channelState);
     DO_OR_ERROR(readTrack(trackIndex, splitTrack, hasMainMetadata));
 
     // Convert the builders to actual tracks.
@@ -1080,23 +1089,23 @@ smf::MidiMetadata::Instance smf::SmfParser::getMidiMetadata() {
 
 void smf::SmfParser::setGMSpec(GMSpecType::Value gmSpec) {
     for (int i = 0; i < 16; ++i) {
-        m_channelSetup[i].m_kitIfPercussion = m_standardPercussionSets.getDefaultPercussionSet(gmSpec, i);
+        m_channelState[i].m_kitIfPercussion = m_standardPercussionSets.getDefaultPercussionSet(gmSpec, i);
     }
     getMidiMetadata().getSpec().set(gmSpec);
 }
 
 void smf::SmfParser::setBankMSB(unsigned int channelNumber, const babelwires::Byte msbValue) {
-    m_channelSetup[channelNumber].m_channelSetupInfo.m_bankMSB = msbValue;
+    m_channelState[channelNumber].m_channelSetupInfo.m_bankMSB = msbValue;
     onChangeProgram(channelNumber);
 }
 
 void smf::SmfParser::setBankLSB(unsigned int channelNumber, const babelwires::Byte lsbValue) {
-    m_channelSetup[channelNumber].m_channelSetupInfo.m_bankLSB = lsbValue;
+    m_channelState[channelNumber].m_channelSetupInfo.m_bankLSB = lsbValue;
     onChangeProgram(channelNumber);
 }
 
 void smf::SmfParser::setProgram(unsigned int channelNumber, const babelwires::Byte value) {
-    m_channelSetup[channelNumber].m_channelSetupInfo.m_program = value;
+    m_channelState[channelNumber].m_channelSetupInfo.m_program = value;
     onChangeProgram(channelNumber);
 }
 
@@ -1104,13 +1113,13 @@ void smf::SmfParser::setGsPartMode(unsigned int blockNumber, babelwires::Byte va
     // For now, assume the midi channels for each part are unchanged.
     // I'm indexing midi channels from 0.
     const unsigned int channelNumber = s_gsBlockToPartMapping[blockNumber] - 1;
-    m_channelSetup[channelNumber].m_channelSetupInfo.m_gsPartMode = value;
+    m_channelState[channelNumber].m_channelSetupInfo.m_gsPartMode = value;
     onChangeProgram(channelNumber);
 }
 
 /// Right now, just trying to determine which percussionSet is in use if any.
 void smf::SmfParser::onChangeProgram(unsigned int channelNumber) {
-    ChannelSetup& channelSetup = m_channelSetup[channelNumber];
+    ChannelState& channelSetup = m_channelState[channelNumber];
     const GMSpecType::Value gmSpec = getMidiMetadata().getSpec().get();
     channelSetup.m_kitIfPercussion =
         m_standardPercussionSets.getPercussionSetFromChannelSetupInfo(gmSpec, channelSetup.m_channelSetupInfo);

@@ -123,8 +123,7 @@ namespace smf {
 
         template <typename STORAGE>
         babelwires::ResultT<std::optional<STORAGE>>
-        read14BitControllerStorage(std::array<std::optional<babelwires::Byte>, 16>& msbByChannel,
-                                   unsigned int channelNumber, babelwires::Byte value, bool isLsb);
+        read14BitControllerStorage(std::optional<babelwires::Byte>& msbByChannel, babelwires::Byte value, bool isLsb);
 
         enum KnownPercussionSets { GM_PERCUSSION_KIT, GM2_STANDARD_PERCUSSION_KIT, NUM_KNOWN_PERCUSSION_KITS };
 
@@ -151,20 +150,26 @@ namespace smf {
         /// Knowledge of how pitches map to percussion instruments.
         StandardPercussionSets m_standardPercussionSets;
 
-        /// Currently just used to determine which tracks are percussion tracks.
-        struct ChannelSetup {
+        /// Information about the state of each MIDI channel.
+        struct ChannelState {
             StandardPercussionSets::ChannelSetupInfo m_channelSetupInfo;
             // This is non-null when the pitches in the data should be interpreted as percussion events from the given
             // kit.
             const bw_music::PercussionSetWithPitchMap* m_kitIfPercussion = nullptr;
+
+            /// Resets the time-sensitive parts of the channel state.
+            // TODO: We wrongly assume some channel information is set up at track start, and other data is time
+            // sensitive. In theory, all of the data is time sensitive. To properly handle this channel state, I really
+            // need to parse all the tracks simultaneously.
+            void resetTimeSensitiveChannelState();
+
+            // Cached MSB (Most Significant Byte) values for various MIDI controllers.
+            std::optional<babelwires::Byte> m_volumeMsb;
+            std::optional<babelwires::Byte> m_panMsb;
+            std::optional<babelwires::Byte> m_expressionMsb;
         };
 
-        std::array<ChannelSetup, 16> m_channelSetup;
-
-        // Cached MSB (Most Significant Byte) values for various MIDI controllers.
-        std::array<std::optional<babelwires::Byte>, 16> m_volumeMsbByChannel;
-        std::array<std::optional<babelwires::Byte>, 16> m_panMsbByChannel;
-        std::array<std::optional<babelwires::Byte>, 16> m_expressionMsbByChannel;
+        std::array<ChannelState, 16> m_channelState;
     };
 
     babelwires::ResultT<std::unique_ptr<babelwires::ValueTreeRoot>>
