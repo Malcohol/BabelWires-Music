@@ -7,9 +7,9 @@
  **/
 #include <Smf/smfParser.hpp>
 
+#include <Smf/Parsing/smfByteParser.hpp>
 #include <Smf/Percussion/gm2StandardPercussionSet.hpp>
 #include <Smf/Percussion/gmPercussionSet.hpp>
-#include <Smf/Parsing/smfByteParser.hpp>
 #include <Smf/smfCommon.hpp>
 
 #include <MusicLib/Percussion/builtInPercussionInstruments.hpp>
@@ -173,12 +173,12 @@ void smf::SmfConsumer::onChangeProgram(unsigned int channelNumber) {
 }
 
 void smf::SmfConsumer::ChannelState::resetTimeSensitiveChannelState() {
-    m_volumeMsb = std::nullopt;
-    m_volumeLsb = std::nullopt;
-    m_panMsb = std::nullopt;
-    m_panLsb = std::nullopt;
-    m_expressionMsb = std::nullopt;
-    m_expressionLsb = std::nullopt;
+    m_volume.m_msb = std::nullopt;
+    m_volume.m_lsb = std::nullopt;
+    m_pan.m_msb = std::nullopt;
+    m_pan.m_lsb = std::nullopt;
+    m_expression.m_msb = std::nullopt;
+    m_expression.m_lsb = std::nullopt;
 }
 
 void smf::SmfConsumer::interpretSysExForGMSpec(std::span<const std::uint8_t> data) {
@@ -345,13 +345,12 @@ bw_music::ModelDuration smf::SmfConsumer::TrackConsumer::timeSinceLastHandledEve
 }
 
 bool smf::SmfConsumer::TrackConsumer::addNoteOn(unsigned int channelNumber,
-                                                bw_music::ModelDuration timeSinceLastTrackEvent,
-                                                bw_music::Pitch pitch, bw_music::VelocityStorage velocity) {
+                                                bw_music::ModelDuration timeSinceLastTrackEvent, bw_music::Pitch pitch,
+                                                bw_music::VelocityStorage velocity) {
     if (const bw_music::PercussionSetWithPitchMap* const percussionSet =
             m_owner.m_channelState[channelNumber].m_kitIfPercussion) {
         if (auto instrument = percussionSet->tryGetInstrumentFromPitch(pitch)) {
-            return addEvent<bw_music::PercussionOnEvent>(channelNumber, timeSinceLastTrackEvent, *instrument,
-                                                         velocity);
+            return addEvent<bw_music::PercussionOnEvent>(channelNumber, timeSinceLastTrackEvent, *instrument, velocity);
         }
         return false;
     } else {
@@ -360,8 +359,8 @@ bool smf::SmfConsumer::TrackConsumer::addNoteOn(unsigned int channelNumber,
 }
 
 bool smf::SmfConsumer::TrackConsumer::addNoteOff(unsigned int channelNumber,
-                                                 bw_music::ModelDuration timeSinceLastTrackEvent,
-                                                 bw_music::Pitch pitch, bw_music::VelocityStorage velocity) {
+                                                 bw_music::ModelDuration timeSinceLastTrackEvent, bw_music::Pitch pitch,
+                                                 bw_music::VelocityStorage velocity) {
     if (const bw_music::PercussionSetWithPitchMap* const percussionSet =
             m_owner.m_channelState[channelNumber].m_kitIfPercussion) {
         if (auto instrument = percussionSet->tryGetInstrumentFromPitch(pitch)) {
@@ -394,24 +393,22 @@ void smf::SmfConsumer::TrackConsumer::setDurationsForAllChannels(bw_music::Model
 
 template <typename STORAGE>
 babelwires::ResultT<std::optional<STORAGE>>
-smf::SmfConsumer::TrackConsumer::read14BitControllerStorage(std::optional<babelwires::Byte>& msb,
-                                                            std::optional<babelwires::Byte>& lsb,
-                                                            babelwires::Byte value, bool isLsb) {
+smf::SmfConsumer::ChannelState::ControllerState::updateWithNewValue(babelwires::Byte value, bool isLsb) {
     if (isLsb) {
-        lsb = value;
-        if (msb.has_value()) {
+        m_lsb = value;
+        if (m_msb.has_value()) {
             ASSIGN_OR_ERROR(const STORAGE fineStorage,
-                            STORAGE::template fromUnsigned<14>(combine14BitControllerValue(*msb, *lsb)));
+                            STORAGE::template fromUnsigned<14>(combine14BitControllerValue(*m_msb, *m_lsb)));
             return std::optional<STORAGE>{fineStorage};
         } else {
             // We don't have a complete 14-bit value yet, so no event is returned.
             return std::optional<STORAGE>{};
         }
     } else {
-        msb = value;
-        if (lsb.has_value()) {
+        m_msb = value;
+        if (m_lsb.has_value()) {
             ASSIGN_OR_ERROR(const STORAGE fineStorage,
-                            STORAGE::template fromUnsigned<14>(combine14BitControllerValue(*msb, *lsb)));
+                            STORAGE::template fromUnsigned<14>(combine14BitControllerValue(*m_msb, *m_lsb)));
             return std::optional<STORAGE>{fineStorage};
         } else {
             // Assume a coarse/legacy 7-bit event (so, for example, 0x7f gets treated the same as 0x3fff).
@@ -485,53 +482,49 @@ smf::SmfConsumer::TrackConsumer::onControlChange(TimeInfo timeInfo, std::uint8_t
             m_owner.setBankMSB(channel4, value7);
             return EventHandlingResult::Ignored;
         case c_volumeMsbController: {
-            ASSIGN_OR_ERROR(auto volume, read14BitControllerStorage<bw_music::ControllerStorage>(
-                                             channelState.m_volumeMsb, channelState.m_volumeLsb, value7, false));
+            ASSIGN_OR_ERROR(auto volume,
+                            channelState.m_volume.updateWithNewValue<bw_music::ControllerStorage>(value7, false));
             return addEvent<bw_music::VolumeEvent>(channel4, time, *volume) ? EventHandlingResult::Handled
-                                                                          : EventHandlingResult::Ignored;
+                                                                            : EventHandlingResult::Ignored;
         }
         case c_volumeLsbController: {
-            ASSIGN_OR_ERROR(auto volume, read14BitControllerStorage<bw_music::ControllerStorage>(
-                                             channelState.m_volumeMsb, channelState.m_volumeLsb, value7, true));
+            ASSIGN_OR_ERROR(auto volume,
+                            channelState.m_volume.updateWithNewValue<bw_music::ControllerStorage>(value7, true));
             if (!volume.has_value()) {
                 return EventHandlingResult::Ignored;
             }
             return addEvent<bw_music::VolumeEvent>(channel4, time, *volume) ? EventHandlingResult::Handled
-                                                                          : EventHandlingResult::Ignored;
+                                                                            : EventHandlingResult::Ignored;
         }
         case c_panMsbController: {
-            ASSIGN_OR_ERROR(auto pan, read14BitControllerStorage<bw_music::CentredControllerStorage>(
-                                          channelState.m_panMsb, channelState.m_panLsb, value7, false));
+            ASSIGN_OR_ERROR(auto pan,
+                            channelState.m_pan.updateWithNewValue<bw_music::CentredControllerStorage>(value7, false));
             return addEvent<bw_music::PanEvent>(channel4, time, *pan) ? EventHandlingResult::Handled
-                                                                     : EventHandlingResult::Ignored;
+                                                                      : EventHandlingResult::Ignored;
         }
         case c_panLsbController: {
-            ASSIGN_OR_ERROR(auto pan, read14BitControllerStorage<bw_music::CentredControllerStorage>(
-                                          channelState.m_panMsb, channelState.m_panLsb, value7, true));
+            ASSIGN_OR_ERROR(auto pan,
+                            channelState.m_pan.updateWithNewValue<bw_music::CentredControllerStorage>(value7, true));
             if (!pan.has_value()) {
                 return EventHandlingResult::Ignored;
             }
             return addEvent<bw_music::PanEvent>(channel4, time, *pan) ? EventHandlingResult::Handled
-                                                                     : EventHandlingResult::Ignored;
+                                                                      : EventHandlingResult::Ignored;
         }
         case c_expressionMsbController: {
-            ASSIGN_OR_ERROR(auto expression, read14BitControllerStorage<bw_music::ControllerStorage>(
-                                                 channelState.m_expressionMsb, channelState.m_expressionLsb, value7,
-                                                 false));
-            return addEvent<bw_music::ExpressionEvent>(channel4, time, *expression)
-                       ? EventHandlingResult::Handled
-                       : EventHandlingResult::Ignored;
+            ASSIGN_OR_ERROR(auto expression,
+                            channelState.m_expression.updateWithNewValue<bw_music::ControllerStorage>(value7, false));
+            return addEvent<bw_music::ExpressionEvent>(channel4, time, *expression) ? EventHandlingResult::Handled
+                                                                                    : EventHandlingResult::Ignored;
         }
         case c_expressionLsbController: {
-            ASSIGN_OR_ERROR(auto expression, read14BitControllerStorage<bw_music::ControllerStorage>(
-                                                 channelState.m_expressionMsb, channelState.m_expressionLsb, value7,
-                                                 true));
+            ASSIGN_OR_ERROR(auto expression,
+                            channelState.m_expression.updateWithNewValue<bw_music::ControllerStorage>(value7, true));
             if (!expression.has_value()) {
                 return EventHandlingResult::Ignored;
             }
-            return addEvent<bw_music::ExpressionEvent>(channel4, time, *expression)
-                       ? EventHandlingResult::Handled
-                       : EventHandlingResult::Ignored;
+            return addEvent<bw_music::ExpressionEvent>(channel4, time, *expression) ? EventHandlingResult::Handled
+                                                                                    : EventHandlingResult::Ignored;
         }
         case c_bankSelectLsbController:
             m_owner.setBankLSB(channel4, value7);
@@ -540,7 +533,7 @@ smf::SmfConsumer::TrackConsumer::onControlChange(TimeInfo timeInfo, std::uint8_t
             ASSIGN_OR_ERROR(const bw_music::ControllerStorage sustain,
                             bw_music::ControllerStorage::fromUnsigned<7>(value7));
             return addEvent<bw_music::SustainEvent>(channel4, time, sustain) ? EventHandlingResult::Handled
-                                                                            : EventHandlingResult::Ignored;
+                                                                             : EventHandlingResult::Ignored;
         }
         default:
             return EventHandlingResult::Ignored;
@@ -555,8 +548,8 @@ smf::SmfConsumer::TrackConsumer::onProgramChange(TimeInfo timeInfo, std::uint8_t
 
 babelwires::ResultT<smf::TrackEventConsumer::EventHandlingResult>
 smf::SmfConsumer::TrackConsumer::onTempoEvent(TimeInfo timeInfo, std::uint32_t tempoValue24) {
-    DO_OR_ERROR(m_owner.readTempoEvent(m_trackIndex, m_owner.ticksToDuration(timeInfo.m_ticksSinceTrackStart),
-                                       tempoValue24));
+    DO_OR_ERROR(
+        m_owner.readTempoEvent(m_trackIndex, m_owner.ticksToDuration(timeInfo.m_ticksSinceTrackStart), tempoValue24));
     return EventHandlingResult::Ignored;
 }
 

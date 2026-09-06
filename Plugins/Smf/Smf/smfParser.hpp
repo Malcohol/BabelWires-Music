@@ -144,11 +144,6 @@ namespace smf {
             /// All channels share the duration of the MIDI track.
             void setDurationsForAllChannels(bw_music::ModelDuration timeToEndOfTrackEvent);
 
-            template <typename STORAGE>
-            babelwires::ResultT<std::optional<STORAGE>> read14BitControllerStorage(std::optional<babelwires::Byte>& msb,
-                                                                                   std::optional<babelwires::Byte>& lsb,
-                                                                                   babelwires::Byte value, bool isLsb);
-
             /// Convert the interface's tick-based TimeInfo into the ModelDuration since the
             /// last handled event.
             bw_music::ModelDuration timeSinceLastHandledEvent(TimeInfo timeInfo) const;
@@ -194,12 +189,18 @@ namespace smf {
             void resetTimeSensitiveChannelState();
 
             // Cached MSB/LSB values for the 14-bit controllers.
-            std::optional<babelwires::Byte> m_volumeMsb;
-            std::optional<babelwires::Byte> m_volumeLsb;
-            std::optional<babelwires::Byte> m_panMsb;
-            std::optional<babelwires::Byte> m_panLsb;
-            std::optional<babelwires::Byte> m_expressionMsb;
-            std::optional<babelwires::Byte> m_expressionLsb;
+            struct ControllerState {
+                std::optional<babelwires::Byte> m_msb;
+                std::optional<babelwires::Byte> m_lsb;
+
+                template <typename STORAGE>
+                babelwires::ResultT<std::optional<STORAGE>> updateWithNewValue(babelwires::Byte value, bool isLsb);
+            };
+
+            ControllerState m_volume;
+            ControllerState m_pan;
+            ControllerState m_expression;
+
         };
         std::array<ChannelState, 16> m_channelState;
 
