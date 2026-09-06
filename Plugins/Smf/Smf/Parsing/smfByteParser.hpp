@@ -64,6 +64,9 @@ namespace smf {
     /// SmfTrackByteParser instances to deliver events in global time order.
     class SmfByteParser : private SmfByteReader {
       public:
+        /// The DataSource is not guaranteed to be fully consumed, even in the successful case:
+        /// a track consumer which returns Done causes the remainder of that track to be skipped
+        /// without parsing.
         SmfByteParser(babelwires::DataSource& dataSource, SequenceEventConsumer& consumer,
                       babelwires::UserAdvisoryLogger& log);
 
@@ -105,6 +108,11 @@ namespace smf {
         /// recently parsed event. When getState() == Ready, this is the time of the
         /// next event minus its (unparsed) delta time.
         std::uint64_t getTicksSinceTrackStart() const { return m_ticksSinceTrackStart; }
+
+        /// The number of bytes of track event data consumed so far.
+        std::uint32_t getNumBytesConsumed() const {
+            return static_cast<std::uint32_t>(m_dataSource.getAbsolutePosition() - m_trackDataStart);
+        }
 
         /// Parse the next event in the track and fire the appropriate callback.
         /// Requires getState() == Ready.

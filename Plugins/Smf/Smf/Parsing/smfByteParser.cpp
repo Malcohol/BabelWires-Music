@@ -152,10 +152,17 @@ babelwires::Result smf::SmfByteParser::readHeaderChunk() {
     return m_consumer.onSequenceStart(m_numTracks, format, division);
 }
 
-babelwires::Result smf::SmfByteParser::readTrackContents(std::uint16_t trackIndex, std::uint32_t trackLength, TrackEventConsumer& trackConsumer) {
+babelwires::Result smf::SmfByteParser::readTrackContents(std::uint16_t trackIndex, std::uint32_t trackLength,
+                                                         TrackEventConsumer& trackConsumer) {
     SmfTrackByteParser trackParser(m_dataSource, trackConsumer, trackLength, trackIndex, m_log);
     while (trackParser.getState() == SmfTrackByteParser::State::Ready) {
         DO_OR_ERROR(trackParser.parseNextEvent());
+    }
+    // A consumer may signal Done before the end-of-track event, leaving part of the
+    // track unparsed. Skip any remaining bytes so the next track starts at the right place.
+    const std::uint32_t numBytesConsumed = trackParser.getNumBytesConsumed();
+    if (numBytesConsumed < trackLength) {
+        DO_OR_ERROR(skipBytes(trackLength - numBytesConsumed));
     }
     return {};
 }
