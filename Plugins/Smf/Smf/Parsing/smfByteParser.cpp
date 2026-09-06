@@ -216,13 +216,13 @@ babelwires::Result smf::SmfTrackByteParser::fireCallback(
 
 babelwires::Result smf::SmfTrackByteParser::handleCallbackResult(EventHandlingResult result) {
     switch (result) {
-        case EventHandlingResult::Handled:
+        case EventHandlingResult::ResetTime:
             m_ticksSinceLastHandledEvent = 0;
             break;
         case EventHandlingResult::Done:
             m_state = State::Done;
             break;
-        case EventHandlingResult::Ignored:
+        case EventHandlingResult::AccumulateTime:
             break;
     }
     return {};

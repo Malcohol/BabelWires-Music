@@ -124,7 +124,7 @@ namespace smf {
 
         /// Advance the running time totals by the given delta, then fire the consumer callback
         /// identified by the member function pointer, forwarding the given arguments.
-        /// If the callback returns Handled, m_ticksSinceLastHandledEvent is reset.
+        /// If the callback returns ResetTime, m_ticksSinceLastHandledEvent is reset.
         /// ARGS are the argument types of the callback (which may include const-ref or span);
         /// CALL_ARGS are the (deduced) argument types at the call site.
         template <typename... ARGS, typename... CALL_ARGS>

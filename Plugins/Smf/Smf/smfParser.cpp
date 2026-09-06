@@ -425,9 +425,9 @@ smf::SmfConsumer::TrackConsumer::onNoteOn(TimeInfo timeInfo, std::uint8_t channe
                                           std::uint8_t velocity7) {
     ASSIGN_OR_ERROR(const bw_music::VelocityStorage velocity, bw_music::MinMaxValue16::fromUnsigned<7>(velocity7));
     if (addNoteOn(channel4, timeSinceLastHandledEvent(timeInfo), pitch7, velocity)) {
-        return EventHandlingResult::Handled;
+        return EventHandlingResult::ResetTime;
     }
-    return EventHandlingResult::Ignored;
+    return EventHandlingResult::AccumulateTime;
 }
 
 babelwires::ResultT<smf::TrackEventConsumer::EventHandlingResult>
@@ -435,9 +435,9 @@ smf::SmfConsumer::TrackConsumer::onNoteOff(TimeInfo timeInfo, std::uint8_t chann
                                            std::uint8_t velocity7) {
     ASSIGN_OR_ERROR(const bw_music::VelocityStorage velocity, bw_music::MinMaxValue16::fromUnsigned<7>(velocity7));
     if (addNoteOff(channel4, timeSinceLastHandledEvent(timeInfo), pitch7, velocity)) {
-        return EventHandlingResult::Handled;
+        return EventHandlingResult::ResetTime;
     }
-    return EventHandlingResult::Ignored;
+    return EventHandlingResult::AccumulateTime;
 }
 
 babelwires::ResultT<smf::TrackEventConsumer::EventHandlingResult>
@@ -446,9 +446,9 @@ smf::SmfConsumer::TrackConsumer::onPolyphonicAftertouch(TimeInfo timeInfo, std::
     ASSIGN_OR_ERROR(const bw_music::ControllerStorage pressure,
                     bw_music::ControllerStorage::fromUnsigned<7>(pressure7));
     if (addEvent<bw_music::NotePressureEvent>(channel4, timeSinceLastHandledEvent(timeInfo), pitch7, pressure)) {
-        return EventHandlingResult::Handled;
+        return EventHandlingResult::ResetTime;
     }
-    return EventHandlingResult::Ignored;
+    return EventHandlingResult::AccumulateTime;
 }
 
 babelwires::ResultT<smf::TrackEventConsumer::EventHandlingResult>
@@ -456,9 +456,9 @@ smf::SmfConsumer::TrackConsumer::onChannelPressure(TimeInfo timeInfo, std::uint8
     ASSIGN_OR_ERROR(const bw_music::ControllerStorage pressure,
                     bw_music::ControllerStorage::fromUnsigned<7>(pressure7));
     if (addEvent<bw_music::PressureEvent>(channel4, timeSinceLastHandledEvent(timeInfo), pressure)) {
-        return EventHandlingResult::Handled;
+        return EventHandlingResult::ResetTime;
     }
-    return EventHandlingResult::Ignored;
+    return EventHandlingResult::AccumulateTime;
 }
 
 babelwires::ResultT<smf::TrackEventConsumer::EventHandlingResult>
@@ -466,9 +466,9 @@ smf::SmfConsumer::TrackConsumer::onPitchBend(TimeInfo timeInfo, std::uint8_t cha
     ASSIGN_OR_ERROR(bw_music::CentredControllerStorage pitchBend,
                     bw_music::CentredControllerStorage::fromUnsigned<14>(value14));
     if (addEvent<bw_music::PitchBendEvent>(channel4, timeSinceLastHandledEvent(timeInfo), std::move(pitchBend))) {
-        return EventHandlingResult::Handled;
+        return EventHandlingResult::ResetTime;
     }
-    return EventHandlingResult::Ignored;
+    return EventHandlingResult::AccumulateTime;
 }
 
 babelwires::ResultT<smf::TrackEventConsumer::EventHandlingResult>
@@ -480,77 +480,77 @@ smf::SmfConsumer::TrackConsumer::onControlChange(TimeInfo timeInfo, std::uint8_t
     switch (controller7) {
         case c_bankSelectMsbController:
             m_owner.setBankMSB(channel4, value7);
-            return EventHandlingResult::Ignored;
+            return EventHandlingResult::AccumulateTime;
         case c_volumeMsbController: {
             ASSIGN_OR_ERROR(auto volume,
                             channelState.m_volume.updateWithNewValue<bw_music::ControllerStorage>(value7, false));
-            return addEvent<bw_music::VolumeEvent>(channel4, time, *volume) ? EventHandlingResult::Handled
-                                                                            : EventHandlingResult::Ignored;
+            return addEvent<bw_music::VolumeEvent>(channel4, time, *volume) ? EventHandlingResult::ResetTime
+                                                                            : EventHandlingResult::AccumulateTime;
         }
         case c_volumeLsbController: {
             ASSIGN_OR_ERROR(auto volume,
                             channelState.m_volume.updateWithNewValue<bw_music::ControllerStorage>(value7, true));
             if (!volume.has_value()) {
-                return EventHandlingResult::Ignored;
+                return EventHandlingResult::AccumulateTime;
             }
-            return addEvent<bw_music::VolumeEvent>(channel4, time, *volume) ? EventHandlingResult::Handled
-                                                                            : EventHandlingResult::Ignored;
+            return addEvent<bw_music::VolumeEvent>(channel4, time, *volume) ? EventHandlingResult::ResetTime
+                                                                            : EventHandlingResult::AccumulateTime;
         }
         case c_panMsbController: {
             ASSIGN_OR_ERROR(auto pan,
                             channelState.m_pan.updateWithNewValue<bw_music::CentredControllerStorage>(value7, false));
-            return addEvent<bw_music::PanEvent>(channel4, time, *pan) ? EventHandlingResult::Handled
-                                                                      : EventHandlingResult::Ignored;
+            return addEvent<bw_music::PanEvent>(channel4, time, *pan) ? EventHandlingResult::ResetTime
+                                                                      : EventHandlingResult::AccumulateTime;
         }
         case c_panLsbController: {
             ASSIGN_OR_ERROR(auto pan,
                             channelState.m_pan.updateWithNewValue<bw_music::CentredControllerStorage>(value7, true));
             if (!pan.has_value()) {
-                return EventHandlingResult::Ignored;
+                return EventHandlingResult::AccumulateTime;
             }
-            return addEvent<bw_music::PanEvent>(channel4, time, *pan) ? EventHandlingResult::Handled
-                                                                      : EventHandlingResult::Ignored;
+            return addEvent<bw_music::PanEvent>(channel4, time, *pan) ? EventHandlingResult::ResetTime
+                                                                      : EventHandlingResult::AccumulateTime;
         }
         case c_expressionMsbController: {
             ASSIGN_OR_ERROR(auto expression,
                             channelState.m_expression.updateWithNewValue<bw_music::ControllerStorage>(value7, false));
-            return addEvent<bw_music::ExpressionEvent>(channel4, time, *expression) ? EventHandlingResult::Handled
-                                                                                    : EventHandlingResult::Ignored;
+            return addEvent<bw_music::ExpressionEvent>(channel4, time, *expression) ? EventHandlingResult::ResetTime
+                                                                                    : EventHandlingResult::AccumulateTime;
         }
         case c_expressionLsbController: {
             ASSIGN_OR_ERROR(auto expression,
                             channelState.m_expression.updateWithNewValue<bw_music::ControllerStorage>(value7, true));
             if (!expression.has_value()) {
-                return EventHandlingResult::Ignored;
+                return EventHandlingResult::AccumulateTime;
             }
-            return addEvent<bw_music::ExpressionEvent>(channel4, time, *expression) ? EventHandlingResult::Handled
-                                                                                    : EventHandlingResult::Ignored;
+            return addEvent<bw_music::ExpressionEvent>(channel4, time, *expression) ? EventHandlingResult::ResetTime
+                                                                                    : EventHandlingResult::AccumulateTime;
         }
         case c_bankSelectLsbController:
             m_owner.setBankLSB(channel4, value7);
-            return EventHandlingResult::Ignored;
+            return EventHandlingResult::AccumulateTime;
         case c_sustainController: {
             ASSIGN_OR_ERROR(const bw_music::ControllerStorage sustain,
                             bw_music::ControllerStorage::fromUnsigned<7>(value7));
-            return addEvent<bw_music::SustainEvent>(channel4, time, sustain) ? EventHandlingResult::Handled
-                                                                             : EventHandlingResult::Ignored;
+            return addEvent<bw_music::SustainEvent>(channel4, time, sustain) ? EventHandlingResult::ResetTime
+                                                                             : EventHandlingResult::AccumulateTime;
         }
         default:
-            return EventHandlingResult::Ignored;
+            return EventHandlingResult::AccumulateTime;
     }
 }
 
 babelwires::ResultT<smf::TrackEventConsumer::EventHandlingResult>
 smf::SmfConsumer::TrackConsumer::onProgramChange(TimeInfo timeInfo, std::uint8_t channel4, std::uint8_t program7) {
     m_owner.setProgram(channel4, program7);
-    return EventHandlingResult::Ignored;
+    return EventHandlingResult::AccumulateTime;
 }
 
 babelwires::ResultT<smf::TrackEventConsumer::EventHandlingResult>
 smf::SmfConsumer::TrackConsumer::onTempoEvent(TimeInfo timeInfo, std::uint32_t tempoValue24) {
     DO_OR_ERROR(
         m_owner.readTempoEvent(m_trackIndex, m_owner.ticksToDuration(timeInfo.m_ticksSinceTrackStart), tempoValue24));
-    return EventHandlingResult::Ignored;
+    return EventHandlingResult::AccumulateTime;
 }
 
 babelwires::ResultT<smf::TrackEventConsumer::EventHandlingResult>
@@ -559,7 +559,7 @@ smf::SmfConsumer::TrackConsumer::onCopyright(TimeInfo timeInfo, std::span<const 
         std::string text(copyright.begin(), copyright.end());
         m_owner.getMidiMetadata().activateAndGetCopyR().set(babelwires::Text::tryFromPrintableAscii(text));
     }
-    return EventHandlingResult::Ignored;
+    return EventHandlingResult::AccumulateTime;
 }
 
 babelwires::ResultT<smf::TrackEventConsumer::EventHandlingResult>
@@ -568,19 +568,19 @@ smf::SmfConsumer::TrackConsumer::onSequenceOrTrackName(TimeInfo timeInfo, std::s
         std::string text(name.begin(), name.end());
         m_owner.getMidiMetadata().activateAndGetName().set(babelwires::Text::tryFromPrintableAscii(text));
     }
-    return EventHandlingResult::Ignored;
+    return EventHandlingResult::AccumulateTime;
 }
 
 babelwires::ResultT<smf::TrackEventConsumer::EventHandlingResult>
 smf::SmfConsumer::TrackConsumer::onSysExEvent(TimeInfo timeInfo, std::span<const std::uint8_t> data) {
     m_owner.interpretSysExForGMSpec(data);
-    return EventHandlingResult::Ignored;
+    return EventHandlingResult::AccumulateTime;
 }
 
 babelwires::ResultT<smf::TrackEventConsumer::EventHandlingResult>
 smf::SmfConsumer::TrackConsumer::onEndOfTrack(TimeInfo timeInfo) {
     setDurationsForAllChannels(timeSinceLastHandledEvent(timeInfo));
-    return EventHandlingResult::Ignored;
+    return EventHandlingResult::AccumulateTime;
 }
 
 smf::SmfConsumer::TrackConsumer::~TrackConsumer() {
