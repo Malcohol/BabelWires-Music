@@ -14,9 +14,9 @@
 #include <span>
 
 namespace smf {
-    class TrackEventConsumer {
+    class SmfTrackEventConsumer {
       public:
-        virtual ~TrackEventConsumer() = default;
+        virtual ~SmfTrackEventConsumer() = default;
 
         enum class EventHandlingResult {
             /// The event should be treated as "handled" by the event consumer, so the time since the last handled event
@@ -237,9 +237,9 @@ namespace smf {
         }
     };
 
-    class SequenceEventConsumer {
+    class SmfEventConsumer {
       public:
-        virtual ~SequenceEventConsumer() = default;
+        virtual ~SmfEventConsumer() = default;
 
         virtual babelwires::Result onSequenceStart(std::uint16_t numTracks, std::uint16_t format,
                                                    std::uint16_t division) {
@@ -247,7 +247,7 @@ namespace smf {
         }
 
         /// Returning nullptr means the track should be ignored.
-        virtual std::unique_ptr<TrackEventConsumer> onTrack(std::uint16_t trackIndex) { return nullptr; };
+        virtual std::unique_ptr<SmfTrackEventConsumer> onTrack(std::uint16_t trackIndex) { return nullptr; };
     };
 
 } // namespace smf

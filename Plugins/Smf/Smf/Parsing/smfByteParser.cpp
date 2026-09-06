@@ -109,7 +109,7 @@ babelwires::Result smf::SmfByteReader::skipBytes(std::uint32_t numBytes) {
 // SmfByteParser
 // ---------------------------------------------------------------------------
 
-smf::SmfByteParser::SmfByteParser(babelwires::DataSource& dataSource, SequenceEventConsumer& consumer,
+smf::SmfByteParser::SmfByteParser(babelwires::DataSource& dataSource, SmfEventConsumer& consumer,
                                   babelwires::UserAdvisoryLogger& log)
     : SmfByteReader(dataSource)
     , m_consumer(consumer)
@@ -121,7 +121,7 @@ babelwires::Result smf::SmfByteParser::parse() {
     for (std::uint16_t i = 0; i < m_numTracks; ++i) {
         DO_OR_ERROR(readByteSequence("MTrk"));
         ASSIGN_OR_ERROR(const std::uint32_t trackLength, readU32());
-        std::unique_ptr<TrackEventConsumer> trackConsumer = m_consumer.onTrack(i);
+        std::unique_ptr<SmfTrackEventConsumer> trackConsumer = m_consumer.onTrack(i);
         if (trackConsumer) {
             DO_OR_ERROR(readTrackContents(i, trackLength, *trackConsumer));
         } else {
@@ -153,7 +153,7 @@ babelwires::Result smf::SmfByteParser::readHeaderChunk() {
 }
 
 babelwires::Result smf::SmfByteParser::readTrackContents(std::uint16_t trackIndex, std::uint32_t trackLength,
-                                                         TrackEventConsumer& trackConsumer) {
+                                                         SmfTrackEventConsumer& trackConsumer) {
     SmfTrackByteParser trackParser(m_dataSource, trackConsumer, trackLength, trackIndex, m_log);
     while (trackParser.getState() == SmfTrackByteParser::State::Ready) {
         DO_OR_ERROR(trackParser.parseNextEvent());
@@ -171,7 +171,7 @@ babelwires::Result smf::SmfByteParser::readTrackContents(std::uint16_t trackInde
 // SmfTrackByteParser
 // ---------------------------------------------------------------------------
 
-smf::SmfTrackByteParser::SmfTrackByteParser(babelwires::DataSource& dataSource, TrackEventConsumer& consumer,
+smf::SmfTrackByteParser::SmfTrackByteParser(babelwires::DataSource& dataSource, SmfTrackEventConsumer& consumer,
                                             std::uint32_t trackLength, std::uint16_t trackIndex,
                                             babelwires::UserAdvisoryLogger& log)
     : SmfByteReader(dataSource)
@@ -203,7 +203,7 @@ babelwires::Result smf::SmfTrackByteParser::logMessageBytes(STREAMLIKE log, std:
 
 template <typename... ARGS, typename... CALL_ARGS>
 babelwires::Result smf::SmfTrackByteParser::fireCallback(
-    std::uint64_t delta, babelwires::ResultT<EventHandlingResult> (TrackEventConsumer::*callback)(TimeInfo, ARGS...),
+    std::uint64_t delta, babelwires::ResultT<EventHandlingResult> (SmfTrackEventConsumer::*callback)(TimeInfo, ARGS...),
     CALL_ARGS&&... args) {
     m_ticksSinceLastHandledEvent += delta;
     m_ticksSinceTrackStart += delta;
@@ -276,24 +276,24 @@ babelwires::Result smf::SmfTrackByteParser::parseChannelMessage(babelwires::Byte
         {
             ASSIGN_OR_ERROR(const std::uint8_t pitch, readU7());
             ASSIGN_OR_ERROR(const std::uint8_t velocity, readU7());
-            return fireCallback(delta, &TrackEventConsumer::onNoteOff, statusLo, pitch, velocity);
+            return fireCallback(delta, &SmfTrackEventConsumer::onNoteOff, statusLo, pitch, velocity);
         }
         case 0b1001: // Note on.
         {
             ASSIGN_OR_ERROR(const std::uint8_t pitch, readU7());
             ASSIGN_OR_ERROR(const std::uint8_t velocity, readU7());
             if (velocity != 0) {
-                return fireCallback(delta, &TrackEventConsumer::onNoteOn, statusLo, pitch, velocity);
+                return fireCallback(delta, &SmfTrackEventConsumer::onNoteOn, statusLo, pitch, velocity);
             } else {
                 // A note-on with velocity 0 is defined as a note-off.
-                return fireCallback(delta, &TrackEventConsumer::onNoteOff, statusLo, pitch, velocity);
+                return fireCallback(delta, &SmfTrackEventConsumer::onNoteOff, statusLo, pitch, velocity);
             }
         }
         case 0b1010: // Polyphonic key pressure (aftertouch).
         {
             ASSIGN_OR_ERROR(const std::uint8_t pitch, readU7());
             ASSIGN_OR_ERROR(const std::uint8_t pressure, readU7());
-            return fireCallback(delta, &TrackEventConsumer::onPolyphonicAftertouch, statusLo, pitch, pressure);
+            return fireCallback(delta, &SmfTrackEventConsumer::onPolyphonicAftertouch, statusLo, pitch, pressure);
         }
         case 0b1011: // Control change.
         {
@@ -301,37 +301,37 @@ babelwires::Result smf::SmfTrackByteParser::parseChannelMessage(babelwires::Byte
             ASSIGN_OR_ERROR(const std::uint8_t value, readU7());
             if (controller >= 120) {
                 // Channel mode message.
-                TrackEventConsumer::ChannelMode mode;
+                SmfTrackEventConsumer::ChannelMode mode;
                 switch (controller) {
-                    case 120: mode = TrackEventConsumer::ChannelMode::AllSoundOff; break;
-                    case 121: mode = TrackEventConsumer::ChannelMode::ResetAllControllers; break;
-                    case 122: mode = TrackEventConsumer::ChannelMode::LocalControl; break;
-                    case 123: mode = TrackEventConsumer::ChannelMode::AllNotesOff; break;
-                    case 124: mode = TrackEventConsumer::ChannelMode::OmniOff; break;
-                    case 125: mode = TrackEventConsumer::ChannelMode::OmniOn; break;
-                    case 126: mode = TrackEventConsumer::ChannelMode::Mono; break;
-                    case 127: mode = TrackEventConsumer::ChannelMode::Poly; break;
+                    case 120: mode = SmfTrackEventConsumer::ChannelMode::AllSoundOff; break;
+                    case 121: mode = SmfTrackEventConsumer::ChannelMode::ResetAllControllers; break;
+                    case 122: mode = SmfTrackEventConsumer::ChannelMode::LocalControl; break;
+                    case 123: mode = SmfTrackEventConsumer::ChannelMode::AllNotesOff; break;
+                    case 124: mode = SmfTrackEventConsumer::ChannelMode::OmniOff; break;
+                    case 125: mode = SmfTrackEventConsumer::ChannelMode::OmniOn; break;
+                    case 126: mode = SmfTrackEventConsumer::ChannelMode::Mono; break;
+                    case 127: mode = SmfTrackEventConsumer::ChannelMode::Poly; break;
                     default: assert(false && "Unexpected channel mode controller"); return {};
                 }
-                return fireCallback(delta, &TrackEventConsumer::onChannelMode, statusLo, mode, value);
+                return fireCallback(delta, &SmfTrackEventConsumer::onChannelMode, statusLo, mode, value);
             } else {
-                return fireCallback(delta, &TrackEventConsumer::onControlChange, statusLo, controller, value);
+                return fireCallback(delta, &SmfTrackEventConsumer::onControlChange, statusLo, controller, value);
             }
         }
         case 0b1100: // Program change.
         {
             ASSIGN_OR_ERROR(const std::uint8_t program, readU7());
-            return fireCallback(delta, &TrackEventConsumer::onProgramChange, statusLo, program);
+            return fireCallback(delta, &SmfTrackEventConsumer::onProgramChange, statusLo, program);
         }
         case 0b1101: // Channel pressure.
         {
             ASSIGN_OR_ERROR(const std::uint8_t pressure, readU7());
-            return fireCallback(delta, &TrackEventConsumer::onChannelPressure, statusLo, pressure);
+            return fireCallback(delta, &SmfTrackEventConsumer::onChannelPressure, statusLo, pressure);
         }
         case 0b1110: // Pitch wheel.
         {
             ASSIGN_OR_ERROR(const std::uint16_t value14, readU14());
-            return fireCallback(delta, &TrackEventConsumer::onPitchBend, statusLo, value14);
+            return fireCallback(delta, &SmfTrackEventConsumer::onPitchBend, statusLo, value14);
         }
         default: {
             return babelwires::Error() << "Unrecognized MIDI message with status hi-nibble "
@@ -348,29 +348,29 @@ babelwires::Result smf::SmfTrackByteParser::parseSystemMessage(babelwires::Byte 
             return babelwires::Error() << "SysEx event in track " << m_trackIndex << " has invalid length";
         }
         DO_OR_ERROR(readMessageBytes(length));
-        return fireCallback(delta, &TrackEventConsumer::onSysExEvent,
+        return fireCallback(delta, &SmfTrackEventConsumer::onSysExEvent,
                             std::span<const std::uint8_t>(m_messageBuffer.data(), m_messageBuffer.size()));
     } else if (statusLo == 0x07) {
         // SysEx continuation (0xF7).
         ASSIGN_OR_ERROR(const std::uint32_t length, readVariableLengthQuantity());
         DO_OR_ERROR(readMessageBytes(length));
-        return fireCallback(delta, &TrackEventConsumer::onSysExContinuationEvent,
+        return fireCallback(delta, &SmfTrackEventConsumer::onSysExContinuationEvent,
                             std::span<const std::uint8_t>(m_messageBuffer.data(), m_messageBuffer.size()));
     } else if (statusLo == 0x01) {
         // MTC Quarter Frame (0xF1).
         ASSIGN_OR_ERROR(const std::uint8_t value, readU7());
-        return fireCallback(delta, &TrackEventConsumer::onMtcQuarterFrame, value);
+        return fireCallback(delta, &SmfTrackEventConsumer::onMtcQuarterFrame, value);
     } else if (statusLo == 0x02) {
         // Song Position Pointer (0xF2).
         ASSIGN_OR_ERROR(const std::uint16_t value14, readU14());
-        return fireCallback(delta, &TrackEventConsumer::onSongPositionPointer, value14);
+        return fireCallback(delta, &SmfTrackEventConsumer::onSongPositionPointer, value14);
     } else if (statusLo == 0x03) {
         // Song Select (0xF3).
         ASSIGN_OR_ERROR(const std::uint8_t song, readU7());
-        return fireCallback(delta, &TrackEventConsumer::onSongSelect, song);
+        return fireCallback(delta, &SmfTrackEventConsumer::onSongSelect, song);
     } else if (statusLo == 0x06) {
         // Tune Request (0xF6).
-        return fireCallback(delta, &TrackEventConsumer::onTuneRequest);
+        return fireCallback(delta, &SmfTrackEventConsumer::onTuneRequest);
     } else if (statusLo == 0x0f) {
         // Meta-event (0xFF).
         return parseMetaEvent(delta);
@@ -392,7 +392,7 @@ babelwires::Result smf::SmfTrackByteParser::parseMetaEvent(std::uint64_t delta) 
                                            << " has incorrect length " << length;
             }
             ASSIGN_OR_ERROR(const std::uint16_t seqNum, readU16());
-            return fireCallback(delta, &TrackEventConsumer::onSequenceNumber, seqNum);
+            return fireCallback(delta, &SmfTrackEventConsumer::onSequenceNumber, seqNum);
         }
         case 0x01: // Text event
         case 0x02: // Copyright
@@ -408,23 +408,23 @@ babelwires::Result smf::SmfTrackByteParser::parseMetaEvent(std::uint64_t delta) 
             const std::span<const std::uint8_t> text(m_messageBuffer.data(), m_messageBuffer.size());
             switch (type) {
                 case 0x01:
-                    return fireCallback(delta, &TrackEventConsumer::onTextEvent, text);
+                    return fireCallback(delta, &SmfTrackEventConsumer::onTextEvent, text);
                 case 0x02:
-                    return fireCallback(delta, &TrackEventConsumer::onCopyright, text);
+                    return fireCallback(delta, &SmfTrackEventConsumer::onCopyright, text);
                 case 0x03:
-                    return fireCallback(delta, &TrackEventConsumer::onSequenceOrTrackName, text);
+                    return fireCallback(delta, &SmfTrackEventConsumer::onSequenceOrTrackName, text);
                 case 0x04:
-                    return fireCallback(delta, &TrackEventConsumer::onInstrumentName, text);
+                    return fireCallback(delta, &SmfTrackEventConsumer::onInstrumentName, text);
                 case 0x05:
-                    return fireCallback(delta, &TrackEventConsumer::onLyric, text);
+                    return fireCallback(delta, &SmfTrackEventConsumer::onLyric, text);
                 case 0x06:
-                    return fireCallback(delta, &TrackEventConsumer::onMarker, text);
+                    return fireCallback(delta, &SmfTrackEventConsumer::onMarker, text);
                 case 0x07:
-                    return fireCallback(delta, &TrackEventConsumer::onCuePoint, text);
+                    return fireCallback(delta, &SmfTrackEventConsumer::onCuePoint, text);
                 case 0x08:
-                    return fireCallback(delta, &TrackEventConsumer::onProgramName, text);
+                    return fireCallback(delta, &SmfTrackEventConsumer::onProgramName, text);
                 case 0x09:
-                    return fireCallback(delta, &TrackEventConsumer::onDeviceName, text);
+                    return fireCallback(delta, &SmfTrackEventConsumer::onDeviceName, text);
                 default:
                     assert(false && "Unexpected text meta-event type");
                     return {};
@@ -437,7 +437,7 @@ babelwires::Result smf::SmfTrackByteParser::parseMetaEvent(std::uint64_t delta) 
                                            << " has incorrect length " << length;
             }
             ASSIGN_OR_ERROR(const std::uint8_t channel, readU7());
-            return fireCallback(delta, &TrackEventConsumer::onChannelPrefix, channel);
+            return fireCallback(delta, &SmfTrackEventConsumer::onChannelPrefix, channel);
         }
         case 0x21: // MIDI port
         {
@@ -446,7 +446,7 @@ babelwires::Result smf::SmfTrackByteParser::parseMetaEvent(std::uint64_t delta) 
                                            << " has incorrect length " << length;
             }
             ASSIGN_OR_ERROR(const std::uint8_t port, readU7());
-            return fireCallback(delta, &TrackEventConsumer::onMidiPort, port);
+            return fireCallback(delta, &SmfTrackEventConsumer::onMidiPort, port);
         }
         case 0x2F: // End of track.
         {
@@ -458,7 +458,7 @@ babelwires::Result smf::SmfTrackByteParser::parseMetaEvent(std::uint64_t delta) 
                                            << " has incorrect length " << length;
             }
             // Fire the callback, then mark as done.
-            DO_OR_ERROR(fireCallback(delta, &TrackEventConsumer::onEndOfTrack));
+            DO_OR_ERROR(fireCallback(delta, &SmfTrackEventConsumer::onEndOfTrack));
             m_state = State::Done;
             return {};
         }
@@ -469,7 +469,7 @@ babelwires::Result smf::SmfTrackByteParser::parseMetaEvent(std::uint64_t delta) 
                                            << length;
             }
             ASSIGN_OR_ERROR(const std::uint32_t tempoValue, readU24());
-            return fireCallback(delta, &TrackEventConsumer::onTempoEvent, tempoValue);
+            return fireCallback(delta, &SmfTrackEventConsumer::onTempoEvent, tempoValue);
         }
         case 0x54: // SMPTE offset
         {
@@ -483,17 +483,17 @@ babelwires::Result smf::SmfTrackByteParser::parseMetaEvent(std::uint64_t delta) 
             ASSIGN_OR_ERROR(const babelwires::Byte fr, getNext());
             ASSIGN_OR_ERROR(const babelwires::Byte ff, getNext());
 
-            TrackEventConsumer::SmpteFrameRate frameRate;
+            SmfTrackEventConsumer::SmpteFrameRate frameRate;
             switch (hr >> 5) {
-                case 0: frameRate = TrackEventConsumer::SmpteFrameRate::Fps24; break;
-                case 1: frameRate = TrackEventConsumer::SmpteFrameRate::Fps25; break;
-                case 2: frameRate = TrackEventConsumer::SmpteFrameRate::Fps29Drop; break;
-                case 3: frameRate = TrackEventConsumer::SmpteFrameRate::Fps30; break;
+                case 0: frameRate = SmfTrackEventConsumer::SmpteFrameRate::Fps24; break;
+                case 1: frameRate = SmfTrackEventConsumer::SmpteFrameRate::Fps25; break;
+                case 2: frameRate = SmfTrackEventConsumer::SmpteFrameRate::Fps29Drop; break;
+                case 3: frameRate = SmfTrackEventConsumer::SmpteFrameRate::Fps30; break;
                 default: assert(false && "Unexpected SMPTE frame rate"); return {};
             }
-            const TrackEventConsumer::SmpteOffset smpteOffset{frameRate, static_cast<std::uint8_t>(hr & 0x1f),
+            const SmfTrackEventConsumer::SmpteOffset smpteOffset{frameRate, static_cast<std::uint8_t>(hr & 0x1f),
                                                               mn, se, fr, ff};
-            return fireCallback(delta, &TrackEventConsumer::onSmpteOffset, smpteOffset);
+            return fireCallback(delta, &SmfTrackEventConsumer::onSmpteOffset, smpteOffset);
         }
         case 0x58: // Time signature
         {
@@ -505,7 +505,7 @@ babelwires::Result smf::SmfTrackByteParser::parseMetaEvent(std::uint64_t delta) 
             ASSIGN_OR_ERROR(const babelwires::Byte dd, getNext());
             ASSIGN_OR_ERROR(const babelwires::Byte cc, getNext());
             ASSIGN_OR_ERROR(const babelwires::Byte bb, getNext());
-            return fireCallback(delta, &TrackEventConsumer::onTimeSignature, static_cast<std::int8_t>(nn),
+            return fireCallback(delta, &SmfTrackEventConsumer::onTimeSignature, static_cast<std::int8_t>(nn),
                                 static_cast<std::int8_t>(dd), static_cast<std::int8_t>(cc),
                                 static_cast<std::int8_t>(bb));
         }
@@ -521,14 +521,14 @@ babelwires::Result smf::SmfTrackByteParser::parseMetaEvent(std::uint64_t delta) 
                 return babelwires::Error() << "Key Signature meta-event in track " << m_trackIndex
                                            << " has invalid mode " << static_cast<int>(mi);
             }
-            const auto mode = (mi == 0) ? TrackEventConsumer::KeySignatureMode::Major
-                                        : TrackEventConsumer::KeySignatureMode::Minor;
-            return fireCallback(delta, &TrackEventConsumer::onKeySignature, sf, mode);
+            const auto mode = (mi == 0) ? SmfTrackEventConsumer::KeySignatureMode::Major
+                                        : SmfTrackEventConsumer::KeySignatureMode::Minor;
+            return fireCallback(delta, &SmfTrackEventConsumer::onKeySignature, sf, mode);
         }
         case 0x7F: // Sequencer specific event
         {
             DO_OR_ERROR(readMessageBytes(length));
-            return fireCallback(delta, &TrackEventConsumer::onSequencerSpecificEvent,
+            return fireCallback(delta, &SmfTrackEventConsumer::onSequencerSpecificEvent,
                                 std::span<const std::uint8_t>(m_messageBuffer.data(), m_messageBuffer.size()));
         }
         default: // Unknown meta-event type

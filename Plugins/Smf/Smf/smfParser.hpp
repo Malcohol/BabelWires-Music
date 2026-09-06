@@ -42,14 +42,14 @@ namespace smf {
     /// Shared mutable state (the global tempo map, per-channel state, the percussion sets,
     /// and the result tree) lives here. Each track is handled by a TrackConsumer (see
     /// onTrack) which holds a reference back to this object.
-    class SmfConsumer : public SequenceEventConsumer {
+    class SmfConsumer : public SmfEventConsumer {
       public:
         SmfConsumer(const babelwires::Context& context, babelwires::UserLogger& log);
 
         babelwires::Result onSequenceStart(std::uint16_t numTracks, std::uint16_t format,
                                            std::uint16_t division) override;
 
-        std::unique_ptr<TrackEventConsumer> onTrack(std::uint16_t trackIndex) override;
+        std::unique_ptr<SmfTrackEventConsumer> onTrack(std::uint16_t trackIndex) override;
 
         /// Called after all tracks have been parsed to assemble the output feature tree
         /// (including the global tempo track).
@@ -86,7 +86,7 @@ namespace smf {
       private:
         /// Per-track event consumer. Splits a MIDI track's channel events into per-channel
         /// tracks and reports interpretation-relevant events back to the owning SmfConsumer.
-        class TrackConsumer : public TrackEventConsumer {
+        class TrackConsumer : public SmfTrackEventConsumer {
           public:
             TrackConsumer(SmfConsumer& owner, std::uint16_t trackIndex, bool hasMainMetadata);
 

@@ -95,7 +95,7 @@ babelwires::Result smf::SmfConsumer::onSequenceStart(std::uint16_t numTracks, st
     return {};
 }
 
-std::unique_ptr<smf::TrackEventConsumer> smf::SmfConsumer::onTrack(std::uint16_t trackIndex) {
+std::unique_ptr<smf::SmfTrackEventConsumer> smf::SmfConsumer::onTrack(std::uint16_t trackIndex) {
     for (auto& channelState : m_channelState) {
         channelState.resetTimeSensitiveChannelState();
     }
@@ -420,7 +420,7 @@ smf::SmfConsumer::ChannelState::ControllerState::updateWithNewValue(babelwires::
     }
 }
 
-babelwires::ResultT<smf::TrackEventConsumer::EventHandlingResult>
+babelwires::ResultT<smf::SmfTrackEventConsumer::EventHandlingResult>
 smf::SmfConsumer::TrackConsumer::onNoteOn(TimeInfo timeInfo, std::uint8_t channel4, std::uint8_t pitch7,
                                           std::uint8_t velocity7) {
     ASSIGN_OR_ERROR(const bw_music::VelocityStorage velocity, bw_music::MinMaxValue16::fromUnsigned<7>(velocity7));
@@ -430,7 +430,7 @@ smf::SmfConsumer::TrackConsumer::onNoteOn(TimeInfo timeInfo, std::uint8_t channe
     return EventHandlingResult::AccumulateTime;
 }
 
-babelwires::ResultT<smf::TrackEventConsumer::EventHandlingResult>
+babelwires::ResultT<smf::SmfTrackEventConsumer::EventHandlingResult>
 smf::SmfConsumer::TrackConsumer::onNoteOff(TimeInfo timeInfo, std::uint8_t channel4, std::uint8_t pitch7,
                                            std::uint8_t velocity7) {
     ASSIGN_OR_ERROR(const bw_music::VelocityStorage velocity, bw_music::MinMaxValue16::fromUnsigned<7>(velocity7));
@@ -440,7 +440,7 @@ smf::SmfConsumer::TrackConsumer::onNoteOff(TimeInfo timeInfo, std::uint8_t chann
     return EventHandlingResult::AccumulateTime;
 }
 
-babelwires::ResultT<smf::TrackEventConsumer::EventHandlingResult>
+babelwires::ResultT<smf::SmfTrackEventConsumer::EventHandlingResult>
 smf::SmfConsumer::TrackConsumer::onPolyphonicAftertouch(TimeInfo timeInfo, std::uint8_t channel4, std::uint8_t pitch7,
                                                         std::uint8_t pressure7) {
     ASSIGN_OR_ERROR(const bw_music::ControllerStorage pressure,
@@ -451,7 +451,7 @@ smf::SmfConsumer::TrackConsumer::onPolyphonicAftertouch(TimeInfo timeInfo, std::
     return EventHandlingResult::AccumulateTime;
 }
 
-babelwires::ResultT<smf::TrackEventConsumer::EventHandlingResult>
+babelwires::ResultT<smf::SmfTrackEventConsumer::EventHandlingResult>
 smf::SmfConsumer::TrackConsumer::onChannelPressure(TimeInfo timeInfo, std::uint8_t channel4, std::uint8_t pressure7) {
     ASSIGN_OR_ERROR(const bw_music::ControllerStorage pressure,
                     bw_music::ControllerStorage::fromUnsigned<7>(pressure7));
@@ -461,7 +461,7 @@ smf::SmfConsumer::TrackConsumer::onChannelPressure(TimeInfo timeInfo, std::uint8
     return EventHandlingResult::AccumulateTime;
 }
 
-babelwires::ResultT<smf::TrackEventConsumer::EventHandlingResult>
+babelwires::ResultT<smf::SmfTrackEventConsumer::EventHandlingResult>
 smf::SmfConsumer::TrackConsumer::onPitchBend(TimeInfo timeInfo, std::uint8_t channel4, std::uint16_t value14) {
     ASSIGN_OR_ERROR(bw_music::CentredControllerStorage pitchBend,
                     bw_music::CentredControllerStorage::fromUnsigned<14>(value14));
@@ -471,7 +471,7 @@ smf::SmfConsumer::TrackConsumer::onPitchBend(TimeInfo timeInfo, std::uint8_t cha
     return EventHandlingResult::AccumulateTime;
 }
 
-babelwires::ResultT<smf::TrackEventConsumer::EventHandlingResult>
+babelwires::ResultT<smf::SmfTrackEventConsumer::EventHandlingResult>
 smf::SmfConsumer::TrackConsumer::onControlChange(TimeInfo timeInfo, std::uint8_t channel4, std::uint8_t controller7,
                                                  std::uint8_t value7) {
     const bw_music::ModelDuration time = timeSinceLastHandledEvent(timeInfo);
@@ -540,20 +540,20 @@ smf::SmfConsumer::TrackConsumer::onControlChange(TimeInfo timeInfo, std::uint8_t
     }
 }
 
-babelwires::ResultT<smf::TrackEventConsumer::EventHandlingResult>
+babelwires::ResultT<smf::SmfTrackEventConsumer::EventHandlingResult>
 smf::SmfConsumer::TrackConsumer::onProgramChange(TimeInfo timeInfo, std::uint8_t channel4, std::uint8_t program7) {
     m_owner.setProgram(channel4, program7);
     return EventHandlingResult::AccumulateTime;
 }
 
-babelwires::ResultT<smf::TrackEventConsumer::EventHandlingResult>
+babelwires::ResultT<smf::SmfTrackEventConsumer::EventHandlingResult>
 smf::SmfConsumer::TrackConsumer::onTempoEvent(TimeInfo timeInfo, std::uint32_t tempoValue24) {
     DO_OR_ERROR(
         m_owner.readTempoEvent(m_trackIndex, m_owner.ticksToDuration(timeInfo.m_ticksSinceTrackStart), tempoValue24));
     return EventHandlingResult::AccumulateTime;
 }
 
-babelwires::ResultT<smf::TrackEventConsumer::EventHandlingResult>
+babelwires::ResultT<smf::SmfTrackEventConsumer::EventHandlingResult>
 smf::SmfConsumer::TrackConsumer::onCopyright(TimeInfo timeInfo, std::span<const std::uint8_t> copyright) {
     if (m_hasMainMetadata) {
         std::string text(copyright.begin(), copyright.end());
@@ -562,7 +562,7 @@ smf::SmfConsumer::TrackConsumer::onCopyright(TimeInfo timeInfo, std::span<const 
     return EventHandlingResult::AccumulateTime;
 }
 
-babelwires::ResultT<smf::TrackEventConsumer::EventHandlingResult>
+babelwires::ResultT<smf::SmfTrackEventConsumer::EventHandlingResult>
 smf::SmfConsumer::TrackConsumer::onSequenceOrTrackName(TimeInfo timeInfo, std::span<const std::uint8_t> name) {
     if (m_hasMainMetadata) {
         std::string text(name.begin(), name.end());
@@ -571,13 +571,13 @@ smf::SmfConsumer::TrackConsumer::onSequenceOrTrackName(TimeInfo timeInfo, std::s
     return EventHandlingResult::AccumulateTime;
 }
 
-babelwires::ResultT<smf::TrackEventConsumer::EventHandlingResult>
+babelwires::ResultT<smf::SmfTrackEventConsumer::EventHandlingResult>
 smf::SmfConsumer::TrackConsumer::onSysExEvent(TimeInfo timeInfo, std::span<const std::uint8_t> data) {
     m_owner.interpretSysExForGMSpec(data);
     return EventHandlingResult::AccumulateTime;
 }
 
-babelwires::ResultT<smf::TrackEventConsumer::EventHandlingResult>
+babelwires::ResultT<smf::SmfTrackEventConsumer::EventHandlingResult>
 smf::SmfConsumer::TrackConsumer::onEndOfTrack(TimeInfo timeInfo) {
     setDurationsForAllChannels(timeSinceLastHandledEvent(timeInfo));
     return EventHandlingResult::AccumulateTime;

@@ -67,7 +67,7 @@ namespace smf {
         /// The DataSource is not guaranteed to be fully consumed, even in the successful case:
         /// a track consumer which returns Done causes the remainder of that track to be skipped
         /// without parsing.
-        SmfByteParser(babelwires::DataSource& dataSource, SequenceEventConsumer& consumer,
+        SmfByteParser(babelwires::DataSource& dataSource, SmfEventConsumer& consumer,
                       babelwires::UserAdvisoryLogger& log);
 
         /// Parse the entire file, firing callbacks on the consumer.
@@ -75,10 +75,10 @@ namespace smf {
 
       private:
         babelwires::Result readHeaderChunk();
-        babelwires::Result readTrackContents(std::uint16_t trackIndex, std::uint32_t trackLength, TrackEventConsumer& trackConsumer);
+        babelwires::Result readTrackContents(std::uint16_t trackIndex, std::uint32_t trackLength, SmfTrackEventConsumer& trackConsumer);
 
       private:
-        SequenceEventConsumer& m_consumer;
+        SmfEventConsumer& m_consumer;
         babelwires::UserAdvisoryLogger& m_log;
 
         std::uint16_t m_numTracks = 0;
@@ -92,7 +92,7 @@ namespace smf {
       public:
         /// The DataSource must be positioned at the first byte of the track's event data
         /// (i.e. after the "MTrk" ID and length field).
-        SmfTrackByteParser(babelwires::DataSource& dataSource, TrackEventConsumer& consumer, std::uint32_t trackLength,
+        SmfTrackByteParser(babelwires::DataSource& dataSource, SmfTrackEventConsumer& consumer, std::uint32_t trackLength,
                            std::uint16_t trackIndex, babelwires::UserAdvisoryLogger& log);
 
         enum class State {
@@ -119,8 +119,8 @@ namespace smf {
         babelwires::Result parseNextEvent();
 
       private:
-        using EventHandlingResult = TrackEventConsumer::EventHandlingResult;
-        using TimeInfo = TrackEventConsumer::TimeInfo;
+        using EventHandlingResult = SmfTrackEventConsumer::EventHandlingResult;
+        using TimeInfo = SmfTrackEventConsumer::TimeInfo;
 
         /// Advance the running time totals by the given delta, then fire the consumer callback
         /// identified by the member function pointer, forwarding the given arguments.
@@ -130,7 +130,7 @@ namespace smf {
         template <typename... ARGS, typename... CALL_ARGS>
         babelwires::Result fireCallback(
             std::uint64_t delta,
-            babelwires::ResultT<EventHandlingResult> (TrackEventConsumer::*callback)(TimeInfo, ARGS...),
+            babelwires::ResultT<EventHandlingResult> (SmfTrackEventConsumer::*callback)(TimeInfo, ARGS...),
             CALL_ARGS&&... args);
 
         /// Handle the result of firing a callback: update time accumulators and
@@ -150,7 +150,7 @@ namespace smf {
         template <typename STREAMLIKE> babelwires::Result logMessageBytes(STREAMLIKE log, std::uint32_t length);
 
       private:
-        TrackEventConsumer& m_consumer;
+        SmfTrackEventConsumer& m_consumer;
         babelwires::UserAdvisoryLogger& m_log;
 
         /// The declared length of the track chunk in bytes.
