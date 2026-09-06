@@ -7,6 +7,7 @@
  **/
 #include <Smf/Parsing/smfByteParser.hpp>
 
+#include <Smf/Parsing/smfTrackByteParser.hpp>
 #include <Smf/Parsing/smfEventConsumer.hpp>
 
 #include <BaseLib/Result/resultDSL.hpp>

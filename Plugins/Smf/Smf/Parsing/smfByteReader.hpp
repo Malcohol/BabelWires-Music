@@ -1,5 +1,5 @@
 /**
- * A steppable byte-level parser for Standard MIDI Files, which fires callbacks on a SequenceEventConsumer.
+ * Low-level big-endian byte reading for SMF files from a DataSource
  *
  * (C) 2021 Malcolm Tyrrell
  *
