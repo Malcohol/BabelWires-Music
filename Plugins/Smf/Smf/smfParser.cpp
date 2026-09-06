@@ -272,6 +272,9 @@ void smf::SmfParser::finalizeGlobalTempoTrack() {
     getSmfSequence().getGlobal().set(globalTrack.finishAndGetTrack());
 }
 
+// TODO: This class splits tracks purely on the channel number in each message's status byte. Channel Prefix
+// meta-events (0x20), which associate channel-less events (meta-events and SysEx) in a track with a channel,
+// are currently ignored. Consider respecting them when attributing such events.
 class smf::SmfParser::TrackSplitter {
   public:
     TrackSplitter(const std::array<ChannelState, 16>& channelSetup)
