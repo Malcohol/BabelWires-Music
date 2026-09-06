@@ -237,17 +237,4 @@ namespace smf {
         }
     };
 
-    class SmfEventConsumer {
-      public:
-        virtual ~SmfEventConsumer() = default;
-
-        virtual babelwires::Result onSequenceStart(std::uint16_t numTracks, std::uint16_t format,
-                                                   std::uint16_t division) {
-            return {};
-        }
-
-        /// Returning nullptr means the track should be ignored.
-        virtual std::unique_ptr<SmfTrackEventConsumer> onTrack(std::uint16_t trackIndex) { return nullptr; };
-    };
-
 } // namespace smf

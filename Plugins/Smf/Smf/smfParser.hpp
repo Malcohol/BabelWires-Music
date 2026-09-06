@@ -7,7 +7,8 @@
  **/
 #pragma once
 
-#include <Smf/Parsing/eventConsumers.hpp>
+#include <Smf/Parsing/smfEventConsumer.hpp>
+#include <Smf/Parsing/smfTrackEventConsumer.hpp>
 #include <Smf/Percussion/standardPercussionSets.hpp>
 #include <Smf/gmSpec.hpp>
 #include <Smf/smfSequence.hpp>

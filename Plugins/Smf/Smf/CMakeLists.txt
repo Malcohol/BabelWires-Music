@@ -2,6 +2,8 @@ SET( SMFLIB_SRCS
 	libRegistration.cpp
 	gmSpec.cpp
 	Parsing/smfByteParser.cpp
+	Parsing/smfByteReader.cpp
+	Parsing/smfTrackByteParser.cpp
 	midiChannel.cpp
 	midiMetadata.cpp
 	midiTrackAndChannel.cpp

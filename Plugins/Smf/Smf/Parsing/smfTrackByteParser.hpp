@@ -8,6 +8,7 @@
 #pragma once
 
 #include <Smf/Parsing/smfTrackEventConsumer.hpp>
+#include <Smf/Parsing/smfByteReader.hpp>
 
 #include <BaseLib/IO/dataSource.hpp>
 #include <BaseLib/Log/userLogger.hpp>
@@ -19,73 +20,6 @@
 #include <vector>
 
 namespace smf {
-
-    class SmfEventConsumer;
-
-    /// Low-level big-endian byte reading over a DataSource, shared by the
-    /// byte-level SMF parsers. All multi-byte reads are big-endian (network order),
-    /// as required by the SMF format.
-    class SmfByteReader {
-      public:
-        SmfByteReader(babelwires::DataSource& dataSource)
-            : m_dataSource(dataSource) {}
-
-        babelwires::ResultT<babelwires::Byte> getNext();
-        babelwires::ResultT<babelwires::Byte> peekNext();
-
-        /// Read a MIDI data byte, which the standard mandates is 7-bit.
-        /// Returns an error if the byte has its high bit set.
-        babelwires::ResultT<std::uint8_t> readU7();
-
-        /// Read a 14-bit value encoded as two 7-bit MIDI data bytes (LSB then MSB).
-        babelwires::ResultT<std::uint16_t> readU14();
-
-        /// Read the expected byte sequence.
-        babelwires::Result readByteSequence(const char* seq);
-
-        babelwires::ResultT<std::uint16_t> readU16();
-        babelwires::ResultT<std::uint32_t> readU24();
-        babelwires::ResultT<std::uint32_t> readU32();
-        babelwires::ResultT<std::uint32_t> readVariableLengthQuantity();
-
-        /// Consume and discard numBytes.
-        babelwires::Result skipBytes(std::uint32_t numBytes);
-
-      protected:
-        babelwires::DataSource& m_dataSource;
-    };
-
-    /// The top-level driver for parsing a Standard MIDI File at the byte level.
-    /// It reads the header chunk and then steps through each track in file order,
-    /// firing callbacks on the SequenceEventConsumer provided by the caller.
-    /// This class contains no Music-domain semantics: it decomposes the bytes into
-    /// MIDI messages and reports them as events. Malformed or unsupported data
-    /// is reported via the returned Result.
-    /// Note: Tracks are processed sequentially in file order, not in global time
-    /// order. A future enhancement could use a priority queue over per-track
-    /// SmfTrackByteParser instances to deliver events in global time order.
-    class SmfByteParser : private SmfByteReader {
-      public:
-        /// The DataSource is not guaranteed to be fully consumed, even in the successful case:
-        /// a track consumer which returns Done causes the remainder of that track to be skipped
-        /// without parsing.
-        SmfByteParser(babelwires::DataSource& dataSource, SmfEventConsumer& consumer,
-                      babelwires::UserAdvisoryLogger& log);
-
-        /// Parse the entire file, firing callbacks on the consumer.
-        babelwires::Result parse();
-
-      private:
-        babelwires::Result readHeaderChunk();
-        babelwires::Result readTrackContents(std::uint16_t trackIndex, std::uint32_t trackLength, SmfTrackEventConsumer& trackConsumer);
-
-      private:
-        SmfEventConsumer& m_consumer;
-        babelwires::UserAdvisoryLogger& m_log;
-
-        std::uint16_t m_numTracks = 0;
-    };
-
     /// Parses the bytes of a single MIDI track chunk, firing callbacks on a
     /// TrackEventConsumer. This is designed to be steppable: parseNextEvent()
     /// processes exactly one event, so a future merged driver can interleave
