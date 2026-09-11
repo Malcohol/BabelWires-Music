@@ -96,9 +96,6 @@ babelwires::Result smf::SmfConsumer::onSequenceStart(std::uint16_t numTracks, st
 }
 
 std::unique_ptr<smf::SmfTrackEventConsumer> smf::SmfConsumer::onTrack(std::uint16_t trackIndex) {
-    for (auto& channelState : m_channelState) {
-        channelState.resetTimeSensitiveChannelState();
-    }
     const bool hasMainMetadata = (m_format == 0) || (trackIndex == 0);
     return std::make_unique<TrackConsumer>(*this, trackIndex, hasMainMetadata);
 }
@@ -170,15 +167,6 @@ void smf::SmfConsumer::onChangeProgram(unsigned int channelNumber) {
     const GMSpecType::Value gmSpec = getMidiMetadata().getSpec().get();
     channelSetup.m_kitIfPercussion =
         m_standardPercussionSets.getPercussionSetFromChannelSetupInfo(gmSpec, channelSetup.m_channelSetupInfo);
-}
-
-void smf::SmfConsumer::ChannelState::resetTimeSensitiveChannelState() {
-    m_volume.m_msb = std::nullopt;
-    m_volume.m_lsb = std::nullopt;
-    m_pan.m_msb = std::nullopt;
-    m_pan.m_lsb = std::nullopt;
-    m_expression.m_msb = std::nullopt;
-    m_expression.m_lsb = std::nullopt;
 }
 
 void smf::SmfConsumer::interpretSysExForGMSpec(std::span<const std::uint8_t> data) {
@@ -283,7 +271,7 @@ babelwires::Result smf::SmfConsumer::buildOutputTracks() {
         if (m_normalizedTracks.empty()) {
             return {};
         }
-        Format1TrackData& data = m_normalizedTracks.front();
+        Format1TrackData& data = m_normalizedTracks.begin()->second;
         tracks.activateAndGetTrack(data.m_channelNumber).set(std::move(data.m_track));
         for (auto& [channelNumber, extraTrack] : data.m_extraTracks) {
             tracks.activateAndGetTrack(channelNumber).set(std::move(extraTrack));
@@ -293,13 +281,16 @@ babelwires::Result smf::SmfConsumer::buildOutputTracks() {
         // Format 1.
         auto tracks = getSmfSequence().getTrcks1();
         tracks.setSize(std::max(1, static_cast<int>(m_normalizedTracks.size())));
-        for (int i = 0; i < m_normalizedTracks.size(); ++i) {
+        int i = 0;
+        for (auto& entry : m_normalizedTracks) {
+            Format1TrackData& data = entry.second;
             auto track = tracks.getEntry(i);
-            track.getChan().set(m_normalizedTracks[i].m_channelNumber);
-            track.getTrack().set(std::move(m_normalizedTracks[i].m_track));
-            for (auto& [channelNumber, extraTrack] : m_normalizedTracks[i].m_extraTracks) {
+            track.getChan().set(data.m_channelNumber);
+            track.getTrack().set(std::move(data.m_track));
+            for (auto& [channelNumber, extraTrack] : data.m_extraTracks) {
                 track.activateAndGetTrack(channelNumber).set(std::move(extraTrack));
             }
+            ++i;
         }
         return {};
     }
@@ -580,10 +571,16 @@ smf::SmfConsumer::TrackConsumer::onSysExEvent(TimeInfo timeInfo, std::span<const
 babelwires::ResultT<smf::SmfTrackEventConsumer::EventHandlingResult>
 smf::SmfConsumer::TrackConsumer::onEndOfTrack(TimeInfo timeInfo) {
     setDurationsForAllChannels(timeSinceLastHandledEvent(timeInfo));
+    finalizeTrack();
     return EventHandlingResult::AccumulateTime;
 }
 
-smf::SmfConsumer::TrackConsumer::~TrackConsumer() {
+void smf::SmfConsumer::TrackConsumer::finalizeTrack() {
+    if (m_finalized) {
+        return;
+    }
+    m_finalized = true;
+
     // Convert the per-channel builders into actual tracks.
     std::array<bw_music::Track, 16> tracks;
 
@@ -621,7 +618,14 @@ smf::SmfConsumer::TrackConsumer::~TrackConsumer() {
             result.m_extraTracks.emplace_back(channelNumber, std::move(tracks[channelNumber]));
         }
     }
-    m_owner.m_normalizedTracks.emplace_back(std::move(result));
+    m_owner.m_normalizedTracks.emplace(m_trackIndex, std::move(result));
+}
+
+smf::SmfConsumer::TrackConsumer::~TrackConsumer() {
+    // Finalization normally happens in onEndOfTrack. This is clean-up for tracks which
+    // ended without an end-of-track event (i.e. the consumer signalled Done, or parsing
+    // of a later track failed).
+    finalizeTrack();
 }
 
 // ---------------------------------------------------------------------------

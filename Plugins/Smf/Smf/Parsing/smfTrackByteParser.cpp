@@ -72,6 +72,20 @@ babelwires::Result smf::SmfTrackByteParser::handleCallbackResult(EventHandlingRe
     return {};
 }
 
+babelwires::ResultT<std::uint64_t> smf::SmfTrackByteParser::getTicksOfNextEvent() {
+    assert(m_state == State::Ready);
+    // Delta-times are variable length quantities, which are at most 4 bytes long.
+    ASSIGN_OR_ERROR(const int numBytesBuffered, m_dataSource.setRewindPoint(4));
+    if (numBytesBuffered == 0) {
+        return babelwires::Error() << "Read all of track " << m_trackIndex
+                                   << " without finding an end-of-track event";
+    }
+    auto deltaResult = readVariableLengthQuantity();
+    m_dataSource.rewind();
+    ASSIGN_OR_ERROR(const std::uint32_t delta, std::move(deltaResult));
+    return m_ticksSinceTrackStart + delta;
+}
+
 babelwires::Result smf::SmfTrackByteParser::parseNextEvent() {
     assert(m_state == State::Ready);
     if ((m_dataSource.getAbsolutePosition() - m_trackDataStart) >= static_cast<int>(m_trackLength)) {

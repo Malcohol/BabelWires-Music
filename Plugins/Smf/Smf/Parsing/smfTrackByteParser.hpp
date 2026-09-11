@@ -21,9 +21,9 @@
 
 namespace smf {
     /// Parses the bytes of a single MIDI track chunk, firing callbacks on a
-    /// TrackEventConsumer. This is designed to be steppable: parseNextEvent()
-    /// processes exactly one event, so a future merged driver can interleave
-    /// multiple tracks in global time order by stepping each track's parser.
+    /// TrackEventConsumer. This is steppable: parseNextEvent() processes exactly one event,
+    /// which allows SmfByteParser to interleave multiple tracks in global time order by
+    /// stepping each track's parser.
     class SmfTrackByteParser : private SmfByteReader {
       public:
         /// The DataSource must be positioned at the first byte of the track's event data
@@ -44,6 +44,11 @@ namespace smf {
         /// recently parsed event. When getState() == Ready, this is the time of the
         /// next event minus its (unparsed) delta time.
         std::uint64_t getTicksSinceTrackStart() const { return m_ticksSinceTrackStart; }
+
+        /// The time of the next event, in MIDI ticks since the start of the track.
+        /// Peeks at the next event's delta time without consuming any bytes.
+        /// Requires getState() == Ready.
+        babelwires::ResultT<std::uint64_t> getTicksOfNextEvent();
 
         /// The number of bytes of track event data consumed so far.
         std::uint32_t getNumBytesConsumed() const {

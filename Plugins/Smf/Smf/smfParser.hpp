@@ -92,8 +92,8 @@ namespace smf {
             TrackConsumer(SmfConsumer& owner, std::uint16_t trackIndex, bool hasMainMetadata);
 
             /// The byte parser destroys this once the track is fully parsed (or the consumer
-            /// signalled Done). The destructor finishes the per-channel tracks and reports them
-            /// to the owner.
+            /// signalled Done). The destructor finalizes the track if that has not already
+            /// happened (see finalizeTrack).
             ~TrackConsumer();
 
             babelwires::ResultT<EventHandlingResult> onNoteOn(TimeInfo timeInfo, std::uint8_t channel4,
@@ -145,6 +145,11 @@ namespace smf {
             /// All channels share the duration of the MIDI track.
             void setDurationsForAllChannels(bw_music::ModelDuration timeToEndOfTrackEvent);
 
+            /// Finish the per-channel tracks and report them to the owner. Called from
+            /// onEndOfTrack, and from the destructor as clean-up when the track ended without
+            /// an end-of-track event. Does nothing if the track has already been finalized.
+            void finalizeTrack();
+
             /// Convert the interface's tick-based TimeInfo into the ModelDuration since the
             /// last handled event.
             bw_music::ModelDuration timeSinceLastHandledEvent(TimeInfo timeInfo) const;
@@ -154,6 +159,7 @@ namespace smf {
             std::uint16_t m_trackIndex;
             bool m_hasMainMetadata;
 
+            bool m_finalized = false;
             bw_music::ModelDuration m_timeSinceStart = 0;
             std::array<std::unique_ptr<PerChannelInfo>, 16> m_channels;
         };
@@ -183,12 +189,6 @@ namespace smf {
             // from the given kit.
             const bw_music::PercussionSetWithPitchMap* m_kitIfPercussion = nullptr;
 
-            /// Resets the time-sensitive parts of the channel state.
-            // TODO: We wrongly assume some channel information is set up at track start, and other data is time
-            // sensitive. In theory, all of the data is time sensitive. To properly handle this channel state, I really
-            // need to parse all the tracks simultaneously.
-            void resetTimeSensitiveChannelState();
-
             // Cached MSB/LSB values for the 14-bit controllers.
             struct ControllerState {
                 std::optional<babelwires::Byte> m_msb;
@@ -205,13 +205,16 @@ namespace smf {
         };
         std::array<ChannelState, 16> m_channelState;
 
-        /// The normalized per-track output accumulated as each track finishes.
+        /// The normalized per-track output accumulated as each track finishes, keyed by track
+        /// index. Since the tracks are parsed in global time order, their end-of-track events can
+        /// be reached in any order: keying by index ensures the output preserves the file's
+        /// track order.
         struct Format1TrackData {
             unsigned int m_channelNumber;
             bw_music::Track m_track;
             std::vector<std::pair<unsigned int, bw_music::Track>> m_extraTracks;
         };
-        std::vector<Format1TrackData> m_normalizedTracks;
+        std::map<std::uint16_t, Format1TrackData> m_normalizedTracks;
     };
 
     babelwires::ResultT<std::unique_ptr<babelwires::ValueTreeRoot>>

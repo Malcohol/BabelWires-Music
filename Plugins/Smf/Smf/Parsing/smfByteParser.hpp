@@ -24,19 +24,19 @@ namespace smf {
     class SmfEventConsumer;
 
     /// The top-level driver for parsing a Standard MIDI File at the byte level.
-    /// It reads the header chunk and then steps through each track in file order,
-    /// firing callbacks on the SequenceEventConsumer provided by the caller.
+    /// It reads the header chunk, buffers each track's bytes, and then steps through
+    /// the events of all the tracks in global time order, firing callbacks on the
+    /// SmfEventConsumer provided by the caller. Events at the same time are handled
+    /// in track order (lower-numbered tracks first), so an event in one track can
+    /// influence the consumer's interpretation of simultaneous or later events in
+    /// other tracks.
     /// This class contains no Music-domain semantics: it decomposes the bytes into
     /// MIDI messages and reports them as events. Malformed or unsupported data
     /// is reported via the returned Result.
-    /// Note: Tracks are processed sequentially in file order, not in global time
-    /// order. A future enhancement could use a priority queue over per-track
-    /// SmfTrackByteParser instances to deliver events in global time order.
     class SmfByteParser : private SmfByteReader {
       public:
-        /// The DataSource is not guaranteed to be fully consumed, even in the successful case:
-        /// a track consumer which returns Done causes the remainder of that track to be skipped
-        /// without parsing.
+        /// The DataSource is consumed up to the end of the last track chunk. Any data
+        /// beyond that is left unread.
         SmfByteParser(babelwires::DataSource& dataSource, SmfEventConsumer& consumer,
                       babelwires::UserAdvisoryLogger& log);
 
@@ -45,7 +45,6 @@ namespace smf {
 
       private:
         babelwires::Result readHeaderChunk();
-        babelwires::Result readTrackContents(std::uint16_t trackIndex, std::uint32_t trackLength, SmfTrackEventConsumer& trackConsumer);
 
       private:
         SmfEventConsumer& m_consumer;
