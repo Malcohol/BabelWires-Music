@@ -31,10 +31,19 @@ SET( MUSICLIB_SRCS
 	Functions/transposeFunction.cpp
 	Types/chordTypeSet.cpp
 	Types/genericAccompaniment.cpp
+	Types/Tempo/tempo.cpp
 	Types/Track/TrackEvents/chordEvents.cpp
+	Types/Track/TrackEvents/notePressureEvent.cpp
+	Types/Track/TrackEvents/expressionEvent.cpp
 	Types/Track/TrackEvents/noteEvents.cpp
+	Types/Track/TrackEvents/panEvent.cpp
+	Types/Track/TrackEvents/pitchBendEvent.cpp
 	Types/Track/TrackEvents/percussionEvents.cpp
+	Types/Track/TrackEvents/pressureEvent.cpp
+	Types/Track/TrackEvents/sustainEvent.cpp
+	Types/Track/TrackEvents/tempoEvent.cpp
 	Types/Track/TrackEvents/trackEvent.cpp
+	Types/Track/TrackEvents/volumeEvent.cpp
 	Types/Track/track.cpp
 	Types/Track/trackType.cpp
 	Types/Track/trackTypeConstructor.cpp
@@ -44,6 +53,9 @@ SET( MUSICLIB_SRCS
 	Percussion/percussionSetWithPitchMap.cpp
 	pitch.cpp
 	Utilities/monophonicNoteIterator.cpp
+	Utilities/minCentreMaxValue.cpp
+	Utilities/minMaxValue.cpp
+	Utilities/tempoValue.cpp
 	Types/Track/trackBuilder.cpp
 	Utilities/trackValidator.cpp
 	libRegistration.cpp

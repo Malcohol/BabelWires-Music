@@ -1,6 +1,9 @@
 #include <gtest/gtest.h>
 
+#include <MusicLib/Types/Track/TrackEvents/expressionEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/panEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
+#include <MusicLib/Types/Track/TrackEvents/volumeEvent.hpp>
 #include <MusicLib/Types/Track/trackBuilder.hpp>
 #include <MusicLib/Utilities/trackValidator.hpp>
 #include <MusicLib/Types/Track/trackBuilder.hpp>
@@ -147,6 +150,70 @@ TEST(TrackBuilderTest, builder_validSimple) {
     EXPECT_EQ(track.getTotalEventDuration(), builtTrack.getDuration());
     EXPECT_EQ(track.getTotalEventDuration(), builtTrack.getTotalEventDuration());
     EXPECT_EQ(track.getNumEvents(), builtTrack.getNumEvents());
+}
+
+TEST(TrackBuilderTest, builder_sameTimeLaterExpressionSubsumesEarlierExpression) {
+    testUtils::TestLog log;
+
+    bw_music::TrackBuilder trackBuilder;
+
+    trackBuilder.addEvent(bw_music::ExpressionEvent(babelwires::Rational(1, 4), 0.25));
+    trackBuilder.addEvent(bw_music::ExpressionEvent(0, 0.75));
+
+    auto builtTrack = trackBuilder.finishAndGetTrack();
+
+    EXPECT_TRUE(bw_music::isTrackValid(builtTrack));
+    EXPECT_EQ(builtTrack.getDuration(), babelwires::Rational(1, 4));
+    EXPECT_EQ(builtTrack.getTotalEventDuration(), babelwires::Rational(1, 4));
+    EXPECT_EQ(builtTrack.getNumEvents(), 1);
+
+    auto it = builtTrack.begin();
+    ASSERT_NE(it, builtTrack.end());
+    ASSERT_NE(it->tryAs<bw_music::ExpressionEvent>(), nullptr);
+    EXPECT_EQ(it->tryAs<bw_music::ExpressionEvent>()->getExpressionStorage(),
+              bw_music::ControllerStorage::assertFromNormalizedDouble(0.75));
+}
+
+TEST(TrackBuilderTest, builder_sameTimeLaterVolumeSubsumesEarlierVolume) {
+    bw_music::TrackBuilder trackBuilder;
+
+    trackBuilder.addEvent(bw_music::VolumeEvent(babelwires::Rational(1, 4),
+                                                bw_music::ControllerStorage::assertFromUnsigned<7>(64u)));
+    trackBuilder.addEvent(bw_music::VolumeEvent(0,
+                                                bw_music::ControllerStorage::assertFromUnsigned<14>(0x3123u)));
+
+    auto builtTrack = trackBuilder.finishAndGetTrack();
+
+    EXPECT_TRUE(bw_music::isTrackValid(builtTrack));
+    EXPECT_EQ(builtTrack.getDuration(), babelwires::Rational(1, 4));
+    EXPECT_EQ(builtTrack.getNumEvents(), 1);
+
+    auto it = builtTrack.begin();
+    ASSERT_NE(it, builtTrack.end());
+    ASSERT_NE(it->tryAs<bw_music::VolumeEvent>(), nullptr);
+    EXPECT_EQ(it->tryAs<bw_music::VolumeEvent>()->getVolumeStorage(),
+              bw_music::ControllerStorage::assertFromUnsigned<14>(0x3123u));
+}
+
+TEST(TrackBuilderTest, builder_sameTimeLaterPanSubsumesEarlierPan) {
+    bw_music::TrackBuilder trackBuilder;
+
+    trackBuilder.addEvent(bw_music::PanEvent(babelwires::Rational(1, 4),
+                                             bw_music::CentredControllerStorage::assertFromUnsigned<7>(32u)));
+    trackBuilder.addEvent(bw_music::PanEvent(0,
+                                             bw_music::CentredControllerStorage::assertFromUnsigned<14>(0x2a55u)));
+
+    auto builtTrack = trackBuilder.finishAndGetTrack();
+
+    EXPECT_TRUE(bw_music::isTrackValid(builtTrack));
+    EXPECT_EQ(builtTrack.getDuration(), babelwires::Rational(1, 4));
+    EXPECT_EQ(builtTrack.getNumEvents(), 1);
+
+    auto it = builtTrack.begin();
+    ASSERT_NE(it, builtTrack.end());
+    ASSERT_NE(it->tryAs<bw_music::PanEvent>(), nullptr);
+    EXPECT_EQ(it->tryAs<bw_music::PanEvent>()->getPanStorage(),
+              bw_music::CentredControllerStorage::assertFromUnsigned<14>(0x2a55u));
 }
 
 TEST(TrackBuilderTest, builder_InvalidSimpleZeroLengthNote) {

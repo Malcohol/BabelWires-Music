@@ -10,6 +10,7 @@
 #include <Smf/Percussion/standardPercussionSets.hpp>
 #include <Smf/smfSequence.hpp>
 
+#include <MusicLib/Types/Track/TrackEvents/tempoEvent.hpp>
 #include <MusicLib/musicTypes.hpp>
 
 #include <cstdint>
@@ -47,7 +48,9 @@ namespace smf {
         WriteTrackEventResult writeTrackEvent(int channelNumber, bw_music::ModelDuration timeSinceLastEvent,
                                               const bw_music::TrackEvent& e);
 
-        void writeTempoEvent(int bpm);
+        bool writeGlobalTrackEvent(bw_music::ModelDuration timeSinceLastEvent, const bw_music::TrackEvent& e);
+
+        void writeTempoEvent(bw_music::TempoValue tempo);
 
         /// type is the integer 0..15 which defines which type of text meta-event should be issued.
         void writeTextMetaEvent(int type, const babelwires::Text& text);
@@ -56,7 +59,7 @@ namespace smf {
 
         void applyToAllTracks(std::function<void(unsigned int, const bw_music::Track&)> function);
 
-        void writeNotes(const std::vector<ChannelAndTrack>& tracks);
+        void writeTrackEvents(const std::vector<ChannelAndTrack>& tracks);
 
         void writeHeaderChunk(unsigned int numTracks);
 
@@ -64,7 +67,7 @@ namespace smf {
         void writeTrack(const std::vector<ChannelAndTrack>& tracks, bool includeGlobalSetup);
 
         /// Write non-channel-specific setup information.
-        void writeGlobalSetup();
+        void writeGlobalSetup(const bw_music::Track* globalTrack);
 
         /// Determine from the events in the tracks what percussion kit (allowed for the channelNumber) includes the
         /// largest number of the events.
@@ -73,6 +76,9 @@ namespace smf {
         void setUpPercussionSets();
 
         template <std::size_t N> void writeMessage(const std::array<std::uint8_t, N>& message);
+
+        /// Assumes timeSinceLastEvent has already been written
+        void write14bitControllerEventContents(int channelNumber, babelwires::Byte controllerMsb, babelwires::Byte controllerLsb, std::uint32_t value);
 
       private:
         const babelwires::Context& m_projectContext;

@@ -6,8 +6,15 @@
 #include <Smf/smfParser.hpp>
 #include <Smf/smfWriter.hpp>
 
+#include <MusicLib/Types/Track/TrackEvents/expressionEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/notePressureEvent.hpp>
 #include <MusicLib/Types/Track/TrackEvents/noteEvents.hpp>
+#include <MusicLib/Types/Track/TrackEvents/panEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/pitchBendEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/pressureEvent.hpp>
+#include <MusicLib/Types/Track/TrackEvents/tempoEvent.hpp>
 #include <MusicLib/Types/Track/trackBuilder.hpp>
+#include <MusicLib/Utilities/filteredTrackIterator.hpp>
 #include <MusicLib/libRegistration.hpp>
 
 #include <BabelWiresLib/Instance/arrayTypeInstance.hpp>
@@ -22,6 +29,8 @@
 
 #include <Tests/TestUtils/tempFilePath.hpp>
 
+using bw_music::operator""_mmv16;
+
 TEST(SmfSaveLoadTest, cMajorScale) {
     testUtils::TestEnvironment testEnvironment;
     bw_music::registerLib(testEnvironment.m_projectContext);
@@ -31,9 +40,9 @@ TEST(SmfSaveLoadTest, cMajorScale) {
 
     const std::vector<bw_music::Pitch> pitches{60, 62, 64, 65, 67, 69, 71, 72};
     {
-        babelwires::ValueTreeRoot smfFeature(
-            testEnvironment.m_projectContext.get<babelwires::TypeSystem>(),
-            babelwires::FileTypeT<smf::SmfSequence>::getType(testEnvironment.m_projectContext.get<babelwires::TypeSystem>()));
+        babelwires::ValueTreeRoot smfFeature(testEnvironment.m_projectContext.get<babelwires::TypeSystem>(),
+                                             babelwires::FileTypeT<smf::SmfSequence>::getType(
+                                                 testEnvironment.m_projectContext.get<babelwires::TypeSystem>()));
         smfFeature.setToDefault();
 
         babelwires::FileTypeT<smf::SmfSequence>::Instance smfSequence{smfFeature};
@@ -85,7 +94,9 @@ namespace {
             metadata.activateAndGetCopyR().set(u8"(C)2021 Test Copyright");
         }
         if (flags & HAS_TEMPO) {
-            metadata.activateAndGetTempo().set(100);
+            bw_music::TrackBuilder globalTrack;
+            globalTrack.addEvent(bw_music::TempoEvent(0, 100.0));
+            smfType.getGlobal().set(globalTrack.finishAndGetTrack());
         }
     }
 
@@ -101,9 +112,47 @@ namespace {
             EXPECT_EQ(metadata.tryGetCopyR()->get(), u8"(C)2021 Test Copyright");
         }
         if (flags & HAS_TEMPO) {
-            ASSERT_TRUE(metadata.tryGetTempo());
-            EXPECT_EQ(metadata.tryGetTempo()->get(), 100);
+            ASSERT_TRUE(metadata.tryGetITempo());
+            EXPECT_EQ(metadata.tryGetITempo()->get(), babelwires::Fixed(10000, 2));
+
+            const auto& globalTrack = smfType.getGlobal().get();
+            auto [tempoBegin, tempoEnd] = bw_music::iterateOver<bw_music::TempoEvent>(globalTrack);
+            ASSERT_NE(tempoBegin, tempoEnd);
+            EXPECT_DOUBLE_EQ(tempoBegin->getBpm(), 100.0);
+            ++tempoBegin;
+            EXPECT_EQ(tempoBegin, tempoEnd);
         }
+    }
+} // namespace
+
+namespace {
+    bw_music::Track makeChannelVoiceCoverageTrack() {
+        bw_music::TrackBuilder track;
+        track.addEvent(bw_music::NoteOnEvent(0, 60, bw_music::MinMaxValue16::assertFromUnsigned<7>(100u)));
+        track.addEvent(bw_music::NotePressureEvent(babelwires::Rational(1, 16), 60, bw_music::ControllerStorage::assertFromUnsigned<7>(96u)));
+        track.addEvent(bw_music::PanEvent(babelwires::Rational(1, 16),
+                                          bw_music::CentredControllerStorage::assertFromUnsigned<14>(0x2a55u)));
+        track.addEvent(bw_music::VolumeEvent(babelwires::Rational(1, 16),
+                                             bw_music::ControllerStorage::assertFromUnsigned<14>(0x3123u)));
+        track.addEvent(bw_music::ExpressionEvent(babelwires::Rational(1, 16),
+                                                 bw_music::ControllerStorage::assertFromUnsigned<7>(0u)));
+        track.addEvent(bw_music::ExpressionEvent(babelwires::Rational(1, 16),
+                                                bw_music::ControllerStorage::assertFromUnsigned<14>(0x2000u)));
+        track.addEvent(bw_music::ExpressionEvent(babelwires::Rational(1, 16),
+                                                 bw_music::ControllerStorage::assertFromUnsigned<14>(0x1f7au)));
+        track.addEvent(bw_music::SustainEvent(babelwires::Rational(1, 16),
+                                              bw_music::ControllerStorage::assertFromUnsigned<7>(127u)));
+        track.addEvent(bw_music::PitchBendEvent(babelwires::Rational(1, 16),
+                                                bw_music::CentredControllerStorage::assertFromUnsigned<14>(0u)));
+        track.addEvent(bw_music::PressureEvent(babelwires::Rational(1, 16),
+                                               bw_music::ControllerStorage::assertFromUnsigned<7>(127u)));
+        track.addEvent(bw_music::SustainEvent(babelwires::Rational(1, 16),
+                                              bw_music::ControllerStorage::assertFromUnsigned<7>(0u)));
+        track.addEvent(bw_music::PitchBendEvent(babelwires::Rational(1, 16),
+                                                bw_music::CentredControllerStorage::assertFromUnsigned<14>(0x3fffu)));
+        track.addEvent(bw_music::NoteOffEvent(babelwires::Rational(1, 16), 60,
+                                              bw_music::MinMaxValue16::assertFromUnsigned<7>(60u)));
+        return track.finishAndGetTrack();
     }
 } // namespace
 
@@ -117,10 +166,9 @@ TEST(SmfSaveLoadTest, cMajorScaleWithMetadata) {
     for (std::uint8_t metadata = 0; metadata < 8; ++metadata) {
         testUtils::TempFilePath tempFile("cMajorWithMetadata.mid", metadata);
         {
-            babelwires::ValueTreeRoot smfFeature(
-                testEnvironment.m_projectContext.get<babelwires::TypeSystem>(),
-                babelwires::FileTypeT<smf::SmfSequence>::getType(
-                    testEnvironment.m_projectContext.get<babelwires::TypeSystem>()));
+            babelwires::ValueTreeRoot smfFeature(testEnvironment.m_projectContext.get<babelwires::TypeSystem>(),
+                                                 babelwires::FileTypeT<smf::SmfSequence>::getType(
+                                                     testEnvironment.m_projectContext.get<babelwires::TypeSystem>()));
             smfFeature.setToDefault();
 
             smf::SmfSequence::Instance smfType{smfFeature.getChild(0)->as<babelwires::ValueTreeNode>()};
@@ -273,4 +321,245 @@ TEST(SmfSaveLoadTest, format1Chords) {
             testUtils::testSimpleNotes(chordPitches[i], track.getTrack().get());
         }
     }
+}
+
+TEST(SmfSaveLoadTest, format1TempoGlobalTrack) {
+    testUtils::TestEnvironment testEnvironment;
+    bw_music::registerLib(testEnvironment.m_projectContext);
+    ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
+    testUtils::TempFilePath tempFile("format1TempoGlobalTrack.mid");
+
+    {
+        babelwires::ValueTreeRoot smfFeature(testEnvironment.m_projectContext.get<babelwires::TypeSystem>(),
+                                             babelwires::FileTypeT<smf::SmfSequence>::getType(
+                                                 testEnvironment.m_projectContext.get<babelwires::TypeSystem>()));
+        smfFeature.setToDefault();
+
+        smf::SmfSequence::Instance smfType{smfFeature.getChild(0)->as<babelwires::ValueTreeNode>()};
+        smfType.selectTag("SMF1");
+
+        bw_music::TrackBuilder globalTrack;
+        globalTrack.addEvent(bw_music::TempoEvent(0, 100.0));
+        smfType.getGlobal().set(globalTrack.finishAndGetTrack());
+
+        auto tracks = smfType.getTrcks1();
+        tracks.setSize(1);
+        auto trackAndChan = tracks.getEntry(0);
+        trackAndChan.getChan().set(0);
+
+        bw_music::TrackBuilder track;
+        testUtils::addSimpleNotes(chordPitches[0], track);
+        trackAndChan.getTrack().set(track.finishAndGetTrack());
+
+        std::ofstream os = tempFile.openForWriting(std::ios_base::binary);
+        smf::writeToSmf(testEnvironment.m_projectContext, testEnvironment.m_log, smfFeature, os);
+    }
+
+    auto midiFileResult = babelwires::FileDataSource::open(tempFile);
+    ASSERT_TRUE(midiFileResult.has_value());
+    auto midiFile = std::move(*midiFileResult);
+
+    auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+    ASSERT_TRUE(midiFile.close().has_value());
+    ASSERT_TRUE(result.has_value());
+    const auto& feature = *result;
+
+    smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
+    ASSERT_EQ(smfSequence.getInstanceType().getIndexOfTag(smfSequence.getSelectedTag()), 1);
+
+    auto tracks = smfSequence.getTrcks1();
+    EXPECT_EQ(tracks.getSize(), 1);
+    testUtils::testSimpleNotes(chordPitches[0], tracks.getEntry(0).getTrack().get());
+
+    const auto& globalTrack = smfSequence.getGlobal().get();
+    auto [tempoBegin, tempoEnd] = bw_music::iterateOver<bw_music::TempoEvent>(globalTrack);
+    ASSERT_NE(tempoBegin, tempoEnd);
+    EXPECT_DOUBLE_EQ(tempoBegin->getBpm(), 100.0);
+    ++tempoBegin;
+    EXPECT_EQ(tempoBegin, tempoEnd);
+}
+
+TEST(SmfSaveLoadTest, format1TempoGlobalTrackPreservesMidiTempoStorage) {
+    testUtils::TestEnvironment testEnvironment;
+    bw_music::registerLib(testEnvironment.m_projectContext);
+    ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
+    testUtils::TempFilePath tempFile("format1TempoGlobalTrackPreservesMidiTempoStorage.mid");
+
+    const auto expectedTempoStorage = bw_music::TempoValue::assertFromMicrosecondsPerQuaternote(500001u);
+
+    {
+        babelwires::ValueTreeRoot smfFeature(testEnvironment.m_projectContext.get<babelwires::TypeSystem>(),
+                                             babelwires::FileTypeT<smf::SmfSequence>::getType(
+                                                 testEnvironment.m_projectContext.get<babelwires::TypeSystem>()));
+        smfFeature.setToDefault();
+
+        smf::SmfSequence::Instance smfType{smfFeature.getChild(0)->as<babelwires::ValueTreeNode>()};
+        smfType.selectTag("SMF1");
+
+        bw_music::TrackBuilder globalTrack;
+        globalTrack.addEvent(bw_music::TempoEvent(0, expectedTempoStorage));
+        smfType.getGlobal().set(globalTrack.finishAndGetTrack());
+
+        auto tracks = smfType.getTrcks1();
+        tracks.setSize(1);
+        auto trackAndChan = tracks.getEntry(0);
+        trackAndChan.getChan().set(0);
+
+        bw_music::TrackBuilder track;
+        testUtils::addSimpleNotes(chordPitches[0], track);
+        trackAndChan.getTrack().set(track.finishAndGetTrack());
+
+        std::ofstream os = tempFile.openForWriting(std::ios_base::binary);
+        smf::writeToSmf(testEnvironment.m_projectContext, testEnvironment.m_log, smfFeature, os);
+    }
+
+    auto midiFileResult = babelwires::FileDataSource::open(tempFile);
+    ASSERT_TRUE(midiFileResult.has_value());
+    auto midiFile = std::move(*midiFileResult);
+
+    auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+    ASSERT_TRUE(midiFile.close().has_value());
+    ASSERT_TRUE(result.has_value());
+    const auto& feature = *result;
+
+    smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
+    const auto& globalTrack = smfSequence.getGlobal().get();
+    auto [tempoBegin, tempoEnd] = bw_music::iterateOver<bw_music::TempoEvent>(globalTrack);
+
+    ASSERT_NE(tempoBegin, tempoEnd);
+    EXPECT_EQ(tempoBegin->getTempoValue(), expectedTempoStorage);
+    EXPECT_DOUBLE_EQ(tempoBegin->getBpm(), 60'000'000.0 / 500001.0);
+    ++tempoBegin;
+    EXPECT_EQ(tempoBegin, tempoEnd);
+}
+
+TEST(SmfSaveLoadTest, format0ChannelVoiceEvents) {
+    testUtils::TestEnvironment testEnvironment;
+    bw_music::registerLib(testEnvironment.m_projectContext);
+    ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
+    testUtils::TempFilePath tempFile("format0ChannelVoiceEvents.mid");
+
+    const bw_music::Track expectedTrack = makeChannelVoiceCoverageTrack();
+
+    {
+        babelwires::ValueTreeRoot smfFeature(testEnvironment.m_projectContext.get<babelwires::TypeSystem>(),
+                                             babelwires::FileTypeT<smf::SmfSequence>::getType(
+                                                 testEnvironment.m_projectContext.get<babelwires::TypeSystem>()));
+        smfFeature.setToDefault();
+
+        smf::SmfSequence::Instance smfType{smfFeature.getChild(0)->as<babelwires::ValueTreeNode>()};
+        smfType.getTrcks0().activateAndGetTrack(3).set(makeChannelVoiceCoverageTrack());
+
+        std::ofstream os = tempFile.openForWriting(std::ios_base::binary);
+        smf::writeToSmf(testEnvironment.m_projectContext, testEnvironment.m_log, smfFeature, os);
+    }
+
+    auto midiFileResult = babelwires::FileDataSource::open(tempFile);
+    ASSERT_TRUE(midiFileResult.has_value());
+    auto midiFile = std::move(*midiFileResult);
+
+    auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+    ASSERT_TRUE(midiFile.close().has_value());
+    ASSERT_TRUE(result.has_value());
+    const auto& feature = *result;
+
+    smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
+    ASSERT_EQ(smfSequence.getInstanceType().getIndexOfTag(smfSequence.getSelectedTag()), 0);
+
+    const auto track = smfSequence.getTrcks0().tryGetTrack(3);
+    ASSERT_TRUE(track);
+    EXPECT_TRUE(track->get() == expectedTrack);
+}
+
+TEST(SmfSaveLoadTest, format1ChannelVoiceEvents) {
+    testUtils::TestEnvironment testEnvironment;
+    bw_music::registerLib(testEnvironment.m_projectContext);
+    ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
+    testUtils::TempFilePath tempFile("format1ChannelVoiceEvents.mid");
+
+    const bw_music::Track expectedTrack = makeChannelVoiceCoverageTrack();
+
+    {
+        babelwires::ValueTreeRoot smfFeature(testEnvironment.m_projectContext.get<babelwires::TypeSystem>(),
+                                             babelwires::FileTypeT<smf::SmfSequence>::getType(
+                                                 testEnvironment.m_projectContext.get<babelwires::TypeSystem>()));
+        smfFeature.setToDefault();
+
+        smf::SmfSequence::Instance smfType{smfFeature.getChild(0)->as<babelwires::ValueTreeNode>()};
+        smfType.selectTag("SMF1");
+
+        auto tracks = smfType.getTrcks1();
+        tracks.setSize(1);
+        auto trackAndChan = tracks.getEntry(0);
+        trackAndChan.getChan().set(5);
+        trackAndChan.getTrack().set(makeChannelVoiceCoverageTrack());
+
+        std::ofstream os = tempFile.openForWriting(std::ios_base::binary);
+        smf::writeToSmf(testEnvironment.m_projectContext, testEnvironment.m_log, smfFeature, os);
+    }
+
+    auto midiFileResult = babelwires::FileDataSource::open(tempFile);
+    ASSERT_TRUE(midiFileResult.has_value());
+    auto midiFile = std::move(*midiFileResult);
+
+    auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+    ASSERT_TRUE(midiFile.close().has_value());
+    ASSERT_TRUE(result.has_value());
+    const auto& feature = *result;
+
+    smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
+    ASSERT_EQ(smfSequence.getInstanceType().getIndexOfTag(smfSequence.getSelectedTag()), 1);
+
+    auto tracks = smfSequence.getTrcks1();
+    ASSERT_EQ(tracks.getSize(), 1);
+    const auto track = tracks.getEntry(0);
+    EXPECT_EQ(track.getChan().get(), 5);
+    EXPECT_TRUE(track.getTrack().get() == expectedTrack);
+}
+
+TEST(SmfSaveLoadTest, expressionMsbUsesCachedLsbAfterFineModeEstablished) {
+    testUtils::TestEnvironment testEnvironment;
+    bw_music::registerLib(testEnvironment.m_projectContext);
+    ASSERT_TRUE(smf::registerLib(testEnvironment.m_projectContext, testEnvironment.m_log));
+    testUtils::TempFilePath tempFile("expressionMsbUsesCachedLsbAfterFineModeEstablished.mid");
+
+    {
+        std::ofstream os = tempFile.openForWriting(std::ios_base::binary);
+        auto writeBytes = [&os](std::initializer_list<unsigned int> bytes) {
+            for (const unsigned int byte : bytes) {
+                os.put(static_cast<char>(byte));
+            }
+        };
+
+        writeBytes({0x4d, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x01, 0x00, 0x60});
+        writeBytes({0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x10,
+                    0x00, 0xb0, 0x0b, 0x20,
+                    0x00, 0xb0, 0x2b, 0x01,
+                    0x60, 0xb0, 0x0b, 0x40,
+                    0x00, 0xff, 0x2f, 0x00});
+    }
+
+    auto midiFileResult = babelwires::FileDataSource::open(tempFile);
+    ASSERT_TRUE(midiFileResult.has_value());
+    auto midiFile = std::move(*midiFileResult);
+
+    auto result = smf::parseSmfSequence(midiFile, testEnvironment.m_projectContext, testEnvironment.m_log);
+    ASSERT_TRUE(midiFile.close().has_value());
+    ASSERT_TRUE(result.has_value());
+    const auto& feature = *result;
+
+    smf::SmfSequence::ConstInstance smfSequence{feature->getChild(0)->as<babelwires::ValueTreeNode>()};
+    ASSERT_EQ(smfSequence.getInstanceType().getIndexOfTag(smfSequence.getSelectedTag()), 0);
+
+    const auto track = smfSequence.getTrcks0().tryGetTrack(0);
+    ASSERT_TRUE(track);
+
+    auto [expressionBegin, expressionEnd] = bw_music::iterateOver<bw_music::ExpressionEvent>(track->get());
+    ASSERT_NE(expressionBegin, expressionEnd);
+    EXPECT_EQ(expressionBegin->getExpressionStorage().getUnsigned<14>(), 0x1001u);
+    ++expressionBegin;
+    ASSERT_NE(expressionBegin, expressionEnd);
+    EXPECT_EQ(expressionBegin->getExpressionStorage().getUnsigned<14>(), 0x2001u);
+    ++expressionBegin;
+    EXPECT_EQ(expressionBegin, expressionEnd);
 }

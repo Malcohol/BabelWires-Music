@@ -9,7 +9,7 @@
 
 #include <Smf/smfFormat.hpp>
 
-#include <MusicLib/Types/tempo.hpp>
+#include <MusicLib/Types/Tempo/tempo.hpp>
 
 #include <BabelWiresLib/TypeSystem/typeSystem.hpp>
 #include <BabelWiresLib/Types/Text/textType.hpp>
@@ -26,8 +26,8 @@ smf::MidiMetadata::MidiMetadata(const babelwires::TypeSystem& typeSystem)
     : babelwires::RecordType(
           getThisIdentifier(), typeSystem,
           {{BW_SHORT_ID("Spec", "MIDI Spec", "15a9fa85-f2c6-4e68-8691-fefd64ca1233"), GMSpecType::getThisIdentifier()},
-           {BW_SHORT_ID("Tempo", "Tempo", "3ef804e9-e34a-4a25-b6bf-ce7597d9d90b"), bw_music::Tempo::getThisIdentifier(),
-            babelwires::RecordType::Optionality::optionalDefaultInactive},
+           {BW_SHORT_ID("ITempo", "Initial Tempo", "3ef804e9-e34a-4a25-b6bf-ce7597d9d90b"), bw_music::Tempo::getThisIdentifier(),
+            babelwires::RecordType::Optionality::optionalDefaultActive},
            {BW_SHORT_ID("Name", "Name", "c2e4910f-d006-4a93-97a7-ae5973157ec8"),
             babelwires::TextTypeConstructor::makeTypeExp(c_maxTextFieldLength),
             babelwires::RecordType::Optionality::optionalDefaultInactive},

@@ -20,7 +20,7 @@ namespace bw_music {
         QUERYABLE_INTERFACE(Transposable);
         virtual ~Transposable() = default;
 
-        /// If it makes sense, transpose the pitch or pitches described by this event by the given number of semitones.
+        /// Transpose the pitch or pitches described by this event by the given number of semitones.
         /// Return false if the event has become invalidated.
         virtual bool transpose(int pitchOffset,
                                TransposeOutOfRangePolicy outOfRangePolicy = TransposeOutOfRangePolicy::Discard) = 0;

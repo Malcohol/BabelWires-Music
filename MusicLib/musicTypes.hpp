@@ -17,7 +17,7 @@
 
 namespace bw_music {
 
-    typedef babelwires::Rational ModelDuration;
-    typedef babelwires::Byte Velocity;
+    using ModelDuration = babelwires::Rational;
+
 
 } // namespace bw_music
