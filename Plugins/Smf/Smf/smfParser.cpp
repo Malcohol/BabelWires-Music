@@ -104,24 +104,12 @@ babelwires::Result smf::SmfConsumer::readTempoEvent(int trackIndex, bw_music::Mo
                                                     std::uint32_t tempoValue) {
     ASSIGN_OR_ERROR(const auto tempo, bw_music::TempoValue::fromMicrosecondsPerQuaternote(tempoValue));
 
-    if (auto existing = m_globalTempoEvents.find(absoluteTime); existing != m_globalTempoEvents.end()) {
-        if (existing->second.m_trackIndex == trackIndex) {
-            m_userLogger.logWarning() << "Multiple tempo events at the same tick in SMF track " << trackIndex
-                                      << "; using the last event in stream order";
-            existing->second.m_tempo = tempo;
-        } else {
-            // It isn't specified how to handle this, but higher-numbered tracks are often processed after
-            // lower-numbered tracks, so this policy seems pragmatic.
-            m_userLogger.logWarning()
-                << "Conflicting simultaneous tempo events in multiple SMF1 tracks; using the higher-numbered track";
-            if (existing->second.m_trackIndex > trackIndex) {
-                return {};
-            }
-            existing->second = {trackIndex, tempo};
-        }
-    } else {
-        m_globalTempoEvents.emplace(absoluteTime, NormalizedTempoEvent{trackIndex, tempo});
-    }
+    // The byte parser delivers events in global time order.
+    assert(!m_hasGlobalTempoEvents || (absoluteTime >= m_timeOfLastGlobalTempoEvent));
+
+    m_globalTempoTrack.addEvent(bw_music::TempoEvent{absoluteTime - m_timeOfLastGlobalTempoEvent, tempo});
+    m_timeOfLastGlobalTempoEvent = absoluteTime;
+    m_hasGlobalTempoEvents = true;
 
     // TODO: Always activate the ITempo field, since 120 bpm should be assumed if no other tempo event is present.
     if (absoluteTime == 0) {
@@ -298,14 +286,8 @@ babelwires::Result smf::SmfConsumer::buildOutputTracks() {
 
 babelwires::Result smf::SmfConsumer::finalize() {
     // Assemble the global tempo track.
-    if (!m_globalTempoEvents.empty()) {
-        bw_music::TrackBuilder globalTrack;
-        bw_music::ModelDuration timeOfLastEvent = 0;
-        for (const auto& [absoluteTime, tempo] : m_globalTempoEvents) {
-            globalTrack.addEvent(bw_music::TempoEvent{absoluteTime - timeOfLastEvent, tempo.m_tempo});
-            timeOfLastEvent = absoluteTime;
-        }
-        getSmfSequence().getGlobal().set(globalTrack.finishAndGetTrack());
+    if (m_hasGlobalTempoEvents) {
+        getSmfSequence().getGlobal().set(m_globalTempoTrack.finishAndGetTrack());
     }
     return buildOutputTracks();
 }

@@ -173,11 +173,12 @@ namespace smf {
         int m_division = -1;
         std::uint16_t m_format = 0;
 
-        struct NormalizedTempoEvent {
-            int m_trackIndex;
-            bw_music::TempoValue m_tempo;
-        };
-        std::map<bw_music::ModelDuration, NormalizedTempoEvent> m_globalTempoEvents;
+        /// The global tempo track, built up as tempo events are delivered in global time order.
+        bw_music::TrackBuilder m_globalTempoTrack;
+        /// Whether any tempo events have been seen (and hence whether the global track should be set).
+        bool m_hasGlobalTempoEvents = false;
+        /// The absolute time of the last tempo event delivered.
+        bw_music::ModelDuration m_timeOfLastGlobalTempoEvent = 0;
 
         /// Knowledge of how pitches map to percussion instruments.
         StandardPercussionSets m_standardPercussionSets;
